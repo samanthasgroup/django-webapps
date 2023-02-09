@@ -9,3 +9,6 @@ Backend for the database, implemented in Django
 4. Create database migrations: `python manage.py makemigrations api`
 5. Apply migrations: `python manage.py migrate`
 6. Create a superuser for admin interface: `python manage.py createsuperuser`
+7. Run the server locally: `python manage.py runserver`
+
+The main page is the admin page, as no user-facing web interface is planned yet.
