@@ -52,72 +52,11 @@ class DayAndTimeSlot(models.Model):
     time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
 
 
-# BLOCKS WITH ADDITIONAL INFORMATION ON A PERSON WITH A SPECIFIC ROLE
-class CoordinatorInfo(models.Model):
-    """Additional information about a coordinator. If an instance of Person has this attribute,
-    this person is a coordinator.
-    """
-
-    is_admin = models.BooleanField(default=False)
-
-
-class StudentInfo(models.Model):
-    """Additional information about a student. If an instance of Person has this attribute, this
-    person is a student.
-    """
-
-    requires_communication_in_ukrainian = models.BooleanField
-    is_member_of_speaking_club = models.BooleanField
-    needs_help_with_CV = models.BooleanField
-    # right now a student can only learn 1 language, but we don't want to fix this in the database
-    teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
-
-
-class TeacherInfo(models.Model):
-    """Additional information about a teacher. If an instance of Person has this attribute, this
-    person is a teacher.
-    """
-
-    # teacher_categories = models.ManyToManyField  # TODO
-    teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
-
-
-# LOG ITEMS AND STATUSES (they are all for internal use, so no multilingual names are needed)
-class LogItem(models.Model):
-    """Abstract class for some sort of internal event ('log item'), e.g. 'joined group' for a
-    student or 'finished' for a group. Statuses will be assigned based on these events.
-
-    We don't call the class Event (although it is an event in a programming sense) for it not to be
-    confused with possible models for events organized by the school.
-    """
-
-    name = models.CharField  # TODO add accepted events to another table or just create an Enum?
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        abstract = True
-
-
-class CoordinatorLogItem(LogItem):
-    coordinator = models.ForeignKey(CoordinatorInfo, related_name="log", on_delete=models.CASCADE)
-
-
-class GroupLogItem(LogItem):
-    group = models.ForeignKey("Group", on_delete=models.CASCADE)
-
-
-class StudentLogItem(LogItem):
-    student = models.ForeignKey(StudentInfo, related_name="log", on_delete=models.CASCADE)
-
-
-class TeacherLogItem(LogItem):
-    student = models.ForeignKey(TeacherInfo, related_name="log", on_delete=models.CASCADE)
-
-
+# STATUSES
 class Status(models.Model):
     name = models.CharField
     # this can be tracked via LogItems but an additional column can be a very convenient shortcut:
-    valid_since = models.DateTimeField(auto_now_add=True)
+    in_place_since = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         abstract = True
@@ -139,7 +78,83 @@ class TeacherStatus(Status):
     """Model for statuses of teachers."""
 
 
-# PEOPLE
+# BLOCKS WITH ADDITIONAL INFORMATION ON A PERSON WITH A SPECIFIC ROLE
+class CoordinatorInfo(models.Model):
+    """Additional information about a coordinator. If an instance of Person has this attribute,
+    this person is a coordinator.
+    """
+
+    is_admin = models.BooleanField(default=False)
+    status = models.ForeignKey(CoordinatorStatus, on_delete=models.PROTECT)
+
+
+class StudentInfo(models.Model):
+    """Additional information about a student. If an instance of Person has this attribute, this
+    person is a student.
+    """
+
+    is_member_of_speaking_club = models.BooleanField
+    requires_help_with_CV = models.BooleanField
+    requires_communication_in_ukrainian = models.BooleanField
+    status = models.ForeignKey(StudentStatus, on_delete=models.PROTECT)
+    # The general rule is that one student can only learn one language,
+    # but we don't want to limit this in the database.
+    teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
+
+
+class TeacherInfo(models.Model):
+    """Additional information about a teacher. If an instance of Person has this attribute, this
+    person is a teacher.
+    """
+
+    status = models.ForeignKey(TeacherStatus, on_delete=models.PROTECT)
+    # teacher_categories = models.ManyToManyField  # TODO
+    teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
+
+
+# LOG ITEMS
+class LogItem(models.Model):
+    """Abstract class for some sort of internal event ('log item'), e.g. 'joined group' for a
+    student or 'finished' for a group. Statuses will be assigned based on these events.
+
+    We don't call the class Event (although it is an event in a programming sense) for it not to be
+    confused with possible models for events organized by the school.
+    """
+
+    date_time = models.DateTimeField(auto_now_add=True)
+    type = models.CharField  # TODO add accepted events to another table or just create an Enum?
+
+    class Meta:
+        abstract = True
+
+
+class GroupLogItem(LogItem):
+    group = models.ForeignKey("Group", on_delete=models.CASCADE)
+
+
+class PersonLogItem(LogItem):
+    """Abstract class for log items for coordinators, students and teachers."""
+
+    from_group = models.ForeignKey("Group", on_delete=models.CASCADE, related_name="log_from_self")
+    to_group = models.ForeignKey("Group", on_delete=models.CASCADE, related_name="log_to_self")
+
+    class Meta:
+        abstract = True
+
+
+class CoordinatorLogItem(PersonLogItem):
+    coordinator = models.ForeignKey(CoordinatorInfo, related_name="log", on_delete=models.CASCADE)
+
+
+class StudentLogItem(PersonLogItem):
+    student = models.ForeignKey(StudentInfo, related_name="log", on_delete=models.CASCADE)
+
+
+class TeacherLogItem(PersonLogItem):
+    teacher = models.ForeignKey(TeacherInfo, related_name="log", on_delete=models.CASCADE)
+
+
+# PEOPLE AND GROUPS
 class Person(models.Model):
     """Model for a coordinator, student, or teacher. We are not using an abstract model here
     because people can combine roles (be a teacher and a coordinator at the same time),
@@ -160,15 +175,17 @@ class Person(models.Model):
     tz_winter_relative_to_utc = models.IntegerField
     approximate_date_of_birth = models.DateField
 
-    enrolment_bot_chat_id = models.IntegerField  # TODO none for coordinator; move to info?
-    chatwoot_conversation_id = models.IntegerField  # TODO none for coordinator; move to info?
+    availability_slots = models.ManyToManyField(DayAndTimeSlot)
+
+    # these are none for coordinator, but can be present for student/teacher, so keeping them here
+    registration_bot_chat_id = models.IntegerField(blank=True, null=True)
+    chatwoot_conversation_id = models.IntegerField(blank=True, null=True)
 
     # native_language = models.ForeignKey  # TODO
-    # status = models.ForeignKey  # TODO
-    # availability_slots = models.ForeignKey  # TODO
-    # source  # TODO: how they learned about SSG
+    # source  # TODO: how they learned about SSG, this could be an Enum
 
-    # blank = True and null = True mean that this attribute is optional
+    # blank = True and null = True mean that this attribute is optional.
+    # The logic is that if a person has coordinator_info, they are a coordinator, etc.
     coordinator_info = models.OneToOneField(
         "CoordinatorInfo",
         on_delete=models.CASCADE,  # TODO check if this is correct for OneToOneField
@@ -197,10 +214,14 @@ class Person(models.Model):
 
 
 class Group(models.Model):
-    start_date = models.DateField
-    end_date = models.DateField  # Is it needed?
-
+    availability_slot = models.ManyToManyField(DayAndTimeSlot)
+    is_for_staff_only = models.BooleanField(default=False)
     language_and_level = models.ForeignKey(TeachingLanguageAndLevel, on_delete=models.CASCADE)
+    status = models.ForeignKey(GroupStatus, on_delete=models.RESTRICT)  # TODO check on_delete
+    schedule = models.CharField  # will have special format (days and exact times)
+    start_date = models.DateField
+    end_date = models.DateField  # TODO is it needed?
+    telegram_chat_url = models.URLField  # group chat created manually by the coordinator/teacher
 
     # related_name must be given, otherwise a backref clash will occur
     coordinators = models.ManyToManyField(Person, related_name="groups_as_coordinator")
