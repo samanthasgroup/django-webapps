@@ -47,6 +47,8 @@ class DayOfWeek(MultilingualObject):
 
 
 class TimeSlot(models.Model):
+    # Postgres supports ranges, and in Django we could use IntegerRangeField for a Postgres range,
+    # but that would hinder development and testing with SQLite
     from_utc_hour = models.IntegerField
     to_utc_hour = models.IntegerField
 
@@ -140,6 +142,7 @@ class CoordinatorLogItem(models.Model):
     coordinator_info = models.ForeignKey(
         CoordinatorInfo, related_name="log", on_delete=models.CASCADE
     )
+    # TODO these should be optional (in other classes too) because either from or to could be empty
     from_group = models.ForeignKey(
         "Group", on_delete=models.CASCADE, related_name="coordinator_log_from_self"
     )
@@ -234,7 +237,6 @@ class Group(models.Model):
     is_for_staff_only = models.BooleanField(default=False)
     language_and_level = models.ForeignKey(TeachingLanguageAndLevel, on_delete=models.CASCADE)
     status = models.ForeignKey(GroupStatus, on_delete=models.PROTECT)
-    schedule = models.CharField  # will have special format (days and exact times)
     start_date = models.DateField
     # this field could be useful for overview, but can be filled automatically when
     # a corresponding log item is created:
@@ -245,6 +247,16 @@ class Group(models.Model):
     coordinators = models.ManyToManyField(Person, related_name="groups_as_coordinator")
     students = models.ManyToManyField(Person, related_name="groups_as_student")
     teachers = models.ManyToManyField(Person, related_name="groups_as_teacher")
+
+    # some research showed that it's better to store the schedule not in a single text field
+    # with some pre-defined syntax, but in 7 columns, one per day of the week
+    monday = models.TimeField(blank=True, null=True)
+    tuesday = models.TimeField(blank=True, null=True)
+    wednesday = models.TimeField(blank=True, null=True)
+    thursday = models.TimeField(blank=True, null=True)
+    friday = models.TimeField(blank=True, null=True)
+    saturday = models.TimeField(blank=True, null=True)
+    sunday = models.TimeField(blank=True, null=True)
 
     # TODO __str__(self): how to join self.teachers?
 
