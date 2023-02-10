@@ -136,26 +136,36 @@ class GroupLogItem(LogItem):
     group = models.ForeignKey("Group", on_delete=models.CASCADE)
 
 
-class PersonLogItem(LogItem):
-    """Abstract class for log items for coordinators, students and teachers."""
-
-    from_group = models.ForeignKey("Group", on_delete=models.CASCADE, related_name="log_from_self")
-    to_group = models.ForeignKey("Group", on_delete=models.CASCADE, related_name="log_to_self")
-
-    class Meta:
-        abstract = True
-
-
-class CoordinatorLogItem(PersonLogItem):
-    coordinator = models.ForeignKey(CoordinatorInfo, related_name="log", on_delete=models.CASCADE)
+class CoordinatorLogItem(models.Model):
+    coordinator_info = models.ForeignKey(
+        CoordinatorInfo, related_name="log", on_delete=models.CASCADE
+    )
+    from_group = models.ForeignKey(
+        "Group", on_delete=models.CASCADE, related_name="coordinator_log_from_self"
+    )
+    to_group = models.ForeignKey(
+        "Group", on_delete=models.CASCADE, related_name="coordinator_log_to_self"
+    )
 
 
-class StudentLogItem(PersonLogItem):
-    student = models.ForeignKey(StudentInfo, related_name="log", on_delete=models.CASCADE)
+class StudentLogItem(models.Model):
+    student_info = models.ForeignKey(StudentInfo, related_name="log", on_delete=models.CASCADE)
+    from_group = models.ForeignKey(
+        "Group", on_delete=models.CASCADE, related_name="student_log_from_self"
+    )
+    to_group = models.ForeignKey(
+        "Group", on_delete=models.CASCADE, related_name="student_log_to_self"
+    )
 
 
-class TeacherLogItem(PersonLogItem):
-    teacher = models.ForeignKey(TeacherInfo, related_name="log", on_delete=models.CASCADE)
+class TeacherLogItem(models.Model):
+    teacher_info = models.ForeignKey(TeacherInfo, related_name="log", on_delete=models.CASCADE)
+    from_group = models.ForeignKey(
+        "Group", on_delete=models.CASCADE, related_name="teacher_log_from_self"
+    )
+    to_group = models.ForeignKey(
+        "Group", on_delete=models.CASCADE, related_name="teacher_log_to_self"
+    )
 
 
 # PEOPLE AND GROUPS
@@ -223,7 +233,7 @@ class Group(models.Model):
     availability_slot = models.ManyToManyField(DayAndTimeSlot)
     is_for_staff_only = models.BooleanField(default=False)
     language_and_level = models.ForeignKey(TeachingLanguageAndLevel, on_delete=models.CASCADE)
-    status = models.ForeignKey(GroupStatus, on_delete=models.RESTRICT)  # TODO check on_delete
+    status = models.ForeignKey(GroupStatus, on_delete=models.PROTECT)
     schedule = models.CharField  # will have special format (days and exact times)
     start_date = models.DateField
     # this field could be useful for overview, but can be filled automatically when
