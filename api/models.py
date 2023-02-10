@@ -35,12 +35,31 @@ class TeachingLanguageAndLevel(models.Model):
     level = models.ForeignKey(LanguageLevel, on_delete=models.CASCADE)
 
 
+# DAYS OF WEEK AND TIME SLOTS
+class DayOfWeek(MultilingualObject):
+    # We could just use numbers and then localize them using Babel,
+    # but it seems easier to just create a table with 7 rows.
+    index = models.IntegerField  # for sorting
+
+
+class TimeSlot(models.Model):
+    from_utc_hour = models.IntegerField
+    to_utc_hour = models.IntegerField
+
+
+class DayAndTimeSlot(models.Model):
+    day_of_week = models.ForeignKey(DayOfWeek, on_delete=models.CASCADE)
+    time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+
+
 # PEOPLE
 class Person(models.Model):
     # This is the ID that will identify a person with any role (student, teacher, coordinator),
     # even if one person combines several roles.
     # TODO I guess I'll need a timestamp then because I can't sort by ID
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # Automatically save date and time when the Person was created.
+    date_and_time_added = models.DateTimeField(auto_now_add=True)
     first_name = models.CharField(max_length=100)  # can include middle name if a person wishes so
     last_name = models.CharField(max_length=100)
     tg_username = models.CharField
