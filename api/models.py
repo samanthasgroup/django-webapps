@@ -20,6 +20,22 @@ class AdminSiteUser(models.Model):
         return self.full_name
 
 
+# LANGUAGES AND LEVELS
+class TeachingLanguage(MultilingualObject):
+    ...
+
+
+class LanguageLevel(models.Model):
+    name = models.CharField(max_length=3)
+    rank = models.IntegerField
+
+
+class TeachingLanguageAndLevel(models.Model):
+    language = models.ForeignKey(TeachingLanguage, on_delete=models.CASCADE)
+    level = models.ForeignKey(LanguageLevel, on_delete=models.CASCADE)
+
+
+# PEOPLE
 class Person(models.Model):
     # This is the ID that will identify a person with any role (student, teacher, coordinator),
     # even if one person combines several roles.
@@ -40,7 +56,6 @@ class Person(models.Model):
     # If this is a student, we will not allow them to select more than 1 language at registration,
     # but the database will remain agnostic: any person can be related to any number of languages
     # and levels.
-    # teaching_languages_and_levels = models.ManyToManyField  # TODO; move to info?
 
     # native_language = models.ForeignKey  # TODO
     # status = models.ForeignKey  # TODO
@@ -91,6 +106,8 @@ class StudentInfo(models.Model):
     requires_communication_in_ukrainian = models.BooleanField
     is_member_of_speaking_club = models.BooleanField
     needs_help_with_CV = models.BooleanField
+    # right now a student can only learn 1 language, but we don't want to fix this in the database
+    teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
 
 
 class TeacherInfo(models.Model):
@@ -99,17 +116,18 @@ class TeacherInfo(models.Model):
     """
 
     # teacher_categories = models.ManyToManyField  # TODO
+    teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
 
 
 class Group(models.Model):
     start_date = models.DateField
     end_date = models.DateField  # Is it needed?
 
-    # language_and_level = models.ForeignKey  # TODO
+    language_and_level = models.ForeignKey(TeachingLanguageAndLevel, on_delete=models.CASCADE)
 
-    # the database will allow to add any person, the checks have to be done in code
-    coordinators = models.ManyToManyField(Person, blank=True)
-    students = models.ManyToManyField(Person, blank=True)
-    teachers = models.ManyToManyField(Person, blank=True)
+    # related_name must be given, otherwise a backref clash will occur
+    coordinators = models.ManyToManyField(Person, related_name="groups_as_coordinator")
+    students = models.ManyToManyField(Person, related_name="groups_as_student")
+    teachers = models.ManyToManyField(Person, related_name="groups_as_teacher")
 
     # TODO __str__(self): how to join self.teachers?
