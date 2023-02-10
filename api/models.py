@@ -21,6 +21,10 @@ class AdminSiteUser(models.Model):
 
 
 # LANGUAGES AND LEVELS
+class NativeLanguage(MultilingualObject):
+    ...
+
+
 class TeachingLanguage(MultilingualObject):
     ...
 
@@ -181,11 +185,11 @@ class Person(models.Model):
     registration_bot_chat_id = models.IntegerField(blank=True, null=True)
     chatwoot_conversation_id = models.IntegerField(blank=True, null=True)
 
-    # native_language = models.ForeignKey  # TODO
+    native_language = models.ForeignKey(NativeLanguage, on_delete=models.PROTECT)
     # source  # TODO: how they learned about SSG, this could be an Enum
 
-    # blank = True and null = True mean that this attribute is optional.
     # The logic is that if a person has coordinator_info, they are a coordinator, etc.
+    # blank = True and null = True mean that this attribute is optional.
     coordinator_info = models.OneToOneField(
         "CoordinatorInfo",
         on_delete=models.CASCADE,  # TODO check if this is correct for OneToOneField
@@ -205,6 +209,8 @@ class Person(models.Model):
         null=True,
     )
 
+    comment = models.TextField
+
     class Meta:
         ordering = ("last_name", "first_name")
 
@@ -220,7 +226,9 @@ class Group(models.Model):
     status = models.ForeignKey(GroupStatus, on_delete=models.RESTRICT)  # TODO check on_delete
     schedule = models.CharField  # will have special format (days and exact times)
     start_date = models.DateField
-    end_date = models.DateField  # TODO is it needed?
+    # this field could be useful for overview, but can be filled automatically when
+    # a corresponding log item is created:
+    end_date = models.DateField
     telegram_chat_url = models.URLField  # group chat created manually by the coordinator/teacher
 
     # related_name must be given, otherwise a backref clash will occur
@@ -229,3 +237,25 @@ class Group(models.Model):
     teachers = models.ManyToManyField(Person, related_name="groups_as_teacher")
 
     # TODO __str__(self): how to join self.teachers?
+
+
+# ENROLLMENT TEST
+class EnrollmentTest(models.Model):
+    language = models.ForeignKey(TeachingLanguage, on_delete=models.PROTECT)
+    levels = models.ManyToManyField(LanguageLevel)
+
+
+class EnrollmentTestQuestion(models.Model):
+    enrollment_test = models.ForeignKey(EnrollmentTest, on_delete=models.CASCADE)
+    text = models.CharField
+
+
+class EnrollmentTestQuestionOption(models.Model):
+    question = models.ForeignKey(EnrollmentTestQuestion, on_delete=models.CASCADE)
+    text = models.CharField
+    is_correct = models.BooleanField
+
+
+class EnrollmentTestResult(models.Model):
+    student_info = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
+    answers = models.ManyToManyField(EnrollmentTestQuestionOption)
