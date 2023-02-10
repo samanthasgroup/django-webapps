@@ -4,12 +4,12 @@ from django.db import models
 
 
 class MultilingualObject(models.Model):
+    name_en = models.CharField(max_length=255)
+    name_ru = models.CharField(max_length=255)
+    name_ua = models.CharField(max_length=255)
+
     class Meta:
         abstract = True  # This model will not be used to create any database table
-
-    name_en = models.CharField
-    name_ru = models.CharField
-    name_ua = models.CharField
 
 
 class AdminSiteUser(models.Model):
@@ -31,7 +31,7 @@ class TeachingLanguage(MultilingualObject):
 
 class LanguageLevel(models.Model):
     name = models.CharField(max_length=3)
-    rank = models.IntegerField
+    rank = models.IntegerField()
 
 
 class TeachingLanguageAndLevel(models.Model):
@@ -43,14 +43,15 @@ class TeachingLanguageAndLevel(models.Model):
 class DayOfWeek(MultilingualObject):
     # We could just use numbers and then localize them using Babel,
     # but it seems easier to just create a table with 7 rows.
-    index = models.IntegerField  # for sorting
+    index = models.IntegerField()  # for sorting
 
 
 class TimeSlot(models.Model):
     # Postgres supports ranges, and in Django we could use IntegerRangeField for a Postgres range,
-    # but that would hinder development and testing with SQLite
-    from_utc_hour = models.IntegerField
-    to_utc_hour = models.IntegerField
+    # but that would hinder development and testing with SQLite.
+    # Also, Postgres has no pure time ranges (only date-time).
+    from_utc_hour = models.TimeField()
+    to_utc_hour = models.TimeField()
 
 
 class DayAndTimeSlot(models.Model):
@@ -60,7 +61,7 @@ class DayAndTimeSlot(models.Model):
 
 # STATUSES
 class Status(models.Model):
-    name = models.CharField
+    name = models.CharField(max_length=100)
     # this can be tracked via LogItems but an additional column can be a very convenient shortcut:
     in_place_since = models.DateTimeField(auto_now_add=True)
 
@@ -99,9 +100,9 @@ class StudentInfo(models.Model):
     person is a student.
     """
 
-    is_member_of_speaking_club = models.BooleanField
-    requires_help_with_CV = models.BooleanField
-    requires_communication_in_ukrainian = models.BooleanField
+    is_member_of_speaking_club = models.BooleanField(default=False)
+    requires_help_with_CV = models.BooleanField(default=False)
+    requires_communication_in_ukrainian = models.BooleanField(default=False)
     status = models.ForeignKey(StudentStatus, on_delete=models.PROTECT)
     # The general rule is that one student can only learn one language,
     # but we don't want to limit this in the database.
@@ -128,7 +129,8 @@ class LogItem(models.Model):
     """
 
     date_time = models.DateTimeField(auto_now_add=True)
-    type = models.CharField  # TODO add accepted events to another table or just create an Enum?
+    type = models.CharField(max_length=100)
+    # TODO add accepted events to another table or just create an Enum?
 
     class Meta:
         abstract = True
@@ -185,12 +187,13 @@ class Person(models.Model):
     date_and_time_added = models.DateTimeField(auto_now_add=True)
     first_name = models.CharField(max_length=100)  # can include middle name if a person wishes so
     last_name = models.CharField(max_length=100)
-    tg_username = models.CharField
+    # Telegram's limit is 32, but this might change
+    tg_username = models.CharField(blank=True, max_length=100, null=True)
     email = models.EmailField()
     phone = models.CharField(max_length=50)
-    tz_summer_relative_to_utc = models.IntegerField
-    tz_winter_relative_to_utc = models.IntegerField
-    approximate_date_of_birth = models.DateField
+    tz_summer_relative_to_utc = models.IntegerField()
+    tz_winter_relative_to_utc = models.IntegerField()
+    approximate_date_of_birth = models.DateField()
 
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
@@ -222,7 +225,7 @@ class Person(models.Model):
         null=True,
     )
 
-    comment = models.TextField
+    comment = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("last_name", "first_name")
@@ -235,13 +238,15 @@ class Person(models.Model):
 class Group(models.Model):
     availability_slot = models.ManyToManyField(DayAndTimeSlot)
     is_for_staff_only = models.BooleanField(default=False)
+    is_pending = models.BooleanField(default=True)
     language_and_level = models.ForeignKey(TeachingLanguageAndLevel, on_delete=models.CASCADE)
     status = models.ForeignKey(GroupStatus, on_delete=models.PROTECT)
-    start_date = models.DateField
+    start_date = models.DateField(blank=True, null=True)
     # this field could be useful for overview, but can be filled automatically when
     # a corresponding log item is created:
-    end_date = models.DateField
-    telegram_chat_url = models.URLField  # group chat created manually by the coordinator/teacher
+    end_date = models.DateField(blank=True, null=True)
+    # group chat created manually by the coordinator/teacher
+    telegram_chat_url = models.URLField(blank=True, null=True)
 
     # related_name must be given, otherwise a backref clash will occur
     coordinators = models.ManyToManyField(Person, related_name="groups_as_coordinator")
@@ -269,13 +274,13 @@ class EnrollmentTest(models.Model):
 
 class EnrollmentTestQuestion(models.Model):
     enrollment_test = models.ForeignKey(EnrollmentTest, on_delete=models.CASCADE)
-    text = models.CharField
+    text = models.CharField(max_length=255)
 
 
 class EnrollmentTestQuestionOption(models.Model):
     question = models.ForeignKey(EnrollmentTestQuestion, on_delete=models.CASCADE)
-    text = models.CharField
-    is_correct = models.BooleanField
+    text = models.CharField(max_length=50)
+    is_correct = models.BooleanField()
 
 
 class EnrollmentTestResult(models.Model):
