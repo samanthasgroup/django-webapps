@@ -6,7 +6,14 @@ from django.db import models
 class MultilingualModel(models.Model):
     """Abstract model for end-user facing entities that need names to be stored in 3 languages."""
 
-    # TODO add internal name?
+    name_internal = models.CharField(
+        max_length=50,
+        unique=True,
+        help_text=(
+            "Internal name to use in code. This will allow to change user-facing names easily "
+            "without breaking the code."
+        ),
+    )
     name_en = models.CharField(max_length=255, unique=True)
     name_ru = models.CharField(max_length=255, unique=True)
     name_ua = models.CharField(max_length=255, unique=True)
@@ -16,7 +23,7 @@ class MultilingualModel(models.Model):
 
 
 class InternalModelWithName(models.Model):
-    """Abstract model for internal entities that have a name attrinute but do not need to support
+    """Abstract model for internal entities that have a name attribute but do not need to support
     internationalization.
     """
 
@@ -180,8 +187,8 @@ class PersonalInfo(models.Model):
     class Meta:
         ordering = ("last_name", "first_name")
 
-    def __str__(self):
-        # TODO display whether it's a teacher, a student, a coordinator, or a combination of these
+    @property
+    def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
 
@@ -216,6 +223,9 @@ class Coordinator(PersonWithRole):
     )
     status = models.ForeignKey(CoordinatorStatus, on_delete=models.PROTECT)
 
+    def __str__(self):
+        return f"Coordinator {self.personal_info.full_name}"
+
 
 class Student(PersonWithRole):
     """Model for a student."""
@@ -228,6 +238,9 @@ class Student(PersonWithRole):
     # but we don't want to limit this in the database.
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
 
+    def __str__(self):
+        return f"Student {self.personal_info.full_name}"
+
 
 class TeacherCategory(MultilingualModel):
     """Model for enumerating categories of a teacher (teacher, methodist, CV mentor etc.)."""
@@ -239,6 +252,9 @@ class Teacher(PersonWithRole):
     status = models.ForeignKey(TeacherStatus, on_delete=models.PROTECT)
     categories = models.ManyToManyField(TeacherCategory)
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
+
+    def __str__(self):
+        return f"Teacher {self.personal_info.full_name}"
 
 
 # LOG ITEMS (EVENTS)
@@ -365,7 +381,13 @@ class Group(models.Model):
     saturday = models.TimeField(blank=True, null=True)
     sunday = models.TimeField(blank=True, null=True)
 
-    # TODO __str__(self): how to join self.teachers?
+    def __str__(self):
+        coordinator_names = ",".join(c.full_name for c in self.coordinators)
+        teacher_names = ",".join(t.full_name for t in self.teachers)
+        return (
+            f"Group {self.id} (coordinators: {coordinator_names}, teachers: {teacher_names}, "
+            f"{len(self.students)} students."
+        )
 
 
 # ENROLLMENT TEST
