@@ -307,7 +307,11 @@ class Person(models.Model):
     tz_winter_relative_to_utc = models.IntegerField()
     approximate_date_of_birth = models.DateField()
 
-    information_source = models.ForeignKey(InformationSource, on_delete=models.PROTECT)
+    information_source = models.ForeignKey(
+        InformationSource,
+        on_delete=models.PROTECT,
+        verbose_name="how did they learn about Samantha Smith's Group?",
+    )
     # a person can be bilingual
     native_language = models.ManyToManyField(NativeLanguage)
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
@@ -323,18 +327,21 @@ class Person(models.Model):
         on_delete=models.CASCADE,  # TODO check if this is correct for OneToOneField
         blank=True,
         null=True,
+        verbose_name="block of coordinator-specific information, if this person is a coordinator",
     )
     student_info = models.OneToOneField(
         "StudentInfo",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
+        verbose_name="block of student-specific information, if this person is a student",
     )
     teacher_info = models.OneToOneField(
         "TeacherInfo",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
+        verbose_name="block of teacher-specific information, if this person is a teacher",
     )
 
     comment = models.TextField(blank=True, null=True)
