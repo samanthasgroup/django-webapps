@@ -43,7 +43,7 @@ class TeachingLanguageAndLevel(models.Model):
 class DayOfWeek(MultilingualObject):
     # We could just use numbers and then localize them using Babel,
     # but it seems easier to just create a table with 7 rows.
-    index = models.IntegerField()  # for sorting
+    ...
 
 
 class TimeSlot(models.Model):
