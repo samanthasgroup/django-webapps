@@ -7,20 +7,20 @@ class MultilingualObject(models.Model):
     """Abstract model for end-user facing entities that need names to be stored in 3 languages."""
 
     # TODO add internal name?
-    name_en = models.CharField(max_length=255)
-    name_ru = models.CharField(max_length=255)
-    name_ua = models.CharField(max_length=255)
+    name_en = models.CharField(max_length=255, unique=True)
+    name_ru = models.CharField(max_length=255, unique=True)
+    name_ua = models.CharField(max_length=255, unique=True)
 
     class Meta:
         abstract = True  # This model will not be used to create any database table
 
 
 class AdminSiteUser(models.Model):
-    login = models.CharField(max_length=70)
+    login = models.CharField(max_length=70, unique=True)
     full_name = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.full_name
+        return f"{self.full_name} (login {self.login})"
 
 
 # LANGUAGES AND LEVELS
@@ -33,8 +33,8 @@ class TeachingLanguage(MultilingualObject):
 
 
 class LanguageLevel(models.Model):
-    name = models.CharField(max_length=3)
-    rank = models.IntegerField()
+    name = models.CharField(max_length=3, unique=True)
+    rank = models.IntegerField(unique=True)
 
 
 class TeachingLanguageAndLevel(models.Model):
@@ -67,7 +67,7 @@ class DayAndTimeSlot(models.Model):
 class StatusName(models.Model):
     """Abstract model for classes enumerating possible statuses."""
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     class Meta:
         abstract = True
@@ -133,7 +133,13 @@ class CoordinatorInfo(models.Model):
     this person is a coordinator.
     """
 
-    is_admin = models.BooleanField(default=False)
+    is_admin = models.BooleanField(
+        default=False,
+        help_text=(
+            "This field has nothing to do with accessing Django admin site. It marks coordinators "
+            "that have special rights over ordinary coordinators."
+        ),
+    )
     status = models.ForeignKey(CoordinatorStatus, on_delete=models.PROTECT)
 
 
@@ -169,7 +175,7 @@ class TeacherInfo(models.Model):
 class LogItemName(models.Model):
     """Abstract model for defining possible names of log items (events) for groups and persons."""
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     class Meta:
         abstract = True
@@ -302,7 +308,8 @@ class Person(models.Model):
     approximate_date_of_birth = models.DateField()
 
     information_source = models.ForeignKey(InformationSource, on_delete=models.PROTECT)
-    native_language = models.ForeignKey(NativeLanguage, on_delete=models.PROTECT)
+    # a person can be bilingual
+    native_language = models.ManyToManyField(NativeLanguage)
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
     # these are none for coordinator, but can be present for student/teacher, so keeping them here
@@ -379,12 +386,12 @@ class EnrollmentTest(models.Model):
 
 class EnrollmentTestQuestion(models.Model):
     enrollment_test = models.ForeignKey(EnrollmentTest, on_delete=models.CASCADE)
-    text = models.CharField(max_length=255)
+    text = models.CharField(max_length=255, unique=True)
 
 
 class EnrollmentTestQuestionOption(models.Model):
     question = models.ForeignKey(EnrollmentTestQuestion, on_delete=models.CASCADE)
-    text = models.CharField(max_length=50)
+    text = models.CharField(max_length=50, unique=True)
     is_correct = models.BooleanField()
 
 
