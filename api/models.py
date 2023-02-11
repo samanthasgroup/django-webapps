@@ -70,7 +70,7 @@ class StatusName(models.Model):
         abstract = True
 
 
-# We could create one table listing all possible status names, but that might look confusing
+# We could have created one table listing all possible status names, but that might look confusing
 # for admin users later on.  It seems more convenient for them to have separate tables.
 class CoordinatorStatusName(StatusName):
     """Model for enumeration of possible statuses of a coordinator."""
@@ -158,9 +158,38 @@ class TeacherInfo(models.Model):
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
 
 
-# LOG ITEMS
+# LOG ITEMS (EVENTS)
+class LogItemName(models.Model):
+    """Abstract model for defining possible names of log items (events) for groups and persons."""
+
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        abstract = True
+
+
+# We could have created one table listing all possible names of log items, but that might look
+# confusing for admin users later on.  It seems more convenient for them to have separate tables.
+
+
+class CoordinatorLogItemName(LogItemName):
+    """Model for enumeration of possible names of log items (events) for a coordinator."""
+
+
+class GroupLogItemName(LogItemName):
+    """Model for enumeration of possible names of log items (events) for a group."""
+
+
+class StudentLogItemName(LogItemName):
+    """Model for enumeration of possible names of log items (events) for a student."""
+
+
+class TeacherLogItemName(LogItemName):
+    """Model for enumeration of possible names of log items (events) for a teacher."""
+
+
 class LogItem(models.Model):
-    """Abstract class for some sort of internal event ('log item'), e.g. 'joined group' for a
+    """Abstract model for some sort of internal event ('log item'), e.g. 'joined group' for a
     student or 'finished' for a group. Statuses will be assigned based on these events.
 
     We don't call the class Event (although it is an event in a programming sense) for it not to be
@@ -168,8 +197,6 @@ class LogItem(models.Model):
     """
 
     date_time = models.DateTimeField(auto_now_add=True)
-    type = models.CharField(max_length=100)
-    # TODO add accepted events to another table or just create an Enum?
 
     class Meta:
         abstract = True
@@ -179,7 +206,8 @@ class GroupLogItem(LogItem):
     group = models.ForeignKey("Group", on_delete=models.CASCADE)
 
 
-class CoordinatorLogItem(models.Model):
+class CoordinatorLogItem(LogItem):
+    name = models.ForeignKey(CoordinatorLogItemName, on_delete=models.CASCADE)
     coordinator_info = models.ForeignKey(
         CoordinatorInfo, related_name="log", on_delete=models.CASCADE
     )
@@ -192,7 +220,8 @@ class CoordinatorLogItem(models.Model):
     )
 
 
-class StudentLogItem(models.Model):
+class StudentLogItem(LogItem):
+    name = models.ForeignKey(StudentLogItemName, on_delete=models.CASCADE)
     student_info = models.ForeignKey(StudentInfo, related_name="log", on_delete=models.CASCADE)
     from_group = models.ForeignKey(
         "Group", on_delete=models.CASCADE, related_name="student_log_from_self"
@@ -202,7 +231,8 @@ class StudentLogItem(models.Model):
     )
 
 
-class TeacherLogItem(models.Model):
+class TeacherLogItem(LogItem):
+    name = models.ForeignKey(TeacherLogItemName, on_delete=models.CASCADE)
     teacher_info = models.ForeignKey(TeacherInfo, related_name="log", on_delete=models.CASCADE)
     from_group = models.ForeignKey(
         "Group", on_delete=models.CASCADE, related_name="teacher_log_from_self"
