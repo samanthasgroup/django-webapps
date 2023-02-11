@@ -3,7 +3,7 @@ import uuid
 from django.db import models
 
 
-class MultilingualObject(models.Model):
+class MultilingualModel(models.Model):
     """Abstract model for end-user facing entities that need names to be stored in 3 languages."""
 
     # TODO add internal name?
@@ -15,6 +15,18 @@ class MultilingualObject(models.Model):
         abstract = True  # This model will not be used to create any database table
 
 
+class InternalModelWithName(models.Model):
+    """Abstract model for internal entities that have a name attrinute but do not need to support
+    internationalization.
+    """
+
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        abstract = True
+
+
+# TODO check if this must be registered somewhere
 class AdminSiteUser(models.Model):
     login = models.CharField(max_length=70, unique=True)
     full_name = models.CharField(max_length=255)
@@ -24,11 +36,11 @@ class AdminSiteUser(models.Model):
 
 
 # LANGUAGES AND LEVELS
-class NativeLanguage(MultilingualObject):
+class NativeLanguage(MultilingualModel):
     """Model for native languages of coordinators, students and teachers."""
 
 
-class TeachingLanguage(MultilingualObject):
+class TeachingLanguage(MultilingualModel):
     """Model for languages that students learn and teachers teach."""
 
 
@@ -43,7 +55,7 @@ class TeachingLanguageAndLevel(models.Model):
 
 
 # DAYS OF WEEK AND TIME SLOTS
-class DayOfWeek(MultilingualObject):
+class DayOfWeek(MultilingualModel):
     """Model for days of the week (with internationalization)."""
 
     # We could just use numbers and then localize them using Babel,
@@ -64,30 +76,21 @@ class DayAndTimeSlot(models.Model):
 
 
 # STATUSES
-class StatusName(models.Model):
-    """Abstract model for classes enumerating possible statuses."""
-
-    name = models.CharField(max_length=100, unique=True)
-
-    class Meta:
-        abstract = True
-
-
 # We could have created one table listing all possible status names, but that might look confusing
 # for admin users later on.  It seems more convenient for them to have separate tables.
-class CoordinatorStatusName(StatusName):
+class CoordinatorStatusName(InternalModelWithName):
     """Model for enumeration of possible statuses of a coordinator."""
 
 
-class GroupStatusName(StatusName):
+class GroupStatusName(InternalModelWithName):
     """Model for enumeration of possible statuses of a group."""
 
 
-class StudentStatusName(StatusName):
+class StudentStatusName(InternalModelWithName):
     """Model for enumeration of possible statuses of a student."""
 
 
-class TeacherStatusName(StatusName):
+class TeacherStatusName(InternalModelWithName):
     """Model for enumeration of possible statuses of a teacher."""
 
 
@@ -157,7 +160,7 @@ class StudentInfo(models.Model):
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
 
 
-class TeacherCategory(MultilingualObject):
+class TeacherCategory(MultilingualModel):
     """Model for enumerating categories of a teacher (teacher, methodist, CV mentor etc.)."""
 
 
@@ -172,32 +175,23 @@ class TeacherInfo(models.Model):
 
 
 # LOG ITEMS (EVENTS)
-class LogItemName(models.Model):
-    """Abstract model for defining possible names of log items (events) for groups and persons."""
-
-    name = models.CharField(max_length=100, unique=True)
-
-    class Meta:
-        abstract = True
-
-
 # We could have created one table listing all possible names of log items, but that might look
 # confusing for admin users later on.  It seems more convenient for them to have separate tables.
 
 
-class CoordinatorLogItemName(LogItemName):
+class CoordinatorLogItemName(InternalModelWithName):
     """Model for enumeration of possible names of log items (events) for a coordinator."""
 
 
-class GroupLogItemName(LogItemName):
+class GroupLogItemName(InternalModelWithName):
     """Model for enumeration of possible names of log items (events) for a group."""
 
 
-class StudentLogItemName(LogItemName):
+class StudentLogItemName(InternalModelWithName):
     """Model for enumeration of possible names of log items (events) for a student."""
 
 
-class TeacherLogItemName(LogItemName):
+class TeacherLogItemName(InternalModelWithName):
     """Model for enumeration of possible names of log items (events) for a teacher."""
 
 
@@ -279,7 +273,7 @@ class TeacherLogItem(LogItem):
 
 
 # SOURCE OF INFORMATION ABOUT THE SCHOOL
-class InformationSource(MultilingualObject):
+class InformationSource(MultilingualModel):
     """Model for enumerating possible sources of information about SSG (answer to the question
     'How did you find out about us?').
     """
