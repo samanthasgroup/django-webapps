@@ -33,15 +33,6 @@ class InternalModelWithName(models.Model):
         abstract = True
 
 
-# TODO check if this must be registered somewhere
-class AdminSiteUser(models.Model):
-    login = models.CharField(max_length=70, unique=True)
-    full_name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return f"{self.full_name} (login {self.login})"
-
-
 # LANGUAGES AND LEVELS
 class NativeLanguage(MultilingualModel):
     """Model for native languages of coordinators, students and teachers."""
