@@ -4,6 +4,8 @@ from django.db import models
 
 
 class MultilingualObject(models.Model):
+    """Abstract model for end-user facing entities that need names to be stored in 3 languages."""
+
     # TODO add internal name?
     name_en = models.CharField(max_length=255)
     name_ru = models.CharField(max_length=255)
@@ -23,11 +25,11 @@ class AdminSiteUser(models.Model):
 
 # LANGUAGES AND LEVELS
 class NativeLanguage(MultilingualObject):
-    ...
+    """Model for native languages of coordinators, students and teachers."""
 
 
 class TeachingLanguage(MultilingualObject):
-    ...
+    """Model for languages that students learn and teachers teach."""
 
 
 class LanguageLevel(models.Model):
@@ -42,9 +44,10 @@ class TeachingLanguageAndLevel(models.Model):
 
 # DAYS OF WEEK AND TIME SLOTS
 class DayOfWeek(MultilingualObject):
+    """Model for days of the week (with internationalization)."""
+
     # We could just use numbers and then localize them using Babel,
     # but it seems easier to just create a table with 7 rows.
-    ...
 
 
 class TimeSlot(models.Model):
@@ -148,13 +151,17 @@ class StudentInfo(models.Model):
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
 
 
+class TeacherCategory(MultilingualObject):
+    """Model for enumerating categories of a teacher (teacher, methodist, CV mentor etc.)."""
+
+
 class TeacherInfo(models.Model):
     """Additional information about a teacher. If an instance of Person has this attribute, this
     person is a teacher.
     """
 
     status = models.ForeignKey(TeacherStatus, on_delete=models.PROTECT)
-    # teacher_categories = models.ManyToManyField  # TODO
+    categories = models.ManyToManyField(TeacherCategory)
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
 
 
