@@ -203,7 +203,8 @@ class Coordinator(models.Model):
     status = models.ForeignKey(CoordinatorStatus, on_delete=models.PROTECT)
 
     def __str__(self):
-        return f"Coordinator {self.personal_info.full_name}"
+        role = "Admin" if self.is_admin else "Coordinator"
+        return f"{role} {self.personal_info.full_name}"
 
 
 class Student(models.Model):
