@@ -4,6 +4,7 @@ from django.db import models
 
 
 class MultilingualObject(models.Model):
+    # TODO add internal name?
     name_en = models.CharField(max_length=255)
     name_ru = models.CharField(max_length=255)
     name_ua = models.CharField(max_length=255)
@@ -211,6 +212,13 @@ class TeacherLogItem(models.Model):
     )
 
 
+# SOURCE OF INFORMATION ABOUT THE SCHOOL
+class InformationSource(MultilingualObject):
+    """Model for enumerating possible sources of information about SSG (answer to the question
+    'How did you find out about us?').
+    """
+
+
 # PEOPLE AND GROUPS
 class Person(models.Model):
     """Model for a coordinator, student, or teacher. We are not using an abstract model here
@@ -233,14 +241,13 @@ class Person(models.Model):
     tz_winter_relative_to_utc = models.IntegerField()
     approximate_date_of_birth = models.DateField()
 
+    information_source = models.ForeignKey(InformationSource, on_delete=models.PROTECT)
+    native_language = models.ForeignKey(NativeLanguage, on_delete=models.PROTECT)
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
     # these are none for coordinator, but can be present for student/teacher, so keeping them here
     registration_bot_chat_id = models.IntegerField(blank=True, null=True)
     chatwoot_conversation_id = models.IntegerField(blank=True, null=True)
-
-    native_language = models.ForeignKey(NativeLanguage, on_delete=models.PROTECT)
-    # source  # TODO: how they learned about SSG, this could be an Enum
 
     # The logic is that if a person has coordinator_info, they are a coordinator, etc.
     # blank = True and null = True mean that this attribute is optional.
