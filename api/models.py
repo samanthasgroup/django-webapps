@@ -167,15 +167,14 @@ class PersonalInfo(models.Model):
     phone = models.CharField(max_length=50)
     tz_summer_relative_to_utc = models.IntegerField()
     tz_winter_relative_to_utc = models.IntegerField()
-    approximate_date_of_birth = models.DateField()
+    approximate_date_of_birth = models.DateField()  # TODO still undecided if we use this or age
 
     information_source = models.ForeignKey(
         InformationSource,
         on_delete=models.PROTECT,
         verbose_name="how did they learn about Samantha Smith's Group?",
     )
-    # a person can be bilingual
-    native_languages = models.ManyToManyField(NativeLanguage)
+    native_languages = models.ManyToManyField(NativeLanguage)  # a person can be bilingual
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
     # these are none for coordinator, but can be present for student/teacher, so keeping them here
@@ -192,28 +191,17 @@ class PersonalInfo(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 
-class PersonWithRole(models.Model):
-    """Abstract model linking a person with a specific role to PersonalInfo.
-    This will add the `personal_info` attribute to all subclasses.
-
-    If a person combines several roles, e.g. those of a coordinator and a teacher,
-    one instance of Coordinator and one instance of Teacher can be created, both linking
-    to the same PersonalInfo.
-    """
-
-    personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
-
-    class Meta:
-        abstract = True
-
-
-class Coordinator(PersonWithRole):
+class Coordinator(models.Model):
     """Model for a coordinator."""
 
-    # TODO it is technically possible to create two Coordinator instances for one PersonalInfo.
-    #  if I add "primary_key" = True to PersonWithRole, it will mean a one-to-one relationship
-    #  between PersonWithRole and PersonalInfo, which is not what I need.
-
+    # We want to give informative related_name (PersonalInfo.coordinator will be misleading),
+    # so an abstract model with personal_info is out of the question.
+    personal_info = models.OneToOneField(
+        PersonalInfo,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="as_coordinator",
+    )
     is_admin = models.BooleanField(
         default=False,
         help_text=(
@@ -227,8 +215,15 @@ class Coordinator(PersonWithRole):
         return f"Coordinator {self.personal_info.full_name}"
 
 
-class Student(PersonWithRole):
+class Student(models.Model):
     """Model for a student."""
+
+    personal_info = models.OneToOneField(
+        PersonalInfo,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="as_student",
+    )
 
     is_member_of_speaking_club = models.BooleanField(default=False)
     requires_help_with_CV = models.BooleanField(default=False)
@@ -246,9 +241,15 @@ class TeacherCategory(MultilingualModel):
     """Model for enumerating categories of a teacher (teacher, methodist, CV mentor etc.)."""
 
 
-class Teacher(PersonWithRole):
+class Teacher(models.Model):
     """Model for a teacher."""
 
+    personal_info = models.OneToOneField(
+        PersonalInfo,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="as_teacher",
+    )
     status = models.ForeignKey(TeacherStatus, on_delete=models.PROTECT)
     categories = models.ManyToManyField(TeacherCategory)
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
