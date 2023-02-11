@@ -130,11 +130,82 @@ class TeacherStatus(Status):
     name = models.ForeignKey(TeacherStatusName, on_delete=models.CASCADE)
 
 
-# BLOCKS WITH ADDITIONAL INFORMATION ON A PERSON WITH A SPECIFIC ROLE
-class CoordinatorInfo(models.Model):
-    """Additional information about a coordinator. If an instance of Person has this attribute,
-    this person is a coordinator.
+# SOURCE OF INFORMATION ABOUT THE SCHOOL
+class InformationSource(MultilingualModel):
+    """Model for enumerating possible sources of information about SSG (answer to the question
+    'How did you find out about us?').
     """
+
+
+# PEOPLE
+# One person can perform several roles.  Therefore, the logic proposed is as follows: first,
+# a PersonalInfo is created, then e.g. a Coordinator is created, linking to that PersonalInfo.
+# Then, if the same person assumes another role, e.g. a Teacher is created, linking to the
+# existing PersonalInfo.
+class PersonalInfo(models.Model):
+    """Model for storing personal information that is relevant for all roles
+    (coordinators, students and teachers).
+    """
+
+    # This is the ID that will identify a person with any role (student, teacher, coordinator),
+    # even if one person combines several roles.
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # Automatically save date and time when the Person was created.
+    date_and_time_added = models.DateTimeField(auto_now_add=True)
+    first_name = models.CharField(max_length=100)  # can include middle name if a person wishes so
+    last_name = models.CharField(max_length=100)
+    # Telegram's limit is 32, but this might change
+    tg_username = models.CharField(blank=True, max_length=100, null=True)
+    email = models.EmailField()
+    phone = models.CharField(max_length=50)
+    tz_summer_relative_to_utc = models.IntegerField()
+    tz_winter_relative_to_utc = models.IntegerField()
+    approximate_date_of_birth = models.DateField()
+
+    information_source = models.ForeignKey(
+        InformationSource,
+        on_delete=models.PROTECT,
+        verbose_name="how did they learn about Samantha Smith's Group?",
+    )
+    # a person can be bilingual
+    native_languages = models.ManyToManyField(NativeLanguage)
+    availability_slots = models.ManyToManyField(DayAndTimeSlot)
+
+    # these are none for coordinator, but can be present for student/teacher, so keeping them here
+    registration_bot_chat_id = models.IntegerField(blank=True, null=True)
+    chatwoot_conversation_id = models.IntegerField(blank=True, null=True)
+
+    comment = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ("last_name", "first_name")
+
+    def __str__(self):
+        # TODO display whether it's a teacher, a student, a coordinator, or a combination of these
+        return f"{self.first_name} {self.last_name}"
+
+
+class PersonWithRole(models.Model):
+    """Abstract model linking a person with a specific role to PersonalInfo.
+    This will add the `personal_info` attribute to all subclasses.
+
+    If a person combines several roles, e.g. those of a coordinator and a teacher,
+    one instance of Coordinator and one instance of Teacher can be created, both linking
+    to the same PersonalInfo.
+    """
+
+    personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+
+class Coordinator(PersonWithRole):
+    """Model for a coordinator."""
+
+    # TODO it is technically possible to create two Coordinator instances for one PersonalInfo.
+    #  if I add "primary_key" = True to PersonWithRole, it will mean a one-to-one relationship
+    #  between PersonWithRole and PersonalInfo, which is not what I need.
 
     is_admin = models.BooleanField(
         default=False,
@@ -146,10 +217,8 @@ class CoordinatorInfo(models.Model):
     status = models.ForeignKey(CoordinatorStatus, on_delete=models.PROTECT)
 
 
-class StudentInfo(models.Model):
-    """Additional information about a student. If an instance of Person has this attribute, this
-    person is a student.
-    """
+class Student(PersonWithRole):
+    """Model for a student."""
 
     is_member_of_speaking_club = models.BooleanField(default=False)
     requires_help_with_CV = models.BooleanField(default=False)
@@ -164,10 +233,8 @@ class TeacherCategory(MultilingualModel):
     """Model for enumerating categories of a teacher (teacher, methodist, CV mentor etc.)."""
 
 
-class TeacherInfo(models.Model):
-    """Additional information about a teacher. If an instance of Person has this attribute, this
-    person is a teacher.
-    """
+class Teacher(PersonWithRole):
+    """Model for a teacher."""
 
     status = models.ForeignKey(TeacherStatus, on_delete=models.PROTECT)
     categories = models.ManyToManyField(TeacherCategory)
@@ -215,9 +282,7 @@ class GroupLogItem(LogItem):
 
 class CoordinatorLogItem(LogItem):
     name = models.ForeignKey(CoordinatorLogItemName, on_delete=models.CASCADE)
-    coordinator_info = models.ForeignKey(
-        CoordinatorInfo, related_name="log", on_delete=models.CASCADE
-    )
+    coordinator_info = models.ForeignKey(Coordinator, related_name="log", on_delete=models.CASCADE)
     from_group = models.ForeignKey(
         "Group",
         blank=True,
@@ -236,7 +301,7 @@ class CoordinatorLogItem(LogItem):
 
 class StudentLogItem(LogItem):
     name = models.ForeignKey(StudentLogItemName, on_delete=models.CASCADE)
-    student_info = models.ForeignKey(StudentInfo, related_name="log", on_delete=models.CASCADE)
+    student_info = models.ForeignKey(Student, related_name="log", on_delete=models.CASCADE)
     from_group = models.ForeignKey(
         "Group",
         blank=True,
@@ -255,7 +320,7 @@ class StudentLogItem(LogItem):
 
 class TeacherLogItem(LogItem):
     name = models.ForeignKey(TeacherLogItemName, on_delete=models.CASCADE)
-    teacher_info = models.ForeignKey(TeacherInfo, related_name="log", on_delete=models.CASCADE)
+    teacher_info = models.ForeignKey(Teacher, related_name="log", on_delete=models.CASCADE)
     from_group = models.ForeignKey(
         "Group",
         blank=True,
@@ -272,82 +337,7 @@ class TeacherLogItem(LogItem):
     )
 
 
-# SOURCE OF INFORMATION ABOUT THE SCHOOL
-class InformationSource(MultilingualModel):
-    """Model for enumerating possible sources of information about SSG (answer to the question
-    'How did you find out about us?').
-    """
-
-
-# PEOPLE AND GROUPS
-class Person(models.Model):
-    """Model for a coordinator, student, or teacher. We are not using an abstract model here
-    because people can combine roles (be a teacher and a coordinator at the same time),
-    and it makes sense to put them in one table.
-    """
-
-    # This is the ID that will identify a person with any role (student, teacher, coordinator),
-    # even if one person combines several roles.
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    # Automatically save date and time when the Person was created.
-    date_and_time_added = models.DateTimeField(auto_now_add=True)
-    first_name = models.CharField(max_length=100)  # can include middle name if a person wishes so
-    last_name = models.CharField(max_length=100)
-    # Telegram's limit is 32, but this might change
-    tg_username = models.CharField(blank=True, max_length=100, null=True)
-    email = models.EmailField()
-    phone = models.CharField(max_length=50)
-    tz_summer_relative_to_utc = models.IntegerField()
-    tz_winter_relative_to_utc = models.IntegerField()
-    approximate_date_of_birth = models.DateField()
-
-    information_source = models.ForeignKey(
-        InformationSource,
-        on_delete=models.PROTECT,
-        verbose_name="how did they learn about Samantha Smith's Group?",
-    )
-    # a person can be bilingual
-    native_language = models.ManyToManyField(NativeLanguage)
-    availability_slots = models.ManyToManyField(DayAndTimeSlot)
-
-    # these are none for coordinator, but can be present for student/teacher, so keeping them here
-    registration_bot_chat_id = models.IntegerField(blank=True, null=True)
-    chatwoot_conversation_id = models.IntegerField(blank=True, null=True)
-
-    # The logic is that if a person has coordinator_info, they are a coordinator, etc.
-    # blank = True and null = True mean that this attribute is optional.
-    coordinator_info = models.OneToOneField(
-        "CoordinatorInfo",
-        on_delete=models.CASCADE,  # TODO check if this is correct for OneToOneField
-        blank=True,
-        null=True,
-        verbose_name="block of coordinator-specific information, if this person is a coordinator",
-    )
-    student_info = models.OneToOneField(
-        "StudentInfo",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        verbose_name="block of student-specific information, if this person is a student",
-    )
-    teacher_info = models.OneToOneField(
-        "TeacherInfo",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        verbose_name="block of teacher-specific information, if this person is a teacher",
-    )
-
-    comment = models.TextField(blank=True, null=True)
-
-    class Meta:
-        ordering = ("last_name", "first_name")
-
-    def __str__(self):
-        # TODO display whether it's a teacher, a student, a coordinator, or a combination of these
-        return f"{self.first_name} {self.last_name}"
-
-
+# GROUP
 class Group(models.Model):
     availability_slot = models.ManyToManyField(DayAndTimeSlot)
     is_for_staff_only = models.BooleanField(default=False)
@@ -361,10 +351,9 @@ class Group(models.Model):
     # group chat created manually by the coordinator/teacher
     telegram_chat_url = models.URLField(blank=True, null=True)
 
-    # related_name must be given, otherwise a backref clash will occur
-    coordinators = models.ManyToManyField(Person, related_name="groups_as_coordinator")
-    students = models.ManyToManyField(Person, related_name="groups_as_student")
-    teachers = models.ManyToManyField(Person, related_name="groups_as_teacher")
+    coordinators = models.ManyToManyField(Coordinator)
+    students = models.ManyToManyField(Student)
+    teachers = models.ManyToManyField(Teacher)
 
     # some research showed that it's better to store the schedule not in a single text field
     # with some pre-defined syntax, but in 7 columns, one per day of the week
@@ -397,5 +386,5 @@ class EnrollmentTestQuestionOption(models.Model):
 
 
 class EnrollmentTestResult(models.Model):
-    student_info = models.ForeignKey(StudentInfo, on_delete=models.CASCADE)
+    student_info = models.ForeignKey(Student, on_delete=models.CASCADE)
     answers = models.ManyToManyField(EnrollmentTestQuestionOption)
