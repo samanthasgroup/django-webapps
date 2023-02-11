@@ -218,12 +218,19 @@ class CoordinatorLogItem(LogItem):
     coordinator_info = models.ForeignKey(
         CoordinatorInfo, related_name="log", on_delete=models.CASCADE
     )
-    # TODO these should be optional (in other classes too) because either from or to could be empty
     from_group = models.ForeignKey(
-        "Group", on_delete=models.CASCADE, related_name="coordinator_log_from_self"
+        "Group",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="coordinator_log_from_self",
     )
     to_group = models.ForeignKey(
-        "Group", on_delete=models.CASCADE, related_name="coordinator_log_to_self"
+        "Group",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="coordinator_log_to_self",
     )
 
 
@@ -231,10 +238,18 @@ class StudentLogItem(LogItem):
     name = models.ForeignKey(StudentLogItemName, on_delete=models.CASCADE)
     student_info = models.ForeignKey(StudentInfo, related_name="log", on_delete=models.CASCADE)
     from_group = models.ForeignKey(
-        "Group", on_delete=models.CASCADE, related_name="student_log_from_self"
+        "Group",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="student_log_from_self",
     )
     to_group = models.ForeignKey(
-        "Group", on_delete=models.CASCADE, related_name="student_log_to_self"
+        "Group",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="student_log_to_self",
     )
 
 
@@ -242,10 +257,18 @@ class TeacherLogItem(LogItem):
     name = models.ForeignKey(TeacherLogItemName, on_delete=models.CASCADE)
     teacher_info = models.ForeignKey(TeacherInfo, related_name="log", on_delete=models.CASCADE)
     from_group = models.ForeignKey(
-        "Group", on_delete=models.CASCADE, related_name="teacher_log_from_self"
+        "Group",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="teacher_log_from_self",
     )
     to_group = models.ForeignKey(
-        "Group", on_delete=models.CASCADE, related_name="teacher_log_to_self"
+        "Group",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="teacher_log_to_self",
     )
 
 
