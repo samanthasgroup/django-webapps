@@ -224,18 +224,18 @@ class Student(models.Model):
     is_member_of_speaking_club = models.BooleanField(
         default=False,
         verbose_name="Speaking club status",
-        help_text="Is the student a member of a speaking club at the moment?"
+        help_text="Is the student a member of a speaking club at the moment?",
     )
     requires_help_with_CV = models.BooleanField(
         default=False,
         verbose_name="CV help status",
-        help_text="Does the student need help with CV at the moment?"
+        help_text="Does the student need help with CV at the moment?",
     )
     status = models.ForeignKey(
         StudentStatus,
         on_delete=models.PROTECT,
         verbose_name="Group studies status",
-        help_text="Status of a student with regard to group studies"
+        help_text="Status of a student with regard to group studies",
     )
 
     # The general rule is that one student can only learn one language,
@@ -344,11 +344,12 @@ class TeacherLogEvent(LogEvent):
 
 
 # GROUP
+# TODO think about group clusters for auto-constructed groups
 class Group(models.Model):
     availability_slot = models.ManyToManyField(DayAndTimeSlot)
     is_for_staff_only = models.BooleanField(default=False)
-    is_pending = models.BooleanField(default=True)
     language_and_level = models.ForeignKey(TeachingLanguageAndLevel, on_delete=models.CASCADE)
+    lesson_duration = models.IntegerField()
     status = models.ForeignKey(GroupStatus, on_delete=models.PROTECT)
     start_date = models.DateField(blank=True, null=True)
     # this field could be useful for overview, but can be filled automatically when
