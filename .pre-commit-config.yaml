@@ -20,3 +20,4 @@ repos:
     rev: 'v0.0.244'
     hooks:
     -   id: ruff
+exclude: api/migrations
