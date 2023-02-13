@@ -97,7 +97,7 @@ class Status(models.Model):
     (selected from allowed status names) with a time that indicates when this status was assigned.
     """
 
-    # this can be tracked via LogItems but an additional column can be a very convenient shortcut:
+    # this can be tracked via LogEvents but an additional column can be a convenient shortcut:
     in_place_since = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -175,7 +175,7 @@ class PersonalInfo(models.Model):
     comment = models.TextField(blank=True, null=True)
 
     class Meta:
-        ordering = ("last_name", "first_name")
+        ordering = ("last_name", "first_name")  # TODO this could be used for selection algorithm
 
     @property
     def full_name(self):
@@ -217,10 +217,27 @@ class Student(models.Model):
         related_name="as_student",
     )
 
-    is_member_of_speaking_club = models.BooleanField(default=False)
-    requires_help_with_CV = models.BooleanField(default=False)
     requires_communication_in_ukrainian = models.BooleanField(default=False)
-    status = models.ForeignKey(StudentStatus, on_delete=models.PROTECT)
+
+    # these are all statuses, but `status` is a complex one concerning working in groups
+    # (i.e. the main activity of the school) and the other two are simple yes-or-no statuses
+    is_member_of_speaking_club = models.BooleanField(
+        default=False,
+        verbose_name="Speaking club status",
+        help_text="Is the student a member of a speaking club at the moment?"
+    )
+    requires_help_with_CV = models.BooleanField(
+        default=False,
+        verbose_name="CV help status",
+        help_text="Does the student need help with CV at the moment?"
+    )
+    status = models.ForeignKey(
+        StudentStatus,
+        on_delete=models.PROTECT,
+        verbose_name="Group studies status",
+        help_text="Status of a student with regard to group studies"
+    )
+
     # The general rule is that one student can only learn one language,
     # but we don't want to limit this in the database.
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
@@ -250,33 +267,33 @@ class Teacher(models.Model):
         return f"Teacher {self.personal_info.full_name}"
 
 
-# LOG ITEMS (EVENTS)
-# We could have created one table listing all possible names of log items, but that might look
+# LOG EVENTS
+# We could have created one table listing all possible names of log events, but that might look
 # confusing for admin users later on.  It seems more convenient for them to have separate tables.
 
 
-class CoordinatorLogItemName(InternalModelWithName):
-    """Model for enumeration of possible names of log items (events) for a coordinator."""
+class CoordinatorLogEventName(InternalModelWithName):
+    """Model for enumeration of possible names of log events (events) for a coordinator."""
 
 
-class GroupLogItemName(InternalModelWithName):
-    """Model for enumeration of possible names of log items (events) for a group."""
+class GroupLogEventName(InternalModelWithName):
+    """Model for enumeration of possible names of log events (events) for a group."""
 
 
-class StudentLogItemName(InternalModelWithName):
-    """Model for enumeration of possible names of log items (events) for a student."""
+class StudentLogEventName(InternalModelWithName):
+    """Model for enumeration of possible names of log events (events) for a student."""
 
 
-class TeacherLogItemName(InternalModelWithName):
-    """Model for enumeration of possible names of log items (events) for a teacher."""
+class TeacherLogEventName(InternalModelWithName):
+    """Model for enumeration of possible names of log events (events) for a teacher."""
 
 
-class LogItem(models.Model):
-    """Abstract model for some sort of internal event ('log item'), e.g. 'joined group' for a
+class LogEvent(models.Model):
+    """Abstract model for some sort of internal event, e.g. 'joined group' for a
     student or 'finished' for a group. Statuses will be assigned based on these events.
 
-    We don't call the class Event (although it is an event in a programming sense) for it not to be
-    confused with possible models for events organized by the school.
+    We don't call the class simply Event for it not to be confused with possible models for events
+    organized by the school.
     """
 
     date_time = models.DateTimeField(auto_now_add=True)
@@ -285,15 +302,15 @@ class LogItem(models.Model):
         abstract = True
 
 
-class PersonLogItem(LogItem):
-    """Abstract class for a log item concerning a person."""
+class PersonLogEvent(LogEvent):
+    """Abstract class for a log event concerning a person."""
 
     from_group = models.ForeignKey(
         "Group",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
-        related_name="%(class)s_from_self",  # will produce e.g. "studentlogitems_from_self"
+        related_name="%(class)s_from_self",  # will produce e.g. "studentLogEvents_from_self"
     )
     to_group = models.ForeignKey(
         "Group",
@@ -307,22 +324,22 @@ class PersonLogItem(LogItem):
         abstract = True
 
 
-class GroupLogItem(LogItem):
+class GroupLogEvent(LogEvent):
     group = models.ForeignKey("Group", on_delete=models.CASCADE)
 
 
-class CoordinatorLogItem(LogItem):
-    name = models.ForeignKey(CoordinatorLogItemName, on_delete=models.CASCADE)
+class CoordinatorLogEvent(LogEvent):
+    name = models.ForeignKey(CoordinatorLogEventName, on_delete=models.CASCADE)
     coordinator_info = models.ForeignKey(Coordinator, related_name="log", on_delete=models.CASCADE)
 
 
-class StudentLogItem(LogItem):
-    name = models.ForeignKey(StudentLogItemName, on_delete=models.CASCADE)
+class StudentLogEvent(LogEvent):
+    name = models.ForeignKey(StudentLogEventName, on_delete=models.CASCADE)
     student_info = models.ForeignKey(Student, related_name="log", on_delete=models.CASCADE)
 
 
-class TeacherLogItem(LogItem):
-    name = models.ForeignKey(TeacherLogItemName, on_delete=models.CASCADE)
+class TeacherLogEvent(LogEvent):
+    name = models.ForeignKey(TeacherLogEventName, on_delete=models.CASCADE)
     teacher_info = models.ForeignKey(Teacher, related_name="log", on_delete=models.CASCADE)
 
 
@@ -335,7 +352,7 @@ class Group(models.Model):
     status = models.ForeignKey(GroupStatus, on_delete=models.PROTECT)
     start_date = models.DateField(blank=True, null=True)
     # this field could be useful for overview, but can be filled automatically when
-    # a corresponding log item is created:
+    # a corresponding log event is created:
     end_date = models.DateField(blank=True, null=True)
     # group chat created manually by the coordinator/teacher
     telegram_chat_url = models.URLField(blank=True, null=True)
