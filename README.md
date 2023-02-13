@@ -6,7 +6,7 @@ Backend for the database, implemented in Django
 1. Clone this repository
 2. Install [Poetry](https://github.com/python-poetry/poetry)
 3. Run `poetry install` in the project directory to [install dependencies](https://python-poetry.org/docs/basic-usage/#installing-dependencies).
-4. Install pre-commit hooks: `pre-commit install`. They will run on files being committed. To check all code, run `pre-commit run -a`.
+4. Install pre-commit hooks: `pre-commit install`. They will run on files being committed. To check all code, run `pre-commit run -a`. If you want `black` to just reformat your file without asking you, run `black path-to-file`.
 5. Create database migrations: `python manage.py makemigrations api`
 6. Apply database migrations: `python manage.py migrate`
 7. Create a superuser for admin interface: `python manage.py createsuperuser`
