@@ -1,6 +1,6 @@
 from django.db import models
 
-from api.models.aux import InternalModelWithName
+from api.models.auxil import InternalModelWithName
 
 
 # We could have created one table listing all possible status names, but that might look confusing

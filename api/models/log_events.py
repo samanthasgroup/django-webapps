@@ -1,6 +1,6 @@
 from django.db import models
 
-from api.models.aux import InternalModelWithName
+from api.models.auxil import InternalModelWithName
 from api.models.people import Coordinator, Student, Teacher
 
 # We could have created one table listing all possible names of log events, but that might look
