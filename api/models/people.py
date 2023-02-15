@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from api.models.aux import MultilingualModel
+from api.models.auxil import MultilingualModel
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import NativeLanguage, TeachingLanguageAndLevel
 from api.models.statuses import CoordinatorStatus, StudentStatus, TeacherStatus

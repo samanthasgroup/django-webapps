@@ -1,6 +1,6 @@
 from django.db import models
 
-from api.models.aux import MultilingualModel
+from api.models.auxil import MultilingualModel
 
 
 class DayOfWeek(MultilingualModel):
