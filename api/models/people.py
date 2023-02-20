@@ -2,17 +2,19 @@ import uuid
 
 from django.db import models
 
-from api.models.auxil import MultilingualModel
+from api.models.auxil import MultilingualModel, InternalModelWithName
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import NativeLanguage, TeachingLanguageAndLevel
 from api.models.statuses import CoordinatorStatus, StudentStatus, TeacherStatus
 
 
 # SOURCE OF INFORMATION ABOUT THE SCHOOL. LEAVING IT HERE FOR NOW BECAUSE THE USE IS YET UNCLEAR.
-class InformationSource(MultilingualModel):
-    """Model for enumerating possible sources of information about SSG (answer to the question
-    'How did you find out about us?').
-    """
+# class InformationSource(MultilingualModel):
+#     """Model for enumerating possible sources of information about SSG (answer to the question
+#     'How did you find out about us?').
+#     """
+class Age(InternalModelWithName):
+    """Model for person age ranges."""
 
 
 # PEOPLE
@@ -38,13 +40,15 @@ class PersonalInfo(models.Model):
     phone = models.CharField(max_length=50)
     tz_summer_relative_to_utc = models.IntegerField()
     tz_winter_relative_to_utc = models.IntegerField()
-    approximate_date_of_birth = models.DateField()  # TODO still undecided if we use this or age
-
-    information_source = models.ForeignKey(
-        InformationSource,
+    age = models.ForeignKey(
+        Age,
         on_delete=models.PROTECT,
-        verbose_name="how did they learn about Samantha Smith's Group?",
+        null=True,
+        verbose_name="Person age",
+        help_text="Person age range",
     )
+
+    information_source = models.TextField(blank=True, max_length=1000, null=True)
     native_languages = models.ManyToManyField(NativeLanguage)  # a person can be bilingual
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
