@@ -26,4 +26,3 @@ def build_correct_http_response(data: Union[Dict, List],
         raise ValueError("data must be dict or list")
 
     return http_response
-
