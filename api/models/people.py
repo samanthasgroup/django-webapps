@@ -31,8 +31,6 @@ class PersonalInfo(models.Model):
     email = models.EmailField()
     phone = models.CharField(max_length=50)
     utc_timedelta = models.DurationField(default=timedelta(hours=0))
-    # TODO for teachers, we don't store age.
-    approximate_date_of_birth = models.DateField()  # TODO still undecided if we use this or age
 
     information_source = models.TextField(
         verbose_name="how did they learn about Samantha Smith's Group?"
