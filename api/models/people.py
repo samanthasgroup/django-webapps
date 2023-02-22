@@ -5,7 +5,7 @@ from django.db import models
 
 from api.models.auxil import InternalModelWithName, MultilingualModel
 from api.models.days_time_slots import DayAndTimeSlot
-from api.models.languages_levels import TeachingLanguageAndLevel
+from api.models.languages_levels import CommunicationLanguageMode, TeachingLanguageAndLevel
 from api.models.statuses import CoordinatorStatus, StudentStatus, TeacherStatus
 
 
@@ -35,10 +35,13 @@ class PersonalInfo(models.Model):
     information_source = models.TextField(
         verbose_name="how did they learn about Samantha Smith's Group?"
     )
-    # TODO communication_language (ru, ua, any, l2 only)
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
+    communication_language_mode = models.ForeignKey(
+        CommunicationLanguageMode, on_delete=models.PROTECT
+    )
 
-    # these are none for coordinator, but can be present for student/teacher, so keeping them here
+    # These are none for coordinator, but can be present for student/teacher, so keeping them here.
+    # Also, there is a possibility that coordinators will register with registration bot someday.
     registration_bot_chat_id = models.IntegerField(blank=True, null=True)
     chatwoot_conversation_id = models.IntegerField(blank=True, null=True)
 
