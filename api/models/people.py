@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from django.db import models
 
-from api.models.auxil import MultilingualModel
+from api.models.auxil import InternalModelWithName, MultilingualModel
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import NativeLanguage, TeachingLanguageAndLevel
 from api.models.statuses import CoordinatorStatus, StudentStatus, TeacherStatus
@@ -53,6 +53,18 @@ class PersonalInfo(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 
+class AgeRange(InternalModelWithName):
+    """Model for age range.  Students have no exact ages, but age ranges. Teachers' preferences
+    and group building algorithms are also based on age ranges.
+    """
+
+    # When bot registers a teacher, it gives the teacher names of age groups.  I don't think it
+    # makes sense to make the entire model multilingual just because of this one case.
+
+    age_from = models.IntegerField()
+    age_to = models.IntegerField()
+
+
 class Coordinator(models.Model):
     """Model for a coordinator."""
 
@@ -86,6 +98,13 @@ class Student(models.Model):
         on_delete=models.CASCADE,
         primary_key=True,
         related_name="as_student",
+    )
+
+    age_range = models.ForeignKey(
+        AgeRange,
+        on_delete=models.PROTECT,
+        help_text="We do not ask students for their exact age. "
+        "They choose an age range when registering with us.",
     )
 
     # TODO preferred language of communication: ru, ua, any, l2_only
