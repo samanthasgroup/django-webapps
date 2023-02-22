@@ -8,13 +8,6 @@ from api.models.languages_levels import NativeLanguage, TeachingLanguageAndLevel
 from api.models.statuses import CoordinatorStatus, StudentStatus, TeacherStatus
 
 
-# SOURCE OF INFORMATION ABOUT THE SCHOOL. LEAVING IT HERE FOR NOW BECAUSE THE USE IS YET UNCLEAR.
-class InformationSource(MultilingualModel):
-    """Model for enumerating possible sources of information about SSG (answer to the question
-    'How did you find out about us?').
-    """
-
-
 # PEOPLE
 # One person can perform several roles.  Therefore, the logic proposed is as follows: first,
 # a PersonalInfo is created, then e.g. a Coordinator is created, linking to that PersonalInfo.
@@ -36,16 +29,17 @@ class PersonalInfo(models.Model):
     tg_username = models.CharField(blank=True, max_length=100, null=True)
     email = models.EmailField()
     phone = models.CharField(max_length=50)
+    # TODO leave only one offset, not integer anymore?
     tz_summer_relative_to_utc = models.IntegerField()
     tz_winter_relative_to_utc = models.IntegerField()
+    # TODO for teachers, we don't store age.
     approximate_date_of_birth = models.DateField()  # TODO still undecided if we use this or age
 
-    information_source = models.ForeignKey(
-        InformationSource,
-        on_delete=models.PROTECT,
-        verbose_name="how did they learn about Samantha Smith's Group?",
+    information_source = models.TextField(
+        verbose_name="how did they learn about Samantha Smith's Group?"
     )
-    native_languages = models.ManyToManyField(NativeLanguage)  # a person can be bilingual
+    native_languages = models.ManyToManyField(NativeLanguage)  # TODO remove this and the model?
+    # TODO communication_language (ru, ua, any, l2 only)
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
     # these are none for coordinator, but can be present for student/teacher, so keeping them here
@@ -97,6 +91,7 @@ class Student(models.Model):
         related_name="as_student",
     )
 
+    # TODO preferred language of communication: ru, ua, any, l2_only
     requires_communication_in_ukrainian = models.BooleanField(default=False)
 
     # these are all statuses, but `status` is a complex one concerning working in groups
@@ -142,6 +137,8 @@ class Teacher(models.Model):
     status = models.ForeignKey(TeacherStatus, on_delete=models.PROTECT)
     categories = models.ManyToManyField(TeacherCategory)
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
+    # TODO has_prior_teaching_experience
+    # TODO how many groups can take
 
     def __str__(self):
         return f"Teacher {self.personal_info.full_name}"
