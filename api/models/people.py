@@ -106,9 +106,6 @@ class Student(models.Model):
         "They choose an age range when registering with us.",
     )
 
-    # TODO preferred language of communication: ru, ua, any, l2_only
-    requires_communication_in_ukrainian = models.BooleanField(default=False)
-
     # these are all statuses, but `status` is a complex one concerning working in groups
     # (i.e. the main activity of the school) and the other two are simple yes-or-no statuses
     is_member_of_speaking_club = models.BooleanField(
