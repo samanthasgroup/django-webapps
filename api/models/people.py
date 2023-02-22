@@ -146,11 +146,16 @@ class Teacher(models.Model):
         primary_key=True,
         related_name="as_teacher",
     )
-    status = models.ForeignKey(TeacherStatus, on_delete=models.PROTECT)
     categories = models.ManyToManyField(TeacherCategory)
+    has_prior_teaching_experience = models.BooleanField()
+    simultaneous_groups = models.IntegerField(
+        default=1, help_text="Number of groups the teacher can teach simultaneously"
+    )
+    status = models.ForeignKey(TeacherStatus, on_delete=models.PROTECT)
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
-    # TODO has_prior_teaching_experience
-    # TODO how many groups can take
+    weekly_frequency_per_group = models.IntegerField(
+        help_text="Number of times per week the teacher can have classes with each group"
+    )
 
     def __str__(self):
         return f"Teacher {self.personal_info.full_name}"
