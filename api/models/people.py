@@ -152,6 +152,12 @@ class Teacher(models.Model):
         default=1, help_text="Number of groups the teacher can teach simultaneously"
     )
     status = models.ForeignKey(TeacherStatus, on_delete=models.PROTECT)
+    student_age_ranges = models.ManyToManyField(
+        AgeRange,
+        help_text="Age ranges of students that the teacher is willing to teach. "
+        "The 'from's and 'to's of these ranges are wider than those the students choose "
+        "for themselves.",
+    )
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
     weekly_frequency_per_group = models.IntegerField(
         help_text="Number of times per week the teacher can have classes with each group"
