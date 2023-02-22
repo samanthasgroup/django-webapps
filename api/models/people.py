@@ -5,7 +5,7 @@ from django.db import models
 
 from api.models.auxil import InternalModelWithName, MultilingualModel
 from api.models.days_time_slots import DayAndTimeSlot
-from api.models.languages_levels import NativeLanguage, TeachingLanguageAndLevel
+from api.models.languages_levels import TeachingLanguageAndLevel
 from api.models.statuses import CoordinatorStatus, StudentStatus, TeacherStatus
 
 
@@ -35,7 +35,6 @@ class PersonalInfo(models.Model):
     information_source = models.TextField(
         verbose_name="how did they learn about Samantha Smith's Group?"
     )
-    native_languages = models.ManyToManyField(NativeLanguage)  # TODO remove this and the model?
     # TODO communication_language (ru, ua, any, l2 only)
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 

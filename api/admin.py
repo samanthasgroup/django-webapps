@@ -16,7 +16,6 @@ for model in (
     models.GroupLogEventName,
     models.GroupStatusName,
     models.LanguageLevel,
-    models.NativeLanguage,
     models.PersonalInfo,
     models.Student,
     models.StudentLogEvent,
