@@ -1,4 +1,5 @@
 import uuid
+from datetime import timedelta
 
 from django.db import models
 
@@ -29,9 +30,7 @@ class PersonalInfo(models.Model):
     tg_username = models.CharField(blank=True, max_length=100, null=True)
     email = models.EmailField()
     phone = models.CharField(max_length=50)
-    # TODO leave only one offset, not integer anymore?
-    tz_summer_relative_to_utc = models.IntegerField()
-    tz_winter_relative_to_utc = models.IntegerField()
+    utc_timedelta = models.DurationField(default=timedelta(hours=0))
     # TODO for teachers, we don't store age.
     approximate_date_of_birth = models.DateField()  # TODO still undecided if we use this or age
 
