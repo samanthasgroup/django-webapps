@@ -38,13 +38,18 @@ class AssessmentTestView(APIView):
                         errors=assessment_test_response.errors
                     )
                 )
+            try:
+                current_page = int(params.get("page", 1))
+            except ValueError as exc:
+                current_page = 1
 
             return Response(
                 # build correct formatting response
                 build_correct_http_response(
                     data=assessment_test_response.value,
                     current_url=request.build_absolute_uri(),
-                    status=HTTPStatus.OK
+                    status=HTTPStatus.OK,
+                    current_page=current_page
                 )
             )
         except Exception as exc:
