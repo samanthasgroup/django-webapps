@@ -8,6 +8,7 @@ for model in (
     models.CoordinatorLogEventName,
     models.CoordinatorStatusName,
     models.DayOfWeek,
+    models.DayAndTimeSlot,
     models.EnrollmentTest,
     models.EnrollmentTestQuestion,
     models.EnrollmentTestQuestionOption,
