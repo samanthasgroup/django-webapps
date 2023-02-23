@@ -3,6 +3,7 @@ from django.contrib import admin
 import api.models as models
 
 for model in (
+    models.CommunicationLanguageMode,
     models.Coordinator,
     models.CoordinatorLogEvent,
     models.CoordinatorLogEventName,
