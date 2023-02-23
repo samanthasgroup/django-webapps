@@ -28,10 +28,10 @@ class ResponseFailure(Response):
 
     @classmethod
     def build_from_none_request(cls, use_case_name: str):
-        errors = [f"No request in {use_case_name}"]
+        errors = [{"no parameter": f"No request in {use_case_name}"}]
         return cls(errors)
 
     @classmethod
     def build_from_error(cls, object_name: str, exc: Exception):
-        errors = [f"{str(exc)} in {object_name}"]
+        errors = [{"no parameter": f"{str(exc)} in {object_name}"}]
         return cls(errors)

@@ -1,7 +1,6 @@
 from api.use_cases import UseCase
 from api.share.requests.users import GetUsersCountRequest
 from api.models.people import PersonalInfo
-from django.db.models.functions import Lower
 
 
 class UsersCount(UseCase):
