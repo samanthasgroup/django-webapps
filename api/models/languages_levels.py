@@ -4,7 +4,11 @@ from api.models.auxil import MultilingualModel
 
 
 class CommunicationLanguageMode(MultilingualModel):
-    """Model for 'language mode' (in class or maybe also communication with coordinators)."""
+    """Model for 'language mode' (in class or maybe also communication with coordinators).
+
+    These language modes are **mutually exclusive** and are intended to be used to match students
+    and teachers into groups.
+    """
 
     # planned possible values for name_internal: "ru" (Russian only), "ua" (Ukrainian only),
     # "ru_ua" (both Russian and Ukrainian), and "l2_only" (the teacher can only speak L2 language,
