@@ -3,11 +3,13 @@ from django.contrib import admin
 import api.models as models
 
 for model in (
+    models.CommunicationLanguageMode,
     models.Coordinator,
     models.CoordinatorLogEvent,
     models.CoordinatorLogEventName,
     models.CoordinatorStatusName,
     models.DayOfWeek,
+    models.DayAndTimeSlot,
     models.EnrollmentTest,
     models.EnrollmentTestQuestion,
     models.EnrollmentTestQuestionOption,
@@ -15,9 +17,7 @@ for model in (
     models.GroupLogEvent,
     models.GroupLogEventName,
     models.GroupStatusName,
-    models.InformationSource,
     models.LanguageLevel,
-    models.NativeLanguage,
     models.PersonalInfo,
     models.Student,
     models.StudentLogEvent,
