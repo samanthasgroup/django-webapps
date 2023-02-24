@@ -8,8 +8,8 @@ from .enrollment_test import (
 )
 from .group import Group
 from .languages_levels import (
+    CommunicationLanguageMode,
     LanguageLevel,
-    NativeLanguage,
     TeachingLanguage,
     TeachingLanguageAndLevel,
 )
@@ -25,7 +25,7 @@ from .log_events import (
     TeacherLogEvent,
     TeacherLogEventName,
 )
-from .people import Age, Coordinator, PersonalInfo, Student, Teacher, TeacherCategory
+from .people import AgeRange, Coordinator, PersonalInfo, Student, Teacher, TeacherCategory
 from .statuses import (
     CoordinatorStatus,
     CoordinatorStatusName,
