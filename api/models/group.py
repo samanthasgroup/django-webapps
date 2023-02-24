@@ -1,7 +1,7 @@
 from django.db import models
 
 from api.models.days_time_slots import DayAndTimeSlot
-from api.models.languages_levels import TeachingLanguageAndLevel
+from api.models.languages_levels import CommunicationLanguageMode, TeachingLanguageAndLevel
 from api.models.people import Coordinator, Student, Teacher
 from api.models.statuses import GroupStatus
 
@@ -9,6 +9,9 @@ from api.models.statuses import GroupStatus
 # TODO think about group clusters for auto-constructed groups
 class Group(models.Model):
     availability_slot = models.ManyToManyField(DayAndTimeSlot)
+    communication_language_mode = models.ForeignKey(
+        CommunicationLanguageMode, on_delete=models.PROTECT
+    )
     is_for_staff_only = models.BooleanField(default=False)
     language_and_level = models.ForeignKey(TeachingLanguageAndLevel, on_delete=models.CASCADE)
     lesson_duration = models.IntegerField()
