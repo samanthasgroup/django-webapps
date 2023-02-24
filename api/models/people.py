@@ -1,18 +1,12 @@
 import uuid
+from datetime import timedelta
 
 from django.db import models
 
-from api.models.auxil import MultilingualModel
+from api.models.auxil import InternalModelWithName, MultilingualModel
 from api.models.days_time_slots import DayAndTimeSlot
-from api.models.languages_levels import NativeLanguage, TeachingLanguageAndLevel
+from api.models.languages_levels import CommunicationLanguageMode, TeachingLanguageAndLevel
 from api.models.statuses import CoordinatorStatus, StudentStatus, TeacherStatus
-
-
-# SOURCE OF INFORMATION ABOUT THE SCHOOL. LEAVING IT HERE FOR NOW BECAUSE THE USE IS YET UNCLEAR.
-class InformationSource(MultilingualModel):
-    """Model for enumerating possible sources of information about SSG (answer to the question
-    'How did you find out about us?').
-    """
 
 
 # PEOPLE
@@ -36,19 +30,18 @@ class PersonalInfo(models.Model):
     tg_username = models.CharField(blank=True, max_length=100, null=True)
     email = models.EmailField()
     phone = models.CharField(max_length=50)
-    tz_summer_relative_to_utc = models.IntegerField()
-    tz_winter_relative_to_utc = models.IntegerField()
-    approximate_date_of_birth = models.DateField()  # TODO still undecided if we use this or age
+    utc_timedelta = models.DurationField(default=timedelta(hours=0))
 
-    information_source = models.ForeignKey(
-        InformationSource,
-        on_delete=models.PROTECT,
-        verbose_name="how did they learn about Samantha Smith's Group?",
+    information_source = models.TextField(
+        verbose_name="how did they learn about Samantha Smith's Group?"
     )
-    native_languages = models.ManyToManyField(NativeLanguage)  # a person can be bilingual
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
+    communication_language_mode = models.ForeignKey(
+        CommunicationLanguageMode, on_delete=models.PROTECT
+    )
 
-    # these are none for coordinator, but can be present for student/teacher, so keeping them here
+    # These are none for coordinator, but can be present for student/teacher, so keeping them here.
+    # Also, there is a possibility that coordinators will register with registration bot someday.
     registration_bot_chat_id = models.IntegerField(blank=True, null=True)
     chatwoot_conversation_id = models.IntegerField(blank=True, null=True)
 
@@ -60,6 +53,18 @@ class PersonalInfo(models.Model):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+
+class AgeRange(InternalModelWithName):
+    """Model for age range.  Students have no exact ages, but age ranges. Teachers' preferences
+    and group building algorithms are also based on age ranges.
+    """
+
+    # When bot registers a teacher, it gives the teacher names of age groups.  I don't think it
+    # makes sense to make the entire model multilingual just because of this one case.
+
+    age_from = models.IntegerField()
+    age_to = models.IntegerField()
 
 
 class Coordinator(models.Model):
@@ -97,7 +102,12 @@ class Student(models.Model):
         related_name="as_student",
     )
 
-    requires_communication_in_ukrainian = models.BooleanField(default=False)
+    age_range = models.ForeignKey(
+        AgeRange,
+        on_delete=models.PROTECT,
+        help_text="We do not ask students for their exact age. "
+        "They choose an age range when registering with us.",
+    )
 
     # these are all statuses, but `status` is a complex one concerning working in groups
     # (i.e. the main activity of the school) and the other two are simple yes-or-no statuses
@@ -139,9 +149,22 @@ class Teacher(models.Model):
         primary_key=True,
         related_name="as_teacher",
     )
-    status = models.ForeignKey(TeacherStatus, on_delete=models.PROTECT)
     categories = models.ManyToManyField(TeacherCategory)
+    has_prior_teaching_experience = models.BooleanField()
+    simultaneous_groups = models.IntegerField(
+        default=1, help_text="Number of groups the teacher can teach simultaneously"
+    )
+    status = models.ForeignKey(TeacherStatus, on_delete=models.PROTECT)
+    student_age_ranges = models.ManyToManyField(
+        AgeRange,
+        help_text="Age ranges of students that the teacher is willing to teach. "
+        "The 'from's and 'to's of these ranges are wider than those the students choose "
+        "for themselves.",
+    )
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
+    weekly_frequency_per_group = models.IntegerField(
+        help_text="Number of times per week the teacher can have classes with each group"
+    )
 
     def __str__(self):
         return f"Teacher {self.personal_info.full_name}"
