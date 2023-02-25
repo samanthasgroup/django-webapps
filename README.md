@@ -18,6 +18,6 @@ The main page is the admin page, as no user-facing web interface is planned yet.
 
 1. Django implements MTV (Model-Template-View) architecture pattern. This is almost MVC (Model-View-Controller) pattern, but with a few changes. Model is Model, Template is View and View is Controller (https://medium.com/shecodeafrica/understanding-the-mvc-pattern-in-django-edda05b9f43f). 
 2. In order to follow SOLID principles we separate business logic and URL handlers.
-3. Views are URL handlers. They parse parameters from http queries, call use case methods to execute business logic, get its results and send HTTP response. 
+3. Views are URL handlers. They parse parameters from HTTP queries, call use case methods to execute business logic, get its results and send HTTP response. 
 4. **TODO** beautiful architecture diagram  
 
