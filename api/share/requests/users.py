@@ -32,7 +32,7 @@ class GetUsersCountRequest(ValidRequestObject):
                                               len(input_dict.get("tg_username")) > 32):
             invalid_request.add_error("tg_username", "Invalid length")
 
-        # See modal PersonalInfo
+        # See model PersonalInfo
         if input_dict.get("first_name") and len(input_dict.get("first_name")) > 100:
             invalid_request.add_error("first_name", "Invalid length")
 
