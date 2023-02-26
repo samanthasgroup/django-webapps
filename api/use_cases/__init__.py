@@ -9,7 +9,7 @@ class UseCase:
     """
 
     def execute(self, request_object: ValidRequestObject) -> Response:
-        if not request_object:
+        if request_object is None:
             return ResponseFailure.build_from_none_request(self.__class__.__name__)
         try:
             value = self.process_request(request_object)
