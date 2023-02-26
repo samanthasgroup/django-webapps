@@ -1,8 +1,13 @@
-from api.share.responses import ResponseFailure, ResponseSuccess, Response
 from api.share.requests import ValidRequestObject
+from api.share.responses import Response, ResponseFailure, ResponseSuccess
 
 
 class UseCase:
+    """
+    Base class for another use cases classes. Inherited classes must implement
+    process_request method,     which calls inside the execute method.
+    """
+
     def execute(self, request_object: ValidRequestObject) -> Response:
         if not request_object:
             return ResponseFailure.build_from_none_request(self.__class__.__name__)
@@ -14,4 +19,5 @@ class UseCase:
 
     def process_request(self, request_object):
         raise NotImplementedError(
-            f"process_request() not implemented by {self.__class__.__name__}")
+            f"process_request() not implemented by {self.__class__.__name__}"
+        )

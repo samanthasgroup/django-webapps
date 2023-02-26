@@ -1,10 +1,9 @@
-from api.use_cases import UseCase
-from api.share.requests.users import GetUsersCountRequest
 from api.models.people import PersonalInfo
+from api.share.requests.users import GetUsersCountRequest
+from api.use_cases import UseCase
 
 
 class UsersCount(UseCase):
-
     def __int__(self):
         pass
 

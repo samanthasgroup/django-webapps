@@ -6,7 +6,6 @@ class Response(ABC):
 
 
 class ResponseSuccess(Response):
-
     def __init__(self, value=None):
         self.value = value
 
@@ -15,7 +14,6 @@ class ResponseSuccess(Response):
 
 
 class ResponseFailure(Response):
-
     def __init__(self, errors):
         self.errors = errors
 
