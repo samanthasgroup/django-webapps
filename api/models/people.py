@@ -148,8 +148,45 @@ class Student(Person):
 class Teacher(Person):
     """Model for a teacher."""
 
+    additional_skills_comment = models.CharField(
+        max_length=255,  # prefer this to TextField for a better search
+        blank=True,
+        null=True,
+        verbose_name="Comment on additional skills besides teaching",
+        help_text="other ways in which the applicant could help, besides teaching or helping other"
+        "teachers with materials or feedback (comment)",
+    )
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
-    has_prior_teaching_experience = models.BooleanField()
+
+    can_help_with_cv = models.BooleanField(default=False)
+    can_help_with_speaking_club = models.BooleanField(default=False)
+
+    # Peer help. When a new teacher is added, they cannot have these set to True unless they
+    # have prior teaching experience.  However, the `.has_prior_teaching_experience` is meant
+    # to stay unchanged (it describes experience before coming to Samantha Smith's Group),
+    # while it's imaginable that if a teacher teaches long enough, they will be allowed to consult
+    # other teachers.  So these flags being here doesn't really break the 3rd normal form.
+    can_check_syllabus = models.BooleanField(default=False)
+    can_consult_other_teachers = models.BooleanField(default=False)
+    can_give_feedback = models.BooleanField(default=False)
+    can_help_with_children_group = models.BooleanField(
+        default=False,
+        verbose_name="can help with children's groups",
+    )
+    can_help_with_materials = models.BooleanField(
+        default=False, verbose_name="can help with teaching materials"
+    )
+    can_invite_to_class = models.BooleanField(
+        default=False,
+        verbose_name="can invite other teachers to their class",
+    )
+    can_work_in_tandem = models.BooleanField(default=False)
+
+    has_prior_teaching_experience = models.BooleanField(
+        default=False,
+        help_text="Has the applicant already worked as a teacher before applying at Samantha "
+        "Smith's Group?",
+    )
     simultaneous_groups = models.IntegerField(
         default=1, help_text="Number of groups the teacher can teach simultaneously"
     )
