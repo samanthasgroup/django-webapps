@@ -48,6 +48,7 @@ class PersonalInfo(models.Model):
 
     class Meta:
         ordering = ("last_name", "first_name")  # TODO this could be used for selection algorithm
+        verbose_name_plural = "personal info records"
 
     def __str__(self):
         return f"{self.full_name} ({self.email})"
