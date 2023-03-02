@@ -19,6 +19,9 @@ class MultilingualModel(models.Model):
     class Meta:
         abstract = True  # This model will not be used to create any database table
 
+    def __str__(self):
+        return self.name_en
+
 
 class InternalModelWithName(models.Model):
     """Abstract model for internal entities that have a name attribute but do not need to support
@@ -29,3 +32,6 @@ class InternalModelWithName(models.Model):
 
     class Meta:
         abstract = True
+
+    def __str__(self):
+        return self.name

@@ -8,10 +8,16 @@ class EnrollmentTest(models.Model):
     language = models.ForeignKey(TeachingLanguage, on_delete=models.PROTECT)
     levels = models.ManyToManyField(LanguageLevel)
 
+    def __str__(self):
+        return f"{self.language}, levels {', '.join(self.levels.all())}"
+
 
 class EnrollmentTestQuestion(models.Model):
     enrollment_test = models.ForeignKey(EnrollmentTest, on_delete=models.CASCADE)
     text = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.text
 
 
 class EnrollmentTestQuestionOption(models.Model):
@@ -19,7 +25,13 @@ class EnrollmentTestQuestionOption(models.Model):
     text = models.CharField(max_length=50, unique=True)
     is_correct = models.BooleanField()
 
+    def __str__(self):
+        return f"{self.text} (*)" if self.is_correct else self.text
+
 
 class EnrollmentTestResult(models.Model):
     student_info = models.ForeignKey(Student, on_delete=models.CASCADE)
     answers = models.ManyToManyField(EnrollmentTestQuestionOption)
+
+    def __str__(self):
+        return f"Test results of {self.student_info} ({len (self.answers)} answers)"

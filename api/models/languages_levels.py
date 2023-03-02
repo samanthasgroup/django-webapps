@@ -27,7 +27,16 @@ class LanguageLevel(models.Model):
     name = models.CharField(max_length=3, unique=True)
     rank = models.IntegerField(unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class TeachingLanguageAndLevel(models.Model):
     language = models.ForeignKey(TeachingLanguage, on_delete=models.CASCADE)
     level = models.ForeignKey(LanguageLevel, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = "Teaching languages with levels"
+
+    def __str__(self):
+        return f"{self.language} - {self.level}"

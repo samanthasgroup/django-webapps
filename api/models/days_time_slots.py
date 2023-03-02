@@ -20,7 +20,13 @@ class TimeSlot(models.Model):
     from_utc_hour = models.TimeField()
     to_utc_hour = models.TimeField()
 
+    def __str__(self):
+        return f"{self.from_utc_hour.strftime('%H:%M')}-{self.to_utc_hour.strftime('%H:%M')} UTC"
+
 
 class DayAndTimeSlot(models.Model):
     day_of_week = models.ForeignKey(DayOfWeek, on_delete=models.CASCADE)
     time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.day_of_week}, {self.time_slot}"

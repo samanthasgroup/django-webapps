@@ -33,6 +33,10 @@ class LogEvent(models.Model):
 
     date_time = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def date_as_str(self) -> str:
+        return f"{self.date_time.strftime('%d.%m.%Y')}"
+
     class Meta:
         abstract = True
 
@@ -52,7 +56,7 @@ class PersonLogEvent(LogEvent):
         blank=True,
         null=True,
         on_delete=models.CASCADE,
-        related_name="%(class)s_from_self",
+        related_name="%(class)s_to_self",
     )
 
     class Meta:
@@ -61,18 +65,34 @@ class PersonLogEvent(LogEvent):
 
 class GroupLogEvent(LogEvent):
     group = models.ForeignKey("Group", on_delete=models.CASCADE)
+    name = models.ForeignKey(GroupLogEventName, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.date_as_str}: group {self.group} {self.name}"
 
 
-class CoordinatorLogEvent(LogEvent):
+class CoordinatorLogEvent(PersonLogEvent):
     name = models.ForeignKey(CoordinatorLogEventName, on_delete=models.CASCADE)
-    coordinator_info = models.ForeignKey(Coordinator, related_name="log", on_delete=models.CASCADE)
+    coordinator = models.ForeignKey(Coordinator, related_name="log", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return (
+            f"{self.date_as_str}: coordinator {self.coordinator.personal_info.full_name} "
+            f"{self.name}"
+        )
 
 
-class StudentLogEvent(LogEvent):
+class StudentLogEvent(PersonLogEvent):
     name = models.ForeignKey(StudentLogEventName, on_delete=models.CASCADE)
-    student_info = models.ForeignKey(Student, related_name="log", on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, related_name="log", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.date_as_str}: student {self.student.personal_info.full_name} {self.name}"
 
 
-class TeacherLogEvent(LogEvent):
+class TeacherLogEvent(PersonLogEvent):
     name = models.ForeignKey(TeacherLogEventName, on_delete=models.CASCADE)
-    teacher_info = models.ForeignKey(Teacher, related_name="log", on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Teacher, related_name="log", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.date_as_str}: teacher {self.teacher.personal_info.full_name} {self.name}"

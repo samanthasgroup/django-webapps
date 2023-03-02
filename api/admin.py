@@ -29,6 +29,7 @@ for model in (
     models.TeacherLogEventName,
     models.TeacherStatusName,
     models.TeachingLanguage,
+    models.TeachingLanguageAndLevel,
     models.TimeSlot,
 ):
     admin.site.register(model)
