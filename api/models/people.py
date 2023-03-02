@@ -46,10 +46,6 @@ class PersonalInfo(models.Model):
 
     comment = models.TextField(blank=True, null=True)
 
-    # Statuses are different for different roles, but this automatic field is common for them all.
-    # Date and time of status change can be tracked in LogEvents but this is a convenient shortcut.
-    status_since = models.DateTimeField(auto_now=True)
-
     class Meta:
         ordering = ("last_name", "first_name")  # TODO this could be used for selection algorithm
         verbose_name_plural = "personal info records"
@@ -74,17 +70,33 @@ class AgeRange(models.Model):
         return f"Age {self.age_from} to {self.age_to}"
 
 
-class Coordinator(models.Model):
-    """Model for a coordinator."""
+class Person(models.Model):
+    """Abstract model for a coordinator/student/teacher. Stores their common fields and methods."""
 
-    # We want to give informative related_name (PersonalInfo.coordinator will be misleading),
-    # so an abstract model with personal_info is out of the question.
     personal_info = models.OneToOneField(
         PersonalInfo,
         on_delete=models.CASCADE,
         primary_key=True,
-        related_name="as_coordinator",
+        related_name="as_%(class)s",  # produces `.as_coordinator` etc.
     )
+
+    # Statuses are different for different roles, but this automatic field is common for them all.
+    # Date and time of status change can be tracked in LogEvents but this is a convenient shortcut.
+    status_since = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return (
+            f"{self.personal_info.full_name}. Status: {getattr(self, 'status')} "
+            f"(since {getattr(self, 'status_since').strftime('%H:%M %d.%m.%Y')})"
+        )
+
+
+class Coordinator(Person):
+    """Model for a coordinator."""
+
     is_admin = models.BooleanField(
         default=False,
         help_text=(
@@ -95,19 +107,12 @@ class Coordinator(models.Model):
     status = models.ForeignKey(CoordinatorStatus, on_delete=models.PROTECT)
 
     def __str__(self):
-        role = "Admin" if self.is_admin else "Coordinator"
-        return f"{role} {self.personal_info.full_name}"
+        role = " (admin)" if self.is_admin else ""
+        return f"{super().__str__()}{role}"
 
 
-class Student(models.Model):
+class Student(Person):
     """Model for a student."""
-
-    personal_info = models.OneToOneField(
-        PersonalInfo,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        related_name="as_student",
-    )
 
     age_range = models.ForeignKey(
         AgeRange,
@@ -139,19 +144,10 @@ class Student(models.Model):
     # but we don't want to limit this in the database.
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
 
-    def __str__(self):
-        return f"Student {self.personal_info.full_name}"
 
-
-class Teacher(models.Model):
+class Teacher(Person):
     """Model for a teacher."""
 
-    personal_info = models.OneToOneField(
-        PersonalInfo,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        related_name="as_teacher",
-    )
     has_prior_teaching_experience = models.BooleanField()
     simultaneous_groups = models.IntegerField(
         default=1, help_text="Number of groups the teacher can teach simultaneously"
@@ -167,6 +163,3 @@ class Teacher(models.Model):
     weekly_frequency_per_group = models.IntegerField(
         help_text="Number of times per week the teacher can have classes with each group"
     )
-
-    def __str__(self):
-        return f"Teacher {self.personal_info.full_name}"
