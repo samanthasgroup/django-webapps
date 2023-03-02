@@ -14,7 +14,7 @@ from api.models.statuses import CoordinatorStatus, StudentStatus, TeacherStatus
 # Then, if the same person assumes another role, e.g. a Teacher is created, linking to the
 # existing PersonalInfo.
 class PersonalInfo(models.Model):
-    """Model for storing personal information that is relevant for all roles
+    """Model for storing personal information that does not depend on a person's role
     (coordinators, students and teachers).
     """
 
@@ -34,7 +34,6 @@ class PersonalInfo(models.Model):
     information_source = models.TextField(
         verbose_name="how did they learn about Samantha Smith's Group?"
     )
-    availability_slots = models.ManyToManyField(DayAndTimeSlot)
     communication_language_mode = models.ForeignKey(
         CommunicationLanguageMode, on_delete=models.PROTECT
     )
@@ -120,6 +119,7 @@ class Student(Person):
         help_text="We do not ask students for their exact age. "
         "They choose an age range when registering with us.",
     )
+    availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
     # these are all statuses, but `status` is a complex one concerning working in groups
     # (i.e. the main activity of the school) and the other two are simple yes-or-no statuses
@@ -148,6 +148,7 @@ class Student(Person):
 class Teacher(Person):
     """Model for a teacher."""
 
+    availability_slots = models.ManyToManyField(DayAndTimeSlot)
     has_prior_teaching_experience = models.BooleanField()
     simultaneous_groups = models.IntegerField(
         default=1, help_text="Number of groups the teacher can teach simultaneously"
