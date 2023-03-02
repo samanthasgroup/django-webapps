@@ -27,10 +27,14 @@ class Status(models.Model):
     """
 
     # this can be tracked via LogEvents but an additional column can be a convenient shortcut:
-    in_place_since = models.DateTimeField(auto_now_add=True)
+    since = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
+
+    def __str__(self):
+        # `name` will be defined in subclasses. I think this is an OK solution to avoid repetition
+        return f"{getattr(self, 'name')} since {self.since.strftime('%H:%M %d.%m.%Y')}"
 
 
 class CoordinatorStatus(Status):
