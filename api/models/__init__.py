@@ -26,14 +26,4 @@ from .log_events import (
     TeacherLogEventName,
 )
 from .people import AgeRange, Coordinator, PersonalInfo, Student, Teacher
-from .statuses import (
-    CoordinatorStatus,
-    CoordinatorStatusName,
-    GroupStatus,
-    GroupStatusName,
-    Status,
-    StudentStatus,
-    StudentStatusName,
-    TeacherStatus,
-    TeacherStatusName,
-)
+from .statuses import CoordinatorStatus, GroupStatus, StudentStatus, TeacherStatus

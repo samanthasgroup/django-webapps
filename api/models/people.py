@@ -46,6 +46,10 @@ class PersonalInfo(models.Model):
 
     comment = models.TextField(blank=True, null=True)
 
+    # Statuses are different for different roles, but this automatic field is common for them all.
+    # Date and time of status change can be tracked in LogEvents but this is a convenient shortcut.
+    status_since = models.DateTimeField(auto_now=True)
+
     class Meta:
         ordering = ("last_name", "first_name")  # TODO this could be used for selection algorithm
         verbose_name_plural = "personal info records"
