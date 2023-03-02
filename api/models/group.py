@@ -38,9 +38,9 @@ class Group(models.Model):
     sunday = models.TimeField(blank=True, null=True)
 
     def __str__(self):
-        coordinator_names = ",".join(c.full_name for c in self.coordinators)
-        teacher_names = ",".join(t.full_name for t in self.teachers)
+        coordinator_names = ",".join(c.full_name for c in self.coordinators.all())
+        teacher_names = ",".join(t.full_name for t in self.teachers.all())
         return (
-            f"Group {self.id} (coordinators: {coordinator_names}, teachers: {teacher_names}, "
-            f"{len(self.students)} students."
+            f"Group {self.pk} (coordinators: {coordinator_names}, teachers: {teacher_names}, "
+            f"{len(self.students.all())} students."
         )

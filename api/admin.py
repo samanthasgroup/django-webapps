@@ -3,6 +3,7 @@ from django.contrib import admin
 import api.models as models
 
 for model in (
+    models.AgeRange,
     models.CommunicationLanguageMode,
     models.Coordinator,
     models.CoordinatorLogEvent,
@@ -24,7 +25,6 @@ for model in (
     models.StudentLogEventName,
     models.StudentStatusName,
     models.Teacher,
-    models.TeacherCategory,
     models.TeacherLogEvent,
     models.TeacherLogEventName,
     models.TeacherStatusName,

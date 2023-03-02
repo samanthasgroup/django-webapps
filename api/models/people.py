@@ -3,7 +3,6 @@ from datetime import timedelta
 
 from django.db import models
 
-from api.models.auxil import InternalModelWithName, MultilingualModel
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import CommunicationLanguageMode, TeachingLanguageAndLevel
 from api.models.statuses import CoordinatorStatus, StudentStatus, TeacherStatus
@@ -50,21 +49,24 @@ class PersonalInfo(models.Model):
     class Meta:
         ordering = ("last_name", "first_name")  # TODO this could be used for selection algorithm
 
+    def __str__(self):
+        return f"{self.full_name} ({self.email})"
+
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
 
-class AgeRange(InternalModelWithName):
+class AgeRange(models.Model):
     """Model for age range.  Students have no exact ages, but age ranges. Teachers' preferences
     and group building algorithms are also based on age ranges.
     """
 
-    # When bot registers a teacher, it gives the teacher names of age groups.  I don't think it
-    # makes sense to make the entire model multilingual just because of this one case.
-
     age_from = models.IntegerField()
     age_to = models.IntegerField()
+
+    def __str__(self):
+        return f"Age {self.age_from} to {self.age_to}"
 
 
 class Coordinator(models.Model):
@@ -136,10 +138,6 @@ class Student(models.Model):
         return f"Student {self.personal_info.full_name}"
 
 
-class TeacherCategory(MultilingualModel):
-    """Model for enumerating categories of a teacher (teacher, methodist, CV mentor etc.)."""
-
-
 class Teacher(models.Model):
     """Model for a teacher."""
 
@@ -149,7 +147,6 @@ class Teacher(models.Model):
         primary_key=True,
         related_name="as_teacher",
     )
-    categories = models.ManyToManyField(TeacherCategory)
     has_prior_teaching_experience = models.BooleanField()
     simultaneous_groups = models.IntegerField(
         default=1, help_text="Number of groups the teacher can teach simultaneously"
