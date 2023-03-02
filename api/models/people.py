@@ -43,8 +43,6 @@ class PersonalInfo(models.Model):
     registration_bot_chat_id = models.IntegerField(blank=True, null=True)
     chatwoot_conversation_id = models.IntegerField(blank=True, null=True)
 
-    comment = models.TextField(blank=True, null=True)
-
     class Meta:
         ordering = ("last_name", "first_name")  # TODO this could be used for selection algorithm
         verbose_name_plural = "personal info records"
@@ -72,6 +70,7 @@ class AgeRange(models.Model):
 class Person(models.Model):
     """Abstract model for a coordinator/student/teacher. Stores their common fields and methods."""
 
+    comment = models.TextField(blank=True, null=True)
     personal_info = models.OneToOneField(
         PersonalInfo,
         on_delete=models.CASCADE,
