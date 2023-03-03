@@ -143,6 +143,12 @@ class Student(Person):
     # but we don't want to limit this in the database.
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
 
+    # JSONField because this will come from external API, so it's good to be protected from changes
+    # Just a reminder: the written test is a model with ForeignKey to Student, no field needed here
+    smalltalk_test_result = models.JSONField(
+        blank=True, null=True, help_text="JSON received from SmallTalk API"
+    )
+
 
 class Teacher(Person):
     """Model for a teacher."""

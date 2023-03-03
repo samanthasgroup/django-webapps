@@ -5,6 +5,8 @@ from api.models.people import Student
 
 
 class EnrollmentTest(models.Model):
+    """Model for 'written' test given to the student at registration."""
+
     language = models.ForeignKey(TeachingLanguage, on_delete=models.PROTECT)
     levels = models.ManyToManyField(LanguageLevel)
 
@@ -30,8 +32,8 @@ class EnrollmentTestQuestionOption(models.Model):
 
 
 class EnrollmentTestResult(models.Model):
-    student_info = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     answers = models.ManyToManyField(EnrollmentTestQuestionOption)
 
     def __str__(self):
-        return f"Test results of {self.student_info} ({len (self.answers)} answers)"
+        return f"Test results of {self.student}"
