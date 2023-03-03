@@ -44,6 +44,12 @@ class PersonalInfo(models.Model):
     chatwoot_conversation_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
+        # there may be no phone or tg username, but matching name and email is good enough reason
+        constraints = [
+            models.UniqueConstraint(
+                fields=["first_name", "last_name", "email"], name="full_name_and_email"
+            )
+        ]
         ordering = ("last_name", "first_name")  # TODO this could be used for selection algorithm
         verbose_name_plural = "personal info records"
 
@@ -62,6 +68,9 @@ class AgeRange(models.Model):
 
     age_from = models.PositiveSmallIntegerField()
     age_to = models.PositiveSmallIntegerField()
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["age_from", "age_to"], name="age_from_to")]
 
     def __str__(self):
         return f"Age {self.age_from} to {self.age_to}"

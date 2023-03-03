@@ -38,6 +38,11 @@ class Group(models.Model):
     saturday = models.TimeField(blank=True, null=True)
     sunday = models.TimeField(blank=True, null=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["telegram_chat_url"], name="telegram_chat_url")
+        ]
+
     def __str__(self):
         coordinator_names = ",".join(c.full_name for c in self.coordinators.all())
         teacher_names = ",".join(t.full_name for t in self.teachers.all())

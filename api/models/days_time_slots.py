@@ -20,6 +20,11 @@ class TimeSlot(models.Model):
     from_utc_hour = models.TimeField()
     to_utc_hour = models.TimeField()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["from_utc_hour", "to_utc_hour"], name="from_to_hour")
+        ]
+
     def __str__(self):
         return f"{self.from_utc_hour.strftime('%H:%M')}-{self.to_utc_hour.strftime('%H:%M')} UTC"
 
@@ -27,6 +32,11 @@ class TimeSlot(models.Model):
 class DayAndTimeSlot(models.Model):
     day_of_week = models.ForeignKey(DayOfWeek, on_delete=models.CASCADE)
     time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["day_of_week", "time_slot"], name="day_and_slot")
+        ]
 
     def __str__(self):
         return f"{self.day_of_week}, {self.time_slot}"
