@@ -117,7 +117,7 @@ class Coordinator(Person):
         blank=True,
         null=True,
         related_name="interns",
-        help_text="curator of this coordinator. One coordinator can have many interns",
+        help_text="mentor of this coordinator. One coordinator can have many interns",
     )
     status = models.ForeignKey(CoordinatorStatus, on_delete=models.PROTECT)
 
