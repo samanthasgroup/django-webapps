@@ -50,7 +50,7 @@ class PersonalInfo(models.Model):
                 fields=["first_name", "last_name", "email"], name="full_name_and_email"
             )
         ]
-        ordering = ("last_name", "first_name")  # TODO this could be used for selection algorithm
+        ordering = ("last_name", "first_name")
         verbose_name_plural = "personal info records"
 
     def __str__(self):
@@ -110,6 +110,14 @@ class Coordinator(Person):
             "This field has nothing to do with accessing Django admin site. It marks coordinators "
             "that have special rights over ordinary coordinators."
         ),
+    )
+    mentor = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="interns",
+        help_text="curator of this coordinator. One coordinator can have many interns",
     )
     status = models.ForeignKey(CoordinatorStatus, on_delete=models.PROTECT)
 
