@@ -60,8 +60,8 @@ class AgeRange(models.Model):
     and group building algorithms are also based on age ranges.
     """
 
-    age_from = models.IntegerField()
-    age_to = models.IntegerField()
+    age_from = models.PositiveSmallIntegerField()
+    age_to = models.PositiveSmallIntegerField()
 
     def __str__(self):
         return f"Age {self.age_from} to {self.age_to}"
@@ -195,7 +195,7 @@ class Teacher(Person):
         help_text="Has the applicant already worked as a teacher before applying at Samantha "
         "Smith's Group?",
     )
-    simultaneous_groups = models.IntegerField(
+    simultaneous_groups = models.PositiveSmallIntegerField(
         default=1, help_text="Number of groups the teacher can teach simultaneously"
     )
     student_age_ranges = models.ManyToManyField(
@@ -205,6 +205,6 @@ class Teacher(Person):
         "for themselves.",
     )
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
-    weekly_frequency_per_group = models.IntegerField(
+    weekly_frequency_per_group = models.PositiveSmallIntegerField(
         help_text="Number of times per week the teacher can have classes with each group"
     )

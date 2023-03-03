@@ -14,7 +14,7 @@ class Group(models.Model):
     )
     is_for_staff_only = models.BooleanField(default=False)
     language_and_level = models.ForeignKey(TeachingLanguageAndLevel, on_delete=models.CASCADE)
-    lesson_duration = models.IntegerField()
+    lesson_duration = models.PositiveSmallIntegerField()
     status = models.ForeignKey(GroupStatus, on_delete=models.PROTECT)
     status_since = models.DateTimeField(auto_now=True)
     start_date = models.DateField(blank=True, null=True)

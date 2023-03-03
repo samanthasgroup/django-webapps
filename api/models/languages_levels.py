@@ -25,7 +25,7 @@ class TeachingLanguage(MultilingualModel):
 
 class LanguageLevel(models.Model):
     name = models.CharField(max_length=3, unique=True)
-    rank = models.IntegerField(unique=True)
+    rank = models.PositiveSmallIntegerField(unique=True)
 
     def __str__(self):
         return self.name
