@@ -157,8 +157,10 @@ class Student(Person):
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
 
 
-class Teacher(Person):
-    """Model for a teacher."""
+class TeacherCommon(Person):
+    """Abstract model for common properties that adult teachers and teachers under 18 share.
+    Teachers under 18 cannot teach groups but can some selected activities.
+    """
 
     additional_skills_comment = models.CharField(
         max_length=255,  # prefer this to TextField for a better search
@@ -168,10 +170,18 @@ class Teacher(Person):
         help_text="other ways in which the applicant could help, besides teaching or helping other"
         "teachers with materials or feedback (comment)",
     )
+    can_help_with_speaking_club = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+
+
+class Teacher(TeacherCommon):
+    """Model for an adult teacher that can teach groups."""
+
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
     can_help_with_cv = models.BooleanField(default=False)
-    can_help_with_speaking_club = models.BooleanField(default=False)
 
     # Peer help. When a new teacher is added, they cannot have these set to True unless they
     # have prior teaching experience.  However, the `.has_prior_teaching_experience` is meant
@@ -217,3 +227,12 @@ class Teacher(Person):
     weekly_frequency_per_group = models.PositiveSmallIntegerField(
         help_text="Number of times per week the teacher can have classes with each group"
     )
+
+
+class TeacherUnder18(TeacherCommon):
+    """Model for a teacher under 18 years old that cannot teach groups."""
+
+    # no additional fields required besides already present in TeacherCommon
+
+    class Meta:
+        verbose_name_plural = "Teaching volunteers under 18 years of age"
