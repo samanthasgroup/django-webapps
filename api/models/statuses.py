@@ -18,14 +18,14 @@ class GroupStatus(InternalModelWithName):
 
 
 class StudentStatus(InternalModelWithName):
-    """Model for enumeration of possible statuses of a student."""
+    """Model for enumeration of possible statuses of a student with regard to group studies."""
 
     class Meta:
-        verbose_name_plural = "possible student statuses"
+        verbose_name_plural = "possible student statuses (group studies)"
 
 
 class TeacherStatus(InternalModelWithName):
-    """Model for enumeration of possible statuses of a teacher."""
+    """Model for enumeration of possible statuses of a teacher with regard to group studies."""
 
     class Meta:
-        verbose_name_plural = "possible teacher statuses"
+        verbose_name_plural = "possible teacher statuses (group studies)"

@@ -120,8 +120,12 @@ class Student(Person):
     )
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
-    # these are all statuses, but `status` is a complex one concerning working in groups
-    # (i.e. the main activity of the school) and the other two are simple yes-or-no statuses
+    group_status = models.ForeignKey(
+        StudentStatus,
+        on_delete=models.PROTECT,
+        verbose_name="Group studies status",
+        help_text="Status of this student with regard to group studies",
+    )
     is_member_of_speaking_club = models.BooleanField(
         default=False,
         verbose_name="Speaking club status",
@@ -132,22 +136,16 @@ class Student(Person):
         verbose_name="CV help status",
         help_text="Does the student need help with CV at the moment?",
     )
-    status = models.ForeignKey(
-        StudentStatus,
-        on_delete=models.PROTECT,
-        verbose_name="Group studies status",
-        help_text="Status of a student with regard to group studies",
-    )
-
-    # The general rule is that one student can only learn one language,
-    # but we don't want to limit this in the database.
-    teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
 
     # JSONField because this will come from external API, so it's good to be protected from changes
     # Just a reminder: the written test is a model with ForeignKey to Student, no field needed here
     smalltalk_test_result = models.JSONField(
         blank=True, null=True, help_text="JSON received from SmallTalk API"
     )
+
+    # The general rule is that one student can only learn one language,
+    # but we don't want to limit this in the database.
+    teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
 
 
 class Teacher(Person):
@@ -187,6 +185,11 @@ class Teacher(Person):
     )
     can_work_in_tandem = models.BooleanField(default=False)
 
+    group_status = models.ForeignKey(
+        TeacherStatus,
+        on_delete=models.PROTECT,
+        help_text="Status of this teacher with regard to group studies.",
+    )
     has_prior_teaching_experience = models.BooleanField(
         default=False,
         help_text="Has the applicant already worked as a teacher before applying at Samantha "
@@ -195,7 +198,6 @@ class Teacher(Person):
     simultaneous_groups = models.IntegerField(
         default=1, help_text="Number of groups the teacher can teach simultaneously"
     )
-    status = models.ForeignKey(TeacherStatus, on_delete=models.PROTECT)
     student_age_ranges = models.ManyToManyField(
         AgeRange,
         help_text="Age ranges of students that the teacher is willing to teach. "
