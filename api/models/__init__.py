@@ -13,17 +13,23 @@ from .languages_levels import (
     TeachingLanguage,
     TeachingLanguageAndLevel,
 )
+from .log_event_rules import (
+    CoordinatorLogEventRule,
+    GroupLogEventRule,
+    StudentLogEventRule,
+    TeacherLogEventRule,
+)
 from .log_events import (
     CoordinatorLogEvent,
-    CoordinatorLogEventName,
+    CoordinatorLogEventType,
     GroupLogEvent,
-    GroupLogEventName,
+    GroupLogEventType,
     LogEvent,
     PersonLogEvent,
     StudentLogEvent,
-    StudentLogEventName,
+    StudentLogEventType,
     TeacherLogEvent,
-    TeacherLogEventName,
+    TeacherLogEventType,
 )
 from .people import AgeRange, Coordinator, PersonalInfo, Student, Teacher
 from .statuses import CoordinatorStatus, GroupStatus, StudentStatus, TeacherStatus

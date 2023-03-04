@@ -1,26 +1,27 @@
 from django.db import models
 
 from api.models.auxil import InternalModelWithName
+from api.models.group import Group
 from api.models.people import Coordinator, Student, Teacher
 
 # We could have created one table listing all possible names of log events, but that might look
 # confusing for admin users later on.  It seems more convenient for them to have separate tables.
 
 
-class CoordinatorLogEventName(InternalModelWithName):
-    """Model for enumeration of possible names of log events (events) for a coordinator."""
+class CoordinatorLogEventType(InternalModelWithName):
+    """Model for enumeration of possible types of log events (events) for a coordinator."""
 
 
-class GroupLogEventName(InternalModelWithName):
-    """Model for enumeration of possible names of log events (events) for a group."""
+class GroupLogEventType(InternalModelWithName):
+    """Model for enumeration of possible types of log events (events) for a group."""
 
 
-class StudentLogEventName(InternalModelWithName):
-    """Model for enumeration of possible names of log events (events) for a student."""
+class StudentLogEventType(InternalModelWithName):
+    """Model for enumeration of possible types of log events (events) for a student."""
 
 
-class TeacherLogEventName(InternalModelWithName):
-    """Model for enumeration of possible names of log events (events) for a teacher."""
+class TeacherLogEventType(InternalModelWithName):
+    """Model for enumeration of possible types of log events (events) for a teacher."""
 
 
 class LogEvent(models.Model):
@@ -39,6 +40,14 @@ class LogEvent(models.Model):
 
     class Meta:
         abstract = True
+
+
+class GroupLogEvent(LogEvent):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    type = models.ForeignKey(GroupLogEventType, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.date_as_str}: group {self.group} {self.type.name_for_user}"
 
 
 class PersonLogEvent(LogEvent):
@@ -63,36 +72,34 @@ class PersonLogEvent(LogEvent):
         abstract = True
 
 
-class GroupLogEvent(LogEvent):
-    group = models.ForeignKey("Group", on_delete=models.CASCADE)
-    name = models.ForeignKey(GroupLogEventName, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.date_as_str}: group {self.group} {self.name}"
-
-
 class CoordinatorLogEvent(PersonLogEvent):
-    name = models.ForeignKey(CoordinatorLogEventName, on_delete=models.CASCADE)
     coordinator = models.ForeignKey(Coordinator, related_name="log", on_delete=models.CASCADE)
+    type = models.ForeignKey(CoordinatorLogEventType, on_delete=models.CASCADE)
 
     def __str__(self):
         return (
             f"{self.date_as_str}: coordinator {self.coordinator.personal_info.full_name} "
-            f"{self.name}"
+            f"{self.type.name_for_user}"
         )
 
 
 class StudentLogEvent(PersonLogEvent):
-    name = models.ForeignKey(StudentLogEventName, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, related_name="log", on_delete=models.CASCADE)
+    type = models.ForeignKey(StudentLogEventType, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.date_as_str}: student {self.student.personal_info.full_name} {self.name}"
+        return (
+            f"{self.date_as_str}: student {self.student.personal_info.full_name} "
+            f"{self.type.name_for_user}"
+        )
 
 
 class TeacherLogEvent(PersonLogEvent):
-    name = models.ForeignKey(TeacherLogEventName, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, related_name="log", on_delete=models.CASCADE)
+    type = models.ForeignKey(TeacherLogEventType, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.date_as_str}: teacher {self.teacher.personal_info.full_name} {self.name}"
+        return (
+            f"{self.date_as_str}: teacher {self.teacher.personal_info.full_name} "
+            f"{self.type.name_for_user}"
+        )
