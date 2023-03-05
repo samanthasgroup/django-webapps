@@ -39,6 +39,7 @@ class DayAndTimeSlot(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["day_of_week", "time_slot"], name="day_and_slot")
         ]
+        ordering = ("day_of_week__index", "time_slot__from_utc_hour")
 
     def __str__(self):
         return f"{self.day_of_week}, {self.time_slot}"
