@@ -8,8 +8,10 @@ class DayOfWeek(MultilingualModel):
 
     # We could just use numbers and then localize them using Babel,
     # but it seems easier to just create a table with 7 rows.
+    index = models.PositiveSmallIntegerField()  # it's best not to rely on automatic ID here
 
     class Meta:
+        ordering = ("index",)
         verbose_name_plural = "days of the week"
 
 
