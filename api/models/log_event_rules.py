@@ -13,10 +13,10 @@ JSON_HELP_TEXT = "JSON describing what object must get what status when the even
 
 # 1. ForeignKeys cannot point to abstract models, and we need these tables to be separate for
 #    coordinators' convenience.  Hence these multiple imports and classes.
-# 2. I'm subclassing rules from InternalModelWithName because it can be convenient to add a name
+# 2. We are subclassing rules from InternalModelWithName because it can be convenient to add a name
 #    to the rule so that coordinators understand what it does.
-# 3. Note that I match log event types, not log events. One event is an occurrence of event with a
-#    timestamp, while rules must be based on types of events.
+# 3. Note that log event types are matched, not log events. One event is an occurrence of event
+#    with a timestamp, while rules must be based on types of events.
 class CoordinatorLogEventRule(InternalModelWithName):
     """Model matching a coordinator log event type to a rule stating what status(es) must be set
     (not only for the coordinator, but maybe also for group(s), student(s) and teacher(s).

@@ -51,7 +51,7 @@ class InternalModelWithName(ModelWithName):
 
     class Meta:
         abstract = True
-        # I have to repeat this: if I put it in the parent class, it will not be inherited.
+        # This has to be repeated: the constraint will not be inherited from parent class.
         constraints = [
             models.UniqueConstraint(fields=["name_internal"], name="f%(class)s_name_internal")
         ]
