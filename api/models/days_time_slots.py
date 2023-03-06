@@ -4,7 +4,7 @@ from api.models.base import ModelWithMultilingualName
 
 
 class DayOfWeek(ModelWithMultilingualName):
-    """Model for days of the week (with internationalization)."""
+    """Model for days of the week (with internationalization). Will be pre-populated."""
 
     # We could just use numbers and then localize them using Babel,
     # but it seems easier to just create a table with 7 rows.
@@ -16,6 +16,10 @@ class DayOfWeek(ModelWithMultilingualName):
 
 
 class TimeSlot(models.Model):
+    """Model for timeslots. Note that the timeslots have no "name" as such.
+    Will be pre-populated.
+    """
+
     # Postgres supports ranges, and in Django we could use IntegerRangeField for a Postgres range,
     # but that would hinder development and testing with SQLite.
     # Also, Postgres has no pure time ranges (only date-time).
@@ -32,6 +36,8 @@ class TimeSlot(models.Model):
 
 
 class DayAndTimeSlot(models.Model):
+    """Model for combinations of days and timeslots. Will be pre-populated."""
+
     day_of_week = models.ForeignKey(DayOfWeek, on_delete=models.CASCADE)
     time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
 
