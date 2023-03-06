@@ -61,7 +61,7 @@ class Group(GroupCommon):
         teacher_names = ",".join(t.full_name for t in self.teachers.all())
         return (
             f"Group {self.pk}, {self.language_and_level} (coordinators: {coordinator_names}, "
-            f"teachers: {teacher_names}, {len(self.students.all())} students."
+            f"teachers: {teacher_names}, {self.students.count()} students."
         )
 
 
@@ -76,6 +76,4 @@ class SpeakingClub(GroupCommon):
 
     def __str__(self):
         category = "children" if self.is_for_children else "adults"
-        return (
-            f"{self.language} speaking club for {category}, {len(self.students.all())} students."
-        )
+        return f"{self.language} speaking club for {category}, {self.students.count()} students."
