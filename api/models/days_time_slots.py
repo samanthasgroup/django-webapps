@@ -1,9 +1,9 @@
 from django.db import models
 
-from api.models.auxil import MultilingualModel
+from api.models.auxil import ModelWithMultilingualName
 
 
-class DayOfWeek(MultilingualModel):
+class DayOfWeek(ModelWithMultilingualName):
     """Model for days of the week (with internationalization)."""
 
     # We could just use numbers and then localize them using Babel,

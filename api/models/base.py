@@ -16,7 +16,7 @@ class ModelWithName(models.Model):
         abstract = True
 
 
-class MultilingualModel(ModelWithName):
+class ModelWithMultilingualName(ModelWithName):
     """Abstract model for end-user facing entities that need names to be stored in 3 languages."""
 
     name_en = models.CharField(max_length=255, unique=True, verbose_name="name in English")

@@ -1,9 +1,9 @@
 from django.db import models
 
-from api.models.auxil import MultilingualModel
+from api.models.auxil import ModelWithMultilingualName
 
 
-class CommunicationLanguageMode(MultilingualModel):
+class CommunicationLanguageMode(ModelWithMultilingualName):
     """Model for 'language mode' (in class or maybe also communication with coordinators).
 
     These language modes are **mutually exclusive** and are intended to be used to match students
@@ -17,7 +17,7 @@ class CommunicationLanguageMode(MultilingualModel):
     # I don't think it should be imported in admin.py: the set of modes is very unlikely to change.
 
 
-class TeachingLanguage(MultilingualModel):
+class TeachingLanguage(ModelWithMultilingualName):
     """Model for languages that students learn and teachers teach."""
 
     # TODO make it into internal model? Bot stores names of languages in its CSV

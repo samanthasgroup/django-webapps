@@ -1,4 +1,4 @@
-from .auxil import InternalModelWithName, MultilingualModel
+from .auxil import InternalModelWithName, ModelWithMultilingualName
 from .days_time_slots import DayAndTimeSlot, DayOfWeek, TimeSlot
 from .enrollment_test import (
     EnrollmentTest,
