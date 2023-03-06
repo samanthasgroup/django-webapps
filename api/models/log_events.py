@@ -36,7 +36,7 @@ class LogEvent(models.Model):
 
     @property
     def date_as_str(self) -> str:
-        return f"{self.date_time.strftime('%d.%m.%Y')}"
+        return self.date_time.strftime("%d.%m.%Y")
 
     class Meta:
         abstract = True
