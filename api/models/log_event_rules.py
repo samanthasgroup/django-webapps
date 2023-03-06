@@ -1,6 +1,6 @@
 from django.db import models
 
-from api.models.auxil import InternalModelWithName
+from api.models.base import InternalModelWithName
 from api.models.log_events import (
     CoordinatorLogEventType,
     GroupLogEventType,

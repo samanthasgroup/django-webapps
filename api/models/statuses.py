@@ -1,4 +1,4 @@
-from api.models.auxil import InternalModelWithName
+from api.models.base import InternalModelWithName
 
 
 # We could have created one table listing all possible status names, but that might look confusing

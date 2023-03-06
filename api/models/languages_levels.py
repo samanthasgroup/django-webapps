@@ -1,6 +1,6 @@
 from django.db import models
 
-from api.models.auxil import ModelWithMultilingualName
+from api.models.base import ModelWithMultilingualName
 
 
 class CommunicationLanguageMode(ModelWithMultilingualName):

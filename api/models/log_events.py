@@ -1,6 +1,6 @@
 from django.db import models
 
-from api.models.auxil import InternalModelWithName
+from api.models.base import InternalModelWithName
 from api.models.group import Group
 from api.models.people import Coordinator, Student, Teacher
 
