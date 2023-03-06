@@ -1,5 +1,7 @@
 from django.db import models
 
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
+
 
 class ModelWithName(models.Model):
     name_internal = models.CharField(
@@ -19,9 +21,15 @@ class ModelWithName(models.Model):
 class ModelWithMultilingualName(ModelWithName):
     """Abstract model for end-user facing entities that need names to be stored in 3 languages."""
 
-    name_en = models.CharField(max_length=255, unique=True, verbose_name="name in English")
-    name_ru = models.CharField(max_length=255, unique=True, verbose_name="name in Russian")
-    name_ua = models.CharField(max_length=255, unique=True, verbose_name="name in Ukrainian")
+    name_en = models.CharField(
+        max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True, verbose_name="name in English"
+    )
+    name_ru = models.CharField(
+        max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True, verbose_name="name in Russian"
+    )
+    name_ua = models.CharField(
+        max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True, verbose_name="name in Ukrainian"
+    )
 
     class Meta:
         abstract = True

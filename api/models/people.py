@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from django.db import models
 
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import CommunicationLanguageMode, TeachingLanguageAndLevel
 from api.models.statuses import CoordinatorStatus, StudentStatus, TeacherStatus
@@ -171,7 +172,7 @@ class TeacherCommon(Person):
     """
 
     additional_skills_comment = models.CharField(
-        max_length=255,  # prefer this to TextField for a better search
+        max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
         blank=True,
         null=True,
         verbose_name="Comment on additional skills besides teaching",

@@ -1,5 +1,6 @@
 from django.db import models
 
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 from api.models.languages_levels import LanguageLevel, TeachingLanguage
 from api.models.people import Student
 
@@ -16,7 +17,7 @@ class EnrollmentTest(models.Model):
 
 class EnrollmentTestQuestion(models.Model):
     enrollment_test = models.ForeignKey(EnrollmentTest, on_delete=models.CASCADE)
-    text = models.CharField(max_length=255, unique=True)
+    text = models.CharField(max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True)
 
     def __str__(self):
         return self.text
