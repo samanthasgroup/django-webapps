@@ -20,7 +20,6 @@ for model in (
     models.GroupLogEventRule,
     models.GroupLogEventType,
     models.GroupStatus,
-    models.LanguageLevel,
     models.PersonalInfo,
     models.Student,
     models.StudentLogEvent,

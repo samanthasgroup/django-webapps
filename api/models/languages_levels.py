@@ -23,17 +23,25 @@ class TeachingLanguage(ModelWithMultilingualName):
     # TODO make it into internal model? Bot stores names of languages in its CSV
 
 
-class LanguageLevel(models.Model):
-    name = models.CharField(max_length=3, unique=True)
-    rank = models.PositiveSmallIntegerField(unique=True)
-
-    def __str__(self):
-        return self.name
-
-
 class TeachingLanguageAndLevel(models.Model):
+    A0 = "A0"
+    A1 = "A1"
+    A2 = "A2"
+    B1 = "B1"
+    B2 = "B2"
+    C1 = "C1"
+    # This school is definitely not for C2 students, so no C2
+    LEVEL_CHOICES = [
+        (A0, "A0 (Starter)"),
+        (A1, "A1 (Beginner)"),
+        (A2, "A2 (Pre-Intermediate)"),
+        (B1, "B1 (Intermediate)"),
+        (B2, "B2 (Upper-Intermediate)"),
+        (C1, "C1 (Advanced)"),
+    ]
+
     language = models.ForeignKey(TeachingLanguage, on_delete=models.CASCADE)
-    level = models.ForeignKey(LanguageLevel, on_delete=models.CASCADE)
+    level = models.CharField(max_length=2, choices=LEVEL_CHOICES)
 
     class Meta:
         verbose_name_plural = "Teaching languages with levels"

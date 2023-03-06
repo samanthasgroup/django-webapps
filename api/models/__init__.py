@@ -7,12 +7,7 @@ from .enrollment_test import (
     EnrollmentTestResult,
 )
 from .group import Group
-from .languages_levels import (
-    CommunicationLanguageMode,
-    LanguageLevel,
-    TeachingLanguage,
-    TeachingLanguageAndLevel,
-)
+from .languages_levels import CommunicationLanguageMode, TeachingLanguage, TeachingLanguageAndLevel
 from .log_event_rules import (
     CoordinatorLogEventRule,
     GroupLogEventRule,
