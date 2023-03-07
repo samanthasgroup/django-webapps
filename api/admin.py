@@ -5,7 +5,6 @@ import api.models as models
 for model in (
     models.AgeRange,
     models.Coordinator,
-    models.DayAndTimeSlot,
     models.EnrollmentTest,
     models.EnrollmentTestQuestion,
     models.EnrollmentTestQuestionOption,
@@ -16,6 +15,5 @@ for model in (
     models.TeacherUnder18,
     models.Language,
     models.LanguageAndLevel,
-    models.TimeSlot,
 ):
     admin.site.register(model)
