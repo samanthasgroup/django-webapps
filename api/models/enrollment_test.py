@@ -24,8 +24,19 @@ class EnrollmentTestQuestion(models.Model):
 
 class EnrollmentTestQuestionOption(models.Model):
     question = models.ForeignKey(EnrollmentTestQuestion, on_delete=models.CASCADE)
-    text = models.CharField(max_length=50, unique=True)
+    text = models.CharField(max_length=50)
     is_correct = models.BooleanField()
+
+    class Meta:
+        constraints = [
+            # accessing foreign key directly instead of making an additional query
+            models.UniqueConstraint(
+                fields=["question_id", "text"], name="option_unique_per_question"
+            ),
+            models.UniqueConstraint(
+                fields=["question_id", "is_correct"], name="only_one_correct_option_per_question"
+            ),
+        ]
 
     def __str__(self):
         return f"{self.text} (*)" if self.is_correct else self.text
