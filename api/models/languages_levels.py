@@ -21,7 +21,7 @@ class LanguageAndLevel(models.Model):
     level = models.CharField(max_length=2, choices=Level.choices)
 
     class Meta:
-        verbose_name_plural = "Teaching languages with levels"
+        verbose_name_plural = "Languages with levels"
 
     def __str__(self):
         return f"{self.language} - {self.level}"
