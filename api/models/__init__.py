@@ -1,12 +1,12 @@
 from .base import InternalModelWithName, ModelWithMultilingualName
 from .days_time_slots import DayAndTimeSlot, TimeSlot
-from .enrollment_test import (
+from .enrollment_tests import (
     EnrollmentTest,
     EnrollmentTestQuestion,
     EnrollmentTestQuestionOption,
     EnrollmentTestResult,
 )
-from .group import Group
+from .groups import Group
 from .languages_levels import CommunicationLanguageMode, TeachingLanguage, TeachingLanguageAndLevel
 from .log_events import (
     CoordinatorLogEvent,
