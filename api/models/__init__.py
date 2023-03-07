@@ -8,12 +8,6 @@ from .enrollment_test import (
 )
 from .group import Group
 from .languages_levels import CommunicationLanguageMode, TeachingLanguage, TeachingLanguageAndLevel
-from .log_event_rules import (
-    CoordinatorLogEventRule,
-    GroupLogEventRule,
-    StudentLogEventRule,
-    TeacherLogEventRule,
-)
 from .log_events import (
     CoordinatorLogEvent,
     CoordinatorLogEventType,
