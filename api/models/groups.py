@@ -35,7 +35,6 @@ class Group(GroupCommon):
     language_and_level = models.ForeignKey(TeachingLanguageAndLevel, on_delete=models.PROTECT)
     lesson_duration = models.PositiveSmallIntegerField()
     status = models.ForeignKey(GroupStatus, on_delete=models.PROTECT)
-    status_since = models.DateTimeField()
     start_date = models.DateField(null=True, blank=True)
     # this field could be useful for overview, but can be filled automatically when
     # a corresponding log event is created:

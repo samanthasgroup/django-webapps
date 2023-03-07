@@ -94,10 +94,7 @@ class Person(models.Model):
         abstract = True
 
     def __str__(self):
-        return (
-            f"{self.personal_info.full_name}. Status: {getattr(self, 'status')} "
-            f"(since {getattr(self, 'status_since').strftime('%H:%M %d.%m.%Y')})"
-        )
+        return f"{self.personal_info.full_name}. Status: {getattr(self, 'status')}"
 
 
 class Coordinator(Person):
