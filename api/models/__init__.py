@@ -7,7 +7,7 @@ from .enrollment_tests import (
     EnrollmentTestResult,
 )
 from .groups import Group
-from .languages_levels import Language, TeachingLanguageAndLevel
+from .languages_levels import Language, LanguageAndLevel
 from .log_events import (
     CoordinatorLogEvent,
     GroupLogEvent,

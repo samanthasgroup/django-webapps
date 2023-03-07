@@ -3,7 +3,7 @@ from django.db import models
 from api.models.base import GroupOrPerson
 from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.days_time_slots import DayAndTimeSlot
-from api.models.languages_levels import Language, TeachingLanguageAndLevel
+from api.models.languages_levels import Language, LanguageAndLevel
 from api.models.people import Coordinator, Student, Teacher, TeacherUnder18
 
 
@@ -32,7 +32,7 @@ class Group(GroupCommon):
 
     availability_slot = models.ManyToManyField(DayAndTimeSlot)
     is_for_staff_only = models.BooleanField(default=False)
-    language_and_level = models.ForeignKey(TeachingLanguageAndLevel, on_delete=models.PROTECT)
+    language_and_level = models.ForeignKey(LanguageAndLevel, on_delete=models.PROTECT)
     lesson_duration = models.PositiveSmallIntegerField()
     status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices

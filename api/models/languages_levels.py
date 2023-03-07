@@ -7,7 +7,7 @@ class Language(InternalModelWithName):
     """Model for languages that students learn and teachers teach."""
 
 
-class TeachingLanguageAndLevel(models.Model):
+class LanguageAndLevel(models.Model):
     class Level(models.TextChoices):
         A0 = "A0", "A0 (Starter)"
         A1 = "A1", "A1 (Beginner)"

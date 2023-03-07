@@ -1,14 +1,14 @@
 from django.db import models
 
 from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
-from api.models.languages_levels import TeachingLanguageAndLevel
+from api.models.languages_levels import LanguageAndLevel
 from api.models.people import Student
 
 
 class EnrollmentTest(models.Model):
     """Model for 'written' test given to the student at registration."""
 
-    languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
+    languages_and_levels = models.ManyToManyField(LanguageAndLevel)
 
     def __str__(self):
         return ", ".join(self.languages_and_levels.all())

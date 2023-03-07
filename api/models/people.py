@@ -7,7 +7,7 @@ from phonenumber_field import modelfields
 from api.models.base import GroupOrPerson
 from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.days_time_slots import DayAndTimeSlot
-from api.models.languages_levels import TeachingLanguageAndLevel
+from api.models.languages_levels import LanguageAndLevel
 
 
 # PEOPLE
@@ -168,7 +168,7 @@ class Student(Person):
 
     # The general rule is that one student can only learn one language,
     # but we don't want to limit this in the database.
-    teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
+    teaching_languages_and_levels = models.ManyToManyField(LanguageAndLevel)
 
 
 class TeacherCommon(Person):
@@ -244,7 +244,7 @@ class Teacher(TeacherCommon):
         "The 'from's and 'to's of these ranges are wider than those the students choose "
         "for themselves.",
     )
-    teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
+    teaching_languages_and_levels = models.ManyToManyField(LanguageAndLevel)
     weekly_frequency_per_group = models.PositiveSmallIntegerField(
         help_text="number of times per week the teacher can have classes with each group"
     )
