@@ -33,7 +33,8 @@ class PersonalInfo(models.Model):
     utc_timedelta = models.DurationField(default=timedelta(hours=0))
 
     information_source = models.TextField(
-        verbose_name="how did they learn about Samantha Smith's Group?"
+        verbose_name="source of info about SSG",
+        help_text="how did they learn about Samantha Smith's Group?",
     )
     communication_language_mode = models.ForeignKey(
         CommunicationLanguageMode, on_delete=models.PROTECT
@@ -87,10 +88,6 @@ class Person(models.Model):
         primary_key=True,
         related_name="as_%(class)s",  # produces `.as_coordinator` etc.
     )
-
-    # Statuses are different for different roles, but this automatic field is common for them all.
-    # Date and time of status change can be tracked in LogEvents but this is a convenient shortcut.
-    status_since = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
