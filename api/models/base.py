@@ -63,21 +63,15 @@ class InternalModelWithName(ModelWithName):
 class GroupOrPerson(models.Model):
     """Model holding attributes that are common for every person and group."""
 
-    # Using class-based syntax in an abstract model causes an error when generating tables:
-    # "'choices' must be an iterable containing (actual value, human-readable name) tuples."
-    RU_ONLY = "ru"
-    UA_ONLY = "ua"
-    RU_OR_UA = "ru_ua"
-    L2_ONLY = "l2_only"
-    COMMUNICATION_MODE_CHOICES = [
-        (RU_ONLY, "Russian only"),
-        (UA_ONLY, "Ukrainian only"),
-        (RU_OR_UA, "Russian or Ukrainian"),
-        (L2_ONLY, "Only language being taught"),
-    ]
+    class CommunicationLanguageMode(models.TextChoices):
+        RU_ONLY = "ru", "Russian only"
+        UA_ONLY = "ua", "Ukrainian only"
+        RU_OR_UA = "ru_ua", "Russian or Ukrainian"
+        L2_ONLY = "l2_only", "Only language being taught"
+
     communication_language_mode = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
-        choices=COMMUNICATION_MODE_CHOICES,
+        choices=CommunicationLanguageMode.choices,
         verbose_name="Language(s) the students and teachers can speak in class",
     )
 
