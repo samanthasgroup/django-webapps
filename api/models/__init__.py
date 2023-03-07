@@ -1,5 +1,5 @@
 from .base import InternalModelWithName, ModelWithMultilingualName
-from .days_time_slots import DayAndTimeSlot, DayOfWeek, TimeSlot
+from .days_time_slots import DayAndTimeSlot, TimeSlot
 from .enrollment_test import (
     EnrollmentTest,
     EnrollmentTestQuestion,

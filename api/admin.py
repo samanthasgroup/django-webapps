@@ -10,7 +10,6 @@ for model in (
     models.CoordinatorLogEventRule,
     models.CoordinatorLogEventType,
     models.CoordinatorStatus,
-    models.DayOfWeek,
     models.DayAndTimeSlot,
     models.EnrollmentTest,
     models.EnrollmentTestQuestion,
