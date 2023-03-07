@@ -16,7 +16,15 @@ class EnrollmentTest(models.Model):
 
 class EnrollmentTestQuestion(models.Model):
     enrollment_test = models.ForeignKey(EnrollmentTest, on_delete=models.CASCADE)
-    text = models.CharField(max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True)
+    text = models.CharField(max_length=DEFAULT_CHAR_FIELD_MAX_LEN)
+
+    class Meta:
+        constraints = [
+            # accessing foreign key directly instead of making an additional query
+            models.UniqueConstraint(
+                fields=["enrollment_test_id", "text"], name="option_unique_per_test"
+            ),
+        ]
 
     def __str__(self):
         return self.text
