@@ -1,12 +1,10 @@
 from django.db import models
 
-from api.models.base import ModelWithMultilingualName
+from api.models.base import InternalModelWithName
 
 
-class TeachingLanguage(ModelWithMultilingualName):
+class Language(InternalModelWithName):
     """Model for languages that students learn and teachers teach."""
-
-    # TODO make it into internal model? Bot stores names of languages in its CSV
 
 
 class TeachingLanguageAndLevel(models.Model):
@@ -19,7 +17,7 @@ class TeachingLanguageAndLevel(models.Model):
         C1 = "C1", "C1 (Advanced)"
         # This school is definitely not for C2 students, so no C2
 
-    language = models.ForeignKey(TeachingLanguage, on_delete=models.CASCADE)
+    language = models.ForeignKey(Language, on_delete=models.CASCADE)
     level = models.CharField(max_length=2, choices=Level.choices)
 
     class Meta:

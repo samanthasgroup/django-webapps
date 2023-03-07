@@ -3,7 +3,7 @@ from django.db import models
 from api.models.base import GroupOrPerson
 from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.days_time_slots import DayAndTimeSlot
-from api.models.languages_levels import TeachingLanguage, TeachingLanguageAndLevel
+from api.models.languages_levels import Language, TeachingLanguageAndLevel
 from api.models.people import Coordinator, Student, Teacher, TeacherUnder18
 
 
@@ -73,7 +73,7 @@ class SpeakingClub(GroupCommon):
         verbose_name="Is this a speaking club for children?", default=False
     )
     # a speaking club has no fixed level, so putting language only
-    language = models.ForeignKey(TeachingLanguage, on_delete=models.PROTECT)
+    language = models.ForeignKey(Language, on_delete=models.PROTECT)
     # in addition to regular teachers, a speaking club can have young teachers
     teachers_under_18 = models.ManyToManyField(TeacherUnder18)
 

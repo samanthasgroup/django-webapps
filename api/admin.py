@@ -14,7 +14,7 @@ for model in (
     models.Student,
     models.Teacher,
     models.TeacherUnder18,
-    models.TeachingLanguage,
+    models.Language,
     models.TeachingLanguageAndLevel,
     models.TimeSlot,
 ):
