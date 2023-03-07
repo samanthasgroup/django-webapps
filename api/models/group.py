@@ -17,7 +17,7 @@ class GroupCommon(models.Model):
     students = models.ManyToManyField(Student)
     teachers = models.ManyToManyField(Teacher)
     # group chat created manually by the coordinator/teacher
-    telegram_chat_url = models.URLField(blank=True, null=True)
+    telegram_chat_url = models.URLField(null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -36,20 +36,20 @@ class Group(GroupCommon):
     lesson_duration = models.PositiveSmallIntegerField()
     status = models.ForeignKey(GroupStatus, on_delete=models.PROTECT)
     status_since = models.DateTimeField()
-    start_date = models.DateField(blank=True, null=True)
+    start_date = models.DateField(null=True, blank=True)
     # this field could be useful for overview, but can be filled automatically when
     # a corresponding log event is created:
-    end_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(null=True, blank=True)
 
     # some research showed that it's better to store the schedule not in a single text field
     # with some pre-defined syntax, but in 7 columns, one per day of the week
-    monday = models.TimeField(blank=True, null=True)
-    tuesday = models.TimeField(blank=True, null=True)
-    wednesday = models.TimeField(blank=True, null=True)
-    thursday = models.TimeField(blank=True, null=True)
-    friday = models.TimeField(blank=True, null=True)
-    saturday = models.TimeField(blank=True, null=True)
-    sunday = models.TimeField(blank=True, null=True)
+    monday = models.TimeField(null=True, blank=True)
+    tuesday = models.TimeField(null=True, blank=True)
+    wednesday = models.TimeField(null=True, blank=True)
+    thursday = models.TimeField(null=True, blank=True)
+    friday = models.TimeField(null=True, blank=True)
+    saturday = models.TimeField(null=True, blank=True)
+    sunday = models.TimeField(null=True, blank=True)
 
     class Meta:
         constraints = [

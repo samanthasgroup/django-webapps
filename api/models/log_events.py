@@ -55,15 +55,15 @@ class PersonLogEvent(LogEvent):
 
     from_group = models.ForeignKey(
         "Group",
-        blank=True,
         null=True,
+        blank=True,
         on_delete=models.CASCADE,
         related_name="%(class)s_from_self",  # will produce e.g. "studentLogEvents_from_self"
     )
     to_group = models.ForeignKey(
         "Group",
-        blank=True,
         null=True,
+        blank=True,
         on_delete=models.CASCADE,
         related_name="%(class)s_to_self",
     )

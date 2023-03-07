@@ -42,8 +42,8 @@ class PersonalInfo(models.Model):
 
     # These are none for coordinator, but can be present for student/teacher, so keeping them here.
     # Also, there is a possibility that coordinators will register with registration bot someday.
-    registration_bot_chat_id = models.IntegerField(blank=True, null=True)
-    chatwoot_conversation_id = models.IntegerField(blank=True, null=True)
+    registration_bot_chat_id = models.IntegerField(null=True, blank=True)
+    chatwoot_conversation_id = models.IntegerField(null=True, blank=True)
 
     class Meta:
         # there may be no phone or tg username, but matching name and email is good enough reason
@@ -81,7 +81,7 @@ class AgeRange(models.Model):
 class Person(models.Model):
     """Abstract model for a coordinator/student/teacher. Stores their common fields and methods."""
 
-    comment = models.TextField(blank=True, null=True)
+    comment = models.TextField(null=True, blank=True)
     personal_info = models.OneToOneField(
         PersonalInfo,
         on_delete=models.CASCADE,
@@ -112,8 +112,8 @@ class Coordinator(Person):
     mentor = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
-        blank=True,
         null=True,
+        blank=True,
         related_name="interns",
         help_text="mentor of this coordinator. One coordinator can have many interns",
     )
@@ -155,7 +155,7 @@ class Student(Person):
     # JSONField because this will come from external API, so it's good to be protected from changes
     # Just a reminder: the written test is a model with ForeignKey to Student, no field needed here
     smalltalk_test_result = models.JSONField(
-        blank=True, null=True, help_text="JSON received from SmallTalk API"
+        null=True, blank=True, help_text="JSON received from SmallTalk API"
     )
 
     # The general rule is that one student can only learn one language,
@@ -170,8 +170,8 @@ class TeacherCommon(Person):
 
     additional_skills_comment = models.CharField(
         max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
-        blank=True,
         null=True,
+        blank=True,
         verbose_name="Comment on additional skills besides teaching",
         help_text="other ways in which the applicant could help, besides teaching or helping other"
         "teachers with materials or feedback (comment)",
