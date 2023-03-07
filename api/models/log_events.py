@@ -1,27 +1,11 @@
 from django.db import models
 
-from api.models.base import InternalModelWithName
+from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.groups import Group
 from api.models.people import Coordinator, Student, Teacher
 
 # We could have created one table listing all possible names of log events, but that might look
 # confusing for admin users later on.  It seems more convenient for them to have separate tables.
-
-
-class CoordinatorLogEventType(InternalModelWithName):
-    """Model for enumeration of possible types of log events (events) for a coordinator."""
-
-
-class GroupLogEventType(InternalModelWithName):
-    """Model for enumeration of possible types of log events (events) for a group."""
-
-
-class StudentLogEventType(InternalModelWithName):
-    """Model for enumeration of possible types of log events (events) for a student."""
-
-
-class TeacherLogEventType(InternalModelWithName):
-    """Model for enumeration of possible types of log events (events) for a teacher."""
 
 
 class LogEvent(models.Model):
@@ -43,11 +27,20 @@ class LogEvent(models.Model):
 
 
 class GroupLogEvent(LogEvent):
+    class EventType(models.TextChoices):
+        FORMED = "formed", "Formed"
+        CONFIRMED = "confirmed", "Confirmed"
+        STARTED = "started", "Started classes"
+        FINISHED = "finished", "Finished classes"
+        # TODO put types here once they are finalized
+
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    type = models.ForeignKey(GroupLogEventType, on_delete=models.CASCADE)
+    type = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
+    )
 
     def __str__(self):
-        return f"{self.date_as_str}: group {self.group} {self.type.name_for_user}"
+        return f"{self.date_as_str}: group {self.group} {self.get_type_display()}"
 
 
 class PersonLogEvent(LogEvent):
@@ -73,33 +66,63 @@ class PersonLogEvent(LogEvent):
 
 
 class CoordinatorLogEvent(PersonLogEvent):
+    class EventType(models.TextChoices):
+        JOINED = "joined", "Joined the team"
+        STARTED_ONBOARDING = "onboard", "Started onboarding"
+        FINISHED_ONBOARDING = "onboard_end", "Finished onboarding"
+        TOOK_GROUP = "took_group", "Took a group"
+        # TODO put types here once they are finalized
+
     coordinator = models.ForeignKey(Coordinator, related_name="log", on_delete=models.CASCADE)
-    type = models.ForeignKey(CoordinatorLogEventType, on_delete=models.CASCADE)
+    type = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
+    )
 
     def __str__(self):
         return (
             f"{self.date_as_str}: coordinator {self.coordinator.personal_info.full_name} "
-            f"{self.type.name_for_user}"
+            f"{self.get_type_display()}"
         )
 
 
 class StudentLogEvent(PersonLogEvent):
+    class EventType(models.TextChoices):
+        REGISTERED = "register", "Joined the team"
+        STUDY_START = "start", "Started studying in a group"
+        TRANSFER_REQUEST = "req_transf", "Requested transfer"
+        TRANSFER_OK = "transferred", "Transferred"
+        MISS_CLASS = "missed_class", "Missed a class"
+        STUDY_FINISH = "finish_group", "Finished studying in a group"
+        NO_REPLY = "no_reply", "Not replying"
+        # TODO put types here once they are finalized
+
     student = models.ForeignKey(Student, related_name="log", on_delete=models.CASCADE)
-    type = models.ForeignKey(StudentLogEventType, on_delete=models.CASCADE)
+    type = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
+    )
 
     def __str__(self):
         return (
             f"{self.date_as_str}: student {self.student.personal_info.full_name} "
-            f"{self.type.name_for_user}"
+            f"{self.get_type_display()}"
         )
 
 
 class TeacherLogEvent(PersonLogEvent):
+    class EventType(models.TextChoices):
+        REGISTERED = "register", "Joined the team"
+        STUDY_START = "start", "Started studying in a group"
+        STUDY_FINISH = "finish_group", "Finished studying in a group"
+        NO_REPLY = "no_reply", "Not replying"
+        # TODO put types here once they are finalized
+
     teacher = models.ForeignKey(Teacher, related_name="log", on_delete=models.CASCADE)
-    type = models.ForeignKey(TeacherLogEventType, on_delete=models.CASCADE)
+    type = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
+    )
 
     def __str__(self):
         return (
             f"{self.date_as_str}: teacher {self.teacher.personal_info.full_name} "
-            f"{self.type.name_for_user}"
+            f"{self.get_type_display()}"
         )

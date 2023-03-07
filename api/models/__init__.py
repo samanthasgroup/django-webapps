@@ -10,14 +10,10 @@ from .groups import Group
 from .languages_levels import TeachingLanguage, TeachingLanguageAndLevel
 from .log_events import (
     CoordinatorLogEvent,
-    CoordinatorLogEventType,
     GroupLogEvent,
-    GroupLogEventType,
     LogEvent,
     PersonLogEvent,
     StudentLogEvent,
-    StudentLogEventType,
     TeacherLogEvent,
-    TeacherLogEventType,
 )
 from .people import AgeRange, Coordinator, PersonalInfo, Student, Teacher, TeacherUnder18
