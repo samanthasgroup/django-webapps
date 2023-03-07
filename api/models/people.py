@@ -2,6 +2,7 @@ import uuid
 from datetime import timedelta
 
 from django.db import models
+from phonenumber_field import modelfields
 
 from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 from api.models.days_time_slots import DayAndTimeSlot
@@ -27,9 +28,9 @@ class PersonalInfo(models.Model):
     first_name = models.CharField(max_length=100)  # can include middle name if a person wishes so
     last_name = models.CharField(max_length=100)
     # Telegram's limit is 32, but this might change
-    tg_username = models.CharField(blank=True, max_length=100, null=True)
+    tg_username = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField()
-    phone = models.CharField(max_length=50)
+    phone = modelfields.PhoneNumberField(null=True, blank=True)
     utc_timedelta = models.DurationField(default=timedelta(hours=0))
 
     information_source = models.TextField(
