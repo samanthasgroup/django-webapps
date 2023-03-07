@@ -1,16 +1,13 @@
 from django.db import models
 
-from api.models.constants import STATUS_MAX_LEN
+from api.models.base import GroupOrPerson
+from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.days_time_slots import DayAndTimeSlot
-from api.models.languages_levels import (
-    CommunicationLanguageMode,
-    TeachingLanguage,
-    TeachingLanguageAndLevel,
-)
+from api.models.languages_levels import TeachingLanguage, TeachingLanguageAndLevel
 from api.models.people import Coordinator, Student, Teacher, TeacherUnder18
 
 
-class GroupCommon(models.Model):
+class GroupCommon(GroupOrPerson):
     """Abstract model for attributes shared by regular groups and speaking clubs."""
 
     coordinators = models.ManyToManyField(Coordinator)
@@ -34,13 +31,12 @@ class Group(GroupCommon):
         # TODO put statuses here once they are finalized
 
     availability_slot = models.ManyToManyField(DayAndTimeSlot)
-    communication_language_mode = models.ForeignKey(
-        CommunicationLanguageMode, on_delete=models.PROTECT
-    )
     is_for_staff_only = models.BooleanField(default=False)
     language_and_level = models.ForeignKey(TeachingLanguageAndLevel, on_delete=models.PROTECT)
     lesson_duration = models.PositiveSmallIntegerField()
-    status = models.CharField(max_length=STATUS_MAX_LEN, choices=Status.choices)
+    status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices
+    )
     start_date = models.DateField(null=True, blank=True)
     # this field could be useful for overview, but can be filled automatically when
     # a corresponding log event is created:

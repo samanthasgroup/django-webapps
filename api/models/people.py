@@ -4,9 +4,10 @@ from datetime import timedelta
 from django.db import models
 from phonenumber_field import modelfields
 
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, STATUS_MAX_LEN
+from api.models.base import GroupOrPerson
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.days_time_slots import DayAndTimeSlot
-from api.models.languages_levels import CommunicationLanguageMode, TeachingLanguageAndLevel
+from api.models.languages_levels import TeachingLanguageAndLevel
 
 
 # PEOPLE
@@ -14,7 +15,7 @@ from api.models.languages_levels import CommunicationLanguageMode, TeachingLangu
 # a PersonalInfo is created, then e.g. a Coordinator is created, linking to that PersonalInfo.
 # Then, if the same person assumes another role, e.g. a Teacher is created, linking to the
 # existing PersonalInfo.
-class PersonalInfo(models.Model):
+class PersonalInfo(GroupOrPerson):
     """Model for storing personal information that does not depend on a person's role
     (coordinators, students and teachers).
     """
@@ -35,9 +36,6 @@ class PersonalInfo(models.Model):
     information_source = models.TextField(
         verbose_name="source of info about SSG",
         help_text="how did they learn about Samantha Smith's Group?",
-    )
-    communication_language_mode = models.ForeignKey(
-        CommunicationLanguageMode, on_delete=models.PROTECT
     )
 
     # These are none for coordinator, but can be present for student/teacher, so keeping them here.
@@ -119,7 +117,9 @@ class Coordinator(Person):
         related_name="interns",
         help_text="mentor of this coordinator. One coordinator can have many interns",
     )
-    status = models.CharField(max_length=STATUS_MAX_LEN, choices=Status.choices)
+    status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices
+    )
 
     def __str__(self):
         role = " (admin)" if self.is_admin else ""
@@ -144,7 +144,7 @@ class Student(Person):
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
     status = models.CharField(
-        max_length=STATUS_MAX_LEN,
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=Status.choices,
         verbose_name="group studies status",
         help_text="status of this student with regard to group studies",
@@ -225,7 +225,7 @@ class Teacher(TeacherCommon):
     can_work_in_tandem = models.BooleanField(default=False)
 
     status = models.CharField(
-        max_length=STATUS_MAX_LEN,
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=Status.choices,
         verbose_name="group studies status",
         help_text="status of this teacher with regard to group studies",
@@ -258,7 +258,9 @@ class TeacherUnder18(TeacherCommon):
         TEACHING_SPEAKING_CLUB = "speak_club", "Teaching in a speaking club"
         # TODO put statuses here once they are finalized
 
-    status = models.CharField(max_length=STATUS_MAX_LEN, choices=Status.choices)
+    status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices
+    )
 
     class Meta:
         verbose_name_plural = "Teaching volunteers under 18 years of age"

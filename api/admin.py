@@ -4,7 +4,6 @@ import api.models as models
 
 for model in (
     models.AgeRange,
-    models.CommunicationLanguageMode,
     models.Coordinator,
     models.CoordinatorLogEvent,
     models.CoordinatorLogEventType,

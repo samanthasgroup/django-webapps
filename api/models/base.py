@@ -1,6 +1,6 @@
 from django.db import models
 
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 
 
 class ModelWithName(models.Model):
@@ -58,3 +58,28 @@ class InternalModelWithName(ModelWithName):
 
     def __str__(self):
         return self.name_for_user
+
+
+class GroupOrPerson(models.Model):
+    """Model holding attributes that are common for every person and group."""
+
+    # Using class-based syntax in an abstract model causes an error when generating tables:
+    # "'choices' must be an iterable containing (actual value, human-readable name) tuples."
+    RU_ONLY = "ru"
+    UA_ONLY = "ua"
+    RU_OR_UA = "ru_ua"
+    L2_ONLY = "l2_only"
+    COMMUNICATION_MODE_CHOICES = [
+        (RU_ONLY, "Russian only"),
+        (UA_ONLY, "Ukrainian only"),
+        (RU_OR_UA, "Russian or Ukrainian"),
+        (L2_ONLY, "Only language being taught"),
+    ]
+    communication_language_mode = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=COMMUNICATION_MODE_CHOICES,
+        verbose_name="Language(s) the students and teachers can speak in class",
+    )
+
+    class Meta:
+        abstract = True
