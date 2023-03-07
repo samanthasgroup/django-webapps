@@ -1,13 +1,13 @@
 from django.db import models
 
+from api.models.constants import STATUS_MAX_LEN
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import (
     CommunicationLanguageMode,
     TeachingLanguage,
     TeachingLanguageAndLevel,
 )
-from api.models.people import Coordinator, Student, Teacher
-from api.models.statuses import GroupStatus
+from api.models.people import Coordinator, Student, Teacher, TeacherUnder18
 
 
 class GroupCommon(models.Model):
@@ -27,6 +27,12 @@ class GroupCommon(models.Model):
 class Group(GroupCommon):
     """Model for a regular language group."""
 
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        STUDYING = "study", "Studying"
+        FINISHED = "finish", "Finished"
+        # TODO put statuses here once they are finalized
+
     availability_slot = models.ManyToManyField(DayAndTimeSlot)
     communication_language_mode = models.ForeignKey(
         CommunicationLanguageMode, on_delete=models.PROTECT
@@ -34,7 +40,7 @@ class Group(GroupCommon):
     is_for_staff_only = models.BooleanField(default=False)
     language_and_level = models.ForeignKey(TeachingLanguageAndLevel, on_delete=models.PROTECT)
     lesson_duration = models.PositiveSmallIntegerField()
-    status = models.ForeignKey(GroupStatus, on_delete=models.PROTECT)
+    status = models.CharField(max_length=STATUS_MAX_LEN, choices=Status.choices)
     start_date = models.DateField(null=True, blank=True)
     # this field could be useful for overview, but can be filled automatically when
     # a corresponding log event is created:
@@ -72,6 +78,8 @@ class SpeakingClub(GroupCommon):
     )
     # a speaking club has no fixed level, so putting language only
     language = models.ForeignKey(TeachingLanguage, on_delete=models.PROTECT)
+    # in addition to regular teachers, a speaking club can have young teachers
+    teachers_under_18 = models.ManyToManyField(TeacherUnder18)
 
     def __str__(self):
         category = "children" if self.is_for_children else "adults"

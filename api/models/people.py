@@ -4,10 +4,9 @@ from datetime import timedelta
 from django.db import models
 from phonenumber_field import modelfields
 
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, STATUS_MAX_LEN
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import CommunicationLanguageMode, TeachingLanguageAndLevel
-from api.models.statuses import CoordinatorStatus, StudentStatus, TeacherStatus
 
 
 # PEOPLE
@@ -100,6 +99,11 @@ class Person(models.Model):
 class Coordinator(Person):
     """Model for a coordinator."""
 
+    class Status(models.TextChoices):
+        ONBOARDING = "onboarding", "In onboarding"
+        WORKING = "working", "Working with a group"
+        # TODO put statuses here once they are finalized
+
     is_admin = models.BooleanField(
         default=False,
         help_text=(
@@ -115,7 +119,7 @@ class Coordinator(Person):
         related_name="interns",
         help_text="mentor of this coordinator. One coordinator can have many interns",
     )
-    status = models.ForeignKey(CoordinatorStatus, on_delete=models.PROTECT)
+    status = models.CharField(max_length=STATUS_MAX_LEN, choices=Status.choices)
 
     def __str__(self):
         role = " (admin)" if self.is_admin else ""
@@ -125,6 +129,12 @@ class Coordinator(Person):
 class Student(Person):
     """Model for a student."""
 
+    class Status(models.TextChoices):
+        WAITING_FOR_GROUP = "waiting", "Waiting for a group"
+        STUDYING = "study", "Studying in a group"
+        NEEDS_TRANSFER = "transfer", "Needs transfer to another group"
+        # TODO put statuses here once they are finalized
+
     age_range = models.ForeignKey(
         AgeRange,
         on_delete=models.PROTECT,
@@ -133,11 +143,11 @@ class Student(Person):
     )
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
-    group_status = models.ForeignKey(
-        StudentStatus,
-        on_delete=models.PROTECT,
-        verbose_name="Group studies status",
-        help_text="Status of this student with regard to group studies",
+    status = models.CharField(
+        max_length=STATUS_MAX_LEN,
+        choices=Status.choices,
+        verbose_name="group studies status",
+        help_text="status of this student with regard to group studies",
     )
     is_member_of_speaking_club = models.BooleanField(
         default=False,
@@ -170,7 +180,7 @@ class TeacherCommon(Person):
         max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
         null=True,
         blank=True,
-        verbose_name="Comment on additional skills besides teaching",
+        verbose_name="comment on additional skills besides teaching",
         help_text="other ways in which the applicant could help, besides teaching or helping other"
         "teachers with materials or feedback (comment)",
     )
@@ -182,6 +192,12 @@ class TeacherCommon(Person):
 
 class Teacher(TeacherCommon):
     """Model for an adult teacher that can teach groups."""
+
+    class Status(models.TextChoices):
+        WAITING_FOR_GROUP = "waiting", "Waiting for a group"
+        TEACHING = "teaching", "Teaching a group"
+        NEEDS_TRANSFER = "transfer", "Needs transfer to another group"
+        # TODO put statuses here once they are finalized
 
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
@@ -208,35 +224,41 @@ class Teacher(TeacherCommon):
     )
     can_work_in_tandem = models.BooleanField(default=False)
 
-    group_status = models.ForeignKey(
-        TeacherStatus,
-        on_delete=models.PROTECT,
-        help_text="Status of this teacher with regard to group studies.",
+    status = models.CharField(
+        max_length=STATUS_MAX_LEN,
+        choices=Status.choices,
+        verbose_name="group studies status",
+        help_text="status of this teacher with regard to group studies",
     )
     has_prior_teaching_experience = models.BooleanField(
         default=False,
-        help_text="Has the applicant already worked as a teacher before applying at Samantha "
+        help_text="has the applicant already worked as a teacher before applying at Samantha "
         "Smith's Group?",
     )
     simultaneous_groups = models.PositiveSmallIntegerField(
-        default=1, help_text="Number of groups the teacher can teach simultaneously"
+        default=1, help_text="number of groups the teacher can teach simultaneously"
     )
     student_age_ranges = models.ManyToManyField(
         AgeRange,
-        help_text="Age ranges of students that the teacher is willing to teach. "
+        help_text="age ranges of students that the teacher is willing to teach. "
         "The 'from's and 'to's of these ranges are wider than those the students choose "
         "for themselves.",
     )
     teaching_languages_and_levels = models.ManyToManyField(TeachingLanguageAndLevel)
     weekly_frequency_per_group = models.PositiveSmallIntegerField(
-        help_text="Number of times per week the teacher can have classes with each group"
+        help_text="number of times per week the teacher can have classes with each group"
     )
 
 
 class TeacherUnder18(TeacherCommon):
     """Model for a teacher under 18 years old that cannot teach groups."""
 
-    # no additional fields required besides already present in TeacherCommon
+    class Status(models.TextChoices):
+        WAITING = "waiting", "Waiting for a group"
+        TEACHING_SPEAKING_CLUB = "speak_club", "Teaching in a speaking club"
+        # TODO put statuses here once they are finalized
+
+    status = models.CharField(max_length=STATUS_MAX_LEN, choices=Status.choices)
 
     class Meta:
         verbose_name_plural = "Teaching volunteers under 18 years of age"

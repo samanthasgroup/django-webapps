@@ -20,5 +20,4 @@ from .log_events import (
     TeacherLogEvent,
     TeacherLogEventType,
 )
-from .people import AgeRange, Coordinator, PersonalInfo, Student, Teacher
-from .statuses import CoordinatorStatus, GroupStatus, StudentStatus, TeacherStatus
+from .people import AgeRange, Coordinator, PersonalInfo, Student, Teacher, TeacherUnder18
