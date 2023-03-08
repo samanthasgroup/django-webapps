@@ -39,6 +39,12 @@ class GroupLogEvent(LogEvent):
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
     )
 
+    class Meta:
+        indexes = [
+            models.Index(fields=("group_id",), name="group_id_idx"),
+            models.Index(fields=("type",), name="group_log_event_type_idx"),
+        ]
+
     def __str__(self):
         return f"{self.date_as_str}: group {self.group} {self.get_type_display()}"
 
@@ -78,6 +84,12 @@ class CoordinatorLogEvent(PersonLogEvent):
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
     )
 
+    class Meta:
+        indexes = [
+            models.Index(fields=("coordinator_id",), name="coordinator_id_idx"),
+            models.Index(fields=("type",), name="coordinator_log_event_type_idx"),
+        ]
+
     def __str__(self):
         return (
             f"{self.date_as_str}: coordinator {self.coordinator.personal_info.full_name} "
@@ -101,6 +113,12 @@ class StudentLogEvent(PersonLogEvent):
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
     )
 
+    class Meta:
+        indexes = [
+            models.Index(fields=("student_id",), name="student_id_idx"),
+            models.Index(fields=("type",), name="student_log_event_type_idx"),
+        ]
+
     def __str__(self):
         return (
             f"{self.date_as_str}: student {self.student.personal_info.full_name} "
@@ -120,6 +138,12 @@ class TeacherLogEvent(PersonLogEvent):
     type = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
     )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=("teacher_id",), name="teacher_id_idx"),
+            models.Index(fields=("type",), name="teacher_log_event_type_idx"),
+        ]
 
     def __str__(self):
         return (

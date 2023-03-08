@@ -67,6 +67,11 @@ class Group(GroupCommon):
                 name="at_least_one_day_time_slot_must_be_selected",
             ),
         ]
+        indexes = [
+            models.Index(fields=("language_and_level",), name="group_language_level_idx"),
+            models.Index(fields=("status",), name="group_status_idx"),
+            models.Index(fields=("start_date",), name="group_start_date_idx"),
+        ]
 
     def __str__(self):
         coordinator_names = ",".join(c.full_name for c in self.coordinators.all())

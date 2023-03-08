@@ -53,6 +53,9 @@ class PersonalInfo(GroupOrPerson):
                 fields=["first_name", "last_name", "email"], name="full_name_and_email"
             )
         ]
+        indexes = [
+            models.Index(fields=("last_name", "first_name", "email"), name="name_email_idx")
+        ]
         ordering = ("last_name", "first_name")
         verbose_name_plural = "personal info records"
 
@@ -109,6 +112,9 @@ class Coordinator(Person):
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices
     )
 
+    class Meta:
+        indexes = [models.Index(fields=("status",), name="coordinator_status_idx")]
+
     def __str__(self):
         role = " (admin)" if self.is_admin else ""
         return f"{super().__str__()}{role}"
@@ -157,6 +163,11 @@ class Student(Person):
     # The general rule is that one student can only learn one language,
     # but we don't want to limit this in the database.
     teaching_languages_and_levels = models.ManyToManyField(LanguageAndLevel)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=("status",), name="student_status_idx"),
+        ]
 
 
 class TeacherCommon(Person):
@@ -237,6 +248,11 @@ class Teacher(TeacherCommon):
         help_text="number of times per week the teacher can have classes with each group"
     )
 
+    class Meta:
+        indexes = [
+            models.Index(fields=("status",), name="teacher_status_idx"),
+        ]
+
 
 class TeacherUnder18(TeacherCommon):
     """Model for a teacher under 18 years old that cannot teach groups."""
@@ -251,4 +267,5 @@ class TeacherUnder18(TeacherCommon):
     )
 
     class Meta:
+        indexes = [models.Index(fields=("status",), name="teacher_under_18_status_idx")]
         verbose_name_plural = "Teaching volunteers under 18 years of age"
