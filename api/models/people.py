@@ -20,9 +20,11 @@ class PersonalInfo(GroupOrPerson):
     (coordinators, students and teachers).
     """
 
-    # This is the ID that will identify a person with any role (student, teacher, coordinator),
-    # even if one person combines several roles.
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # One ID will identify a person with any role (student, teacher, coordinator),
+    # even if one person combines several roles.  The autoincrement simple numeric ID can be used
+    # for internal communication ("John 132"), while uuid can be used e.g. for hyperlinks
+    # to prevent IDOR
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     # Automatically save date and time when the Person was created.
     date_and_time_added = models.DateTimeField(auto_now_add=True)
     first_name = models.CharField(max_length=100)  # can include middle name if a person wishes so
@@ -54,7 +56,7 @@ class PersonalInfo(GroupOrPerson):
         verbose_name_plural = "personal info records"
 
     def __str__(self):
-        return f"{self.full_name} ({self.email})"
+        return f"{self.full_name} ({self.pk})"
 
     @property
     def full_name(self):
