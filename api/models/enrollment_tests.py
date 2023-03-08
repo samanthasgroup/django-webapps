@@ -40,10 +40,7 @@ class EnrollmentTestQuestionOption(models.Model):
             # accessing foreign key directly instead of making an additional query
             models.UniqueConstraint(
                 fields=["question_id", "text"], name="option_unique_per_question"
-            ),
-            models.UniqueConstraint(
-                fields=["question_id", "is_correct"], name="only_one_correct_option_per_question"
-            ),
+            )
         ]
 
     def __str__(self):
