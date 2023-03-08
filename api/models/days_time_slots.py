@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 
 class TimeSlot(models.Model):
@@ -40,7 +41,19 @@ class DayAndTimeSlot(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["day_of_week_index", "time_slot"], name="day_and_slot")
+            models.UniqueConstraint(
+                fields=["day_of_week_index", "time_slot"], name="unique_day_and_slot"
+            ),
+            models.CheckConstraint(
+                check=Q(monday__isnull=False)
+                | Q(tuesday__isnull=False)
+                | Q(wednesday__isnull=False)
+                | Q(thursday__isnull=False)
+                | Q(friday__isnull=False)
+                | Q(saturday__isnull=False)
+                | Q(sunday__isnull=False),
+                name="at_least_one_day_time_slot_must_be_selected",
+            ),
         ]
         ordering = ("day_of_week_index", "time_slot__from_utc_hour")
 
