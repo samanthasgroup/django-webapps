@@ -33,7 +33,7 @@ class Group(GroupCommon):
     availability_slot = models.ManyToManyField(DayAndTimeSlot)
     is_for_staff_only = models.BooleanField(default=False)
     language_and_level = models.ForeignKey(LanguageAndLevel, on_delete=models.PROTECT)
-    lesson_duration = models.PositiveSmallIntegerField()
+    lesson_duration_in_minutes = models.PositiveSmallIntegerField()
     status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices
     )
