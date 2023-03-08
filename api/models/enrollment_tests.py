@@ -1,17 +1,34 @@
 from django.db import models
 
+from api.models.age_ranges import AgeRange
 from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
-from api.models.languages_levels import LanguageAndLevel
+from api.models.languages_levels import Language, LanguageLevel
 from api.models.people import Student
 
 
 class EnrollmentTest(models.Model):
     """Model for 'written' test given to the student at registration."""
 
-    languages_and_levels = models.ManyToManyField(LanguageAndLevel)
+    # null=True has no effect on ManyToManyField.
+    age_ranges = models.ManyToManyField(
+        AgeRange,
+        blank=True,
+        help_text="age ranges for which this test was designed. "
+        "Leave blank for the test to be shown to all ages.",
+    )
+    language = models.ForeignKey(Language, on_delete=models.CASCADE)
+    levels = models.ManyToManyField(
+        LanguageLevel,
+        blank=True,
+        help_text="level(s) of the language this test was designed for. "
+        "Leave blank for the test to be shown for all levels.",
+    )
 
     def __str__(self):
-        return ", ".join(self.languages_and_levels.all())
+        ages, levels = self.age_ranges.all(), self.levels.all()
+        ages_text = ", ".join(ages) if ages else "all ages"
+        levels_text = ", ".join(levels) if levels else "all levels"
+        return f"{self.language} ({levels_text}, {ages_text})"
 
 
 class EnrollmentTestQuestion(models.Model):

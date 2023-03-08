@@ -1,3 +1,4 @@
+from .age_ranges import AgeRange
 from .base import GroupOrPerson, InternalModelWithName
 from .days_time_slots import DayAndTimeSlot, TimeSlot
 from .enrollment_tests import (
@@ -7,7 +8,7 @@ from .enrollment_tests import (
     EnrollmentTestResult,
 )
 from .groups import Group
-from .languages_levels import Language, LanguageAndLevel
+from .languages_levels import Language, LanguageAndLevel, LanguageLevel
 from .log_events import (
     CoordinatorLogEvent,
     GroupLogEvent,
@@ -16,4 +17,4 @@ from .log_events import (
     StudentLogEvent,
     TeacherLogEvent,
 )
-from .people import AgeRange, Coordinator, PersonalInfo, Student, Teacher, TeacherUnder18
+from .people import Coordinator, PersonalInfo, Student, Teacher, TeacherUnder18

@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.db import models
 from phonenumber_field import modelfields
 
+from api.models.age_ranges import AgeRange
 from api.models.base import GroupOrPerson
 from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.days_time_slots import DayAndTimeSlot
@@ -61,21 +62,6 @@ class PersonalInfo(GroupOrPerson):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
-
-
-class AgeRange(models.Model):
-    """Model for age range.  Students have no exact ages, but age ranges. Teachers' preferences
-    and group building algorithms are also based on age ranges.
-    """
-
-    age_from = models.PositiveSmallIntegerField()
-    age_to = models.PositiveSmallIntegerField()
-
-    class Meta:
-        constraints = [models.UniqueConstraint(fields=["age_from", "age_to"], name="age_from_to")]
-
-    def __str__(self):
-        return f"Age {self.age_from} to {self.age_to}"
 
 
 class Person(models.Model):

@@ -2,23 +2,25 @@ from django.db import models
 
 from api.models.base import InternalModelWithName
 
+# Sometimes the languages and levels are needed separately, sometimes in combinations.
+# This means that we cannot create a "choices" field for language or level.
+
 
 class Language(InternalModelWithName):
     """Model for languages that students learn and teachers teach."""
 
 
+class LanguageLevel(InternalModelWithName):
+    """Model for language levels. Will be pre-populated."""
+
+
 class LanguageAndLevel(models.Model):
-    class Level(models.TextChoices):
-        A0 = "A0", "A0 (Starter)"
-        A1 = "A1", "A1 (Beginner)"
-        A2 = "A2", "A2 (Pre-Intermediate)"
-        B1 = "B1", "B1 (Intermediate)"
-        B2 = "B2", "B2 (Upper-Intermediate)"
-        C1 = "C1", "C1 (Advanced)"
-        # This school is definitely not for C2 students, so no C2
+    """A model combining language and level. It is needed for the cases when a student/teacher
+    studies/teaches several languages, each at different level(s).
+    """
 
     language = models.ForeignKey(Language, on_delete=models.CASCADE)
-    level = models.CharField(max_length=2, choices=Level.choices)
+    level = models.ForeignKey(LanguageLevel, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name_plural = "Languages with levels"
