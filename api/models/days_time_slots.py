@@ -1,23 +1,50 @@
 from django.db import models
 
-from api.models.auxil import MultilingualModel
-
-
-class DayOfWeek(MultilingualModel):
-    """Model for days of the week (with internationalization)."""
-
-    # We could just use numbers and then localize them using Babel,
-    # but it seems easier to just create a table with 7 rows.
-
 
 class TimeSlot(models.Model):
+    """Model for timeslots. Note that the timeslots have no "name" as such.
+    Will be pre-populated.
+    """
+
     # Postgres supports ranges, and in Django we could use IntegerRangeField for a Postgres range,
     # but that would hinder development and testing with SQLite.
     # Also, Postgres has no pure time ranges (only date-time).
     from_utc_hour = models.TimeField()
     to_utc_hour = models.TimeField()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["from_utc_hour", "to_utc_hour"], name="from_to_hour")
+        ]
+
+    def __str__(self):
+        return f"{self.from_utc_hour.strftime('%H:%M')}-{self.to_utc_hour.strftime('%H:%M')} UTC"
+
 
 class DayAndTimeSlot(models.Model):
-    day_of_week = models.ForeignKey(DayOfWeek, on_delete=models.CASCADE)
+    """Model for combinations of days and timeslots. Will be pre-populated."""
+
+    class DayOfWeek(models.IntegerChoices):
+        MONDAY = 0
+        TUESDAY = 1
+        WEDNESDAY = 2
+        THURSDAY = 3
+        FRIDAY = 4
+        SATURDAY = 5
+        SUNDAY = 6
+
+    day_of_week_index = models.PositiveSmallIntegerField(
+        choices=DayOfWeek.choices, verbose_name="day of the week"
+    )
     time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["day_of_week_index", "time_slot"], name="unique_day_and_slot"
+            )
+        ]
+        ordering = ("day_of_week_index", "time_slot__from_utc_hour")
+
+    def __str__(self):
+        return f"{self.get_day_of_week_index_display()}, {self.time_slot}"
