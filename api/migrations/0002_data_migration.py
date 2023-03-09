@@ -12,6 +12,8 @@ from api.models.constants import (
 )
 from api.models.age_ranges import AgeRangeType
 
+APP_NAME = "api"
+
 
 class PrePopulationMaster:
     """Class-based variation of functions for pre-populating the database with fixed data.
@@ -34,7 +36,7 @@ class PrePopulationMaster:
 
     def _write_age_ranges(self):
         """Writes `AgeRange` objects to database."""
-        AgeRange = self.apps.get_model("api", "AgeRange")
+        AgeRange = self.apps.get_model(APP_NAME, "AgeRange")
 
         student_age_ranges = [
             AgeRange(type=AgeRangeType.STUDENT, age_from=pair[0], age_to=pair[1])
@@ -52,8 +54,8 @@ class PrePopulationMaster:
 
     def _write_day_and_time_slots(self):
         """Writes `TimeSlot` and `DayAndTimeSlot` objects to database."""
-        TimeSlot = self.apps.get_model("api", "TimeSlot")
-        DayAndTimeSlot = self.apps.get_model("api", "DayAndTimeSlot")
+        TimeSlot = self.apps.get_model(APP_NAME, "TimeSlot")
+        DayAndTimeSlot = self.apps.get_model(APP_NAME, "DayAndTimeSlot")
 
         slots = (
             TimeSlot(
@@ -72,9 +74,9 @@ class PrePopulationMaster:
 
     def _write_languages_and_levels(self):
         """Writes `Language', `LanguageLevel`, and `LanguageAndLevel` objects to database."""
-        Language = self.apps.get_model("api", "Language")
-        Level = self.apps.get_model("api", "LanguageLevel")
-        LanguageAndLevel = self.apps.get_model("api", "LanguageAndLevel")
+        Language = self.apps.get_model(APP_NAME, "Language")
+        Level = self.apps.get_model(APP_NAME, "LanguageLevel")
+        LanguageAndLevel = self.apps.get_model(APP_NAME, "LanguageAndLevel")
 
         languages = (
             Language(id=pair[0], name=pair[1])
@@ -105,7 +107,7 @@ class PrePopulationMaster:
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("api", "0001_initial"),
+        (APP_NAME, "0001_initial"),
     ]
 
     operations = [migrations.RunPython(PrePopulationMaster)]
