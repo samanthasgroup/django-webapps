@@ -3,7 +3,6 @@ from django.contrib import admin
 import api.models as models
 
 for model in (
-    models.AgeRange,
     models.Coordinator,
     models.EnrollmentTest,
     models.EnrollmentTestQuestion,

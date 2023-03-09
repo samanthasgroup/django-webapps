@@ -5,6 +5,13 @@ from django.db import migrations
 from django.db.backends.sqlite3.schema import DatabaseSchemaEditor  # for typing only
 from django.db.migrations.state import StateApps  # for typing only
 
+from api.models.constants import (
+    STUDENT_AGE_RANGE_BOUNDARIES,
+    # STUDENT_AGE_RANGE_BOUNDARIES_FOR_MATCHING,
+    STUDENT_AGE_RANGE_BOUNDARIES_FOR_TEACHER,
+)
+from api.models.age_ranges import AgeRangeType
+
 
 class PrePopulationMaster:
     """Class-based variation of functions for pre-populating the database with fixed data.
@@ -20,9 +27,27 @@ class PrePopulationMaster:
         self.main()
 
     def main(self):
+        self._write_age_ranges()
         self._write_time_slots()
         self._write_day_and_time_slots()
         self._write_levels()
+
+    def _write_age_ranges(self):
+        AgeRange = self.apps.get_model("api", "AgeRange")
+
+        student_age_ranges = [
+            AgeRange(type=AgeRangeType.STUDENT, age_from=pair[0], age_to=pair[1])
+            for pair in STUDENT_AGE_RANGE_BOUNDARIES.values()  # keys are string ranges, we don't need them
+        ]
+
+        student_age_ranges_for_teacher = [
+            AgeRange(type=AgeRangeType.TEACHER, age_from=pair[0], age_to=pair[1])
+            for pair in STUDENT_AGE_RANGE_BOUNDARIES_FOR_TEACHER.values()
+        ]
+
+        # TODO ranges for matching
+
+        AgeRange.objects.bulk_create(student_age_ranges + student_age_ranges_for_teacher)
 
     def _write_time_slots(self):
         TimeSlot = self.apps.get_model("api", "TimeSlot")
