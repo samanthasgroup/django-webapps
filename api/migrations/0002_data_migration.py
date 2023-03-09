@@ -31,13 +31,14 @@ class PrePopulationMaster:
         self._write_time_slots()
         self._write_day_and_time_slots()
         self._write_levels()
+        self._write_languages()
 
     def _write_age_ranges(self):
         AgeRange = self.apps.get_model("api", "AgeRange")
 
         student_age_ranges = [
             AgeRange(type=AgeRangeType.STUDENT, age_from=pair[0], age_to=pair[1])
-            for pair in STUDENT_AGE_RANGE_BOUNDARIES.values()  # keys are string ranges, we don't need them
+            for pair in STUDENT_AGE_RANGE_BOUNDARIES.values()  # keys are string ranges, not needed
         ]
 
         student_age_ranges_for_teacher = [
@@ -75,6 +76,21 @@ class PrePopulationMaster:
         # no C2 at this school
         levels = (Level(id=id_) for id_ in ("A0", "A1", "A2", "B1", "B2", "C1"))
         Level.objects.bulk_create(levels)
+
+    def _write_languages(self):
+        Language = self.apps.get_model("api", "Language")
+        language_dicts = ({"id": pair[0], "name": pair[1]} for pair in (
+            ("en", "English"),
+            ("fr", "French"),
+            ("de", "German"),
+            ("es", "Spanish"),
+            ("it", "Italian"),
+            ("pl", "Polish"),
+            ("cz", "Czech"),
+            ("se", "Swedish"),
+        ))
+        languages = (Language(**dict_) for dict_ in language_dicts)
+        Language.objects.bulk_create(languages)
 
 
 class Migration(migrations.Migration):
