@@ -57,11 +57,12 @@ class PrePopulationMaster:
         """Writes `TimeSlot` objects to database."""
         TimeSlot = self.apps.get_model("api", "TimeSlot")
 
-        slots_dicts = (
-            {"from_utc_hour": datetime.time(hour=from_), "to_utc_hour": datetime.time(hour=to)}
-            for from_, to in ((5, 8), (8, 11), (11, 14), (14, 17), (17, 21))
+        slots = (
+            TimeSlot(
+                from_utc_hour=datetime.time(hour=pair[0]), to_utc_hour=datetime.time(hour=pair[1])
+            )
+            for pair in ((5, 8), (8, 11), (11, 14), (14, 17), (17, 21))
         )
-        slots = (TimeSlot(**dict_) for dict_ in slots_dicts)
         TimeSlot.objects.bulk_create(slots)
 
     def _write_day_and_time_slot_objects(self):
