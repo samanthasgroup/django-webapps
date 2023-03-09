@@ -27,13 +27,16 @@ class PrePopulationMaster:
         self.main()
 
     def main(self):
+        """Runs pre-population operations."""
         self._write_age_ranges()
         self._write_time_slots()
-        self._write_day_and_time_slots()
+        self._write_day_and_time_slot_objects()
         self._write_levels()
         self._write_languages()
+        self._write_language_and_level_objects()
 
     def _write_age_ranges(self):
+        """Writes `AgeRange` objects to database."""
         AgeRange = self.apps.get_model("api", "AgeRange")
 
         student_age_ranges = [
@@ -51,6 +54,7 @@ class PrePopulationMaster:
         AgeRange.objects.bulk_create(student_age_ranges + student_age_ranges_for_teacher)
 
     def _write_time_slots(self):
+        """Writes `TimeSlot` objects to database."""
         TimeSlot = self.apps.get_model("api", "TimeSlot")
 
         slots_dicts = (
@@ -60,7 +64,8 @@ class PrePopulationMaster:
         slots = (TimeSlot(**dict_) for dict_ in slots_dicts)
         TimeSlot.objects.bulk_create(slots)
 
-    def _write_day_and_time_slots(self):
+    def _write_day_and_time_slot_objects(self):
+        """Writes `DayAndTimeSlot` objects to database."""
         TimeSlot = self.apps.get_model("api", "TimeSlot")
         DayAndTimeSlot = self.apps.get_model("api", "DayAndTimeSlot")
 
@@ -72,25 +77,43 @@ class PrePopulationMaster:
         DayAndTimeSlot.objects.bulk_create(day_time_slots)
 
     def _write_levels(self):
+        """Writes `LanguageLevel` objects to database."""
         Level = self.apps.get_model("api", "LanguageLevel")
         # no C2 at this school
         levels = (Level(id=id_) for id_ in ("A0", "A1", "A2", "B1", "B2", "C1"))
         Level.objects.bulk_create(levels)
 
     def _write_languages(self):
+        """Writes `Language` objects to database."""
         Language = self.apps.get_model("api", "Language")
-        language_dicts = ({"id": pair[0], "name": pair[1]} for pair in (
-            ("en", "English"),
-            ("fr", "French"),
-            ("de", "German"),
-            ("es", "Spanish"),
-            ("it", "Italian"),
-            ("pl", "Polish"),
-            ("cz", "Czech"),
-            ("se", "Swedish"),
-        ))
+        language_dicts = (
+            {"id": pair[0], "name": pair[1]}
+            for pair in (
+                ("en", "English"),
+                ("fr", "French"),
+                ("de", "German"),
+                ("es", "Spanish"),
+                ("it", "Italian"),
+                ("pl", "Polish"),
+                ("cz", "Czech"),
+                ("se", "Swedish"),
+            )
+        )
         languages = (Language(**dict_) for dict_ in language_dicts)
         Language.objects.bulk_create(languages)
+
+    def _write_language_and_level_objects(self):
+        """Writes `LanguageAndLevel` objects to database."""
+        Language = self.apps.get_model("api", "Language")
+        Level = self.apps.get_model("api", "LanguageLevel")
+        LanguageAndLevel = self.apps.get_model("api", "LanguageAndLevel")
+
+        language_and_level_objects = (
+            LanguageAndLevel(language=language, level=level)
+            for language in Language.objects.iterator()
+            for level in Level.objects.iterator()
+        )
+        LanguageAndLevel.objects.bulk_create(language_and_level_objects)
 
 
 class Migration(migrations.Migration):
