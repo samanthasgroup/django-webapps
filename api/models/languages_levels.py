@@ -13,6 +13,9 @@ class Language(InternalModelWithName):
 class LanguageLevel(InternalModelWithName):
     """Model for language levels. Will be pre-populated."""
 
+    # This would be a good candidate for a `models.TextChoices` class, but EnrollmentTest
+    # has a many-to-many relationship to LanguageLevel, which requires a table.
+
 
 class LanguageAndLevel(models.Model):
     """A model combining language and level. It is needed for the cases when a student/teacher
