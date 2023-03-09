@@ -10,11 +10,14 @@ class Language(InternalModelWithName):
     """Model for languages that students learn and teachers teach."""
 
 
-class LanguageLevel(InternalModelWithName):
+class LanguageLevel(models.Model):
     """Model for language levels. Will be pre-populated."""
 
     # This would be a good candidate for a `models.TextChoices` class, but EnrollmentTest
     # has a many-to-many relationship to LanguageLevel, which requires a table.
+
+    # no need for auto-incrementing ID here as level is only 2 chars long
+    id = models.CharField(max_length=2, primary_key=True)
 
 
 class LanguageAndLevel(models.Model):
