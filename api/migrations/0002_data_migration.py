@@ -86,8 +86,8 @@ class PrePopulationMaster:
     def _write_languages(self):
         """Writes `Language` objects to database."""
         Language = self.apps.get_model("api", "Language")
-        language_dicts = (
-            {"id": pair[0], "name": pair[1]}
+        languages = (
+            Language(id=pair[0], name=pair[1])
             for pair in (
                 ("en", "English"),
                 ("fr", "French"),
@@ -99,7 +99,6 @@ class PrePopulationMaster:
                 ("se", "Swedish"),
             )
         )
-        languages = (Language(**dict_) for dict_ in language_dicts)
         Language.objects.bulk_create(languages)
 
     def _write_language_and_level_objects(self):
