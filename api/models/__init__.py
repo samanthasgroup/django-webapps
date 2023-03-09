@@ -1,39 +1,20 @@
-from .auxil import InternalModelWithName, MultilingualModel
-from .days_time_slots import DayAndTimeSlot, DayOfWeek, TimeSlot
-from .enrollment_test import (
+from .age_ranges import AgeRange
+from .base import GroupOrPerson, InternalModelWithName
+from .days_time_slots import DayAndTimeSlot, TimeSlot
+from .enrollment_tests import (
     EnrollmentTest,
     EnrollmentTestQuestion,
     EnrollmentTestQuestionOption,
     EnrollmentTestResult,
 )
-from .group import Group
-from .languages_levels import (
-    CommunicationLanguageMode,
-    LanguageLevel,
-    TeachingLanguage,
-    TeachingLanguageAndLevel,
-)
+from .groups import Group
+from .languages_levels import Language, LanguageAndLevel, LanguageLevel
 from .log_events import (
     CoordinatorLogEvent,
-    CoordinatorLogEventName,
     GroupLogEvent,
-    GroupLogEventName,
     LogEvent,
     PersonLogEvent,
     StudentLogEvent,
-    StudentLogEventName,
     TeacherLogEvent,
-    TeacherLogEventName,
 )
-from .people import AgeRange, Coordinator, PersonalInfo, Student, Teacher, TeacherCategory
-from .statuses import (
-    CoordinatorStatus,
-    CoordinatorStatusName,
-    GroupStatus,
-    GroupStatusName,
-    Status,
-    StudentStatus,
-    StudentStatusName,
-    TeacherStatus,
-    TeacherStatusName,
-)
+from .people import Coordinator, PersonalInfo, Student, Teacher, TeacherUnder18

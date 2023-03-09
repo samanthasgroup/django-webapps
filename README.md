@@ -15,6 +15,8 @@ Backend for the database, implemented in Django
 10. Create a superuser for admin interface: `python manage.py createsuperuser`
 11. Run the server locally: `python manage.py runserver`
 
+Note that in development mode (if you don't change the settings) you will be working with an SQLite database. Since some models contain [`JSONField`](https://docs.djangoproject.com/en/4.1/ref/models/fields/#django.db.models.JSONField)s, it is required that your SQLite installation supports JSON. To check if it does, follow the instructions [here](https://code.djangoproject.com/wiki/JSON1Extension).
+
 The main page is the admin page, as no user-facing web interface is planned yet.
 
 That's it for developing locally. To set up a remote server during development, see e.g. [this tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-22-04).
