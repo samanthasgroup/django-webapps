@@ -1,13 +1,14 @@
 from django.db import models
 
-from api.models.base import InternalModelWithName
-
 # Sometimes the languages and levels are needed separately, sometimes in combinations.
 # This means that we cannot create a "choices" field for language or level.
 
 
-class Language(InternalModelWithName):
+class Language(models.Model):
     """Model for languages that students learn and teachers teach."""
+
+    id = models.CharField(max_length=2, primary_key=True, verbose_name="locale")
+    name = models.CharField(max_length=50)
 
 
 class LanguageLevel(models.Model):
