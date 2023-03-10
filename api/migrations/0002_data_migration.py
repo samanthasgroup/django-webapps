@@ -6,7 +6,7 @@ from django.db.migrations.state import StateApps
 
 from api.models.constants import (
     STUDENT_AGE_RANGES,
-    # STUDENT_AGE_RANGES_FOR_MATCHING,
+    STUDENT_AGE_RANGES_FOR_MATCHING,
     STUDENT_AGE_RANGES_FOR_TEACHER,
 )
 from api.models.age_ranges import AgeRangeType
@@ -47,9 +47,14 @@ class PrePopulationMaster:
             for pair in STUDENT_AGE_RANGES_FOR_TEACHER.values()
         ]
 
-        # TODO ranges for matching
+        student_age_ranges_for_matching = [
+            AgeRange(type=AgeRangeType.MATCHING, age_from=pair[0], age_to=pair[1])
+            for pair in STUDENT_AGE_RANGES_FOR_MATCHING.values()
+        ]
 
-        AgeRange.objects.bulk_create(student_age_ranges + student_age_ranges_for_teacher)
+        AgeRange.objects.bulk_create(
+            student_age_ranges + student_age_ranges_for_teacher + student_age_ranges_for_matching
+        )
 
     def _write_day_and_time_slots(self):
         """Writes `TimeSlot` and `DayAndTimeSlot` objects to database."""
