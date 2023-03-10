@@ -40,4 +40,29 @@ STUDENT_AGE_RANGES_FOR_TEACHER = {
 }
 
 # age ranges for matching algorithm
-STUDENT_AGE_RANGES_FOR_MATCHING = ()  # TODO
+# TODO for now leaving these ranges the same as the ranges that students get when registering,
+#  but this is likely to change.  The children's ranges will most likely remain the same, though.
+STUDENT_AGE_RANGES_FOR_MATCHING = {
+    "5-6": (5, 7),
+    "7-8": (7, 9),
+    "9-10": (9, 11),
+    "11-12": (11, 13),
+    "13-14": (13, 15),
+    "15-17": (15, 18),
+    "18-20": (18, 21),
+    "21-25": (21, 26),
+    "26-30": (26, 31),
+    "31-35": (31, 36),
+    "36-40": (36, 41),
+    "41-45": (41, 46),
+    "46-50": (46, 51),
+    "51-55": (51, 56),
+    "56-60": (56, 61),
+    "61-65": (61, 66),
+    "66-70": (66, 71),
+    "71-75": (71, 76),
+    "76-80": (76, 81),
+    "81-65": (81, 66),
+    "86-90": (86, 91),
+    "91-95": (91, 96),
+}
