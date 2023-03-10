@@ -1,8 +1,8 @@
 import datetime
 
 from django.db import migrations
-from django.db.backends.sqlite3.schema import DatabaseSchemaEditor  # for typing only
-from django.db.migrations.state import StateApps  # for typing only
+from django.db.backends.postgresql.schema import DatabaseSchemaEditor
+from django.db.migrations.state import StateApps
 
 from api.models.constants import (
     STUDENT_AGE_RANGE_BOUNDARIES,
