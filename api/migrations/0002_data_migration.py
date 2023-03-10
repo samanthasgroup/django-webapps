@@ -5,9 +5,9 @@ from django.db.backends.postgresql.schema import DatabaseSchemaEditor
 from django.db.migrations.state import StateApps
 
 from api.models.constants import (
-    STUDENT_AGE_RANGE_BOUNDARIES,
-    # STUDENT_AGE_RANGE_BOUNDARIES_FOR_MATCHING,
-    STUDENT_AGE_RANGE_BOUNDARIES_FOR_TEACHER,
+    STUDENT_AGE_RANGES,
+    # STUDENT_AGE_RANGES_FOR_MATCHING,
+    STUDENT_AGE_RANGES_FOR_TEACHER,
 )
 from api.models.age_ranges import AgeRangeType
 
@@ -39,12 +39,12 @@ class PrePopulationMaster:
 
         student_age_ranges = [
             AgeRange(type=AgeRangeType.STUDENT, age_from=pair[0], age_to=pair[1])
-            for pair in STUDENT_AGE_RANGE_BOUNDARIES.values()  # keys are string ranges, not needed
+            for pair in STUDENT_AGE_RANGES.values()  # keys are string ranges, not needed
         ]
 
         student_age_ranges_for_teacher = [
             AgeRange(type=AgeRangeType.TEACHER, age_from=pair[0], age_to=pair[1])
-            for pair in STUDENT_AGE_RANGE_BOUNDARIES_FOR_TEACHER.values()
+            for pair in STUDENT_AGE_RANGES_FOR_TEACHER.values()
         ]
 
         # TODO ranges for matching
