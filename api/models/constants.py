@@ -4,11 +4,14 @@ DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH = 15
 # IMPORTANT: the boundaries of larger ranges must match the boundaries of the smaller ones
 
 # Match string ranges that are presented to the user to actual ranges.
-# A dict comprehension would be more concise but less readable.
+# A dict comprehension would be more concise but less readable.  Dict comprehension would also be
+# less error-prone, but the dict isn't supposed to be changed frequently (or at all) after launch.
 STUDENT_AGE_RANGES = {
-    "6-8": (6, 9),
-    "9-11": (9, 12),
-    "12-14": (12, 15),
+    "5-6": (5, 7),
+    "7-8": (7, 9),
+    "9-10": (9, 11),
+    "11-12": (11, 13),
+    "13-14": (13, 15),
     "15-17": (15, 18),
     "18-20": (18, 21),
     "21-25": (21, 26),
