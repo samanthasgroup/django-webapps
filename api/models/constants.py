@@ -34,8 +34,9 @@ STUDENT_AGE_RANGES = {
 # Match string ranges presented to the teacher (for them to choose desired age groups of students)
 # to actual ranges
 STUDENT_AGE_RANGES_FOR_TEACHER = {
-    "6-11": (6, 12),
-    "12-17": (12, 18),
+    "5-8": (5, 9),
+    "9-12": (9, 13),
+    "13-17": (13, 18),
     "18-": (18, 95),
 }
 
