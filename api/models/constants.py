@@ -37,7 +37,7 @@ STUDENT_AGE_RANGES_FOR_TEACHER = {
     "5-8": (5, 9),
     "9-12": (9, 13),
     "13-17": (13, 18),
-    "18-": (18, 95),
+    "18-": (18, 96),
 }
 
 # age ranges for matching algorithm
