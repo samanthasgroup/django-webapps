@@ -3,7 +3,6 @@ from django.db import models
 from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 
 
-# defining outside of model to use in data migration
 class AgeRangeType(models.TextChoices):
     STUDENT = "student", "for students to select their age"
     TEACHER = "teacher", "for teacher to select desired ages of students"
