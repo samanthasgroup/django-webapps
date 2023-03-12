@@ -20,7 +20,7 @@ class AgeRange(models.Model):
     # TODO split in 3 tables? Otherwise a teacher's age range can be chosen in Student.
     #  Maybe it's not a big deal, though
     age_from = models.PositiveSmallIntegerField()
-    age_to = models.PositiveSmallIntegerField(verbose_name="End of age range (NOT inclusive!)")
+    age_to = models.PositiveSmallIntegerField(verbose_name="End of age range (inclusive)")
     type = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=AgeRangeType.choices,
