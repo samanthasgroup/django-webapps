@@ -3,7 +3,7 @@ DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH = 15
 
 # IMPORTANT: the boundaries of larger ranges must match the boundaries of the smaller ones
 
-# Match string ranges that are presented to the user to actual ranges: {"5-7": (5, 7), ...}
+# Match string ranges that are presented to the user to actual ranges: {"5-6": (5, 6), ...}
 STUDENT_AGE_RANGES = {
     f"{left}-{right}": (left, right)
     for left, right in (
