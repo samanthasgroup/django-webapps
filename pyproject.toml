@@ -35,7 +35,7 @@ line-length = 99
 exclude = ["api/migrations"]
 per-file-ignores = {"__init__.py" = ["F401"]}
 # Pyflakes and pycodestyle Error (included by default without explicit "select"),
-# I = isort, N = pep8-naming, PL = pylint.
+# I = isort, N = pep8-naming, PL = pylint, UP = pyupgrade
 # A = flake8-builtins, DJ = flake8-django C4 = flake8-comprehensions, DTZ = flake8-datetimez,
 # ISC = flake8-implicit-str-concat, T20 = flake8-print, RET = flake8-return, SIM = flake8-simplify,
 # ARG = flake8-unused-arguments, PTH = flake8-use-pathlib
