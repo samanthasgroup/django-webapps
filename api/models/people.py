@@ -148,7 +148,7 @@ class Student(Person):
         verbose_name="Speaking club status",
         help_text="Is the student a member of a speaking club at the moment?",
     )
-    requires_help_with_CV = models.BooleanField(
+    requires_help_with_cv = models.BooleanField(
         default=False,
         verbose_name="CV help status",
         help_text="Does the student need help with CV at the moment?",
