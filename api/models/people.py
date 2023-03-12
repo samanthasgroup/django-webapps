@@ -31,7 +31,7 @@ class PersonalInfo(GroupOrPerson):
     first_name = models.CharField(max_length=100)  # can include middle name if a person wishes so
     last_name = models.CharField(max_length=100)
     # Telegram's limit is 32, but this might change
-    tg_username = models.CharField(max_length=100, null=True, blank=True)
+    tg_username = models.CharField(max_length=100, blank=True)
     email = models.EmailField()
     phone = modelfields.PhoneNumberField(null=True, blank=True)
     utc_timedelta = models.DurationField(default=timedelta(hours=0))
@@ -70,7 +70,7 @@ class PersonalInfo(GroupOrPerson):
 class Person(models.Model):
     """Abstract model for a coordinator/student/teacher. Stores their common fields and methods."""
 
-    comment = models.TextField(null=True, blank=True)
+    comment = models.TextField(blank=True)
     personal_info = models.OneToOneField(
         PersonalInfo,
         on_delete=models.CASCADE,
@@ -177,7 +177,6 @@ class TeacherCommon(Person):
 
     additional_skills_comment = models.CharField(
         max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
-        null=True,
         blank=True,
         verbose_name="comment on additional skills besides teaching",
         help_text="other ways in which the applicant could help, besides teaching or helping other"
