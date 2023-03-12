@@ -1,20 +1,30 @@
 from django.db import models
 
-from api.models.base import InternalModelWithName
-
 # Sometimes the languages and levels are needed separately, sometimes in combinations.
 # This means that we cannot create a "choices" field for language or level.
 
 
-class Language(InternalModelWithName):
+class Language(models.Model):
     """Model for languages that students learn and teachers teach."""
 
+    id = models.CharField(max_length=2, primary_key=True, verbose_name="locale")
+    name = models.CharField(max_length=50)
 
-class LanguageLevel(InternalModelWithName):
+    def __str__(self):
+        return self.name
+
+
+class LanguageLevel(models.Model):
     """Model for language levels. Will be pre-populated."""
 
     # This would be a good candidate for a `models.TextChoices` class, but EnrollmentTest
     # has a many-to-many relationship to LanguageLevel, which requires a table.
+
+    # no need for auto-incrementing ID here as level is only 2 chars long
+    id = models.CharField(max_length=2, primary_key=True)
+
+    def __str__(self):
+        return self.id
 
 
 class LanguageAndLevel(models.Model):

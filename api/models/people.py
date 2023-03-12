@@ -21,6 +21,11 @@ class PersonalInfo(GroupOrPerson):
     (coordinators, students and teachers).
     """
 
+    class RegistrationBotLanguage(models.TextChoices):
+        EN = "en", "English"
+        RU = "ru", "Russian"
+        UA = "ua", "Ukrainian"
+
     # One ID will identify a person with any role (student, teacher, coordinator),
     # even if one person combines several roles.  The autoincrement simple numeric ID can be used
     # for internal communication ("John 132"), while uuid can be used e.g. for hyperlinks
@@ -31,7 +36,7 @@ class PersonalInfo(GroupOrPerson):
     first_name = models.CharField(max_length=100)  # can include middle name if a person wishes so
     last_name = models.CharField(max_length=100)
     # Telegram's limit is 32, but this might change
-    tg_username = models.CharField(max_length=100, null=True, blank=True)
+    tg_username = models.CharField(max_length=100, blank=True)
     email = models.EmailField()
     phone = modelfields.PhoneNumberField(null=True, blank=True)
     utc_timedelta = models.DurationField(default=timedelta(hours=0))
@@ -44,6 +49,12 @@ class PersonalInfo(GroupOrPerson):
     # These are none for coordinator, but can be present for student/teacher, so keeping them here.
     # Also, there is a possibility that coordinators will register with registration bot someday.
     registration_bot_chat_id = models.IntegerField(null=True, blank=True)
+    registration_bot_language = models.CharField(
+        max_length=2,
+        choices=RegistrationBotLanguage.choices,
+        help_text="Language in which the person wishes to communicate with the bot "
+        "(is chosen by the person at first contact)",
+    )
     chatwoot_conversation_id = models.IntegerField(null=True, blank=True)
 
     class Meta:
@@ -70,7 +81,7 @@ class PersonalInfo(GroupOrPerson):
 class Person(models.Model):
     """Abstract model for a coordinator/student/teacher. Stores their common fields and methods."""
 
-    comment = models.TextField(null=True, blank=True)
+    comment = models.TextField(blank=True)
     personal_info = models.OneToOneField(
         PersonalInfo,
         on_delete=models.CASCADE,
@@ -148,7 +159,7 @@ class Student(Person):
         verbose_name="Speaking club status",
         help_text="Is the student a member of a speaking club at the moment?",
     )
-    requires_help_with_CV = models.BooleanField(
+    requires_help_with_cv = models.BooleanField(
         default=False,
         verbose_name="CV help status",
         help_text="Does the student need help with CV at the moment?",
@@ -177,7 +188,6 @@ class TeacherCommon(Person):
 
     additional_skills_comment = models.CharField(
         max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
-        null=True,
         blank=True,
         verbose_name="comment on additional skills besides teaching",
         help_text="other ways in which the applicant could help, besides teaching or helping other"
