@@ -21,6 +21,11 @@ class PersonalInfo(GroupOrPerson):
     (coordinators, students and teachers).
     """
 
+    class RegistrationBotLanguage(models.TextChoices):
+        EN = "en", "English"
+        RU = "ru", "Russian"
+        UA = "ua", "Ukrainian"
+
     # One ID will identify a person with any role (student, teacher, coordinator),
     # even if one person combines several roles.  The autoincrement simple numeric ID can be used
     # for internal communication ("John 132"), while uuid can be used e.g. for hyperlinks
@@ -44,6 +49,12 @@ class PersonalInfo(GroupOrPerson):
     # These are none for coordinator, but can be present for student/teacher, so keeping them here.
     # Also, there is a possibility that coordinators will register with registration bot someday.
     registration_bot_chat_id = models.IntegerField(null=True, blank=True)
+    registration_bot_language = models.CharField(
+        max_length=2,
+        choices=RegistrationBotLanguage.choices,
+        help_text="Language in which the person wishes to communicate with the bot "
+        "(is chosen by the person at first contact)",
+    )
     chatwoot_conversation_id = models.IntegerField(null=True, blank=True)
 
     class Meta:
