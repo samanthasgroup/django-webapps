@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-import api.models as models
+from api import models
 
 for model in (
     models.Coordinator,
