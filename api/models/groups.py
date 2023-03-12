@@ -15,7 +15,7 @@ class GroupCommon(GroupOrPerson):
     students = models.ManyToManyField(Student)
     teachers = models.ManyToManyField(Teacher)
     # group chat created manually by the coordinator/teacher
-    telegram_chat_url = models.URLField(null=True, blank=True)
+    telegram_chat_url = models.URLField(blank=True)
 
     class Meta:
         abstract = True

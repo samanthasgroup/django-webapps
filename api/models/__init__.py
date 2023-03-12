@@ -1,5 +1,5 @@
 from .age_ranges import AgeRange
-from .base import GroupOrPerson, InternalModelWithName
+from .base import GroupOrPerson
 from .days_time_slots import DayAndTimeSlot, TimeSlot
 from .enrollment_tests import (
     EnrollmentTest,
