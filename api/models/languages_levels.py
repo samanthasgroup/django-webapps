@@ -10,6 +10,9 @@ class Language(models.Model):
     id = models.CharField(max_length=2, primary_key=True, verbose_name="locale")
     name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.name
+
 
 class LanguageLevel(models.Model):
     """Model for language levels. Will be pre-populated."""
@@ -19,6 +22,9 @@ class LanguageLevel(models.Model):
 
     # no need for auto-incrementing ID here as level is only 2 chars long
     id = models.CharField(max_length=2, primary_key=True)
+
+    def __str__(self):
+        return self.id
 
 
 class LanguageAndLevel(models.Model):
