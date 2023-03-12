@@ -40,7 +40,7 @@ per-file-ignores = {"__init__.py" = ["F401"]}
 # A = flake8-builtins, DJ = flake8-django C4 = flake8-comprehensions, DTZ = flake8-datetimez,
 # ISC = flake8-implicit-str-concat, T20 = flake8-print, RET = flake8-return, SIM = flake8-simplify,
 # ARG = flake8-unused-arguments, PTH = flake8-use-pathlib
-select = ["E", "F", "I", "N", "PL", "A", "DJ", "C4", "DTZ", "ISC", "T20", "RET", "SIM", "ARG", "PTH"]
+select = ["E", "F", "I", "N", "PL", "UP", "A", "DJ", "C4", "DTZ", "ISC", "T20", "RET", "SIM", "ARG", "PTH"]
 # can add ERA (eradicate) later in here ^ for deleting commented out code
 # Ignore: A003 (class attribute `id`/`type` is shadowing a python builtin) because class attributes don't really shadow Python builtins
 ignore = ["A003"]
