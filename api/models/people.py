@@ -17,8 +17,9 @@ from api.models.languages_levels import LanguageAndLevel
 # Then, if the same person assumes another role, e.g. a Teacher is created, linking to the
 # existing PersonalInfo.
 class PersonalInfo(GroupOrPerson):
-    """Model for storing personal information that does not depend on a person's role
-    (coordinators, students and teachers).
+    """Model for storing personal information.
+
+    This model does not depend on a person's role (coordinators, students and teachers).
     """
 
     class RegistrationBotLanguage(models.TextChoices):
@@ -183,6 +184,7 @@ class Student(Person):
 
 class TeacherCommon(Person):
     """Abstract model for common properties that adult teachers and teachers under 18 share.
+
     Teachers under 18 cannot teach groups but can some selected activities.
     """
 

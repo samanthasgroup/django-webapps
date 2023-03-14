@@ -3,6 +3,7 @@ from django.db import models
 
 class TimeSlot(models.Model):
     """Model for timeslots. Note that the timeslots have no "name" as such.
+
     Will be pre-populated.
     """
 

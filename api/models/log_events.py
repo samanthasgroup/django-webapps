@@ -9,8 +9,10 @@ from api.models.people import Coordinator, Student, Teacher
 
 
 class LogEvent(models.Model):
-    """Abstract model for some sort of internal event, e.g. 'joined group' for a
-    student or 'finished' for a group. Statuses will be assigned based on these events.
+    """Abstract model for some sort of internal event.
+
+    This can be e.g. 'joined group' for a student or 'finished' for a group.
+    Statuses will be assigned based on these events.
 
     We don't call the class simply Event for it not to be confused with possible models for events
     organized by the school.
@@ -27,6 +29,8 @@ class LogEvent(models.Model):
 
 
 class GroupLogEvent(LogEvent):
+    """Model for a log event concerning a group."""
+
     class EventType(models.TextChoices):
         FORMED = "formed", "Formed"
         CONFIRMED = "confirmed", "Confirmed"
@@ -72,6 +76,8 @@ class PersonLogEvent(LogEvent):
 
 
 class CoordinatorLogEvent(PersonLogEvent):
+    """Model for a log event concerning a coordinator."""
+
     class EventType(models.TextChoices):
         JOINED = "joined", "Joined the team"
         STARTED_ONBOARDING = "onboard", "Started onboarding"
@@ -98,6 +104,8 @@ class CoordinatorLogEvent(PersonLogEvent):
 
 
 class StudentLogEvent(PersonLogEvent):
+    """Model for a log event concerning a student."""
+
     class EventType(models.TextChoices):
         REGISTERED = "register", "Joined the team"
         STUDY_START = "start", "Started studying in a group"
@@ -127,6 +135,8 @@ class StudentLogEvent(PersonLogEvent):
 
 
 class TeacherLogEvent(PersonLogEvent):
+    """Model for a log event concerning a teacher."""
+
     class EventType(models.TextChoices):
         REGISTERED = "register", "Joined the team"
         STUDY_START = "start", "Started studying in a group"

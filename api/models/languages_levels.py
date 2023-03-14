@@ -28,8 +28,10 @@ class LanguageLevel(models.Model):
 
 
 class LanguageAndLevel(models.Model):
-    """A model combining language and level. It is needed for the cases when a student/teacher
-    studies/teaches several languages, each at different level(s).
+    """A model combining language and level.
+
+    This model is needed for the cases when a student/teacher studies/teaches several languages,
+    each at different level(s).
     """
 
     language = models.ForeignKey(Language, on_delete=models.CASCADE)
