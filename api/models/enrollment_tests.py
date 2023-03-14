@@ -32,6 +32,8 @@ class EnrollmentTest(models.Model):
 
 
 class EnrollmentTestQuestion(models.Model):
+    """Model for a question in a 'written' test given to the student at registration."""
+
     enrollment_test = models.ForeignKey(EnrollmentTest, on_delete=models.CASCADE)
     text = models.CharField(max_length=DEFAULT_CHAR_FIELD_MAX_LEN)
 
@@ -48,6 +50,8 @@ class EnrollmentTestQuestion(models.Model):
 
 
 class EnrollmentTestQuestionOption(models.Model):
+    """Model for a possible answer to a question in a 'written' test."""
+
     question = models.ForeignKey(EnrollmentTestQuestion, on_delete=models.CASCADE)
     text = models.CharField(max_length=50)
     is_correct = models.BooleanField()
@@ -65,6 +69,8 @@ class EnrollmentTestQuestionOption(models.Model):
 
 
 class EnrollmentTestResult(models.Model):
+    """Model for a test result for a given student. Consists of answers to assessment questions."""
+
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     answers = models.ManyToManyField(EnrollmentTestQuestionOption)
 

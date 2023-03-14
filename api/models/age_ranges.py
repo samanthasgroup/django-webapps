@@ -10,7 +10,9 @@ class AgeRangeType(models.TextChoices):
 
 
 class AgeRange(models.Model):
-    """Model for age range.  Students have no exact ages, but age ranges. Teachers' preferences
+    """Model for age range.
+
+    Students have no exact ages, but age ranges. Teachers' preferences
     and group building algorithms are also based on age ranges.
 
     Will be pre-populated.  If changing, care must be taken: the boundaries of bigger
