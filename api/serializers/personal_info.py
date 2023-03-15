@@ -6,4 +6,4 @@ from api.models import PersonalInfo
 class PersonalInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PersonalInfo
-        fields = '__all__'
+        fields = "__all__"
