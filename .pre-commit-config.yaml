@@ -4,20 +4,17 @@ repos:
     hooks:
     -   id: black
         language_version: python3.10
-        args:
-        - --diff
-        - --check
 -   repo: https://github.com/pycqa/isort
     rev: 5.12.0
     hooks:
     -   id: isort
         name: isort
-        args:
-        - --diff
-        - --check
 -   repo: https://github.com/charliermarsh/ruff-pre-commit
     # Ruff version.
     rev: 'v0.0.254'
     hooks:
     -   id: ruff
+        name: ruff
+        args:
+        - --fix
 exclude: api/migrations
