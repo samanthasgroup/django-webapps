@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "phonenumber_field",
     "django_extensions",
+    "rest_framework",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
