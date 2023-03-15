@@ -20,6 +20,5 @@ repos:
     -   id: ruff
         name: ruff
         args:
-        - --diff
         - --fix
 exclude: api/migrations
