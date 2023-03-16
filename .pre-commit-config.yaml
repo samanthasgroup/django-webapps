@@ -13,7 +13,7 @@ repos:
     rev: v1.1.1
     hooks:
       - id: mypy
-        exclude: ^(tests|api/models)/
+        exclude: ^tests/
         args: [--strict, --strict-optional, --python-version=3.10]
         additional_dependencies:
             - "django-stubs"
