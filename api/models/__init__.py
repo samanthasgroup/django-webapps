@@ -18,3 +18,18 @@ from .log_events import (
     TeacherLogEvent,
 )
 from .people import Coordinator, PersonalInfo, Student, Teacher, TeacherUnder18
+
+# for mypy: listing only models that appear in admin.my
+__all__ = [
+    "Coordinator",
+    "EnrollmentTest",
+    "EnrollmentTestQuestion",
+    "EnrollmentTestQuestionOption",
+    "Group",
+    "PersonalInfo",
+    "Student",
+    "Teacher",
+    "TeacherUnder18",
+    "Language",
+    "LanguageAndLevel",
+]

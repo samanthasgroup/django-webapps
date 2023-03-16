@@ -13,6 +13,7 @@ skip_glob = ["api/migrations/*"]
 [tool.mypy]
 exclude = "api/migrations"
 plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+python_version = "3.10"
 strict = true
 strict_optional = true
 
