@@ -1,1 +1,5 @@
-from .personal_info import PersonalInfoSerializer
+from api.serializers.age_range import AgeRangeSerializer
+from api.serializers.personal_info import PersonalInfoSerializer
+from api.serializers.student import StudentSerializer
+from api.serializers.teacher import TeacherSerializer
+from api.serializers.teacher_under_18 import TeacherUnder18Serializer

@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
-from ..models import PersonalInfo
-from ..serializers import PersonalInfoSerializer
+from api.models import PersonalInfo
+from api.serializers import PersonalInfoSerializer
 
 
 class PersonalInfoViewSet(viewsets.ModelViewSet):
