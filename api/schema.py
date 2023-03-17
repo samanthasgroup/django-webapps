@@ -7,7 +7,8 @@ from api.serializers.errors import ValidationErrorSerializer
 class CustomSchema(AutoSchema):
     """
     Differences from default schema:
-    - Default schema uses same tag (from url) for all endpoints.
+    - Default schema uses same tag - first non-parameter path part as tag for all endpoints.
+      (e.g. /api/users/ -> tag: api and also /api/other/ -> tag: api).
       To make it more clear, we use viewset name as additional tag.
     - We add 400 response for all endpoints with unsafe method.
       (Also some other responses can be added here in the future, as 403 etc.).
