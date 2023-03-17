@@ -19,7 +19,7 @@ from .log_events import (
 )
 from .people import Coordinator, PersonalInfo, Student, Teacher, TeacherUnder18
 
-# for mypy: listing only models that appear in admin.my
+# for mypy: listing only models that appear in admin.py
 __all__ = [
     "Coordinator",
     "EnrollmentTest",
