@@ -10,7 +10,7 @@ class CustomSchema(AutoSchema):
     - Default schema uses same tag (from url) for all endpoints.
       To make it more clear, we use viewset name as additional tag.
     - We add 400 response for all endpoints with unsafe method.
-      (Also some other responses can be added here in the future, as 403 etc.).
+      (Also some other responses can be added here in the future, such as 403 etc.).
     """
 
     def get_tags(self) -> list[str]:
