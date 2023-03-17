@@ -3,7 +3,7 @@ Backend for the database, implemented in Django
 
 
 ## API Documentation
-Could be found at `/api/docs/swagger` or `/api/docs/redoc` after deployment (or local running).
+Can be found at `/api/docs/swagger` or `/api/docs/redoc` after deployment (or when running locally).
 
 ## For developers
 
