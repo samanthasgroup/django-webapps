@@ -2,7 +2,7 @@ import uuid
 from datetime import timedelta
 
 from django.db import models
-from phonenumber_field import modelfields  # type: ignore
+from phonenumber_field import modelfields
 
 from api.models.age_ranges import AgeRange
 from api.models.base import GroupOrPerson
