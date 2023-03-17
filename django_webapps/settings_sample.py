@@ -10,11 +10,6 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-# This import is for mypy pre-commit hook. Otherwise, list[str] in ALLOWED_HOSTS triggers an error
-# despite Python version being specified in the args. See:
-# https://mypy.readthedocs.io/en/stable/runtime_troubles.html#future-annotations
-from __future__ import annotations
-
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
