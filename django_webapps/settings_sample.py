@@ -131,7 +131,7 @@ STATIC_ROOT = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    "DEFAULT_SCHEMA_CLASS": "api.schema.TaggedByViewSetNameSchema",
+    "DEFAULT_SCHEMA_CLASS": "api.schema.CustomSchema",
 }
 
 SPECTACULAR_SETTINGS = {

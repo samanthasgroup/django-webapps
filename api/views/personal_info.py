@@ -1,9 +1,25 @@
-from rest_framework import viewsets
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.serializers import BaseSerializer
 
 from api.models import PersonalInfo
-from api.serializers import PersonalInfoSerializer
+from api.serializers import PersonalInfoCheckExistenceSerializer, PersonalInfoSerializer
 
 
 class PersonalInfoViewSet(viewsets.ModelViewSet):
     queryset = PersonalInfo.objects.all()
-    serializer_class = PersonalInfoSerializer
+
+    def get_serializer_class(self) -> type[BaseSerializer]:
+        if self.action == "check_existence":
+            return PersonalInfoCheckExistenceSerializer
+        return PersonalInfoSerializer
+
+    @action(detail=False, methods=["post"])
+    def check_existence(self, request) -> Response:
+        """
+        Check if a personal info exists.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(status.HTTP_200_OK)

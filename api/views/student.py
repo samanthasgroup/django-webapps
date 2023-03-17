@@ -1,9 +1,11 @@
 from rest_framework import viewsets
 
 from api.models import Student
-from api.serializers import StudentSerializer
+from api.serializers import StudentReadSerializer, StudentWriteSerializer
+from api.views.mixins import ReadWriteSerializersMixin
 
 
-class StudentViewSet(viewsets.ModelViewSet):
+class StudentViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet):
     queryset = Student.objects.all()
-    serializer_class = StudentSerializer
+    serializer_read_class = StudentReadSerializer
+    serializer_write_class = StudentWriteSerializer

@@ -1,11 +1,24 @@
 from rest_framework import serializers
 
 from api.models import Student
+from api.serializers import (
+    AgeRangeSerializer,
+    DayAndTimeSlotSerializer,
+    LanguageAndLevelSerializer,
+)
 
 
-class StudentSerializer(serializers.ModelSerializer):
-    # TODO Here and in other serializers, we should decide,
-    #  which id we use for linking with PersonalInfo - uuid or id
+class StudentWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = "__all__"
+
+
+class StudentReadSerializer(serializers.ModelSerializer):
+    age_range = AgeRangeSerializer(read_only=True)
+    teaching_languages_and_levels = LanguageAndLevelSerializer(many=True, read_only=True)
+    availability_slots = DayAndTimeSlotSerializer(many=True, read_only=True)
+
     class Meta:
         model = Student
         fields = "__all__"

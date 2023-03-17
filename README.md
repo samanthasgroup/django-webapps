@@ -1,6 +1,10 @@
 # django-webapps
 Backend for the database, implemented in Django
 
+
+## API Documentation
+Could be found at `/api/docs/swagger` or `/api/docs/redoc` after deployment (or local running).
+
 ## For developers
 
 1. Clone this repository
