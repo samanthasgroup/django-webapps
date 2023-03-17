@@ -20,3 +20,13 @@ Note that in development mode (if you don't change the settings) you will be wor
 The main page is the admin page, as no user-facing web interface is planned yet.
 
 That's it for developing locally. To set up a remote server during development, see e.g. [this tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-22-04).
+
+### Side notes
+
+If pre-commit hooks produce strange errors that definitely shouldn't be there, re-installing pre-commit could help:
+```bash
+pre-commit clean
+pre-commit uninstall
+pre-commit install
+pre-commit run
+```
