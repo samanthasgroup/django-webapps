@@ -18,7 +18,7 @@ class TimeSlot(models.Model):
             models.UniqueConstraint(fields=["from_utc_hour", "to_utc_hour"], name="from_to_hour")
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.from_utc_hour.strftime('%H:%M')}-{self.to_utc_hour.strftime('%H:%M')} UTC"
 
 
@@ -47,5 +47,5 @@ class DayAndTimeSlot(models.Model):
         ]
         ordering = ("day_of_week_index", "time_slot__from_utc_hour")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.get_day_of_week_index_display()}, {self.time_slot}"

@@ -73,9 +73,9 @@ class Group(GroupCommon):
             models.Index(fields=("start_date",), name="group_start_date_idx"),
         ]
 
-    def __str__(self):
-        coordinator_names = ",".join(c.full_name for c in self.coordinators.all())
-        teacher_names = ",".join(t.full_name for t in self.teachers.all())
+    def __str__(self) -> str:
+        coordinator_names = ",".join(c.personal_info.full_name for c in self.coordinators.all())
+        teacher_names = ",".join(t.personal_info.full_name for t in self.teachers.all())
         return (
             f"Group {self.pk}, {self.language_and_level} (coordinators: {coordinator_names}, "
             f"teachers: {teacher_names}, {self.students.count()} students."
@@ -93,6 +93,6 @@ class SpeakingClub(GroupCommon):
     # in addition to regular teachers, a speaking club can have young teachers
     teachers_under_18 = models.ManyToManyField(TeacherUnder18)
 
-    def __str__(self):
+    def __str__(self) -> str:
         category = "children" if self.is_for_children else "adults"
         return f"{self.language} speaking club for {category}, {self.students.count()} students."

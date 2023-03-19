@@ -36,5 +36,5 @@ class AgeRange(models.Model):
             )
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.age_from}-{self.age_to} [{self.type[0].upper()}]"
