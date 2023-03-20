@@ -149,6 +149,13 @@ class Student(Person):
     )
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
+    children = models.ManyToManyField(
+        "self",
+        symmetrical=False,
+        related_name="parents",
+        help_text="children of this student that are also studying at SSG",
+    )
+
     status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=Status.choices,
