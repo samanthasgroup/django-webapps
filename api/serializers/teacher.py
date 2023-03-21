@@ -8,13 +8,13 @@ from api.serializers import (
 )
 
 
-class TeacherWriteSerializer(serializers.ModelSerializer):
+class TeacherWriteSerializer(serializers.ModelSerializer[Teacher]):
     class Meta:
         model = Teacher
         fields = "__all__"
 
 
-class TeacherReadSerializer(serializers.ModelSerializer):
+class TeacherReadSerializer(serializers.ModelSerializer[Teacher]):
     student_age_ranges = AgeRangeSerializer(read_only=True, many=True)
     teaching_languages_and_levels = LanguageAndLevelSerializer(many=True, read_only=True)
     availability_slots = DayAndTimeSlotSerializer(many=True, read_only=True)
