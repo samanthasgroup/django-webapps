@@ -6,6 +6,8 @@ from api.serializers.errors import ValidationErrorSerializer
 
 class CustomSchema(AutoSchema):
     """
+    Custom schema for drf-spectacular.
+
     Differences from default schema:
     - Default schema uses same tag - first non-parameter path part as tag for all endpoints.
       (e.g. /api/users/ -> tag: api and also /api/other/ -> tag: api).
