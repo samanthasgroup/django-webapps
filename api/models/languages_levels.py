@@ -10,7 +10,7 @@ class Language(models.Model):
     id = models.CharField(max_length=2, primary_key=True, verbose_name="locale")
     name = models.CharField(max_length=50)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -23,7 +23,7 @@ class LanguageLevel(models.Model):
     # no need for auto-incrementing ID here as level is only 2 chars long
     id = models.CharField(max_length=2, primary_key=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.id
 
 
@@ -40,5 +40,5 @@ class LanguageAndLevel(models.Model):
     class Meta:
         verbose_name_plural = "Languages with levels"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.language} - {self.level}"

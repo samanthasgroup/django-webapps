@@ -49,7 +49,7 @@ class GroupLogEvent(LogEvent):
             models.Index(fields=("type",), name="group_log_event_type_idx"),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.date_as_str}: group {self.group} {self.get_type_display()}"
 
 
@@ -57,14 +57,14 @@ class PersonLogEvent(LogEvent):
     """Abstract class for a log event concerning a person."""
 
     from_group = models.ForeignKey(
-        "Group",
+        Group,
         null=True,
         blank=True,
         on_delete=models.CASCADE,
         related_name="%(class)s_from_self",  # will produce e.g. "studentLogEvents_from_self"
     )
     to_group = models.ForeignKey(
-        "Group",
+        Group,
         null=True,
         blank=True,
         on_delete=models.CASCADE,
@@ -96,7 +96,7 @@ class CoordinatorLogEvent(PersonLogEvent):
             models.Index(fields=("type",), name="coordinator_log_event_type_idx"),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"{self.date_as_str}: coordinator {self.coordinator.personal_info.full_name} "
             f"{self.get_type_display()}"
@@ -127,7 +127,7 @@ class StudentLogEvent(PersonLogEvent):
             models.Index(fields=("type",), name="student_log_event_type_idx"),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"{self.date_as_str}: student {self.student.personal_info.full_name} "
             f"{self.get_type_display()}"
@@ -155,7 +155,7 @@ class TeacherLogEvent(PersonLogEvent):
             models.Index(fields=("type",), name="teacher_log_event_type_idx"),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"{self.date_as_str}: teacher {self.teacher.personal_info.full_name} "
             f"{self.get_type_display()}"
