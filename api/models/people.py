@@ -6,11 +6,9 @@ from phonenumber_field import modelfields
 
 from api.models.age_ranges import AgeRange
 from api.models.base import GroupOrPerson
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import LanguageAndLevel
-
-CHOICE_CHAR_FIELD_MAX_LENGTH = 50  # default is not enough for status to be descriptive
 
 
 # PEOPLE
@@ -136,7 +134,9 @@ class Coordinator(Person):
         related_name="interns",
         help_text="mentor of this coordinator. One coordinator can have many interns",
     )
-    status = models.CharField(max_length=CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices)
+    status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices
+    )
 
     class Meta:
         indexes = [models.Index(fields=("status",), name="coordinator_status_idx")]
@@ -176,7 +176,7 @@ class Student(Person):
     )
 
     status = models.CharField(
-        max_length=CHOICE_CHAR_FIELD_MAX_LENGTH,
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=Status.choices,
         verbose_name="group studies status",
         help_text="status of this student with regard to group studies",
@@ -282,7 +282,7 @@ class Teacher(TeacherCommon):
     can_work_in_tandem = models.BooleanField(default=False)
 
     status = models.CharField(
-        max_length=CHOICE_CHAR_FIELD_MAX_LENGTH,
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=Status.choices,
         verbose_name="group studies status",
         help_text="status of this teacher with regard to group studies",
@@ -324,7 +324,9 @@ class TeacherUnder18(TeacherCommon):
         DECLINED = "declined", "Announced that they cannot participate in the project"
         FINISHED_STAYS = "finished_stays", "Finished teaching but remains in the project"
 
-    status = models.CharField(max_length=CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices)
+    status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices
+    )
 
     class Meta:
         indexes = [models.Index(fields=("status",), name="teacher_under_18_status_idx")]

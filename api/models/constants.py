@@ -1,5 +1,5 @@
 DEFAULT_CHAR_FIELD_MAX_LEN = 255
-DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH = 15
+DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH = 50
 
 # IMPORTANT: the boundaries of larger ranges must match the boundaries of the smaller ones
 
