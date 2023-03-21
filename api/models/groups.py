@@ -27,9 +27,14 @@ class Group(GroupCommon):
 
     class Status(models.TextChoices):
         PENDING = "pending", "Pending"
-        STUDYING = "study", "Studying"
-        FINISHED = "finish", "Finished"
-        # TODO put statuses here once they are finalized
+        AWAITING_START = "awaiting_start", "Group confirmed, awaiting start of classes"
+        WORKING = "working", "Working, everything is OK"
+        PROBLEM = (
+            "problem",
+            "Some sort of problem: needs substitute teacher, change of coordinator etc.",
+        )
+        ABORTED = "aborted", "Finished prematurely"
+        FINISHED = "finished", "Finished (completed the course)"
 
     availability_slot = models.ManyToManyField(DayAndTimeSlot)
     is_for_staff_only = models.BooleanField(default=False)

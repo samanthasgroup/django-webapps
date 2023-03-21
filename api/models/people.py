@@ -6,9 +6,11 @@ from phonenumber_field import modelfields
 
 from api.models.age_ranges import AgeRange
 from api.models.base import GroupOrPerson
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import LanguageAndLevel
+
+CHOICE_CHAR_FIELD_MAX_LENGTH = 50  # default is not enough for status to be descriptive
 
 
 # PEOPLE
@@ -101,9 +103,23 @@ class Coordinator(Person):
     """Model for a coordinator."""
 
     class Status(models.TextChoices):
+        PENDING = "pending", "Completed registration, waiting for onboarding"
         ONBOARDING = "onboarding", "In onboarding"
-        WORKING = "working", "Working with a group"
-        # TODO put statuses here once they are finalized
+        AWAITING_GROUP = "awaiting_group", "Not working, waiting for a group"
+        PREPARING_START = "preparing_start", "Taken a single group, preparing start of classes"
+        WORKING_ACCEPTING_MORE = "working_open", "Coordinating, ready to take on another group"
+        WORKING_NOT_ACCEPTING_MORE = "working_full", "Coordinating, not accepting any more groups"
+        WORKING_PREPARING_START_OF_ANOTHER = (
+            "working_preparing_another",
+            "Coordinating existing group(s), preparing start of another group",
+        )
+        NEEDS_TRANSFER = "needs_transfer", "Needs to transfer the group to another coordinator"
+        # TODO where to store the date when the teacher needs to be contacted again?
+        ON_LEAVE = "on_leave", "On leave"
+        NO_RESPONSE = "no_response", "Not responding"
+        DECLINED = "declined", "Announced that they cannot participate in the project"
+        FINISHED_STAYS = "finished_stays", "Finished coordinating but remains in the project"
+        REMOVED = "removed", "All access revoked, accounts closed"
 
     is_admin = models.BooleanField(
         default=False,
@@ -120,9 +136,7 @@ class Coordinator(Person):
         related_name="interns",
         help_text="mentor of this coordinator. One coordinator can have many interns",
     )
-    status = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices
-    )
+    status = models.CharField(max_length=CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices)
 
     class Meta:
         indexes = [models.Index(fields=("status",), name="coordinator_status_idx")]
@@ -136,10 +150,15 @@ class Student(Person):
     """Model for a student."""
 
     class Status(models.TextChoices):
-        WAITING_FOR_GROUP = "waiting", "Waiting for a group"
+        # TODO add status for oral test?
+        AWAITING_OFFER = "awaiting_offer", "Registration complete, waiting for a group"
+        GROUP_OFFERED = "group_offered", "Was offered a group, has not responded yet"
+        AWAITING_START = "awaiting_start", "Group confirmed, awaiting start of classes"
         STUDYING = "study", "Studying in a group"
-        NEEDS_TRANSFER = "transfer", "Needs transfer to another group"
-        # TODO put statuses here once they are finalized
+        NEEDS_TRANSFER = "needs_transfer", "Needs transfer to another group"
+        NO_RESPONSE = "no_response", "Not responding"
+        LEFT = "left", "Left the project prematurely"
+        FINISHED = "finished", "Completed the course and left the project"
 
     age_range = models.ForeignKey(
         AgeRange,
@@ -157,7 +176,7 @@ class Student(Person):
     )
 
     status = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        max_length=CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=Status.choices,
         verbose_name="group studies status",
         help_text="status of this student with regard to group studies",
@@ -212,10 +231,30 @@ class Teacher(TeacherCommon):
     """Model for an adult teacher that can teach groups."""
 
     class Status(models.TextChoices):
-        WAITING_FOR_GROUP = "waiting", "Waiting for a group"
-        TEACHING = "teaching", "Teaching a group"
-        NEEDS_TRANSFER = "transfer", "Needs transfer to another group"
-        # TODO put statuses here once they are finalized
+        PENDING = "pending", "Completed registration in the bot, waiting for approval"
+        AWAITING_OFFER = "awaiting_offer", "Registration approved, waiting for a group"
+        GROUP_OFFERED = "group_offered", "Was offered a group, has not responded yet"
+        AWAITING_START = "awaiting_start", "Group confirmed, awaiting start of classes"
+        TEACHING_ACCEPTING_MORE = "teaching_open", "Teaching, ready to take on another group"
+        TEACHING_NOT_ACCEPTING_MORE = "teaching_full", "Teaching, not accepting any more groups"
+        TEACHING_ANOTHER_GROUP_OFFERED = (
+            "teaching_another_offered",
+            "Teaching, received offer for another group",
+        )
+        TEACHING_AWAITING_START_OF_ANOTHER = (
+            "teaching_another_awaiting_start",
+            "Teaching, awaiting start of another group",
+        )
+        NEEDS_TRANSFER = "needs_transfer", "Needs transfer to another group"
+        NEEDS_SUBSTITUTION = (
+            "needs_substitution",
+            "Needs a break in teaching the group, substitute teacher needed",
+        )
+        # TODO where to store the date when the teacher needs to be contacted again?
+        ON_LEAVE = "on_leave", "On leave"
+        NO_RESPONSE = "no_response", "Not responding"
+        DECLINED = "declined", "Announced that they cannot participate in the project"
+        FINISHED_STAYS = "finished_stays", "Finished teaching but remains in the project"
 
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
@@ -243,7 +282,7 @@ class Teacher(TeacherCommon):
     can_work_in_tandem = models.BooleanField(default=False)
 
     status = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        max_length=CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=Status.choices,
         verbose_name="group studies status",
         help_text="status of this teacher with regard to group studies",
@@ -277,13 +316,15 @@ class TeacherUnder18(TeacherCommon):
     """Model for a teacher under 18 years old that cannot teach groups."""
 
     class Status(models.TextChoices):
-        WAITING = "waiting", "Waiting for a group"
-        TEACHING_SPEAKING_CLUB = "speak_club", "Teaching in a speaking club"
-        # TODO put statuses here once they are finalized
+        PENDING = "pending", "Completed registration in the bot, waiting for approval"
+        APPROVED = "approved", "Registration approved"
+        # TODO where to store the date when the teacher needs to be contacted again?
+        ON_LEAVE = "on_leave", "On leave"
+        NO_RESPONSE = "no_response", "Not responding"
+        DECLINED = "declined", "Announced that they cannot participate in the project"
+        FINISHED_STAYS = "finished_stays", "Finished teaching but remains in the project"
 
-    status = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices
-    )
+    status = models.CharField(max_length=CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices)
 
     class Meta:
         indexes = [models.Index(fields=("status",), name="teacher_under_18_status_idx")]
