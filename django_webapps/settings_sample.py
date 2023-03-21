@@ -12,6 +12,14 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 from pathlib import Path
 
+import django_stubs_ext
+from rest_framework import viewsets
+
+# This is needed to be able to use annotations like "viewsets.ReadOnlyModelViewSet[Teacher]"
+# for mypy to stop ****ing our brains.
+django_stubs_ext.monkeypatch(extra_classes=[viewsets.ModelViewSet, viewsets.ReadOnlyModelViewSet])
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
