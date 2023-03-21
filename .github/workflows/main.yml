@@ -1,0 +1,21 @@
+name: main
+
+on: [push]
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+      - name: Copy settings
+        run: |
+          cp ./django_webapps/settings_sample.py ./django_webapps/settings.py
+      - uses: pre-commit/action@v2.0.0
