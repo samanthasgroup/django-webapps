@@ -1,5 +1,10 @@
+from typing import TypeVar
+
+from django.db.models import Model
 from rest_framework import request, serializers
 from rest_framework.permissions import SAFE_METHODS
+
+_MT_co = TypeVar("_MT_co", bound=Model)
 
 
 class ReadWriteSerializersMixin:

@@ -17,6 +17,7 @@ repos:
             - "django-stubs"
             - "djangorestframework"
             - "djangorestframework-stubs"
+            - "django-filter-stubs"
             - "django-phonenumber-field"
             - "phonenumberslite"
             - "django_extensions"

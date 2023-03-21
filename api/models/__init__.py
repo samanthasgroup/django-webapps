@@ -32,4 +32,5 @@ __all__ = [
     "TeacherUnder18",
     "Language",
     "LanguageAndLevel",
+    "AgeRange",
 ]

@@ -35,6 +35,8 @@ psycopg2-binary = "^2.9.5"
 djangorestframework = "^3.14.0"
 drf-spectacular = "^0.26.0"
 django-filter = "^22.1"
+django-filter-stubs = "^0.1.2"
+djangorestframework-stubs = "^1.10.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"

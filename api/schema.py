@@ -1,3 +1,5 @@
+from typing import Any
+
 from drf_spectacular.openapi import AutoSchema
 from rest_framework.permissions import SAFE_METHODS
 
@@ -21,7 +23,7 @@ class CustomSchema(AutoSchema):
         view_set_tag_name = self.view.__class__.__name__.replace("ViewSet", "")
         return tags + [view_set_tag_name]
 
-    def _get_response_bodies(self, direction="response"):
+    def _get_response_bodies(self, direction: str = "response") -> dict[str, Any]:
         bodies = super()._get_response_bodies(direction)
         if self.method not in SAFE_METHODS and direction == "response":
             bodies["400"] = self._get_response_for_code(
