@@ -19,6 +19,12 @@ strict = true
 disallow_untyped_calls = false
 warn_return_any = false
 
+[[tool.mypy.overrides]]
+module = [
+  "tests.*"
+]
+ignore_errors = true
+
 
 [tool.poetry]
 name = "django-webapps"
@@ -44,6 +50,8 @@ django-stubs = "^1.16.0"
 # this one definitely needs to be in main dependencies, django will break withouth its monkeypatch:
 django-stubs-ext = "^0.8.0"
 pytest = "^7.2.2"
+pytest-django = "^4.5.2"
+pytest-asyncio = "^0.21.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
@@ -77,3 +85,8 @@ build-backend = "poetry.core.masonry.api"
 
 [mypy.plugins.django-stubs]
 django_settings_module = "api.settings"
+
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "django_webapps.settings"
+asyncio_mode = "auto"
