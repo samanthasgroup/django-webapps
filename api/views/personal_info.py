@@ -8,7 +8,7 @@ from api.models import PersonalInfo
 from api.serializers import PersonalInfoCheckExistenceSerializer, PersonalInfoSerializer
 
 
-class PersonalInfoViewSet(viewsets.ModelViewSet):
+class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
     queryset = PersonalInfo.objects.all()
 
     def get_serializer_class(self) -> type[BaseSerializer[PersonalInfo]]:
