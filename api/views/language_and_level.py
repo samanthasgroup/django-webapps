@@ -4,6 +4,6 @@ from api.models import LanguageAndLevel
 from api.serializers import LanguageAndLevelSerializer
 
 
-class LanguageAndLevelViewSet(viewsets.ReadOnlyModelViewSet[LanguageAndLevel]):
+class LanguageAndLevelViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = LanguageAndLevel.objects.all()
     serializer_class = LanguageAndLevelSerializer

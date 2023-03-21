@@ -4,6 +4,6 @@ from api.models import TeacherUnder18
 from api.serializers import TeacherUnder18Serializer
 
 
-class TeacherUnder18ViewSet(viewsets.ModelViewSet[TeacherUnder18]):
+class TeacherUnder18ViewSet(viewsets.ModelViewSet):
     queryset = TeacherUnder18.objects.all()
     serializer_class = TeacherUnder18Serializer

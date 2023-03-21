@@ -5,7 +5,7 @@ from api.serializers import TeacherReadSerializer, TeacherWriteSerializer
 from api.views.mixins import ReadWriteSerializersMixin
 
 
-class TeacherViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Teacher]):
+class TeacherViewSet(ReadWriteSerializersMixin):
     queryset = Teacher.objects.all()
     serializer_read_class = TeacherReadSerializer
     serializer_write_class = TeacherWriteSerializer
