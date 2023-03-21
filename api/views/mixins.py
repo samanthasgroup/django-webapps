@@ -1,3 +1,5 @@
+from typing import Any
+
 from rest_framework import request, serializers
 from rest_framework.permissions import SAFE_METHODS
 
@@ -9,11 +11,11 @@ class ReadWriteSerializersMixin:
 
     # Typings for attributes which are set in ViewSet
     request: request.Request
-    serializer_class: type[serializers.BaseSerializer] | None
-    serializer_read_class: type[serializers.BaseSerializer]
-    serializer_write_class: type[serializers.BaseSerializer]
+    serializer_class: type[serializers.BaseSerializer[Any]] | None
+    serializer_read_class: type[serializers.BaseSerializer[Any]]
+    serializer_write_class: type[serializers.BaseSerializer[Any]]
 
-    def get_serializer_class(self) -> type[serializers.BaseSerializer]:
+    def get_serializer_class(self) -> type[serializers.BaseSerializer[Any]]:
         """
         Return the class to use for the serializer.
         """
