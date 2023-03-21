@@ -6,7 +6,7 @@ from api.models import AgeRange
 from api.serializers import AgeRangeSerializer
 
 
-class AgeRangeViewSet(viewsets.ReadOnlyModelViewSet):
+class AgeRangeViewSet(viewsets.ReadOnlyModelViewSet[AgeRange]):
     queryset = AgeRange.objects.all()
     serializer_class = AgeRangeSerializer
     filter_backends = (filters.DjangoFilterBackend,)

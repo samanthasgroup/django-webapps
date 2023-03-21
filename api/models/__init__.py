@@ -33,4 +33,6 @@ __all__ = [
     "Language",
     "LanguageAndLevel",
     "AgeRange",
+    "TimeSlot",
+    "DayAndTimeSlot",
 ]

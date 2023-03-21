@@ -8,3 +8,16 @@ from api.serializers.personal_info import (
 from api.serializers.student import StudentReadSerializer, StudentWriteSerializer
 from api.serializers.teacher import TeacherReadSerializer, TeacherWriteSerializer
 from api.serializers.teacher_under_18 import TeacherUnder18Serializer
+
+__all__ = [
+    "AgeRangeSerializer",
+    "DayAndTimeSlotSerializer",
+    "LanguageAndLevelSerializer",
+    "PersonalInfoCheckExistenceSerializer",
+    "PersonalInfoSerializer",
+    "StudentReadSerializer",
+    "StudentWriteSerializer",
+    "TeacherReadSerializer",
+    "TeacherWriteSerializer",
+    "TeacherUnder18Serializer",
+]
