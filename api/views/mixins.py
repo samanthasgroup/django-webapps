@@ -9,8 +9,7 @@ _MT_co = TypeVar("_MT_co", bound=Model)
 
 class ReadWriteSerializersMixin:
     """
-    A view mixin that provides a way to specify different serializers for
-    input and output purposes.
+    Mixin for ViewSet for defining different serializers for read and write.
     """
 
     # Typings for attributes which are set in ViewSet
