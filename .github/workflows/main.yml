@@ -15,4 +15,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "3.10"
+      - name: Copy settings
+        run: |
+          cp ./django_webapps/settings_sample.py ./django_webapps/settings.py
       - uses: pre-commit/action@v2.0.0
