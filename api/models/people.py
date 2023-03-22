@@ -90,6 +90,8 @@ class Person(models.Model):
         related_name="as_%(class)s",  # produces `.as_coordinator` etc.
     )
 
+    # TODO last contacted, last responded, scheduled date of next contact?
+
     class Meta:
         abstract = True
 
@@ -117,6 +119,7 @@ class Coordinator(Person):
         NO_RESPONSE = "no_response", "Not responding"
         DECLINED = "declined", "Announced that they cannot participate in the project"
         FINISHED_STAYS = "finished_stays", "Finished coordinating but remains in the project"
+        FINISHED_LEFT = "finished_left", "Finished coordinating and left the project"
         REMOVED = "removed", "All access revoked, accounts closed"
 
     is_admin = models.BooleanField(
@@ -245,7 +248,6 @@ class Teacher(TeacherCommon):
             "teaching_another_awaiting_start",
             "Teaching, awaiting start of another group",
         )
-        NEEDS_TRANSFER = "needs_transfer", "Needs transfer to another group"
         NEEDS_SUBSTITUTION = (
             "needs_substitution",
             "Needs a break in teaching the group, substitute teacher needed",
@@ -254,6 +256,7 @@ class Teacher(TeacherCommon):
         ON_LEAVE = "on_leave", "On leave"
         NO_RESPONSE = "no_response", "Not responding"
         DECLINED = "declined", "Announced that they cannot participate in the project"
+        FINISHED_LEFT = "finished_left", "Finished teaching and left the project"
         FINISHED_STAYS = "finished_stays", "Finished teaching but remains in the project"
 
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
@@ -322,6 +325,7 @@ class TeacherUnder18(TeacherCommon):
         ON_LEAVE = "on_leave", "On leave"
         NO_RESPONSE = "no_response", "Not responding"
         DECLINED = "declined", "Announced that they cannot participate in the project"
+        FINISHED_LEFT = "finished_left", "Finished teaching and left the project"
         FINISHED_STAYS = "finished_stays", "Finished teaching but remains in the project"
 
     status = models.CharField(
