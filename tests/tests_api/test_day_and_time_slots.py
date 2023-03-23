@@ -3,9 +3,9 @@ from rest_framework import status
 from api.models import DayAndTimeSlot
 
 
-def test_day_and_time_slot_list(admin_client):
+def test_day_and_time_slot_list(api_client):
     queryset = DayAndTimeSlot.objects.all()
-    response = admin_client.get("/api/day_and_time_slots/")
+    response = api_client.get("/api/day_and_time_slots/")
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == [
         {
@@ -21,9 +21,9 @@ def test_day_and_time_slot_list(admin_client):
     ]
 
 
-def test_day_and_time_slots_retrieve(admin_client):
+def test_day_and_time_slots_retrieve(api_client):
     day_and_time_slot = DayAndTimeSlot.objects.first()
-    response = admin_client.get(f"/api/day_and_time_slots/{day_and_time_slot.id}/")
+    response = api_client.get(f"/api/day_and_time_slots/{day_and_time_slot.id}/")
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {
