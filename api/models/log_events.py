@@ -20,12 +20,12 @@ class LogEvent(models.Model):
 
     date_time = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        abstract = True
+
     @property
     def date_as_str(self) -> str:
         return self.date_time.strftime("%d.%m.%Y")
-
-    class Meta:
-        abstract = True
 
 
 class GroupLogEvent(LogEvent):
