@@ -23,7 +23,7 @@ def test_languages_and_levels_list(api_client, language):
                 "id": language_and_level.language.id,
                 "name": language_and_level.language.name,
             },
-            "level": str(language_and_level.level),
+            "level": language_and_level.level.id,
         }
         for language_and_level in queryset
     ]
@@ -40,5 +40,5 @@ def test_languages_and_levels_retrieve(api_client):
             "id": language_and_level.language.id,
             "name": language_and_level.language.name,
         },
-        "level": str(language_and_level.level),
+        "level": language_and_level.level.id,
     }
