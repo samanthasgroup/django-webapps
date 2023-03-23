@@ -29,6 +29,68 @@ class LogEvent(models.Model):
         abstract = True
 
 
+class CoordinatorLogEvent(LogEvent):
+    """Model for a log event concerning a coordinator."""
+
+    class EventType(models.TextChoices):
+        APPLIED = "applied", "Applied for the role"
+        JOINED = "joined", "Joined the team"
+        STARTED_ONBOARDING = "onboarding_start", "Started onboarding"
+        FINISHED_ONBOARDING = "onboarding_end", "Finished onboarding"
+        TOOK_NEW_GROUP = (
+            "took_new_group",
+            "Took a new group (not transferred from another coordinator)",
+        )
+        GROUP_STARTED_CLASSES = "group_started_classes", "The group started classes"
+        REQUESTED_TRANSFER = (
+            "requested_transfer",
+            "Requested that the group be transferred to a different coordinator",
+        )
+        TRANSFER_CANCELED = (
+            "transfer_canceled",
+            "Transfer canceled (declined or the coordinator changed their mind)",
+        )
+        TRANSFER_COMPLETED = "transferred", "Transfer of group to another coordinator completed"
+        TOOK_TRANSFERRED_GROUP = "took_transfer", "Received group from another coordinator"
+        REQUESTED_LEAVE = "requested_leave", "Requested a leave"
+        LEAVE_CONFIRMED = "leave_confirmed", "Leave confirmed"
+        RETURNED_FROM_LEAVE = "returned_from_leave", "Returned from leave"
+        DECLINED = "declined_to_continue", "Declined to continue participating in the project"
+        FINISHED_AND_LEAVING = (
+            "finished_and_leaving",
+            "Finished working and announced that they are leaving the project",
+        )
+        FINISHED_AND_STAYING = (
+            "finished_and_staying",
+            "Finished working and announced that they are staying in the project",
+        )
+        ACCESS_REVOKED = "access_revoked", "Access to corporate resources revoked"
+
+    coordinator = models.ForeignKey(Coordinator, related_name="log", on_delete=models.CASCADE)
+    group = models.ForeignKey(
+        Group,
+        null=True,
+        blank=True,
+        related_name="coordinator_log_events",
+        on_delete=models.CASCADE,
+    )
+    type = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
+    )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=("coordinator_id",), name="coordinator_id_idx"),
+            models.Index(fields=("type",), name="coordinator_log_event_type_idx"),
+        ]
+
+    def __str__(self) -> str:
+        return (
+            f"{self.date_as_str}: coordinator {self.coordinator.personal_info.full_name} "
+            f"{self.get_type_display()}"
+        )
+
+
 class GroupLogEvent(LogEvent):
     """Model for a log event concerning a group."""
 
@@ -74,84 +136,7 @@ class GroupLogEvent(LogEvent):
         return f"{self.date_as_str}: group {self.group} {self.get_type_display()}"
 
 
-class PersonLogEvent(LogEvent):
-    """Abstract class for a log event concerning a person."""
-
-    from_group = models.ForeignKey(
-        Group,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        related_name="%(class)s_from_self",  # will produce e.g. "studentLogEvents_from_self"
-    )
-    to_group = models.ForeignKey(
-        Group,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        related_name="%(class)s_to_self",
-    )
-
-    class Meta:
-        abstract = True
-
-
-class CoordinatorLogEvent(PersonLogEvent):
-    """Model for a log event concerning a coordinator."""
-
-    class EventType(models.TextChoices):
-        APPLIED = "applied", "Applied for the role"
-        JOINED = "joined", "Joined the team"
-        STARTED_ONBOARDING = "onboarding_start", "Started onboarding"
-        FINISHED_ONBOARDING = "onboarding_end", "Finished onboarding"
-        TOOK_NEW_GROUP = (
-            "took_new_group",
-            "Took a new group (not transferred from another coordinator)",
-        )
-        GROUP_STARTED_CLASSES = "group_started_classes", "The group started classes"
-        REQUESTED_TRANSFER = (
-            "requested_transfer",
-            "Requested that the group be transferred to a different coordinator",
-        )
-        TRANSFER_CANCELED = (
-            "transfer_canceled",
-            "Transfer canceled (declined or the coordinator changed their mind)",
-        )
-        TRANSFER_COMPLETED = "transferred", "Transfer of group to another coordinator completed"
-        TOOK_TRANSFERRED_GROUP = "took_transfer", "Received group from another coordinator"
-        REQUESTED_LEAVE = "requested_leave", "Requested a leave"
-        LEAVE_CONFIRMED = "leave_confirmed", "Leave confirmed"
-        RETURNED_FROM_LEAVE = "returned_from_leave", "Returned from leave"
-        DECLINED = "declined_to_continue", "Declined to continue participating in the project"
-        FINISHED_AND_LEAVING = (
-            "finished_and_leaving",
-            "Finished working and announced that they are leaving the project",
-        )
-        FINISHED_AND_STAYING = (
-            "finished_and_staying",
-            "Finished working and announced that they are staying in the project",
-        )
-        ACCESS_REVOKED = "access_revoked", "Access to corporate resources revoked"
-
-    coordinator = models.ForeignKey(Coordinator, related_name="log", on_delete=models.CASCADE)
-    type = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
-    )
-
-    class Meta:
-        indexes = [
-            models.Index(fields=("coordinator_id",), name="coordinator_id_idx"),
-            models.Index(fields=("type",), name="coordinator_log_event_type_idx"),
-        ]
-
-    def __str__(self) -> str:
-        return (
-            f"{self.date_as_str}: coordinator {self.coordinator.personal_info.full_name} "
-            f"{self.get_type_display()}"
-        )
-
-
-class StudentLogEvent(PersonLogEvent):
+class StudentLogEvent(LogEvent):
     """Model for a log event concerning a student."""
 
     class EventType(models.TextChoices):
@@ -177,6 +162,20 @@ class StudentLogEvent(PersonLogEvent):
         FINISHED_LEFT = "finished_left", "Completed the course and left the project"
         FINISHED_STAYS = "finished_stays", "Completed the course and wants to join another group"
 
+    from_group = models.ForeignKey(
+        Group,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="student_log_events_from_this_group",
+    )
+    to_group = models.ForeignKey(
+        Group,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="student_log_events_to_this_group",
+    )
     student = models.ForeignKey(Student, related_name="log", on_delete=models.CASCADE)
     type = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
@@ -195,7 +194,7 @@ class StudentLogEvent(PersonLogEvent):
         )
 
 
-class TeacherLogEvent(PersonLogEvent):
+class TeacherLogEvent(LogEvent):
     """Model for a log event concerning an adult teacher."""
 
     class EventType(models.TextChoices):
@@ -217,6 +216,20 @@ class TeacherLogEvent(PersonLogEvent):
         FINISHED_LEFT = "finished_left", "Completed the course and left the project"
         FINISHED_STAYS = "finished_stays", "Completed the course and wants to join another group"
 
+    from_group = models.ForeignKey(
+        Group,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="teacher_log_events_from_this_group",
+    )
+    to_group = models.ForeignKey(
+        Group,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="teacher_log_events_to_this_group",
+    )
     teacher = models.ForeignKey(Teacher, related_name="log", on_delete=models.CASCADE)
     type = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
@@ -235,7 +248,7 @@ class TeacherLogEvent(PersonLogEvent):
         )
 
 
-class TeacherUnder18LogEvent(PersonLogEvent):
+class TeacherUnder18LogEvent(LogEvent):
     """Model for a log event concerning a young teacher."""
 
     class EventType(models.TextChoices):
