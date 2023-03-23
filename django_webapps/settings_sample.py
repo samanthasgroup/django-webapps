@@ -141,7 +141,7 @@ SPECTACULAR_SETTINGS = {
 
 
 # The following is needed to be able to use annotations
-# like "viewsets.ReadOnlyModelViewSet[Teacher]" for mypy to stop ****ing our brains.
+# like "viewsets.ReadOnlyModelViewSet[Teacher]" for mypy to be happy.
 
 #  If you import something from rest_framework before REST_FRAMEWORK setting,
 #  this setting will be ignored.
