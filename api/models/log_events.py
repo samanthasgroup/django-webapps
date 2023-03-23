@@ -18,6 +18,7 @@ class LogEvent(models.Model):
     organized by the school.
     """
 
+    comment = models.TextField()
     date_time = models.DateTimeField(auto_now_add=True)
 
     @property
