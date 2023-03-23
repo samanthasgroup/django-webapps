@@ -155,7 +155,7 @@ class StudentLogEvent(PersonLogEvent):
         GROUP_OFFERED = "group_offered", "Was offered a group, has not responded yet"
         ACCEPTED_OFFER = "accepted_offer", "Was offered a group and accepted it"
         DECLINED_OFFER = "declined_offer", "Was offered a group but declined it"
-        AWAITING_START = "awaiting_start", "Group confirmed, awaiting start of classes"
+        GROUP_CONFIRMED = "group_confirmed", "Group confirmed, awaiting start of classes"
         STUDY_START = "start", "Started studying in a group"
         MISSED_CLASS_NOTIFIED = (
             "missed_class_notified",
@@ -203,7 +203,7 @@ class TeacherLogEvent(PersonLogEvent):
         GROUP_OFFERED = "group_offered", "Was offered a group, has not responded yet"
         ACCEPTED_OFFER = "accepted_offer", "Was offered a group and accepted it"
         DECLINED_OFFER = "declined_offer", "Was offered a group but declined it"
-        AWAITING_START = "awaiting_start", "Group confirmed, awaiting start of classes"
+        GROUP_CONFIRMED = "group_confirmed", "Group confirmed, awaiting start of classes"
         STUDY_START = "start", "Started teaching a group"
         REQUESTED_TRANSFER = "requested_transfer", "Requested transfer"
         TRANSFERRED = "transferred", "Transferred"
