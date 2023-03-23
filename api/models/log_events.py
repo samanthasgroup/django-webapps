@@ -104,17 +104,21 @@ class CoordinatorLogEvent(PersonLogEvent):
         JOINED = "joined", "Joined the team"
         STARTED_ONBOARDING = "onboarding_start", "Started onboarding"
         FINISHED_ONBOARDING = "onboarding_end", "Finished onboarding"
-        TOOK_GROUP = "took_group", "Took a group"
+        TOOK_NEW_GROUP = (
+            "took_new_group",
+            "Took a new group (not transferred from another coordinator)",
+        )
         GROUP_STARTED_CLASSES = "group_started_classes", "The group started classes"
         REQUESTED_TRANSFER = (
             "requested_transfer",
             "Requested that the group be transferred to a different coordinator",
         )
-        TRANSFERRED = "transferred", "Transferred to another group"
         TRANSFER_CANCELED = (
             "transfer_canceled",
             "Transfer canceled (declined or the coordinator changed their mind)",
         )
+        TRANSFER_COMPLETED = "transferred", "Transfer of group to another coordinator completed"
+        TOOK_TRANSFERRED_GROUP = "took_transfer", "Received group from another coordinator"
         REQUESTED_LEAVE = "requested_leave", "Requested a leave"
         LEAVE_CONFIRMED = "leave_confirmed", "Leave confirmed"
         RETURNED_FROM_LEAVE = "returned_from_leave", "Returned from leave"
