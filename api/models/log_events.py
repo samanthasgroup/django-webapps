@@ -21,12 +21,12 @@ class LogEvent(models.Model):
     comment = models.TextField()
     date_time = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        abstract = True
+
     @property
     def date_as_str(self) -> str:
         return self.date_time.strftime("%d.%m.%Y")
-
-    class Meta:
-        abstract = True
 
 
 class CoordinatorLogEvent(LogEvent):
