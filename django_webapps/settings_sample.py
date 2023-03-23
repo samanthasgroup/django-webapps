@@ -140,10 +140,11 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-# The following is needed to be able to use annotations like "viewsets.ReadOnlyModelViewSet[Teacher]"
-# for mypy to stop ****ing our brains.
+# The following is needed to be able to use annotations
+# like "viewsets.ReadOnlyModelViewSet[Teacher]" for mypy to stop ****ing our brains.
 
 #  If you import something from rest_framework before REST_FRAMEWORK setting,
 #  this setting will be ignored.
 from rest_framework import viewsets  # noqa
+
 django_stubs_ext.monkeypatch(extra_classes=[viewsets.ModelViewSet, viewsets.ReadOnlyModelViewSet])
