@@ -105,6 +105,10 @@ class Coordinator(Person):
     class Status(models.TextChoices):
         PENDING = "pending", "Completed registration, waiting for onboarding"
         ONBOARDING = "onboarding", "In onboarding"
+        ONBOARDING_STALE = (
+            "onboarding_stale",
+            "Has been in onboarding for too long without taking a group",
+        )
         AWAITING_GROUP = "awaiting_group", "Not working, waiting for a group"
         PREPARING_START = "preparing_start", "Taken a single group, preparing start of classes"
         WORKING_ACCEPTING_MORE = "working_open", "Coordinating, ready to take on another group"
