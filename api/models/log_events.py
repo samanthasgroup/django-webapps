@@ -212,9 +212,6 @@ class TeacherLogEvent(LogEvent):
         DECLINED_OFFER = "declined_offer", "Was offered a group but declined it"
         GROUP_CONFIRMED = "group_confirmed", "Group confirmed, awaiting start of classes"
         STUDY_START = "start", "Started teaching a group"
-        REQUESTED_TRANSFER = "requested_transfer", "Requested transfer"
-        TRANSFERRED = "transferred", "Transferred"
-        TRANSFER_CANCELED = "transfer_canceled", "Transfer canceled"
         ABORTED = "aborted", "Left the project prematurely"
         FINISHED_AND_LEAVING = (
             "finished_and_leaving",
