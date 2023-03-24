@@ -159,8 +159,11 @@ class StudentLogEvent(LogEvent):
         TRANSFERRED = "transferred", "Transferred"
         TRANSFER_CANCELED = "transfer_canceled", "Transfer canceled"
         ABORTED = "aborted", "Left the project prematurely"
-        FINISHED_LEFT = "finished_left", "Completed the course and left the project"
-        FINISHED_STAYS = "finished_stays", "Completed the course and wants to join another group"
+        FINISHED_AND_LEAVING = "finished_left", "Completed the course and left the project"
+        FINISHED_AND_STAYING = (
+            "finished_stays",
+            "Completed the course and wants to join another group",
+        )
 
     from_group = models.ForeignKey(
         Group,
@@ -213,8 +216,14 @@ class TeacherLogEvent(LogEvent):
         TRANSFERRED = "transferred", "Transferred"
         TRANSFER_CANCELED = "transfer_canceled", "Transfer canceled"
         ABORTED = "aborted", "Left the project prematurely"
-        FINISHED_LEFT = "finished_left", "Completed the course and left the project"
-        FINISHED_STAYS = "finished_stays", "Completed the course and wants to join another group"
+        FINISHED_AND_LEAVING = (
+            "finished_and_leaving",
+            "Finished working and announced that they are leaving the project",
+        )
+        FINISHED_AND_STAYING = (
+            "finished_and_staying",
+            "Finished working and announced that they are staying in the project",
+        )
 
     from_group = models.ForeignKey(
         Group,
