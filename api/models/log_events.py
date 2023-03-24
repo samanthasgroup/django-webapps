@@ -36,7 +36,6 @@ class CoordinatorLogEvent(LogEvent):
         APPLIED = "applied", "Applied for the role"
         JOINED = "joined", "Joined the team"
         STARTED_ONBOARDING = "onboarding_start", "Started onboarding"
-        FINISHED_ONBOARDING = "onboarding_end", "Finished onboarding"
         TOOK_NEW_GROUP = (
             "took_new_group",
             "Took a new group (not transferred from another coordinator)",
