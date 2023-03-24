@@ -121,6 +121,7 @@ class Coordinator(Person):
         FINISHED_STAYS = "finished_stays", "Finished coordinating but remains in the project"
         FINISHED_LEFT = "finished_left", "Finished coordinating and left the project"
         REMOVED = "removed", "All access revoked, accounts closed"
+        BANNED = "banned", "Banned from the project"
 
     is_admin = models.BooleanField(
         default=False,
@@ -162,6 +163,7 @@ class Student(Person):
         NO_RESPONSE = "no_response", "Not responding"
         LEFT = "left", "Left the project prematurely"
         FINISHED = "finished", "Completed the course and left the project"
+        BANNED = "banned", "Banned from the project"
 
     age_range = models.ForeignKey(
         AgeRange,
@@ -258,6 +260,7 @@ class Teacher(TeacherCommon):
         DECLINED = "declined", "Announced that they cannot participate in the project"
         FINISHED_LEFT = "finished_left", "Finished teaching and left the project"
         FINISHED_STAYS = "finished_stays", "Finished teaching but remains in the project"
+        BANNED = "banned", "Banned from the project"
 
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
@@ -327,6 +330,7 @@ class TeacherUnder18(TeacherCommon):
         DECLINED = "declined", "Announced that they cannot participate in the project"
         FINISHED_LEFT = "finished_left", "Finished teaching and left the project"
         FINISHED_STAYS = "finished_stays", "Finished teaching but remains in the project"
+        BANNED = "banned", "Banned from the project"
 
     status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices

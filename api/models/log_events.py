@@ -64,6 +64,7 @@ class CoordinatorLogEvent(LogEvent):
             "finished_and_staying",
             "Finished working and announced that they are staying in the project",
         )
+        EXPELLED = "expelled", "Expelled from the project"
         ACCESS_REVOKED = "access_revoked", "Access to corporate resources revoked"
 
     coordinator = models.ForeignKey(Coordinator, related_name="log", on_delete=models.CASCADE)
@@ -159,6 +160,7 @@ class StudentLogEvent(LogEvent):
         TRANSFERRED = "transferred", "Transferred"
         TRANSFER_CANCELED = "transfer_canceled", "Transfer canceled"
         ABORTED = "aborted", "Left the project prematurely"
+        EXPELLED = "expelled", "Expelled from the project"
         FINISHED_AND_LEAVING = "finished_left", "Completed the course and left the project"
         FINISHED_AND_STAYING = (
             "finished_stays",
@@ -221,6 +223,7 @@ class TeacherLogEvent(LogEvent):
             "finished_and_staying",
             "Finished working and announced that they are staying in the project",
         )
+        EXPELLED = "expelled", "Expelled from the project"
 
     from_group = models.ForeignKey(
         Group,
@@ -261,6 +264,7 @@ class TeacherUnder18LogEvent(LogEvent):
         REGISTERED = "registered", "Completed registration"
         JOINED = "joined", "Joined the team"
         LEFT = "left", "Left the project"
+        EXPELLED = "expelled", "Expelled from the project"
 
     teacher = models.ForeignKey(TeacherUnder18, related_name="log", on_delete=models.CASCADE)
     type = models.CharField(
