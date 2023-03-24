@@ -12,7 +12,7 @@ def test_day_and_time_slot_list(api_client):
             "id": day_and_time_slot.id,
             "time_slot": {
                 "id": day_and_time_slot.time_slot.id,
-                # Because these fields are TimeFields, they are returned as strings
+                # Since these fields are TimeFields, they are returned as strings
                 "from_utc_hour": str(day_and_time_slot.time_slot.from_utc_hour),
                 "to_utc_hour": str(day_and_time_slot.time_slot.to_utc_hour),
             },
