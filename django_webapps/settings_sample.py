@@ -17,7 +17,6 @@ import django_stubs_ext
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -28,7 +27,6 @@ SECRET_KEY = "django-insecure-0295@@7_o^7w5#qe@2a!lrby7+#)5^gv&#-h9b4#*9gj2&s2e=
 DEBUG = True
 
 ALLOWED_HOSTS: list[str] = []
-
 
 # Application definition
 
@@ -77,7 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "django_webapps.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -87,7 +84,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -107,7 +103,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -118,7 +113,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -137,8 +131,12 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
+    "ENUM_NAME_OVERRIDES": {
+        "CoordinatorStatus": "api.models.people.Coordinator.Status.choices",
+        "StudentStatus": "api.models.people.Student.Status.choices",
+        "TeacherStatus": "api.models.people.Teacher.Status.choices",
+    },
 }
-
 
 # The following is needed to be able to use annotations
 # like "viewsets.ReadOnlyModelViewSet[Teacher]" for mypy to be happy.
