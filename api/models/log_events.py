@@ -34,8 +34,8 @@ class CoordinatorLogEvent(LogEvent):
 
     class EventType(models.TextChoices):
         APPLIED = "applied", "Applied for the role"
-        JOINED = "joined", "Joined the team"
-        STARTED_ONBOARDING = "onboarding_start", "Started onboarding"
+        JOINED = "joined", "Joined the common group"
+        STARTED_ONBOARDING = "onboarding_start", "Joined the onboarding group"
         TOOK_NEW_GROUP = (
             "took_new_group",
             "Took a new group (not transferred from another coordinator)",

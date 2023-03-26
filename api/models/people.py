@@ -121,7 +121,10 @@ class Coordinator(Person):
         # TODO where to store the date when the teacher needs to be contacted again?
         ON_LEAVE = "on_leave", "On leave"
         NO_RESPONSE = "no_response", "Not responding"
-        DECLINED = "declined", "Announced that they cannot participate in the project"
+        LEFT_PREMATURELY = (
+            "left_prematurely",
+            "Announced that they cannot participate in the project",
+        )
         FINISHED_STAYS = "finished_stays", "Finished coordinating but remains in the project"
         FINISHED_LEFT = "finished_left", "Finished coordinating and left the project"
         REMOVED = "removed", "All access revoked, accounts closed"
@@ -165,7 +168,7 @@ class Student(Person):
         STUDYING = "study", "Studying in a group"
         NEEDS_TRANSFER = "needs_transfer", "Needs transfer to another group"
         NO_RESPONSE = "no_response", "Not responding"
-        LEFT = "left", "Left the project prematurely"
+        LEFT_PREMATURELY = "left_prematurely", "Left the project prematurely"
         FINISHED = "finished", "Completed the course and left the project"
         BANNED = "banned", "Banned from the project"
 
@@ -261,7 +264,10 @@ class Teacher(TeacherCommon):
         # TODO where to store the date when the teacher needs to be contacted again?
         ON_LEAVE = "on_leave", "On leave"
         NO_RESPONSE = "no_response", "Not responding"
-        DECLINED = "declined", "Announced that they cannot participate in the project"
+        LEFT_PREMATURELY = (
+            "left_prematurely",
+            "Announced that they cannot participate in the project",
+        )
         FINISHED_LEFT = "finished_left", "Finished teaching and left the project"
         FINISHED_STAYS = "finished_stays", "Finished teaching but remains in the project"
         BANNED = "banned", "Banned from the project"
@@ -331,7 +337,10 @@ class TeacherUnder18(TeacherCommon):
         # TODO where to store the date when the teacher needs to be contacted again?
         ON_LEAVE = "on_leave", "On leave"
         NO_RESPONSE = "no_response", "Not responding"
-        DECLINED = "declined", "Announced that they cannot participate in the project"
+        LEFT_PREMATURELY = (
+            "left_prematurely",
+            "Announced that they cannot participate in the project",
+        )
         FINISHED_LEFT = "finished_left", "Finished teaching and left the project"
         FINISHED_STAYS = "finished_stays", "Finished teaching but remains in the project"
         BANNED = "banned", "Banned from the project"
