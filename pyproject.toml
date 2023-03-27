@@ -34,7 +34,7 @@ django-extensions = "^3.2.1"
 psycopg2-binary = "^2.9.5"
 djangorestframework = "^3.14.0"
 drf-spectacular = "^0.26.0"
-django-filter = "^22.1"
+django-filter = "^23.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
