@@ -47,7 +47,7 @@ def test_personal_info_update(api_client, fake_personal_info_data):
     assert PersonalInfo.objects.filter(**fake_personal_info_data).exists()
 
 
-def test_personal_info_check_existence(api_client):
+def test_personal_info_check_existence_returns_400_with_existing_info(api_client):
     existing_personal_info = baker.make(PersonalInfo)
     response = api_client.post(
         "/api/personal_info/check_existence/",
