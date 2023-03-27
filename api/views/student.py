@@ -6,6 +6,8 @@ from api.views.mixins import ReadWriteSerializersMixin
 
 
 class StudentViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Student]):  # type: ignore
+    """Student viewset."""
+
     queryset = Student.objects.all()
     serializer_read_class = StudentReadSerializer
     serializer_write_class = StudentWriteSerializer

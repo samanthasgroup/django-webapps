@@ -43,7 +43,7 @@ def fake_personal_info_data(faker):
         "email": faker.email(),
         "phone": faker.numerify("+791########"),
         "utc_timedelta": "03:00:00",
-        "information_source": faker.pystr(),
+        "information_source": faker.text(),
         "registration_bot_chat_id": faker.pyint(),
         "registration_bot_language": faker.random_element(
             PersonalInfo.RegistrationBotLanguage.values
