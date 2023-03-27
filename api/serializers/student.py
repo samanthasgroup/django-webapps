@@ -11,7 +11,11 @@ from api.serializers import (
 class StudentWriteSerializer(serializers.ModelSerializer[Student]):
     class Meta:
         model = Student
-        fields = "__all__"
+        exclude = (
+            "children",
+            "status",
+            "comment",
+        )
 
 
 class StudentReadSerializer(serializers.ModelSerializer[Student]):
@@ -21,4 +25,6 @@ class StudentReadSerializer(serializers.ModelSerializer[Student]):
 
     class Meta:
         model = Student
-        fields = "__all__"
+        # TODO: Do we need to exclude `children` here? Do we need them in API?
+        #  If yes, then we need to decide how to show them. As nested students?
+        exclude = ("children",)

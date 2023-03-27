@@ -7,7 +7,10 @@ from api.serializers.personal_info import (
 )
 from api.serializers.student import StudentReadSerializer, StudentWriteSerializer
 from api.serializers.teacher import TeacherReadSerializer, TeacherWriteSerializer
-from api.serializers.teacher_under_18 import TeacherUnder18Serializer
+from api.serializers.teacher_under_18 import (
+    TeacherUnder18ReadSerializer,
+    TeacherUnder18WriteSerializer,
+)
 
 __all__ = [
     "AgeRangeSerializer",
@@ -19,5 +22,6 @@ __all__ = [
     "StudentWriteSerializer",
     "TeacherReadSerializer",
     "TeacherWriteSerializer",
-    "TeacherUnder18Serializer",
+    "TeacherUnder18ReadSerializer",
+    "TeacherUnder18WriteSerializer",
 ]
