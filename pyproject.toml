@@ -25,6 +25,12 @@ module = [
 ]
 ignore_errors = true
 
+[mypy.plugins.django-stubs]
+django_settings_module = "api.settings"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "django_webapps.settings"
+asyncio_mode = "auto"
 
 [tool.poetry]
 name = "django-webapps"
@@ -84,11 +90,3 @@ target-version = "py310"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[mypy.plugins.django-stubs]
-django_settings_module = "api.settings"
-
-
-[tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "django_webapps.settings"
-asyncio_mode = "auto"
