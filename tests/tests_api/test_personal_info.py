@@ -20,7 +20,7 @@ def test_personal_info_create(api_client, fake_personal_info_data):
     assert response.status_code == status.HTTP_201_CREATED
     assert PersonalInfo.objects.count() == initial_count + 1
 
-    # Changing it to internal type for further filtering
+    # Changing it to a timedelta object for further filtering
     fake_personal_info_data["utc_timedelta"] = parse_duration(
         fake_personal_info_data["utc_timedelta"]
     )
