@@ -26,13 +26,18 @@ def test_student_create(api_client, faker):
     }
     response = api_client.post("/api/students/", data=data)
 
+    # TODO why does the test NOT fail when we pass no status and DOES fail when I pass one
+    #  (as "status": faker.random_element(Student.Status.values)? The test for Teacher fails
+    #  if I pass no status.  There is something wrong with Student and I can't figure out what.
+    #  BTW I think we should assign a default status at creation for all Person submodels.
+
     assert response.status_code == status.HTTP_201_CREATED
     assert Student.objects.count() == initial_count + 1
 
     m2m_fields = [
         "teaching_languages_and_levels",
         "availability_slots",
-    ]
+    ]  # TODO children
     # Changing for further filtering
     for field in m2m_fields:
         data[f"{field}__in"] = data.pop(field)
@@ -42,7 +47,6 @@ def test_student_create(api_client, faker):
 
 def test_student_retrieve(api_client):
     student = baker.make(Student, make_m2m=True)
-    # TODO: Student doesn't have `id` field, but `personal_info` does. Is it ok?
     response = api_client.get(f"/api/students/{student.personal_info.id}/")
 
     response_json = response.json()
