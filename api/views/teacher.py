@@ -8,6 +8,7 @@ from api.views.mixins import ReadWriteSerializersMixin
 class TeacherViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Teacher]):  # type: ignore
     """Teacher viewset."""
 
+    lookup_field = "personal_info_id"
     queryset = Teacher.objects.all()
     serializer_read_class = TeacherReadSerializer
     serializer_write_class = TeacherWriteSerializer

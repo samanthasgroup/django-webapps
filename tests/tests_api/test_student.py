@@ -16,10 +16,6 @@ def test_student_create(api_client, faker):
         DayAndTimeSlot.objects.first().id,
         DayAndTimeSlot.objects.last().id,
     ]
-    m2m_fields = [
-        "teaching_languages_and_levels",
-        "availability_slots",
-    ]
     data = {
         "personal_info": personal_info.id,
         "age_range": age_range_id,
@@ -33,6 +29,10 @@ def test_student_create(api_client, faker):
     assert response.status_code == status.HTTP_201_CREATED
     assert Student.objects.count() == initial_count + 1
 
+    m2m_fields = [
+        "teaching_languages_and_levels",
+        "availability_slots",
+    ]
     # Changing for further filtering
     for field in m2m_fields:
         data[f"{field}__in"] = data.pop(field)

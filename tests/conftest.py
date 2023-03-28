@@ -20,7 +20,6 @@ def enable_db_access_for_all_tests(
     """
     A pytest fixture that enables database access for all tests.
     """
-    pass
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -41,7 +40,7 @@ def fake_personal_info_data(faker):
         "last_name": faker.last_name(),
         "tg_username": faker.user_name(),
         "email": faker.email(),
-        "phone": faker.numerify("+353########"),
+        "phone": faker.numerify("+3531#######"),
         "utc_timedelta": "03:00:00",
         "information_source": faker.text(),
         "registration_bot_chat_id": faker.pyint(),
