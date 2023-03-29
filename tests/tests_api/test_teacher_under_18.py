@@ -13,6 +13,7 @@ def test_teacher_under_18_create(api_client, faker):
         "personal_info": personal_info.id,
         "additional_skills_comment": faker.pystr(max_chars=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH),
         "can_help_with_speaking_club": faker.pybool(),
+        "comment": faker.text(),
     }
     response = api_client.post("/api/teachers_under_18/", data=data)
     assert response.status_code == status.HTTP_201_CREATED

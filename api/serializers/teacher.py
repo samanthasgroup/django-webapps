@@ -11,7 +11,7 @@ from api.serializers import (
 class TeacherWriteSerializer(serializers.ModelSerializer[Teacher]):
     class Meta:
         model = Teacher
-        fields = "__all__"
+        exclude = ("status",)
 
 
 class TeacherReadSerializer(serializers.ModelSerializer[Teacher]):

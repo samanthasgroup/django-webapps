@@ -18,6 +18,7 @@ def test_student_create(api_client, faker):
     ]
     data = {
         "personal_info": personal_info.id,
+        "comment": faker.text(),
         "age_range": age_range_id,
         "teaching_languages_and_levels": teaching_languages_and_levels_ids,
         "is_member_of_speaking_club": faker.pybool(),
@@ -25,11 +26,6 @@ def test_student_create(api_client, faker):
         "availability_slots": availability_slots_ids,
     }
     response = api_client.post("/api/students/", data=data)
-
-    # TODO why does the test NOT fail when we pass no status and DOES fail when I pass one
-    #  (as "status": faker.random_element(Student.Status.values)? The test for Teacher fails
-    #  if I pass no status.  There is something wrong with Student and I can't figure out what.
-    #  BTW I think we should assign a default status at creation for all Person submodels.
 
     assert response.status_code == status.HTTP_201_CREATED
     assert Student.objects.count() == initial_count + 1

@@ -14,7 +14,6 @@ class StudentWriteSerializer(serializers.ModelSerializer[Student]):
         exclude = (
             "children",
             "status",
-            "comment",
         )
 
 
@@ -25,6 +24,4 @@ class StudentReadSerializer(serializers.ModelSerializer[Student]):
 
     class Meta:
         model = Student
-        # TODO: Do we need to exclude `children` here? Do we need them in API?
-        #  If yes, then we need to decide how to show them. As nested students?
         exclude = ("children",)

@@ -21,7 +21,6 @@ def test_teacher_create(api_client, faker):
     ]
     data = {
         "personal_info": personal_info.id,
-        "status": faker.random_element(Teacher.Status.values),
         "student_age_ranges": age_range_ids,
         "teaching_languages_and_levels": teaching_languages_and_levels_ids,
         "availability_slots": availability_slots_ids,
