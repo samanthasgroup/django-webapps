@@ -12,9 +12,10 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 from pathlib import Path
 
+import django_stubs_ext
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -26,7 +27,6 @@ SECRET_KEY = "django-insecure-0295@@7_o^7w5#qe@2a!lrby7+#)5^gv&#-h9b4#*9gj2&s2e=
 DEBUG = True
 
 ALLOWED_HOSTS: list[str] = []
-
 
 # Application definition
 
@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "phonenumber_field",
     "django_extensions",
+    "rest_framework",
+    "drf_spectacular",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -72,7 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "django_webapps.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -82,7 +84,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -102,7 +103,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -114,7 +114,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
@@ -125,3 +124,25 @@ STATIC_ROOT = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "api.schema.CustomSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "SERVE_INCLUDE_SCHEMA": False,
+    "ENUM_NAME_OVERRIDES": {
+        "CoordinatorStatus": "api.models.people.Coordinator.Status.choices",
+        "StudentStatus": "api.models.people.Student.Status.choices",
+        "TeacherStatus": "api.models.people.Teacher.Status.choices",
+    },
+}
+
+# The following is needed to be able to use annotations
+# like "viewsets.ReadOnlyModelViewSet[Teacher]" for mypy to be happy.
+
+#  If you import something from rest_framework before REST_FRAMEWORK setting,
+#  this setting will be ignored.
+from rest_framework import viewsets  # noqa
+
+django_stubs_ext.monkeypatch(extra_classes=[viewsets.ModelViewSet, viewsets.ReadOnlyModelViewSet])

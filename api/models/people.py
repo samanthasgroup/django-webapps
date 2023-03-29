@@ -182,6 +182,7 @@ class Student(Person):
 
     children = models.ManyToManyField(
         "self",
+        blank=True,
         symmetrical=False,
         related_name="parents",
         help_text="children of this student that are also studying at SSG",
