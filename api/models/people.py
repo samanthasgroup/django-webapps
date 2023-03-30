@@ -9,6 +9,7 @@ from api.models.base import GroupOrPerson
 from api.models.constants import (
     DEFAULT_CHAR_FIELD_MAX_LEN,
     DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+    STUDENT_CLASS_MISS_LIMIT,
     CoordinatorGroupLimit,
 )
 from api.models.days_time_slots import DayAndTimeSlot
@@ -170,6 +171,10 @@ class Student(Person):
         GROUP_OFFERED = "group_offered", "Was offered a group, has not responded yet"
         AWAITING_START = "awaiting_start", "Group confirmed, awaiting start of classes"
         STUDYING = "study", "Studying in a group"
+        NOT_ATTENDING = (
+            "not_attending",
+            f"Missed {STUDENT_CLASS_MISS_LIMIT} classes in a row without letting the teacher know",
+        )
         NEEDS_TRANSFER = "needs_transfer", "Needs transfer to another group"
         NO_RESPONSE = "no_response", "Not responding"
         LEFT_PREMATURELY = "left_prematurely", "Left the project prematurely"

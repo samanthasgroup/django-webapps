@@ -56,3 +56,8 @@ STUDENT_AGE_RANGES_FOR_TEACHER = {
 # TODO for now leaving these ranges the same as the ranges that students get when registering,
 #  but this is likely to change.  The children's ranges will most likely remain the same, though.
 STUDENT_AGE_RANGES_FOR_MATCHING = STUDENT_AGE_RANGES.copy()
+
+STUDENT_CLASS_MISS_LIMIT = 3
+"""If a student misses this amount of classes **in a row** and **without notifying**
+the teacher, they can be expelled.
+"""
