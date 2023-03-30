@@ -54,7 +54,7 @@ class CoordinatorLogEvent(LogEvent):
         REQUESTED_LEAVE = "requested_leave", "Requested a leave"
         LEAVE_CONFIRMED = "leave_confirmed", "Leave confirmed"
         RETURNED_FROM_LEAVE = "returned_from_leave", "Returned from leave"
-        DECLINED = "declined_to_continue", "Declined to continue participating in the project"
+        LEFT_PREMATURELY = "left_prematurely", "Left the project prematurely"
         FINISHED_AND_LEAVING = (
             "finished_and_leaving",
             "Finished working and announced that they are leaving the project",
@@ -158,7 +158,7 @@ class StudentLogEvent(LogEvent):
         REQUESTED_TRANSFER = "requested_transfer", "Requested transfer"
         TRANSFERRED = "transferred", "Transferred"
         TRANSFER_CANCELED = "transfer_canceled", "Transfer canceled"
-        ABORTED = "aborted", "Left the project prematurely"
+        LEFT_PREMATURELY = "left_prematurely", "Left the project prematurely"
         EXPELLED = "expelled", "Expelled from the project"
         FINISHED_AND_LEAVING = "finished_left", "Completed the course and left the project"
         FINISHED_AND_STAYING = (
@@ -214,7 +214,7 @@ class TeacherLogEvent(LogEvent):
         GROUP_CONFIRMED = "group_confirmed", "Group confirmed, awaiting start of classes"
         STUDY_START = "started_teaching_group", "Started teaching a group"
         HOSTED_SPEAKING_CLUB = "hosted_speaking_club", "Hosted a speaking club"
-        ABORTED = "aborted", "Left the project prematurely"
+        LEFT_PREMATURELY = "left_prematurely", "Left the project prematurely"
         FINISHED_AND_LEAVING = (
             "finished_and_leaving",
             "Finished working and announced that they are leaving the project",
