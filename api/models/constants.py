@@ -1,3 +1,11 @@
+from enum import IntEnum
+
+
+class CoordinatorGroupLimit(IntEnum):
+    MIN = 5
+    MAX = 20
+
+
 DEFAULT_CHAR_FIELD_MAX_LEN = 255
 DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH = 50
 

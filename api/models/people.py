@@ -6,7 +6,11 @@ from phonenumber_field import modelfields
 
 from api.models.age_ranges import AgeRange
 from api.models.base import GroupOrPerson
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
+from api.models.constants import (
+    DEFAULT_CHAR_FIELD_MAX_LEN,
+    DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+    CoordinatorGroupLimit,
+)
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import LanguageAndLevel
 
@@ -111,12 +115,13 @@ class Coordinator(Person):
         )
         WORKING_BELOW_THRESHOLD = (
             "working_threshold_not_reached",
-            "Working, but not yet reached the required minimum amount of groups",
+            "Working, but not yet reached the required minimum amount of groups "
+            f"({CoordinatorGroupLimit.MIN})",
         )
         WORKING_OK = "working_ok", "Working, required amount of groups reached"
         WORKING_LIMIT_REACHED = (
             "working_limit_reached",
-            "Working, reached maximum number of groups",
+            f"Working, reached maximum number of groups ({CoordinatorGroupLimit.MAX})",
         )
         ON_LEAVE = "on_leave", "On leave"
         NO_RESPONSE = "no_response", "Not responding"
