@@ -19,9 +19,6 @@ strict = true
 disallow_untyped_calls = false
 warn_return_any = false
 
-[mypy_django_plugin]
-ignore_missing_settings = true
-
 [[tool.mypy.overrides]]
 module = [
   "tests.*"
@@ -30,6 +27,7 @@ ignore_errors = true
 
 [mypy.plugins.django-stubs]
 django_settings_module = "api.settings"
+ignore_missing_settings = true
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "django_webapps.settings"
