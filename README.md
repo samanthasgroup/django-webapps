@@ -1,4 +1,4 @@
-![GitHub Actions](https://github.com/samanthasgroup/django_webapps/workflows/main/badge.svg)
+![GitHub Actions](https://github.com/samanthasgroup/django-webapps/actions/workflows/main.yml/badge.svg)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/samanthasgroup/django-webapps/master.svg)](https://results.pre-commit.ci/latest/github/samanthasgroup/django-webapps/master)
 
 # django-webapps
