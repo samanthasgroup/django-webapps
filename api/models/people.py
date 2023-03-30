@@ -71,11 +71,11 @@ class PersonalInfo(GroupOrPerson):
         ordering = ("last_name", "first_name")
         verbose_name_plural = "personal info records"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.full_name} ({self.pk})"
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
 
@@ -93,7 +93,7 @@ class Person(models.Model):
     class Meta:
         abstract = True
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.personal_info.full_name}. Status: {getattr(self, 'status')}"
 
 
@@ -127,7 +127,7 @@ class Coordinator(Person):
     class Meta:
         indexes = [models.Index(fields=("status",), name="coordinator_status_idx")]
 
-    def __str__(self):
+    def __str__(self) -> str:
         role = " (admin)" if self.is_admin else ""
         return f"{super().__str__()}{role}"
 
@@ -148,6 +148,14 @@ class Student(Person):
         "They choose an age range when registering with us.",
     )
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
+
+    children = models.ManyToManyField(
+        "self",
+        blank=True,
+        symmetrical=False,
+        related_name="parents",
+        help_text="children of this student that are also studying at SSG",
+    )
 
     status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,

@@ -24,10 +24,14 @@ class EnrollmentTest(models.Model):
         "Leave blank for the test to be shown for all levels.",
     )
 
-    def __str__(self):
-        ages, levels = self.age_ranges.all(), self.levels.all()
-        ages_text = ", ".join(ages) if ages else "all ages"
-        levels_text = ", ".join(levels) if levels else "all levels"
+    def __str__(self) -> str:
+        age_ranges, levels = self.age_ranges.all(), self.levels.all()
+        ages_text = (
+            ", ".join(f"{age_range.age_from}-{age_range.age_to}" for age_range in age_ranges)
+            if age_ranges
+            else "all ages"
+        )
+        levels_text = ", ".join(level.id for level in levels) if levels else "all levels"
         return f"{self.language} ({levels_text}, {ages_text})"
 
 
@@ -45,7 +49,7 @@ class EnrollmentTestQuestion(models.Model):
             ),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.text
 
 
@@ -64,7 +68,7 @@ class EnrollmentTestQuestionOption(models.Model):
             )
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.text} (*)" if self.is_correct else self.text
 
 
@@ -74,5 +78,5 @@ class EnrollmentTestResult(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     answers = models.ManyToManyField(EnrollmentTestQuestionOption)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Test results of {self.student}"
