@@ -109,16 +109,15 @@ class Coordinator(Person):
             "onboarding_stale",
             "Has been in onboarding for too long without taking a group",
         )
-        AWAITING_GROUP = "awaiting_group", "Not working, waiting for a group"
-        PREPARING_START = "preparing_start", "Taken a single group, preparing start of classes"
-        WORKING_ACCEPTING_MORE = "working_open", "Coordinating, ready to take on another group"
-        WORKING_NOT_ACCEPTING_MORE = "working_full", "Coordinating, not accepting any more groups"
-        WORKING_PREPARING_START_OF_ANOTHER = (
-            "working_preparing_another",
-            "Coordinating existing group(s), preparing start of another group",
+        WORKING_BELOW_THRESHOLD = (
+            "working_threshold_not_reached",
+            "Working, but not yet reached the required minimum amount of groups",
         )
-        NEEDS_TRANSFER = "needs_transfer", "Needs to transfer the group to another coordinator"
-        # TODO where to store the date when the teacher needs to be contacted again?
+        WORKING_OK = "working_ok", "Working, required amount of groups reached"
+        WORKING_LIMIT_REACHED = (
+            "working_limit_reached",
+            "Working, reached maximum number of groups",
+        )
         ON_LEAVE = "on_leave", "On leave"
         NO_RESPONSE = "no_response", "Not responding"
         LEFT_PREMATURELY = (
