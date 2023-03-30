@@ -29,8 +29,8 @@ class Group(GroupCommon):
         PENDING = "pending", "Pending"
         AWAITING_START = "awaiting_start", "Group confirmed, awaiting start of classes"
         WORKING = "working", "Working, everything is OK"
-        PROBLEM = (
-            "problem",
+        ATTENTION_REQUIRED = (
+            "attention",
             "Some sort of problem: needs substitute teacher, change of coordinator etc.",
         )
         ABORTED = "aborted", "Finished prematurely"
