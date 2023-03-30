@@ -19,9 +19,6 @@ strict = true
 disallow_untyped_calls = false
 warn_return_any = false
 
-[mypy_django_plugin]
-ignore_missing_settings = true
-
 [[tool.mypy.overrides]]
 module = [
   "tests.*"
