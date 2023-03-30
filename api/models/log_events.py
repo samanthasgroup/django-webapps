@@ -51,8 +51,7 @@ class CoordinatorLogEvent(LogEvent):
         )
         TRANSFER_COMPLETED = "transferred", "Transfer of group to another coordinator completed"
         TOOK_TRANSFERRED_GROUP = "took_transfer", "Received group from another coordinator"
-        REQUESTED_LEAVE = "requested_leave", "Requested a leave"
-        LEAVE_CONFIRMED = "leave_confirmed", "Leave confirmed"
+        GONE_ON_LEAVE = "gone_on_leave", "Gone on leave"
         RETURNED_FROM_LEAVE = "returned_from_leave", "Returned from leave"
         LEFT_PREMATURELY = "left_prematurely", "Left the project prematurely"
         FINISHED_AND_LEAVING = (
@@ -213,7 +212,7 @@ class TeacherLogEvent(LogEvent):
         DECLINED_OFFER = "declined_offer", "Was offered a group but declined it"
         GROUP_CONFIRMED = "group_confirmed", "Group confirmed, awaiting start of classes"
         STUDY_START = "started_teaching_group", "Started teaching a group"
-        HOSTED_SPEAKING_CLUB = "hosted_speaking_club", "Hosted a speaking club"
+        HOSTED_SPEAKING_CLUB = "hosted_speaking_club", "Hosted a speaking club session"
         LEFT_PREMATURELY = "left_prematurely", "Left the project prematurely"
         FINISHED_AND_LEAVING = (
             "finished_and_leaving",
@@ -263,7 +262,7 @@ class TeacherUnder18LogEvent(LogEvent):
     class EventType(models.TextChoices):
         REGISTERED = "registered", "Completed registration"
         VALIDATED = "Validated in a face-to-face interview"
-        HOSTED_SPEAKING_CLUB = "hosted_speaking_club", "Hosted a speaking club"
+        HOSTED_SPEAKING_CLUB = "hosted_speaking_club", "Hosted a speaking club session"
         LEFT = "left", "Left the project"
         EXPELLED = "expelled", "Expelled from the project"
 
