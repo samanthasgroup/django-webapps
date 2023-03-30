@@ -4,7 +4,6 @@ target-version = ['py310']
 
 [tool.django-stubs]
 django_settings_module = "django_webapps.settings"
-ignore_missing_settings = true
 
 [tool.isort]
 profile = "black"
