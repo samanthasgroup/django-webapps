@@ -253,8 +253,7 @@ class Teacher(TeacherCommon):
     """Model for an adult teacher that can teach groups."""
 
     class Status(models.TextChoices):
-        PENDING = "pending", "Completed registration in the bot, waiting for approval"
-        AWAITING_OFFER = "awaiting_offer", "Registration approved, waiting for a group"
+        AWAITING_OFFER = "awaiting_offer", "Registered and waiting for a group"
         GROUP_OFFERED = "group_offered", "Was offered a group, has not responded yet"
         AWAITING_START = "awaiting_start", "Group confirmed, awaiting start of classes"
         TEACHING_ACCEPTING_MORE = "teaching_open", "Teaching, ready to take on another group"
@@ -342,8 +341,7 @@ class TeacherUnder18(TeacherCommon):
     """Model for a teacher under 18 years old that cannot teach groups."""
 
     class Status(models.TextChoices):
-        PENDING = "pending", "Completed registration in the bot, waiting for approval"
-        APPROVED = "approved", "Registration approved"
+        ACTIVE = "active", "Completed registration in the bot"
         # TODO where to store the date when the teacher needs to be contacted again?
         ON_LEAVE = "on_leave", "On leave"
         NO_RESPONSE = "no_response", "Not responding"
