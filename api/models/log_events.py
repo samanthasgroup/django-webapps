@@ -203,13 +203,13 @@ class TeacherLogEvent(LogEvent):
 
     class EventType(models.TextChoices):
         REGISTERED = "registered", "Completed registration"
-        JOINED = "joined", "Joined the team"
         AWAITING_OFFER = (
             "awaiting_offer",
             "Registration and validation complete, started waiting for a group",
         )
         GROUP_OFFERED = "group_offered", "Was offered a group, has not responded yet"
         ACCEPTED_OFFER = "accepted_offer", "Was offered a group and accepted it"
+        VALIDATED = "Validated in a face-to-face interview"
         DECLINED_OFFER = "declined_offer", "Was offered a group but declined it"
         GROUP_CONFIRMED = "group_confirmed", "Group confirmed, awaiting start of classes"
         STUDY_START = "started_teaching_group", "Started teaching a group"
@@ -262,7 +262,7 @@ class TeacherUnder18LogEvent(LogEvent):
 
     class EventType(models.TextChoices):
         REGISTERED = "registered", "Completed registration"
-        JOINED = "joined", "Joined the team"
+        VALIDATED = "Validated in a face-to-face interview"
         HOSTED_SPEAKING_CLUB = "hosted_speaking_club", "Hosted a speaking club"
         LEFT = "left", "Left the project"
         EXPELLED = "expelled", "Expelled from the project"
