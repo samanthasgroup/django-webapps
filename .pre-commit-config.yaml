@@ -1,5 +1,5 @@
 ci:
-    skip: ["mypy"]
+    skip: ["mypy"]  # for some reason it can't find the settings
 
 repos:
 -   repo: https://github.com/psf/black
