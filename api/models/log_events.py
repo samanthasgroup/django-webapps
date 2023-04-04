@@ -223,6 +223,7 @@ class TeacherLogEvent(LogEvent):
             "Finished working and announced that they are staying in the project",
         )
         EXPELLED = "expelled", "Expelled from the project"
+        ACCESS_REVOKED = "access_revoked", "Access to corporate resources revoked"
 
     from_group = models.ForeignKey(
         Group,
@@ -265,6 +266,7 @@ class TeacherUnder18LogEvent(LogEvent):
         HOSTED_SPEAKING_CLUB = "hosted_speaking_club", "Hosted a speaking club session"
         LEFT = "left", "Left the project"
         EXPELLED = "expelled", "Expelled from the project"
+        ACCESS_REVOKED = "access_revoked", "Access to corporate resources revoked"
 
     teacher = models.ForeignKey(TeacherUnder18, related_name="log", on_delete=models.CASCADE)
     type = models.CharField(

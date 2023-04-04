@@ -280,6 +280,7 @@ class Teacher(TeacherCommon):
         FINISHED_LEFT = "finished_left", "Finished teaching and left the project"
         FINISHED_STAYS = "finished_stays", "Finished teaching but remains in the project"
         BANNED = "banned", "Banned from the project"
+        REMOVED = "removed", "All access revoked, accounts closed"
 
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
@@ -352,6 +353,7 @@ class TeacherUnder18(TeacherCommon):
         FINISHED_LEFT = "finished_left", "Finished teaching and left the project"
         FINISHED_STAYS = "finished_stays", "Finished teaching but remains in the project"
         BANNED = "banned", "Banned from the project"
+        REMOVED = "removed", "All access revoked, accounts closed"
 
     status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices
