@@ -6,6 +6,7 @@ from phonenumber_field import modelfields
 
 from api.models.age_ranges import AgeRange
 from api.models.base import GroupOrPerson
+from api.models.choices.registration_bot_language import RegistrationBotLanguage
 from api.models.choices.statuses import (
     CoordinatorStatus,
     StudentStatus,
@@ -27,11 +28,6 @@ class PersonalInfo(GroupOrPerson):
 
     This model does not depend on a person's role (coordinators, students and teachers).
     """
-
-    class RegistrationBotLanguage(models.TextChoices):
-        EN = "en", "English"
-        RU = "ru", "Russian"
-        UA = "ua", "Ukrainian"
 
     # One ID will identify a person with any role (student, teacher, coordinator),
     # even if one person combines several roles.  The autoincrement simple numeric ID can be used
