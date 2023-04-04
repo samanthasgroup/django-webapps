@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import Q
 
 from api.models.base import GroupOrPerson
-from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
+from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, GroupStatus
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import Language, LanguageAndLevel
 from api.models.people import Coordinator, Student, Teacher, TeacherUnder18
@@ -25,23 +25,12 @@ class GroupCommon(GroupOrPerson):
 class Group(GroupCommon):
     """Model for a regular language group."""
 
-    class Status(models.TextChoices):
-        PENDING = "pending", "Pending"
-        AWAITING_START = "awaiting_start", "Group confirmed, awaiting start of classes"
-        WORKING = "working", "Working, everything is OK"
-        ATTENTION_REQUIRED = (
-            "attention",
-            "Some sort of problem: needs substitute teacher, change of coordinator etc.",
-        )
-        ABORTED = "aborted", "Finished prematurely"
-        FINISHED = "finished", "Finished (completed the course)"
-
     availability_slot = models.ManyToManyField(DayAndTimeSlot)
     is_for_staff_only = models.BooleanField(default=False)
     language_and_level = models.ForeignKey(LanguageAndLevel, on_delete=models.PROTECT)
     lesson_duration_in_minutes = models.PositiveSmallIntegerField()
     status = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=GroupStatus.choices
     )
     start_date = models.DateField(null=True, blank=True)
     # this field could be useful for overview, but can be filled automatically when
