@@ -6,6 +6,13 @@ from phonenumber_field import modelfields
 
 from api.models.age_ranges import AgeRange
 from api.models.base import GroupOrPerson
+from api.models.choices.registration_bot_language import RegistrationBotLanguage
+from api.models.choices.statuses import (
+    CoordinatorStatus,
+    StudentStatus,
+    TeacherStatus,
+    TeacherUnder18Status,
+)
 from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import LanguageAndLevel
@@ -21,11 +28,6 @@ class PersonalInfo(GroupOrPerson):
 
     This model does not depend on a person's role (coordinators, students and teachers).
     """
-
-    class RegistrationBotLanguage(models.TextChoices):
-        EN = "en", "English"
-        RU = "ru", "Russian"
-        UA = "ua", "Ukrainian"
 
     # One ID will identify a person with any role (student, teacher, coordinator),
     # even if one person combines several roles.  The autoincrement simple numeric ID can be used
@@ -90,6 +92,8 @@ class Person(models.Model):
         related_name="as_%(class)s",  # produces `.as_coordinator` etc.
     )
 
+    # TODO last contacted, last responded, scheduled date of next contact?
+
     class Meta:
         abstract = True
 
@@ -99,11 +103,6 @@ class Person(models.Model):
 
 class Coordinator(Person):
     """Model for a coordinator."""
-
-    class Status(models.TextChoices):
-        ONBOARDING = "onboarding", "In onboarding"
-        WORKING = "working", "Working with a group"
-        # TODO put statuses here once they are finalized
 
     is_admin = models.BooleanField(
         default=False,
@@ -121,7 +120,8 @@ class Coordinator(Person):
         help_text="mentor of this coordinator. One coordinator can have many interns",
     )
     status = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=CoordinatorStatus.choices,
     )
 
     class Meta:
@@ -134,12 +134,6 @@ class Coordinator(Person):
 
 class Student(Person):
     """Model for a student."""
-
-    class Status(models.TextChoices):
-        WAITING_FOR_GROUP = "waiting", "Waiting for a group"
-        STUDYING = "study", "Studying in a group"
-        NEEDS_TRANSFER = "transfer", "Needs transfer to another group"
-        # TODO put statuses here once they are finalized
 
     age_range = models.ForeignKey(
         AgeRange,
@@ -159,7 +153,7 @@ class Student(Person):
 
     status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
-        choices=Status.choices,
+        choices=StudentStatus.choices,
         verbose_name="group studies status",
         help_text="status of this student with regard to group studies",
     )
@@ -212,12 +206,6 @@ class TeacherCommon(Person):
 class Teacher(TeacherCommon):
     """Model for an adult teacher that can teach groups."""
 
-    class Status(models.TextChoices):
-        WAITING_FOR_GROUP = "waiting", "Waiting for a group"
-        TEACHING = "teaching", "Teaching a group"
-        NEEDS_TRANSFER = "transfer", "Needs transfer to another group"
-        # TODO put statuses here once they are finalized
-
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
     can_help_with_cv = models.BooleanField(default=False)
@@ -245,7 +233,7 @@ class Teacher(TeacherCommon):
 
     status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
-        choices=Status.choices,
+        choices=TeacherStatus.choices,
         verbose_name="group studies status",
         help_text="status of this teacher with regard to group studies",
     )
@@ -277,13 +265,9 @@ class Teacher(TeacherCommon):
 class TeacherUnder18(TeacherCommon):
     """Model for a teacher under 18 years old that cannot teach groups."""
 
-    class Status(models.TextChoices):
-        WAITING = "waiting", "Waiting for a group"
-        TEACHING_SPEAKING_CLUB = "speak_club", "Teaching in a speaking club"
-        # TODO put statuses here once they are finalized
-
     status = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=Status.choices
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=TeacherUnder18Status.choices,
     )
 
     class Meta:

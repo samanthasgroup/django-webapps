@@ -1,5 +1,18 @@
+from enum import IntEnum
+
+
+class CoordinatorGroupLimit(IntEnum):
+    MIN = 5
+    MAX = 20
+
+
+STUDENT_CLASS_MISS_LIMIT = 3
+"""If a student misses this amount of classes **in a row** and **without notifying**
+the teacher, they can be expelled.
+"""
+
 DEFAULT_CHAR_FIELD_MAX_LEN = 255
-DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH = 15
+DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH = 50
 
 # IMPORTANT: the boundaries of larger ranges must match the boundaries of the smaller ones
 
