@@ -166,7 +166,6 @@ class Student(Person):
     """Model for a student."""
 
     class Status(models.TextChoices):
-        # TODO add status for oral test?
         AWAITING_OFFER = "awaiting_offer", "Registration complete, waiting for a group"
         GROUP_OFFERED = "group_offered", "Was offered a group, has not responded yet"
         AWAITING_START = "awaiting_start", "Group confirmed, awaiting start of classes"
@@ -270,7 +269,6 @@ class Teacher(TeacherCommon):
             "needs_substitution",
             "Needs a break in teaching the group, substitute teacher needed",
         )
-        # TODO where to store the date when the teacher needs to be contacted again?
         ON_LEAVE = "on_leave", "On leave"
         NO_RESPONSE = "no_response", "Not responding"
         LEFT_PREMATURELY = (
@@ -343,7 +341,6 @@ class TeacherUnder18(TeacherCommon):
 
     class Status(models.TextChoices):
         ACTIVE = "active", "Completed registration in the bot"
-        # TODO where to store the date when the teacher needs to be contacted again?
         ON_LEAVE = "on_leave", "On leave"
         NO_RESPONSE = "no_response", "Not responding"
         LEFT_PREMATURELY = (
