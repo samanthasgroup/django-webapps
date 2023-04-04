@@ -6,14 +6,13 @@ from phonenumber_field import modelfields
 
 from api.models.age_ranges import AgeRange
 from api.models.base import GroupOrPerson
-from api.models.constants import (
-    DEFAULT_CHAR_FIELD_MAX_LEN,
-    DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+from api.models.choices.statuses import (
     CoordinatorStatus,
     StudentStatus,
     TeacherStatus,
     TeacherUnder18Status,
 )
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import LanguageAndLevel
 

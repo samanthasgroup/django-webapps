@@ -2,7 +2,8 @@ from django.db import models
 from django.db.models import Q
 
 from api.models.base import GroupOrPerson
-from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, GroupStatus
+from api.models.choices.statuses import GroupStatus
+from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import Language, LanguageAndLevel
 from api.models.people import Coordinator, Student, Teacher, TeacherUnder18
