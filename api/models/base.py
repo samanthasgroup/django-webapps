@@ -1,6 +1,6 @@
 from django.db import models
 
-from api.models.choices.communication_language_modes import CommunicationLanguageMode
+from api.models.choices.communication_language_mode import CommunicationLanguageMode
 from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 
 
