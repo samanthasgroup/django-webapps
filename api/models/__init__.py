@@ -13,9 +13,9 @@ from .log_events import (
     CoordinatorLogEvent,
     GroupLogEvent,
     LogEvent,
-    PersonLogEvent,
     StudentLogEvent,
     TeacherLogEvent,
+    TeacherUnder18LogEvent,
 )
 from .people import Coordinator, PersonalInfo, Student, Teacher, TeacherUnder18
 

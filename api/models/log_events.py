@@ -1,8 +1,15 @@
 from django.db import models
 
+from api.models.choices.log_event_types import (
+    CoordinatorLogEventType,
+    GroupLogEventType,
+    StudentLogEventType,
+    TeacherLogEventType,
+    TeacherUnder18LogEventType,
+)
 from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.groups import Group
-from api.models.people import Coordinator, Student, Teacher
+from api.models.people import Coordinator, Student, Teacher, TeacherUnder18
 
 # We could have created one table listing all possible names of log events, but that might look
 # confusing for admin users later on.  It seems more convenient for them to have separate tables.
@@ -18,6 +25,7 @@ class LogEvent(models.Model):
     organized by the school.
     """
 
+    comment = models.TextField()
     date_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -28,66 +36,20 @@ class LogEvent(models.Model):
         return self.date_time.strftime("%d.%m.%Y")
 
 
-class GroupLogEvent(LogEvent):
-    """Model for a log event concerning a group."""
-
-    class EventType(models.TextChoices):
-        FORMED = "formed", "Formed"
-        CONFIRMED = "confirmed", "Confirmed"
-        STARTED = "started", "Started classes"
-        FINISHED = "finished", "Finished classes"
-        # TODO put types here once they are finalized
-
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    type = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
-    )
-
-    class Meta:
-        indexes = [
-            models.Index(fields=("group_id",), name="group_id_idx"),
-            models.Index(fields=("type",), name="group_log_event_type_idx"),
-        ]
-
-    def __str__(self) -> str:
-        return f"{self.date_as_str}: group {self.group} {self.get_type_display()}"
-
-
-class PersonLogEvent(LogEvent):
-    """Abstract class for a log event concerning a person."""
-
-    from_group = models.ForeignKey(
-        Group,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        related_name="%(class)s_from_self",  # will produce e.g. "studentLogEvents_from_self"
-    )
-    to_group = models.ForeignKey(
-        Group,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        related_name="%(class)s_to_self",
-    )
-
-    class Meta:
-        abstract = True
-
-
-class CoordinatorLogEvent(PersonLogEvent):
+class CoordinatorLogEvent(LogEvent):
     """Model for a log event concerning a coordinator."""
 
-    class EventType(models.TextChoices):
-        JOINED = "joined", "Joined the team"
-        STARTED_ONBOARDING = "onboard", "Started onboarding"
-        FINISHED_ONBOARDING = "onboard_end", "Finished onboarding"
-        TOOK_GROUP = "took_group", "Took a group"
-        # TODO put types here once they are finalized
-
     coordinator = models.ForeignKey(Coordinator, related_name="log", on_delete=models.CASCADE)
+    group = models.ForeignKey(
+        Group,
+        null=True,
+        blank=True,
+        related_name="coordinator_log_events",
+        on_delete=models.CASCADE,
+    )
     type = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=CoordinatorLogEventType.choices,
     )
 
     class Meta:
@@ -103,22 +65,45 @@ class CoordinatorLogEvent(PersonLogEvent):
         )
 
 
-class StudentLogEvent(PersonLogEvent):
+class GroupLogEvent(LogEvent):
+    """Model for a log event concerning a group."""
+
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    type = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=GroupLogEventType.choices,
+    )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=("group_id",), name="group_id_idx"),
+            models.Index(fields=("type",), name="group_log_event_type_idx"),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.date_as_str}: group {self.group} {self.get_type_display()}"
+
+
+class StudentLogEvent(LogEvent):
     """Model for a log event concerning a student."""
 
-    class EventType(models.TextChoices):
-        REGISTERED = "register", "Joined the team"
-        STUDY_START = "start", "Started studying in a group"
-        TRANSFER_REQUEST = "req_transf", "Requested transfer"
-        TRANSFER_OK = "transferred", "Transferred"
-        MISS_CLASS = "missed_class", "Missed a class"
-        STUDY_FINISH = "finish_group", "Finished studying in a group"
-        NO_REPLY = "no_reply", "Not replying"
-        # TODO put types here once they are finalized
-
+    from_group = models.ForeignKey(
+        Group,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="student_log_events_from_this_group",
+    )
+    to_group = models.ForeignKey(
+        Group,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="student_log_events_to_this_group",
+    )
     student = models.ForeignKey(Student, related_name="log", on_delete=models.CASCADE)
     type = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=StudentLogEventType.choices
     )
 
     class Meta:
@@ -134,19 +119,49 @@ class StudentLogEvent(PersonLogEvent):
         )
 
 
-class TeacherLogEvent(PersonLogEvent):
-    """Model for a log event concerning a teacher."""
+class TeacherLogEvent(LogEvent):
+    """Model for a log event concerning an adult teacher."""
 
-    class EventType(models.TextChoices):
-        REGISTERED = "register", "Joined the team"
-        STUDY_START = "start", "Started studying in a group"
-        STUDY_FINISH = "finish_group", "Finished studying in a group"
-        NO_REPLY = "no_reply", "Not replying"
-        # TODO put types here once they are finalized
-
+    from_group = models.ForeignKey(
+        Group,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="teacher_log_events_from_this_group",
+    )
+    to_group = models.ForeignKey(
+        Group,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="teacher_log_events_to_this_group",
+    )
     teacher = models.ForeignKey(Teacher, related_name="log", on_delete=models.CASCADE)
     type = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=EventType.choices
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=TeacherLogEventType.choices,
+    )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=("teacher_id",), name="young_teacher_id_idx"),
+            models.Index(fields=("type",), name="young_teach_log_event_type_idx"),
+        ]
+
+    def __str__(self) -> str:
+        return (
+            f"{self.date_as_str}: teacher {self.teacher.personal_info.full_name} "
+            f"{self.get_type_display()}"
+        )
+
+
+class TeacherUnder18LogEvent(LogEvent):
+    """Model for a log event concerning a young teacher."""
+
+    teacher = models.ForeignKey(TeacherUnder18, related_name="log", on_delete=models.CASCADE)
+    type = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=TeacherUnder18LogEventType.choices,
     )
 
     class Meta:
@@ -157,6 +172,6 @@ class TeacherLogEvent(PersonLogEvent):
 
     def __str__(self) -> str:
         return (
-            f"{self.date_as_str}: teacher {self.teacher.personal_info.full_name} "
+            f"{self.date_as_str}: young teacher {self.teacher.personal_info.full_name} "
             f"{self.get_type_display()}"
         )
