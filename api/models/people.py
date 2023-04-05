@@ -13,7 +13,11 @@ from api.models.choices.statuses import (
     TeacherStatus,
     TeacherUnder18Status,
 )
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
+from api.models.constants import (
+    DEFAULT_CHAR_FIELD_MAX_LEN,
+    DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+    CoordinatorGroupLimit,
+)
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import LanguageAndLevel
 
@@ -130,6 +134,20 @@ class Coordinator(Person):
     def __str__(self) -> str:
         role = " (admin)" if self.is_admin else ""
         return f"{super().__str__()}{role}"
+
+    @property
+    def has_enough_groups(self) -> bool:
+        """Returns `True` if coordinator has required minimum amount of groups."""
+        if self.group_set.count() >= CoordinatorGroupLimit.MIN:
+            return True
+        return False
+
+    @property
+    def has_reached_group_limit(self) -> bool:
+        """Returns `True` if coordinator has reached maximum amount of groups."""
+        if self.group_set.count() >= CoordinatorGroupLimit.MAX:
+            return True
+        return False
 
 
 class Student(Person):
