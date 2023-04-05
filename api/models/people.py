@@ -160,7 +160,7 @@ class Student(Person):
         "They choose an age range when registering with us.",
     )
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
-
+    can_read_in_english = models.BooleanField(null=True, blank=True)
     children = models.ManyToManyField(
         "self",
         blank=True,
