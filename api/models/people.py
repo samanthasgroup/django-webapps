@@ -20,6 +20,7 @@ from api.models.constants import (
 )
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import LanguageAndLevel
+from api.models.non_teaching_help_types import NonTeachingHelpType
 
 
 # PEOPLE
@@ -168,28 +169,29 @@ class Student(Person):
         related_name="parents",
         help_text="children of this student that are also studying at SSG",
     )
-
-    status = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
-        choices=StudentStatus.choices,
-        verbose_name="group studies status",
-        help_text="status of this student with regard to group studies",
-    )
     is_member_of_speaking_club = models.BooleanField(
         default=False,
         verbose_name="Speaking club status",
         help_text="Is the student a member of a speaking club at the moment?",
     )
-    requires_help_with_cv = models.BooleanField(
-        default=False,
-        verbose_name="CV help status",
-        help_text="Does the student need help with CV at the moment?",
+    non_teaching_help_types_required = models.ManyToManyField(
+        NonTeachingHelpType,
+        blank=True,
+        related_name="students",
+        verbose_name="Types of non-teaching help this student requires",
     )
 
     # JSONField because this will come from external API, so it's good to be protected from changes
     # Just a reminder: the written test is a model with ForeignKey to Student, no field needed here
     smalltalk_test_result = models.JSONField(
         null=True, blank=True, help_text="JSON received from SmallTalk API"
+    )
+
+    status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=StudentStatus.choices,
+        verbose_name="group studies status",
+        help_text="status of this student with regard to group studies",
     )
 
     # The general rule is that one student can only learn one language,
@@ -226,7 +228,12 @@ class Teacher(TeacherCommon):
 
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
-    can_help_with_cv = models.BooleanField(default=False)
+    non_teaching_help_types_provided = models.ManyToManyField(
+        NonTeachingHelpType,
+        blank=True,
+        related_name="teachers",
+        verbose_name="Types of non-teaching help this teacher can provide to students",
+    )
 
     # Peer help. When a new teacher is added, they cannot have these set to True unless they
     # have prior teaching experience.  However, the `.has_prior_teaching_experience` is meant
@@ -249,12 +256,6 @@ class Teacher(TeacherCommon):
     )
     can_work_in_tandem = models.BooleanField(default=False)
 
-    status = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
-        choices=TeacherStatus.choices,
-        verbose_name="group studies status",
-        help_text="status of this teacher with regard to group studies",
-    )
     has_prior_teaching_experience = models.BooleanField(
         default=False,
         help_text="has the applicant already worked as a teacher before applying at Samantha "
@@ -262,6 +263,12 @@ class Teacher(TeacherCommon):
     )
     simultaneous_groups = models.PositiveSmallIntegerField(
         default=1, help_text="number of groups the teacher can teach simultaneously"
+    )
+    status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=TeacherStatus.choices,
+        verbose_name="group studies status",
+        help_text="status of this teacher with regard to group studies",
     )
     student_age_ranges = models.ManyToManyField(
         AgeRange,

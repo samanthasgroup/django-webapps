@@ -17,6 +17,7 @@ from .log_events import (
     TeacherLogEvent,
     TeacherUnder18LogEvent,
 )
+from .non_teaching_help_types import NonTeachingHelpType
 from .people import Coordinator, PersonalInfo, Student, Teacher, TeacherUnder18
 
 # for mypy: listing only models that appear in admin.py
@@ -35,4 +36,5 @@ __all__ = [
     "AgeRange",
     "TimeSlot",
     "DayAndTimeSlot",
+    "NonTeachingHelpType",
 ]

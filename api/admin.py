@@ -14,5 +14,6 @@ for model in (
     models.TeacherUnder18,
     models.Language,
     models.LanguageAndLevel,
+    models.NonTeachingHelpType,
 ):
     admin.site.register(model)
