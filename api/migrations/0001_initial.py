@@ -897,14 +897,14 @@ class Migration(migrations.Migration):
             model_name="enrollmenttestquestionoption",
             name="question",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="api.enrollmenttestquestion"
+                on_delete=django.db.models.deletion.CASCADE, to="api.enrollmenttestquestion", related_name="options",
             ),
         ),
         migrations.AddField(
             model_name="enrollmenttestquestion",
             name="enrollment_test",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="api.enrollmenttest"
+                on_delete=django.db.models.deletion.CASCADE, to="api.enrollmenttest", related_name="questions",
             ),
         ),
         migrations.AddField(
