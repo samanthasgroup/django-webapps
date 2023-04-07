@@ -240,27 +240,6 @@ class Teacher(TeacherCommon):
 
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
-    # Peer help. When a new teacher is added, they cannot have these set to True unless they
-    # have prior teaching experience.  However, the `.has_prior_teaching_experience` is meant
-    # to stay unchanged (it describes experience before coming to Samantha Smith's Group),
-    # while it's imaginable that if a teacher teaches long enough, they will be allowed to consult
-    # other teachers.  So these flags being here doesn't really break the 3rd normal form.
-    can_check_syllabus = models.BooleanField(default=False)
-    can_consult_other_teachers = models.BooleanField(default=False)
-    can_give_feedback = models.BooleanField(default=False)
-    can_help_with_children_group = models.BooleanField(
-        default=False,
-        verbose_name="can help with children's groups",
-    )
-    can_help_with_materials = models.BooleanField(
-        default=False, verbose_name="can help with teaching materials"
-    )
-    can_invite_to_class = models.BooleanField(
-        default=False,
-        verbose_name="can invite other teachers to their class",
-    )
-    can_work_in_tandem = models.BooleanField(default=False)
-
     has_prior_teaching_experience = models.BooleanField(
         default=False,
         help_text="has the applicant already worked as a teacher before applying at Samantha "
@@ -272,6 +251,37 @@ class Teacher(TeacherCommon):
         related_name="teachers",
         verbose_name="Types of non-teaching help this teacher can provide to students",
     )
+
+    # Peer support. When a new teacher is added, they cannot have these set to True unless they
+    # have prior teaching experience.  However, the `.has_prior_teaching_experience` is meant
+    # to stay unchanged (it describes experience before coming to Samantha Smith's Group),
+    # while it's imaginable that if a teacher teaches long enough, they will be allowed to consult
+    # other teachers.  So these flags being here doesn't really break the 3rd normal form.
+    peer_support_can_check_syllabus = models.BooleanField(
+        default=False, verbose_name="peer support: can check syllabus"
+    )
+    peer_support_can_host_mentoring_sessions = models.BooleanField(
+        default=False, verbose_name="peer support: can host individual or group mentoring sessions"
+    )
+    peer_support_can_give_feedback = models.BooleanField(
+        default=False, verbose_name="peer support: can give feedback"
+    )
+    peer_support_can_help_with_childrens_groups = models.BooleanField(
+        default=False,
+        verbose_name="peer support: can help with children's groups",
+    )
+    peer_support_can_provide_materials = models.BooleanField(
+        default=False, verbose_name="peer support: can provide teaching materials"
+    )
+    peer_support_can_invite_to_class = models.BooleanField(
+        default=False,
+        verbose_name="peer support: can invite other teachers to their class",
+    )
+    peer_support_can_work_in_tandem = models.BooleanField(
+        default=False,
+        verbose_name="peer support: can work in tandem with a less experienced teacher",
+    )
+
     simultaneous_groups = models.PositiveSmallIntegerField(
         default=1, help_text="number of groups the teacher can teach simultaneously"
     )
