@@ -225,8 +225,8 @@ class TeacherCommon(Person):
         help_text="other ways in which the applicant could help, besides teaching or helping other"
         "teachers with materials or feedback (comment)",
     )
-    can_help_with_speaking_club = models.BooleanField(default=False)
-    is_active_in_speaking_club = models.BooleanField(default=False)
+    can_host_speaking_club = models.BooleanField(default=False)
+    has_hosted_speaking_club = models.BooleanField(default=False)
     is_validated = models.BooleanField(
         help_text="Has an initial validation interview been conducted with this teacher?"
     )

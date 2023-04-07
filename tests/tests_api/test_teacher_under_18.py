@@ -12,10 +12,10 @@ def test_teacher_under_18_create(api_client, faker):
     data = {
         "personal_info": personal_info.id,
         "additional_skills_comment": faker.pystr(max_chars=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH),
-        "can_help_with_speaking_club": faker.pybool(),
+        "can_host_speaking_club": faker.pybool(),
         "comment": faker.text(),
         "status_since": faker.date_time(),
-        "is_active_in_speaking_club": faker.pybool(),
+        "has_hosted_speaking_club": faker.pybool(),
         "is_validated": faker.pybool(),
     }
     response = api_client.post("/api/teachers_under_18/", data=data)
@@ -34,9 +34,9 @@ def test_teacher_under_18_retrieve(api_client):
         "personal_info": teacher_under_18.personal_info.id,
         "comment": teacher_under_18.comment,
         "additional_skills_comment": teacher_under_18.additional_skills_comment,
-        "can_help_with_speaking_club": teacher_under_18.can_help_with_speaking_club,
+        "can_host_speaking_club": teacher_under_18.can_host_speaking_club,
         "status": teacher_under_18.status,
         "status_since": teacher_under_18.status_since.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-        "is_active_in_speaking_club": teacher_under_18.is_active_in_speaking_club,
+        "has_hosted_speaking_club": teacher_under_18.has_hosted_speaking_club,
         "is_validated": teacher_under_18.is_validated,
     }
