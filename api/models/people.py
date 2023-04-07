@@ -291,7 +291,13 @@ class Teacher(TeacherCommon):
     )
     teaching_languages_and_levels = models.ManyToManyField(LanguageAndLevel)
     weekly_frequency_per_group = models.PositiveSmallIntegerField(
-        help_text="number of times per week the teacher can have classes with each group"
+        help_text=(
+            "number of times per week the teacher can have classes with each group. "
+            "This column will be ignored if the teacher currently doesn't want to teach any "
+            "groups (in which case the column 'simultaneous groups' will have value 0). The "
+            "value of frequency column does NOT have to be 0 in this case. Maybe the teacher will "
+            "start (or return to) group studies and the frequency column will become relevant."
+        )
     )
 
     class Meta:
