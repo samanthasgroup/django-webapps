@@ -97,6 +97,10 @@ class Person(models.Model):
         related_name="as_%(class)s",  # produces `.as_coordinator` etc.
     )
 
+    # This field is not just as a shortcut for log event timestamps: not all statuses have
+    # corresponding LogEvent... objects.
+    status_since = models.DateTimeField(verbose_name="status in place since")
+
     # TODO last contacted, last responded, scheduled date of next contact?
 
     class Meta:
