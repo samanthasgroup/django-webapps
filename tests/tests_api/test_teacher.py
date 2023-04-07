@@ -1,3 +1,4 @@
+from dateutil import tz
 from model_bakery import baker
 from rest_framework import status
 
@@ -47,7 +48,7 @@ def test_teacher_create(api_client, faker):
         "simultaneous_groups": faker.pyint(),
         "weekly_frequency_per_group": faker.pyint(),
         "can_host_speaking_club": faker.pybool(),
-        "status_since": faker.date_time(),
+        "status_since": faker.date_time(tzinfo=tz.gettz("UTC")),
         "has_hosted_speaking_club": faker.pybool(),
         "is_validated": faker.pybool(),
         "non_teaching_help_provided": non_teaching_help_ids,
