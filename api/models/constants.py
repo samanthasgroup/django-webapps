@@ -64,3 +64,12 @@ STUDENT_AGE_RANGES_FOR_MATCHING = STUDENT_AGE_RANGES.copy()
 
 
 ENROLLMENT_TEST_PASS_THRESHOLD = 0.7
+
+# FIXME Just an example, subject to change,
+#  and also probably levels should be TextChoices
+LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS = {
+    10: "A1",
+    20: "A2",
+    40: "B1",
+    60: "B2",
+}

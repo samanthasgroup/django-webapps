@@ -1,8 +1,8 @@
 from django.db import models
 
 from api.models.age_ranges import AgeRange
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, ENROLLMENT_TEST_PASS_THRESHOLD
-from api.models.languages_levels import Language, LanguageLevel
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS
+from api.models.languages_levels import Language
 from api.models.people import Student
 
 
@@ -17,22 +17,15 @@ class EnrollmentTest(models.Model):
         "Leave blank for the test to be shown to all ages.",
     )
     language = models.ForeignKey(Language, on_delete=models.CASCADE)
-    levels = models.ManyToManyField(
-        LanguageLevel,
-        blank=True,
-        help_text="level(s) of the language this test was designed for. "
-        "Leave blank for the test to be shown for all levels.",
-    )
 
     def __str__(self) -> str:
-        age_ranges, levels = self.age_ranges.all(), self.levels.all()
+        age_ranges = self.age_ranges.all()
         ages_text = (
             ", ".join(f"{age_range.age_from}-{age_range.age_to}" for age_range in age_ranges)
             if age_ranges
             else "all ages"
         )
-        levels_text = ", ".join(level.id for level in levels) if levels else "all levels"
-        return f"{self.language} ({levels_text}, {ages_text})"
+        return f"{self.language} ({ages_text})"
 
 
 class EnrollmentTestQuestion(models.Model):
@@ -86,20 +79,13 @@ class EnrollmentTestResult(models.Model):
         return f"Test results of {self.student}"
 
     @property
-    def right_answers_percentage(self) -> float:
-        """
-        Get percentage of correct answers.
-        """
+    def passed_level(self) -> str:
+        """Returns language level of the student based on amount of right answers."""
+        right_answers = self.answers.filter(is_correct=True).count()
         total_answers = self.answers.count()
-        correct_answers = self.answers.filter(is_correct=True).count()
-        return round(correct_answers / total_answers * 100, 2)
+        percentage = right_answers / total_answers * 100
+        closest_percentage = min(
+            LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS, key=lambda x: abs(x - percentage)
+        )
 
-    @property
-    def is_passed(self) -> bool:
-        """
-        Check if student passed the test.
-
-        FIXME As for now - just a fake method to show idea of how it can be implemented.
-        TODO discuss, maybe put all logic to services-layer, if it will be quite complex.
-        """
-        return self.right_answers_percentage >= ENROLLMENT_TEST_PASS_THRESHOLD
+        return LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS[closest_percentage]

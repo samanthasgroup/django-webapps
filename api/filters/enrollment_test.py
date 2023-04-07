@@ -8,6 +8,5 @@ class EnrollmentTestFilter(filters.FilterSet):
         model = EnrollmentTest
         fields = (
             "age_ranges",
-            "levels",
             "language",
         )

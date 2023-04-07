@@ -36,7 +36,7 @@ class EnrollmentTestSerializer(serializers.ModelSerializer[EnrollmentTest]):
 
     class Meta:
         model = EnrollmentTest
-        exclude = ("levels",)
+        fields = "__all__"
 
 
 class EnrollmentTestResultCreateSerializer(serializers.ModelSerializer[EnrollmentTestResult]):
@@ -45,8 +45,7 @@ class EnrollmentTestResultCreateSerializer(serializers.ModelSerializer[Enrollmen
         fields = (
             "student",
             "answers",
-            "is_passed",
-            "right_answers_percentage",
+            "passed_level",
         )
 
     # TODO Think about some validation, e.g. answers should be unique for each question
