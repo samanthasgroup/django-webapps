@@ -1,9 +1,10 @@
 from django_filters import rest_framework as filters
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.mixins import CreateModelMixin
+from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet
 
 from api.filters import EnrollmentTestFilter
 from api.models import EnrollmentTest, EnrollmentTestResult
-from api.serializers import EnrollmentTestResultSerializer, EnrollmentTestSerializer
+from api.serializers import EnrollmentTestResultCreateSerializer, EnrollmentTestSerializer
 
 
 class EnrollmentTestViewSet(ReadOnlyModelViewSet[EnrollmentTest]):
@@ -13,6 +14,6 @@ class EnrollmentTestViewSet(ReadOnlyModelViewSet[EnrollmentTest]):
     filterset_class = EnrollmentTestFilter
 
 
-class EnrollmentTestResultViewSet(ModelViewSet[EnrollmentTestResult]):
+class EnrollmentTestResultViewSet(CreateModelMixin, GenericViewSet[EnrollmentTestResult]):
     queryset = EnrollmentTestResult.objects.all()
-    serializer_class = EnrollmentTestResultSerializer
+    serializer_class = EnrollmentTestResultCreateSerializer

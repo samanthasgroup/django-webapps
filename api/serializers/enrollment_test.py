@@ -39,7 +39,15 @@ class EnrollmentTestSerializer(serializers.ModelSerializer[EnrollmentTest]):
         fields = "__all__"
 
 
-class EnrollmentTestResultSerializer(serializers.ModelSerializer[EnrollmentTestResult]):
+class EnrollmentTestResultCreateSerializer(serializers.ModelSerializer[EnrollmentTestResult]):
     class Meta:
         model = EnrollmentTestResult
-        fields = "__all__"
+        fields = (
+            "student",
+            "answers",
+            "is_passed",
+            "right_answers_percentage",
+        )
+
+    # TODO Think about some validation, e.g. answers should be unique for each question
+    #  and should be in options for this question

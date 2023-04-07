@@ -1,7 +1,7 @@
 from django.db import models
 
 from api.models.age_ranges import AgeRange
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, ENROLLMENT_TEST_PASS_THRESHOLD
 from api.models.languages_levels import Language, LanguageLevel
 from api.models.people import Student
 
@@ -84,3 +84,22 @@ class EnrollmentTestResult(models.Model):
 
     def __str__(self) -> str:
         return f"Test results of {self.student}"
+
+    @property
+    def right_answers_percentage(self) -> float:
+        """
+        Get percentage of correct answers.
+        """
+        total_answers = self.answers.count()
+        correct_answers = self.answers.filter(is_correct=True).count()
+        return round(correct_answers / total_answers * 100, 2)
+
+    @property
+    def is_passed(self) -> bool:
+        """
+        Check if student passed the test.
+
+        FIXME As for now - just a fake method to show idea of how it can be implemented.
+        TODO discuss, maybe put all logic to services-layer, if it will be quite complex.
+        """
+        return self.right_answers_percentage >= ENROLLMENT_TEST_PASS_THRESHOLD
