@@ -240,13 +240,6 @@ class Teacher(TeacherCommon):
 
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
-    non_teaching_help_types_provided = models.ManyToManyField(
-        NonTeachingHelpType,
-        blank=True,
-        related_name="teachers",
-        verbose_name="Types of non-teaching help this teacher can provide to students",
-    )
-
     # Peer help. When a new teacher is added, they cannot have these set to True unless they
     # have prior teaching experience.  However, the `.has_prior_teaching_experience` is meant
     # to stay unchanged (it describes experience before coming to Samantha Smith's Group),
@@ -272,6 +265,12 @@ class Teacher(TeacherCommon):
         default=False,
         help_text="has the applicant already worked as a teacher before applying at Samantha "
         "Smith's Group?",
+    )
+    non_teaching_help_types_provided = models.ManyToManyField(
+        NonTeachingHelpType,
+        blank=True,
+        related_name="teachers",
+        verbose_name="Types of non-teaching help this teacher can provide to students",
     )
     simultaneous_groups = models.PositiveSmallIntegerField(
         default=1, help_text="number of groups the teacher can teach simultaneously"

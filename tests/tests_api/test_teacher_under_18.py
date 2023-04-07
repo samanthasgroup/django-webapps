@@ -14,6 +14,9 @@ def test_teacher_under_18_create(api_client, faker):
         "additional_skills_comment": faker.pystr(max_chars=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH),
         "can_help_with_speaking_club": faker.pybool(),
         "comment": faker.text(),
+        "status_since": faker.date_time(),
+        "is_active_in_speaking_club": faker.pybool(),
+        "is_validated": faker.pybool(),
     }
     response = api_client.post("/api/teachers_under_18/", data=data)
     assert response.status_code == status.HTTP_201_CREATED
@@ -33,4 +36,7 @@ def test_teacher_under_18_retrieve(api_client):
         "additional_skills_comment": teacher_under_18.additional_skills_comment,
         "can_help_with_speaking_club": teacher_under_18.can_help_with_speaking_club,
         "status": teacher_under_18.status,
+        "status_since": teacher_under_18.status_since.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+        "is_active_in_speaking_club": teacher_under_18.is_active_in_speaking_club,
+        "is_validated": teacher_under_18.is_validated,
     }

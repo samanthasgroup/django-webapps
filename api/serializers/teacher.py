@@ -5,6 +5,7 @@ from api.serializers import (
     AgeRangeSerializer,
     DayAndTimeSlotSerializer,
     LanguageAndLevelSerializer,
+    NonTeachingHelpTypeSerializer,
 )
 
 
@@ -18,6 +19,7 @@ class TeacherReadSerializer(serializers.ModelSerializer[Teacher]):
     student_age_ranges = AgeRangeSerializer(many=True, read_only=True)
     teaching_languages_and_levels = LanguageAndLevelSerializer(many=True, read_only=True)
     availability_slots = DayAndTimeSlotSerializer(many=True, read_only=True)
+    non_teaching_help_provided = NonTeachingHelpTypeSerializer(many=True, read_only=True)
 
     class Meta:
         model = Teacher

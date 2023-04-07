@@ -1,6 +1,7 @@
 from api.views.age_range import AgeRangeViewSet
 from api.views.day_and_time_slot import DayAndTimeSlotViewSet
 from api.views.language_and_level import LanguageAndLevelViewSet
+from api.views.non_teaching_help_type import NonTeachingHelpTypeViewSet
 from api.views.personal_info import PersonalInfoViewSet
 from api.views.student import StudentViewSet
 from api.views.teacher import TeacherViewSet
@@ -10,6 +11,7 @@ __all__ = [
     "AgeRangeViewSet",
     "DayAndTimeSlotViewSet",
     "LanguageAndLevelViewSet",
+    "NonTeachingHelpTypeViewSet",
     "PersonalInfoViewSet",
     "StudentViewSet",
     "TeacherViewSet",
