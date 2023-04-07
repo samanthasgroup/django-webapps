@@ -32,7 +32,7 @@ class PrePopulationMaster:
         self._write_age_ranges()
         self._write_day_and_time_slots()
         self._write_languages_and_levels()
-        self._write_non_teaching_help_types()
+        self._write_non_teaching_help()
 
     def _write_age_ranges(self):
         """Writes `AgeRange` objects to database."""
@@ -109,8 +109,8 @@ class PrePopulationMaster:
         )
         LanguageAndLevel.objects.bulk_create(language_and_level_objects)
 
-    def _write_non_teaching_help_types(self):
-        HelpType = self.apps.get_model(APP_NAME, "NonTeachingHelpType")
+    def _write_non_teaching_help(self):
+        HelpType = self.apps.get_model(APP_NAME, "NonTeachingHelp")
 
         help_types = []
         for id_and_name in (

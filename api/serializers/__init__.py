@@ -1,7 +1,7 @@
 from api.serializers.age_range import AgeRangeSerializer
 from api.serializers.day_and_time_slot import DayAndTimeSlotSerializer
 from api.serializers.language_and_level import LanguageAndLevelSerializer
-from api.serializers.non_teaching_help_type import NonTeachingHelpTypeSerializer
+from api.serializers.non_teaching_help import NonTeachingHelpSerializer
 from api.serializers.personal_info import (
     PersonalInfoCheckExistenceSerializer,
     PersonalInfoSerializer,
@@ -17,7 +17,7 @@ __all__ = [
     "AgeRangeSerializer",
     "DayAndTimeSlotSerializer",
     "LanguageAndLevelSerializer",
-    "NonTeachingHelpTypeSerializer",
+    "NonTeachingHelpSerializer",
     "PersonalInfoCheckExistenceSerializer",
     "PersonalInfoSerializer",
     "StudentReadSerializer",

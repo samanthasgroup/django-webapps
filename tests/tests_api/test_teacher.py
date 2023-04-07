@@ -5,7 +5,7 @@ from api.models import (
     AgeRange,
     DayAndTimeSlot,
     LanguageAndLevel,
-    NonTeachingHelpType,
+    NonTeachingHelp,
     PersonalInfo,
     Teacher,
 )
@@ -26,9 +26,9 @@ def test_teacher_create(api_client, faker):
         AgeRange.objects.first().id,
         AgeRange.objects.last().id,
     ]
-    non_teaching_help_types_ids = [
-        NonTeachingHelpType.objects.first().id,
-        NonTeachingHelpType.objects.last().id,
+    non_teaching_help_ids = [
+        NonTeachingHelp.objects.first().id,
+        NonTeachingHelp.objects.last().id,
     ]
     data = {
         "personal_info": personal_info.id,
@@ -51,7 +51,7 @@ def test_teacher_create(api_client, faker):
         "status_since": faker.date_time(),
         "has_hosted_speaking_club": faker.pybool(),
         "is_validated": faker.pybool(),
-        "non_teaching_help_types_provided": non_teaching_help_types_ids,
+        "non_teaching_help_provided": non_teaching_help_ids,
     }
     response = api_client.post("/api/teachers/", data=data)
 
@@ -62,7 +62,7 @@ def test_teacher_create(api_client, faker):
         "teaching_languages_and_levels",
         "availability_slots",
         "student_age_ranges",
-        "non_teaching_help_types_provided",
+        "non_teaching_help_provided",
     ]
     # Changing for further filtering
     for field in m2m_fields:
@@ -109,12 +109,12 @@ def test_teacher_retrieve(api_client):
         }
         for age_range in teacher.student_age_ranges.all()
     ]
-    non_teaching_help_types = [
+    non_teaching_help = [
         {
             "id": item.id,
             "name": item.name,
         }
-        for item in teacher.non_teaching_help_types_provided.all()
+        for item in teacher.non_teaching_help_provided.all()
     ]
     assert response_json == {
         "personal_info": teacher.personal_info.id,
@@ -139,7 +139,7 @@ def test_teacher_retrieve(api_client):
         "has_hosted_speaking_club": teacher.has_hosted_speaking_club,
         "is_validated": teacher.is_validated,
         # TODO this fails: JSON only has list of IDs:
-        "non_teaching_help_types_provided": non_teaching_help_types,
+        "non_teaching_help_provided": non_teaching_help,
     }
 
 

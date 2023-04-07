@@ -3,7 +3,7 @@ from django.db import models
 from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 
 
-class NonTeachingHelpType(models.Model):
+class NonTeachingHelp(models.Model):
     """Model for ways of helping students other than teaching them foreign languages.
 
     Both Student and Teacher can have connections to this model, meaning that a teacher can

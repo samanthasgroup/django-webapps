@@ -20,7 +20,7 @@ from api.models.constants import (
 )
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import LanguageAndLevel
-from api.models.non_teaching_help_types import NonTeachingHelpType
+from api.models.non_teaching_help import NonTeachingHelp
 
 
 # PEOPLE
@@ -182,8 +182,8 @@ class Student(Person):
         verbose_name="Speaking club status",
         help_text="Is the student a member of a speaking club at the moment?",
     )
-    non_teaching_help_types_required = models.ManyToManyField(
-        NonTeachingHelpType,
+    non_teaching_help_required = models.ManyToManyField(
+        NonTeachingHelp,
         blank=True,
         related_name="students",
         verbose_name="Types of non-teaching help this student requires",
@@ -245,8 +245,8 @@ class Teacher(TeacherCommon):
         help_text="has the applicant already worked as a teacher before applying at Samantha "
         "Smith's Group?",
     )
-    non_teaching_help_types_provided = models.ManyToManyField(
-        NonTeachingHelpType,
+    non_teaching_help_provided = models.ManyToManyField(
+        NonTeachingHelp,
         blank=True,
         related_name="teachers",
         verbose_name="Types of non-teaching help this teacher can provide to students",

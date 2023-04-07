@@ -5,7 +5,7 @@ from api.models import (
     AgeRange,
     DayAndTimeSlot,
     LanguageAndLevel,
-    NonTeachingHelpType,
+    NonTeachingHelp,
     PersonalInfo,
     Student,
 )
@@ -23,9 +23,9 @@ def test_student_create(api_client, faker):
         DayAndTimeSlot.objects.first().id,
         DayAndTimeSlot.objects.last().id,
     ]
-    non_teaching_help_types_ids = [
-        NonTeachingHelpType.objects.first().id,
-        NonTeachingHelpType.objects.last().id,
+    non_teaching_help_ids = [
+        NonTeachingHelp.objects.first().id,
+        NonTeachingHelp.objects.last().id,
     ]
     data = {
         "personal_info": personal_info.id,
@@ -35,7 +35,7 @@ def test_student_create(api_client, faker):
         "teaching_languages_and_levels": teaching_languages_and_levels_ids,
         "is_member_of_speaking_club": faker.pybool(),
         "can_read_in_english": faker.pybool(),
-        "non_teaching_help_types_required": non_teaching_help_types_ids,
+        "non_teaching_help_required": non_teaching_help_ids,
         "availability_slots": availability_slots_ids,
     }
     response = api_client.post("/api/students/", data=data)
@@ -46,7 +46,7 @@ def test_student_create(api_client, faker):
     m2m_fields = [
         "teaching_languages_and_levels",
         "availability_slots",
-        "non_teaching_help_types_required",
+        "non_teaching_help_required",
     ]  # TODO children
     # Changing for further filtering
     for field in m2m_fields:
@@ -100,7 +100,7 @@ def test_student_retrieve(api_client):
         "is_member_of_speaking_club": student.is_member_of_speaking_club,
         "can_read_in_english": student.can_read_in_english,
         # These are optional, so baker won't generate them (unless _fill_optional is True)
-        "non_teaching_help_types_required": [],
+        "non_teaching_help_required": [],
         "smalltalk_test_result": None,
     }
 

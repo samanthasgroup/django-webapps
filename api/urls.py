@@ -5,7 +5,7 @@ from api.views import (
     AgeRangeViewSet,
     DayAndTimeSlotViewSet,
     LanguageAndLevelViewSet,
-    NonTeachingHelpTypeViewSet,
+    NonTeachingHelpViewSet,
     PersonalInfoViewSet,
     StudentViewSet,
     TeacherUnder18ViewSet,
@@ -20,9 +20,7 @@ router.register(r"teachers_under_18", TeacherUnder18ViewSet, basename="teachers_
 router.register(r"age_ranges", AgeRangeViewSet, basename="age_ranges")
 router.register(r"languages_and_levels", LanguageAndLevelViewSet, basename="languages_and_levels")
 router.register(r"day_and_time_slots", DayAndTimeSlotViewSet, basename="day_and_time_slots")
-router.register(
-    r"non_teaching_help_types", NonTeachingHelpTypeViewSet, basename="non_teaching_help_types"
-)
+router.register(r"non_teaching_help", NonTeachingHelpViewSet, basename="non_teaching_help")
 
 urlpatterns = [
     path("", include(router.urls)),
