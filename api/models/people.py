@@ -116,6 +116,10 @@ class Coordinator(Person):
             "that have special rights over ordinary coordinators."
         ),
     )
+    # TODO add default=False when coordinators get an opportunity to register through the bot?
+    is_validated = models.BooleanField(
+        help_text="Has an initial validation interview been conducted with this teacher?"
+    )
     mentor = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -218,6 +222,10 @@ class TeacherCommon(Person):
         "teachers with materials or feedback (comment)",
     )
     can_help_with_speaking_club = models.BooleanField(default=False)
+    is_validated = models.BooleanField(
+        default=False,
+        help_text="Has an initial validation interview been conducted with this teacher?",
+    )
 
     class Meta:
         abstract = True
