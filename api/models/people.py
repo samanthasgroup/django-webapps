@@ -120,7 +120,6 @@ class Coordinator(Person):
             "that have special rights over ordinary coordinators."
         ),
     )
-    # TODO add default=False when coordinators get an opportunity to register through the bot?
     is_validated = models.BooleanField(
         help_text="Has an initial validation interview been conducted with this teacher?"
     )
@@ -228,8 +227,7 @@ class TeacherCommon(Person):
     can_help_with_speaking_club = models.BooleanField(default=False)
     is_active_in_speaking_club = models.BooleanField(default=False)
     is_validated = models.BooleanField(
-        default=False,
-        help_text="Has an initial validation interview been conducted with this teacher?",
+        help_text="Has an initial validation interview been conducted with this teacher?"
     )
 
     class Meta:
