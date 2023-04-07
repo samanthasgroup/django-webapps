@@ -35,7 +35,7 @@ def test_student_create(api_client, faker):
         "teaching_languages_and_levels": teaching_languages_and_levels_ids,
         "is_member_of_speaking_club": faker.pybool(),
         "can_read_in_english": faker.pybool(),
-        "non_teaching_help_types": non_teaching_help_types_ids,
+        "non_teaching_help_types_required": non_teaching_help_types_ids,
         "availability_slots": availability_slots_ids,
     }
     response = api_client.post("/api/students/", data=data)
