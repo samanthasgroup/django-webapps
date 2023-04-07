@@ -36,7 +36,6 @@ def test_teacher_create(api_client, faker):
         "teaching_languages_and_levels": teaching_languages_and_levels_ids,
         "availability_slots": availability_slots_ids,
         "comment": faker.text(),
-        "can_help_with_cv": faker.pybool(),
         "can_check_syllabus": faker.pybool(),
         "can_consult_other_teachers": faker.pybool(),
         "can_give_feedback": faker.pybool(),
@@ -52,7 +51,7 @@ def test_teacher_create(api_client, faker):
         "status_since": faker.date_time(),
         "is_active_in_speaking_club": faker.pybool(),
         "is_validated": faker.pybool(),
-        "non_teaching_help_provided": non_teaching_help_types_ids,
+        "non_teaching_help_types_provided": non_teaching_help_types_ids,
     }
     response = api_client.post("/api/teachers/", data=data)
 
@@ -67,8 +66,6 @@ def test_teacher_create(api_client, faker):
     ]
     # Changing for further filtering
     for field in m2m_fields:
-        # TODO this fails with KeyError for "non_teaching_help_types_provided". KeyError disappears
-        #  if I make the field non-optional (by removing blank=True)
         data[f"{field}__in"] = data.pop(field)
 
     assert Teacher.objects.filter(**data).exists()
