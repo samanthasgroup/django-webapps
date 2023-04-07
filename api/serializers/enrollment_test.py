@@ -36,7 +36,7 @@ class EnrollmentTestSerializer(serializers.ModelSerializer[EnrollmentTest]):
 
     class Meta:
         model = EnrollmentTest
-        fields = "__all__"
+        exclude = ("levels",)
 
 
 class EnrollmentTestResultCreateSerializer(serializers.ModelSerializer[EnrollmentTestResult]):

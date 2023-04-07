@@ -14,7 +14,6 @@ def test_get_enrollment_test(api_client):
             "id": test.id,
             "language": test.language.id,
             "age_ranges": [age_range.id for age_range in test.age_ranges.all()],
-            "levels": [level.id for level in test.levels.all()],
             "questions": [
                 {
                     "id": question.id,
