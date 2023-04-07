@@ -218,13 +218,6 @@ class TeacherCommon(Person):
     Teachers under 18 cannot teach groups but can some selected activities.
     """
 
-    additional_skills_comment = models.CharField(
-        max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
-        blank=True,
-        verbose_name="comment on additional skills besides teaching",
-        help_text="other ways in which the applicant could help, besides teaching or helping other"
-        "teachers with materials or feedback (comment)",
-    )
     can_host_speaking_club = models.BooleanField(default=False)
     has_hosted_speaking_club = models.BooleanField(default=False)
     is_validated = models.BooleanField(
@@ -250,6 +243,12 @@ class Teacher(TeacherCommon):
         blank=True,
         related_name="teachers",
         verbose_name="Types of non-teaching help this teacher can provide to students",
+    )
+    non_teaching_help_provided_comment = models.CharField(
+        max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
+        blank=True,
+        verbose_name="comment on additional non-teaching skills",
+        help_text="other ways in which the applicant could help the students beside listed ones",
     )
 
     # Peer support. When a new teacher is added, they cannot have these set to True unless they

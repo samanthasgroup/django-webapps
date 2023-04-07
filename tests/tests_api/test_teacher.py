@@ -46,12 +46,12 @@ def test_teacher_create(api_client, faker):
         "has_prior_teaching_experience": faker.pybool(),
         "simultaneous_groups": faker.pyint(),
         "weekly_frequency_per_group": faker.pyint(),
-        "additional_skills_comment": faker.text(),
         "can_host_speaking_club": faker.pybool(),
         "status_since": faker.date_time(),
         "has_hosted_speaking_club": faker.pybool(),
         "is_validated": faker.pybool(),
         "non_teaching_help_provided": non_teaching_help_ids,
+        "non_teaching_help_provided_comment": faker.text(),
     }
     response = api_client.post("/api/teachers/", data=data)
 
@@ -134,12 +134,11 @@ def test_teacher_retrieve(api_client):
         "has_prior_teaching_experience": teacher.has_prior_teaching_experience,
         "simultaneous_groups": teacher.simultaneous_groups,
         "weekly_frequency_per_group": teacher.weekly_frequency_per_group,
-        "additional_skills_comment": teacher.additional_skills_comment,
         "can_host_speaking_club": teacher.can_host_speaking_club,
         "has_hosted_speaking_club": teacher.has_hosted_speaking_club,
         "is_validated": teacher.is_validated,
-        # TODO this fails: JSON only has list of IDs:
         "non_teaching_help_provided": non_teaching_help,
+        "non_teaching_help_provided_comment": teacher.non_teaching_help_provided_comment,
     }
 
 
