@@ -222,6 +222,7 @@ class TeacherCommon(Person):
         "teachers with materials or feedback (comment)",
     )
     can_help_with_speaking_club = models.BooleanField(default=False)
+    is_active_in_speaking_club = models.BooleanField(default=False)
     is_validated = models.BooleanField(
         default=False,
         help_text="Has an initial validation interview been conducted with this teacher?",
