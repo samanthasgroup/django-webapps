@@ -53,14 +53,31 @@ STUDENT_AGE_RANGES_FOR_TEACHER = {
         (5, 8),
         (9, 12),
         (13, 17),
-        (18, 95),
+        (18, 65),
+        (66, 95),
     )
 }
 
 # age ranges for matching algorithm
-# TODO for now leaving these ranges the same as the ranges that students get when registering,
-#  but this is likely to change.  The children's ranges will most likely remain the same, though.
-STUDENT_AGE_RANGES_FOR_MATCHING = STUDENT_AGE_RANGES.copy()
+STUDENT_AGE_RANGES_FOR_MATCHING = {
+    f"{left}-{right}": (left, right)
+    for left, right in (
+        (5, 6),
+        (7, 8),
+        (9, 10),
+        (11, 12),
+        (13, 14),
+        (15, 17),
+        (18, 25),
+        (26, 35),
+        (36, 45),
+        (46, 55),
+        (56, 65),
+        (66, 75),
+        (76, 85),
+        (86, 95),
+    )
+}
 
 
 ENROLLMENT_TEST_PASS_THRESHOLD = 0.7

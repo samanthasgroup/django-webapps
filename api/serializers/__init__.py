@@ -5,6 +5,7 @@ from api.serializers.enrollment_test import (
     EnrollmentTestSerializer,
 )
 from api.serializers.language_and_level import LanguageAndLevelSerializer
+from api.serializers.non_teaching_help import NonTeachingHelpSerializer
 from api.serializers.personal_info import (
     PersonalInfoCheckExistenceSerializer,
     PersonalInfoSerializer,
@@ -20,6 +21,7 @@ __all__ = [
     "AgeRangeSerializer",
     "DayAndTimeSlotSerializer",
     "LanguageAndLevelSerializer",
+    "NonTeachingHelpSerializer",
     "PersonalInfoCheckExistenceSerializer",
     "PersonalInfoSerializer",
     "StudentReadSerializer",

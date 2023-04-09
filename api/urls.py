@@ -7,6 +7,7 @@ from api.views import (
     EnrollmentTestResultViewSet,
     EnrollmentTestViewSet,
     LanguageAndLevelViewSet,
+    NonTeachingHelpViewSet,
     PersonalInfoViewSet,
     StudentViewSet,
     TeacherUnder18ViewSet,
@@ -25,6 +26,7 @@ router.register(r"enrollment_test", EnrollmentTestViewSet, basename="enrollment_
 router.register(
     r"enrollment_test_result", EnrollmentTestResultViewSet, basename="enrollment_test_result"
 )
+router.register(r"non_teaching_help", NonTeachingHelpViewSet, basename="non_teaching_help")
 
 urlpatterns = [
     path("", include(router.urls)),
