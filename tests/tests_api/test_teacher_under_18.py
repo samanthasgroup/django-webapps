@@ -34,7 +34,7 @@ def test_teacher_under_18_retrieve(api_client):
         "comment": teacher_under_18.comment,
         "can_host_speaking_club": teacher_under_18.can_host_speaking_club,
         "status": teacher_under_18.status,
-        "status_since": teacher_under_18.status_since.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+        "status_since": teacher_under_18.status_since.isoformat().replace("+00:00", "Z"),
         "has_hosted_speaking_club": teacher_under_18.has_hosted_speaking_club,
         "is_validated": teacher_under_18.is_validated,
     }

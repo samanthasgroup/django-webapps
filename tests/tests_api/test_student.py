@@ -97,7 +97,7 @@ def test_student_retrieve(api_client):
         "availability_slots": availability_slots,
         "comment": student.comment,
         "status": student.status,
-        "status_since": student.status_since.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+        "status_since": student.status_since.isoformat().replace("+00:00", "Z"),
         "is_member_of_speaking_club": student.is_member_of_speaking_club,
         "can_read_in_english": student.can_read_in_english,
         # These are optional, so baker won't generate them (unless _fill_optional is True)
