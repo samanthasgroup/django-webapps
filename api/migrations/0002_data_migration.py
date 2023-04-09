@@ -113,7 +113,7 @@ class PrePopulationMaster:
         HelpType = self.apps.get_model(APP_NAME, "NonTeachingHelp")
 
         help_types = []
-        for id_and_name in (
+        for id_, name in (
             ("cv_write_edit", "CV and cover letter (write or edit)"),
             ("cv_proofread", "CV and cover letter (proofread)"),
             ("mock_interview", "Mock interview"),
@@ -125,7 +125,7 @@ class PrePopulationMaster:
             ("uni_abroad", "Entering a university abroad"),
             ("translate_docs", "Translation of documents"),
         ):
-            help_types.append(HelpType(id=id_and_name[0], name=id_and_name[1]))
+            help_types.append(HelpType(id=id_, name=name))
 
         HelpType.objects.bulk_create(help_types)
 
