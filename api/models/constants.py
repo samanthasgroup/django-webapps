@@ -61,3 +61,15 @@ STUDENT_AGE_RANGES_FOR_TEACHER = {
 # TODO for now leaving these ranges the same as the ranges that students get when registering,
 #  but this is likely to change.  The children's ranges will most likely remain the same, though.
 STUDENT_AGE_RANGES_FOR_MATCHING = STUDENT_AGE_RANGES.copy()
+
+
+ENROLLMENT_TEST_PASS_THRESHOLD = 0.7
+
+# FIXME Just an example, subject to change,
+#  and also probably levels should be TextChoices
+LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS = {
+    10: "A1",
+    20: "A2",
+    40: "B1",
+    60: "B2",
+}
