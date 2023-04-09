@@ -12,9 +12,9 @@ from api.models.people import Coordinator, Student, Teacher, TeacherUnder18
 class GroupCommon(GroupOrPerson):
     """Abstract model for attributes shared by regular groups and speaking clubs."""
 
-    coordinators = models.ManyToManyField(Coordinator)
-    students = models.ManyToManyField(Student)
-    teachers = models.ManyToManyField(Teacher)
+    coordinators = models.ManyToManyField(Coordinator, related_name="groups")
+    students = models.ManyToManyField(Student, related_name="groups")
+    teachers = models.ManyToManyField(Teacher, related_name="groups")
     # group chat created manually by the coordinator/teacher
     telegram_chat_url = models.URLField(blank=True)
 

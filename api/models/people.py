@@ -150,14 +150,14 @@ class Coordinator(Person):
     @property
     def has_enough_groups(self) -> bool:
         """Returns `True` if coordinator has required minimum amount of groups."""
-        if self.group_set.count() >= CoordinatorGroupLimit.MIN:
+        if self.groups.count() >= CoordinatorGroupLimit.MIN:
             return True
         return False
 
     @property
     def has_reached_group_limit(self) -> bool:
         """Returns `True` if coordinator has reached maximum amount of groups."""
-        if self.group_set.count() >= CoordinatorGroupLimit.MAX:
+        if self.groups.count() >= CoordinatorGroupLimit.MAX:
             return True
         return False
 
