@@ -1,4 +1,4 @@
-from dateutil import tz
+import pytz
 from model_bakery import baker
 from rest_framework import status
 
@@ -31,7 +31,7 @@ def test_student_create(api_client, faker):
     data = {
         "personal_info": personal_info.id,
         "comment": faker.text(),
-        "status_since": faker.date_time(tzinfo=tz.gettz("UTC")),
+        "status_since": faker.date_time(tzinfo=pytz.utc),
         "age_range": age_range_id,
         "teaching_languages_and_levels": teaching_languages_and_levels_ids,
         "is_member_of_speaking_club": faker.pybool(),
