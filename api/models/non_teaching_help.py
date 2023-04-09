@@ -14,4 +14,4 @@ class NonTeachingHelp(models.Model):
     name = models.CharField(max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True)
 
     def __str__(self) -> str:
-        return f"{self.name}"
+        return self.name
