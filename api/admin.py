@@ -10,6 +10,7 @@ for model in (
     models.Group,
     models.PersonalInfo,
     models.Student,
+    models.SpeakingClub,
     models.Teacher,
     models.TeacherUnder18,
     models.Language,

@@ -6,7 +6,7 @@ from phonenumber_field import modelfields
 
 from api.models.age_ranges import AgeRange
 from api.models.base import GroupOrPerson
-from api.models.choices.registration_bot_language import RegistrationBotLanguage
+from api.models.choices.registration_telegram_bot_language import RegistrationTelegramBotLanguage
 from api.models.choices.statuses import (
     CoordinatorStatus,
     StudentStatus,
@@ -45,7 +45,9 @@ class PersonalInfo(GroupOrPerson):
     first_name = models.CharField(max_length=100)  # can include middle name if a person wishes so
     last_name = models.CharField(max_length=100)
     # Telegram's limit is 32, but this might change
-    tg_username = models.CharField(verbose_name="Telegram username", max_length=100, blank=True)
+    telegram_username = models.CharField(
+        verbose_name="Telegram username", max_length=100, blank=True
+    )
     email = models.EmailField()
     phone = modelfields.PhoneNumberField(null=True, blank=True)
     utc_timedelta = models.DurationField(
@@ -60,10 +62,10 @@ class PersonalInfo(GroupOrPerson):
 
     # These are none for coordinator, but can be present for student/teacher, so keeping them here.
     # Also, there is a possibility that coordinators will register with registration bot someday.
-    registration_bot_chat_id = models.IntegerField(null=True, blank=True)
-    registration_bot_language = models.CharField(
+    registration_telegram_bot_chat_id = models.IntegerField(null=True, blank=True)
+    registration_telegram_bot_language = models.CharField(
         max_length=2,
-        choices=RegistrationBotLanguage.choices,
+        choices=RegistrationTelegramBotLanguage.choices,
         help_text="Language in which the person wishes to communicate with the bot "
         "(is chosen by the person at first contact)",
     )

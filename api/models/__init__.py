@@ -7,7 +7,7 @@ from .enrollment_tests import (
     EnrollmentTestQuestionOption,
     EnrollmentTestResult,
 )
-from .groups import Group
+from .groups import Group, SpeakingClub
 from .languages_levels import Language, LanguageAndLevel, LanguageLevel
 from .log_events import (
     CoordinatorLogEvent,
@@ -27,6 +27,7 @@ __all__ = [
     "EnrollmentTestQuestion",
     "EnrollmentTestQuestionOption",
     "Group",
+    "SpeakingClub",
     "PersonalInfo",
     "Student",
     "Teacher",
