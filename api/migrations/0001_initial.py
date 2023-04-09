@@ -950,14 +950,18 @@ class Migration(migrations.Migration):
             model_name="enrollmenttestquestionoption",
             name="question",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="api.enrollmenttestquestion"
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="options",
+                to="api.enrollmenttestquestion",
             ),
         ),
         migrations.AddField(
             model_name="enrollmenttestquestion",
             name="enrollment_test",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="api.enrollmenttest"
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="questions",
+                to="api.enrollmenttest",
             ),
         ),
         migrations.AddField(
@@ -974,15 +978,6 @@ class Migration(migrations.Migration):
             name="language",
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE, to="api.language"
-            ),
-        ),
-        migrations.AddField(
-            model_name="enrollmenttest",
-            name="levels",
-            field=models.ManyToManyField(
-                blank=True,
-                help_text="level(s) of the language this test was designed for. Leave blank for the test to be shown for all levels.",
-                to="api.languagelevel",
             ),
         ),
         migrations.AddField(

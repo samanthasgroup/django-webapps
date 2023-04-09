@@ -135,4 +135,4 @@ class Migration(migrations.Migration):
         (APP_NAME, "0001_initial"),
     ]
 
-    operations = [migrations.RunPython(PrePopulationMaster)]
+    operations = [migrations.RunPython(PrePopulationMaster, reverse_code=migrations.RunPython.noop)]

@@ -37,5 +37,6 @@ __all__ = [
     "AgeRange",
     "TimeSlot",
     "DayAndTimeSlot",
+    "EnrollmentTestResult",
     "NonTeachingHelp",
 ]

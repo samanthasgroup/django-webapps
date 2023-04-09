@@ -145,4 +145,6 @@ SPECTACULAR_SETTINGS = {
 #  this setting will be ignored.
 from rest_framework import viewsets  # noqa
 
-django_stubs_ext.monkeypatch(extra_classes=[viewsets.ModelViewSet, viewsets.ReadOnlyModelViewSet])
+django_stubs_ext.monkeypatch(
+    extra_classes=[viewsets.ModelViewSet, viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet]
+)

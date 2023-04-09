@@ -1,8 +1,8 @@
 from django.db import models
 
 from api.models.age_ranges import AgeRange
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
-from api.models.languages_levels import Language, LanguageLevel
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS
+from api.models.languages_levels import Language
 from api.models.people import Student
 
 
@@ -17,28 +17,23 @@ class EnrollmentTest(models.Model):
         "Leave blank for the test to be shown to all ages.",
     )
     language = models.ForeignKey(Language, on_delete=models.CASCADE)
-    levels = models.ManyToManyField(
-        LanguageLevel,
-        blank=True,
-        help_text="level(s) of the language this test was designed for. "
-        "Leave blank for the test to be shown for all levels.",
-    )
 
     def __str__(self) -> str:
-        age_ranges, levels = self.age_ranges.all(), self.levels.all()
+        age_ranges = self.age_ranges.all()
         ages_text = (
             ", ".join(f"{age_range.age_from}-{age_range.age_to}" for age_range in age_ranges)
             if age_ranges
             else "all ages"
         )
-        levels_text = ", ".join(level.id for level in levels) if levels else "all levels"
-        return f"{self.language} ({levels_text}, {ages_text})"
+        return f"{self.language} ({ages_text})"
 
 
 class EnrollmentTestQuestion(models.Model):
     """Model for a question in a 'written' test given to the student at registration."""
 
-    enrollment_test = models.ForeignKey(EnrollmentTest, on_delete=models.CASCADE)
+    enrollment_test = models.ForeignKey(
+        EnrollmentTest, on_delete=models.CASCADE, related_name="questions"
+    )
     text = models.CharField(max_length=DEFAULT_CHAR_FIELD_MAX_LEN)
 
     class Meta:
@@ -56,7 +51,9 @@ class EnrollmentTestQuestion(models.Model):
 class EnrollmentTestQuestionOption(models.Model):
     """Model for a possible answer to a question in a 'written' test."""
 
-    question = models.ForeignKey(EnrollmentTestQuestion, on_delete=models.CASCADE)
+    question = models.ForeignKey(
+        EnrollmentTestQuestion, on_delete=models.CASCADE, related_name="options"
+    )
     text = models.CharField(max_length=50)
     is_correct = models.BooleanField()
 
@@ -80,3 +77,15 @@ class EnrollmentTestResult(models.Model):
 
     def __str__(self) -> str:
         return f"Test results of {self.student}"
+
+    @property
+    def resulting_level(self) -> str:
+        """Returns language level of the student based on amount of correct answers."""
+        correct_answers = self.answers.filter(is_correct=True).count()
+        total_answers = self.answers.count()
+        percentage = correct_answers / total_answers * 100
+        closest_percentage = min(
+            LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS, key=lambda x: abs(x - percentage)
+        )
+
+        return LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS[closest_percentage]
