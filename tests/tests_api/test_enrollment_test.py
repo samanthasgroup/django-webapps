@@ -53,5 +53,5 @@ def test_create_student_enrollment_test_result(api_client):
     assert response.json() == {
         "student": student.personal_info.id,
         "answers": correct_answers_ids,
-        "passed_level": "B2",
+        "resulting_level": "B2",
     }

@@ -45,7 +45,7 @@ class EnrollmentTestResultCreateSerializer(serializers.ModelSerializer[Enrollmen
         fields = (
             "student",
             "answers",
-            "passed_level",
+            "resulting_level",
         )
 
     # TODO Think about some validation, e.g. answers should be unique for each question

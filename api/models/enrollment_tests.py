@@ -79,11 +79,11 @@ class EnrollmentTestResult(models.Model):
         return f"Test results of {self.student}"
 
     @property
-    def passed_level(self) -> str:
-        """Returns language level of the student based on amount of right answers."""
-        right_answers = self.answers.filter(is_correct=True).count()
+    def resulting_level(self) -> str:
+        """Returns language level of the student based on amount of correct answers."""
+        correct_answers = self.answers.filter(is_correct=True).count()
         total_answers = self.answers.count()
-        percentage = right_answers / total_answers * 100
+        percentage = correct_answers / total_answers * 100
         closest_percentage = min(
             LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS, key=lambda x: abs(x - percentage)
         )
