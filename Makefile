@@ -20,7 +20,7 @@ generate-erd:
 	poetry run python manage.py graph_models --output erd.dot --theme django2018 --layout fdp --rankdir TB --arrow crow --verbosity 2 api && \
 	dot -Tpng erd.dot -o ./api/models/erd.png && \
 	rm erd.dot && \
-	poetry run python manage.py graph_models --output erd_core.dot --verbose-names -I PersonalInfo,Coordinator,Student,Teacher --theme django2018 --layout fdp --rankdir TB --arrow crow --verbosity 2 api && \
+	poetry run python manage.py graph_models --output erd_core.dot --verbose-names -I PersonalInfo,Coordinator,Student,Teacher,TeacherUnder18 --theme django2018 --layout fdp --rankdir TB --arrow crow --verbosity 2 api && \
 	dot -Tpng erd_core.dot -o ./api/models/erd_core.png && \
 	rm erd_core.dot
 
