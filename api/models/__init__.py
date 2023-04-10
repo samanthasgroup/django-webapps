@@ -7,16 +7,17 @@ from .enrollment_tests import (
     EnrollmentTestQuestionOption,
     EnrollmentTestResult,
 )
-from .groups import Group
+from .groups import Group, SpeakingClub
 from .languages_levels import Language, LanguageAndLevel, LanguageLevel
 from .log_events import (
     CoordinatorLogEvent,
     GroupLogEvent,
     LogEvent,
-    PersonLogEvent,
     StudentLogEvent,
     TeacherLogEvent,
+    TeacherUnder18LogEvent,
 )
+from .non_teaching_help import NonTeachingHelp
 from .people import Coordinator, PersonalInfo, Student, Teacher, TeacherUnder18
 
 # for mypy: listing only models that appear in admin.py
@@ -26,6 +27,7 @@ __all__ = [
     "EnrollmentTestQuestion",
     "EnrollmentTestQuestionOption",
     "Group",
+    "SpeakingClub",
     "PersonalInfo",
     "Student",
     "Teacher",
@@ -35,4 +37,6 @@ __all__ = [
     "AgeRange",
     "TimeSlot",
     "DayAndTimeSlot",
+    "EnrollmentTestResult",
+    "NonTeachingHelp",
 ]

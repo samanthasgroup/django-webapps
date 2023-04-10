@@ -1,7 +1,15 @@
+import pytz
 from model_bakery import baker
 from rest_framework import status
 
-from api.models import AgeRange, DayAndTimeSlot, LanguageAndLevel, PersonalInfo, Student
+from api.models import (
+    AgeRange,
+    DayAndTimeSlot,
+    LanguageAndLevel,
+    NonTeachingHelp,
+    PersonalInfo,
+    Student,
+)
 
 
 def test_student_create(api_client, faker):
@@ -16,13 +24,19 @@ def test_student_create(api_client, faker):
         DayAndTimeSlot.objects.first().id,
         DayAndTimeSlot.objects.last().id,
     ]
+    non_teaching_help_ids = [
+        NonTeachingHelp.objects.first().id,
+        NonTeachingHelp.objects.last().id,
+    ]
     data = {
         "personal_info": personal_info.id,
         "comment": faker.text(),
+        "status_since": faker.date_time(tzinfo=pytz.utc),
         "age_range": age_range_id,
         "teaching_languages_and_levels": teaching_languages_and_levels_ids,
         "is_member_of_speaking_club": faker.pybool(),
-        "requires_help_with_cv": faker.pybool(),
+        "can_read_in_english": faker.pybool(),
+        "non_teaching_help_required": non_teaching_help_ids,
         "availability_slots": availability_slots_ids,
     }
     response = api_client.post("/api/students/", data=data)
@@ -33,6 +47,7 @@ def test_student_create(api_client, faker):
     m2m_fields = [
         "teaching_languages_and_levels",
         "availability_slots",
+        "non_teaching_help_required",
     ]  # TODO children
     # Changing for further filtering
     for field in m2m_fields:
@@ -82,8 +97,11 @@ def test_student_retrieve(api_client):
         "availability_slots": availability_slots,
         "comment": student.comment,
         "status": student.status,
+        "status_since": student.status_since.isoformat().replace("+00:00", "Z"),
         "is_member_of_speaking_club": student.is_member_of_speaking_club,
-        "requires_help_with_cv": student.requires_help_with_cv,
+        "can_read_in_english": student.can_read_in_english,
+        # These are optional, so baker won't generate them (unless _fill_optional is True)
+        "non_teaching_help_required": [],
         "smalltalk_test_result": None,
     }
 

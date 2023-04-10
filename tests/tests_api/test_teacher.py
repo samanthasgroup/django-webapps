@@ -1,7 +1,15 @@
+import pytz
 from model_bakery import baker
 from rest_framework import status
 
-from api.models import AgeRange, DayAndTimeSlot, LanguageAndLevel, PersonalInfo, Teacher
+from api.models import (
+    AgeRange,
+    DayAndTimeSlot,
+    LanguageAndLevel,
+    NonTeachingHelp,
+    PersonalInfo,
+    Teacher,
+)
 
 
 def test_teacher_create(api_client, faker):
@@ -19,32 +27,44 @@ def test_teacher_create(api_client, faker):
         AgeRange.objects.first().id,
         AgeRange.objects.last().id,
     ]
+    non_teaching_help_ids = [
+        NonTeachingHelp.objects.first().id,
+        NonTeachingHelp.objects.last().id,
+    ]
     data = {
         "personal_info": personal_info.id,
         "student_age_ranges": age_range_ids,
         "teaching_languages_and_levels": teaching_languages_and_levels_ids,
         "availability_slots": availability_slots_ids,
         "comment": faker.text(),
-        "can_help_with_cv": faker.pybool(),
-        "can_check_syllabus": faker.pybool(),
-        "can_consult_other_teachers": faker.pybool(),
-        "can_give_feedback": faker.pybool(),
-        "can_help_with_children_group": faker.pybool(),
-        "can_help_with_materials": faker.pybool(),
-        "can_invite_to_class": faker.pybool(),
-        "can_work_in_tandem": faker.pybool(),
+        "peer_support_can_check_syllabus": faker.pybool(),
+        "peer_support_can_host_mentoring_sessions": faker.pybool(),
+        "peer_support_can_give_feedback": faker.pybool(),
+        "peer_support_can_help_with_childrens_groups": faker.pybool(),
+        "peer_support_can_provide_materials": faker.pybool(),
+        "peer_support_can_invite_to_class": faker.pybool(),
+        "peer_support_can_work_in_tandem": faker.pybool(),
         "has_prior_teaching_experience": faker.pybool(),
         "simultaneous_groups": faker.pyint(),
         "weekly_frequency_per_group": faker.pyint(),
-        "additional_skills_comment": faker.text(),
-        "can_help_with_speaking_club": faker.pybool(),
+        "can_host_speaking_club": faker.pybool(),
+        "status_since": faker.date_time(tzinfo=pytz.utc),
+        "has_hosted_speaking_club": faker.pybool(),
+        "is_validated": faker.pybool(),
+        "non_teaching_help_provided": non_teaching_help_ids,
+        "non_teaching_help_provided_comment": faker.text(),
     }
     response = api_client.post("/api/teachers/", data=data)
 
     assert response.status_code == status.HTTP_201_CREATED
     assert Teacher.objects.count() == initial_count + 1
 
-    m2m_fields = ["teaching_languages_and_levels", "availability_slots", "student_age_ranges"]
+    m2m_fields = [
+        "teaching_languages_and_levels",
+        "availability_slots",
+        "student_age_ranges",
+        "non_teaching_help_provided",
+    ]
     # Changing for further filtering
     for field in m2m_fields:
         data[f"{field}__in"] = data.pop(field)
@@ -53,7 +73,7 @@ def test_teacher_create(api_client, faker):
 
 
 def test_teacher_retrieve(api_client):
-    teacher = baker.make(Teacher, make_m2m=True)
+    teacher = baker.make(Teacher, make_m2m=True, _fill_optional=True)
     response = api_client.get(f"/api/teachers/{teacher.personal_info.id}/")
 
     response_json = response.json()
@@ -90,6 +110,13 @@ def test_teacher_retrieve(api_client):
         }
         for age_range in teacher.student_age_ranges.all()
     ]
+    non_teaching_help = [
+        {
+            "id": item.id,
+            "name": item.name,
+        }
+        for item in teacher.non_teaching_help_provided.all()
+    ]
     assert response_json == {
         "personal_info": teacher.personal_info.id,
         "student_age_ranges": age_ranges,
@@ -97,19 +124,22 @@ def test_teacher_retrieve(api_client):
         "availability_slots": availability_slots,
         "comment": teacher.comment,
         "status": teacher.status,
-        "can_help_with_cv": teacher.can_help_with_cv,
-        "can_check_syllabus": teacher.can_check_syllabus,
-        "can_consult_other_teachers": teacher.can_consult_other_teachers,
-        "can_give_feedback": teacher.can_give_feedback,
-        "can_help_with_children_group": teacher.can_help_with_children_group,
-        "can_help_with_materials": teacher.can_help_with_materials,
-        "can_invite_to_class": teacher.can_invite_to_class,
-        "can_work_in_tandem": teacher.can_work_in_tandem,
+        "status_since": teacher.status_since.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+        "peer_support_can_check_syllabus": teacher.peer_support_can_check_syllabus,
+        "peer_support_can_host_mentoring_sessions": teacher.peer_support_can_host_mentoring_sessions,  # noqa E501
+        "peer_support_can_give_feedback": teacher.peer_support_can_give_feedback,
+        "peer_support_can_help_with_childrens_groups": teacher.peer_support_can_help_with_childrens_groups,  # noqa E501
+        "peer_support_can_provide_materials": teacher.peer_support_can_provide_materials,
+        "peer_support_can_invite_to_class": teacher.peer_support_can_invite_to_class,
+        "peer_support_can_work_in_tandem": teacher.peer_support_can_work_in_tandem,
         "has_prior_teaching_experience": teacher.has_prior_teaching_experience,
         "simultaneous_groups": teacher.simultaneous_groups,
         "weekly_frequency_per_group": teacher.weekly_frequency_per_group,
-        "additional_skills_comment": teacher.additional_skills_comment,
-        "can_help_with_speaking_club": teacher.can_help_with_speaking_club,
+        "can_host_speaking_club": teacher.can_host_speaking_club,
+        "has_hosted_speaking_club": teacher.has_hosted_speaking_club,
+        "is_validated": teacher.is_validated,
+        "non_teaching_help_provided": non_teaching_help,
+        "non_teaching_help_provided_comment": teacher.non_teaching_help_provided_comment,
     }
 
 
