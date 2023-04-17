@@ -13,9 +13,6 @@ class DataMigrationMaster(abc.ABC):
     def __init__(self, apps: StateApps, schema_editor: DatabaseSchemaEditor):
         self.apps = apps
         self.schema_editor = schema_editor
-        # Adding __call__ to a class won't work because RunPython can't create an instance and then
-        # run it.  So we're running main() right after instantiating, which effectively makes
-        # DataMigrationMaster into a callable with instance attributes.\
 
     @abc.abstractmethod
     def main(self) -> None:
@@ -24,6 +21,9 @@ class DataMigrationMaster(abc.ABC):
 
     @classmethod
     def run(cls, apps: StateApps, schema_editor: DatabaseSchemaEditor) -> None:
-        """Runs data migration operations."""
+        """
+        Runs data migration operations.
+        This method is called by Django and should be passed into RunPython.
+        """
         instance = cls(apps, schema_editor)
         instance.main()
