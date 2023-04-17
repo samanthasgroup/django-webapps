@@ -65,6 +65,7 @@ class FakeDataPopulationMaster(DataMigrationMaster):
             information_source=self.faker.text,
             registration_telegram_bot_chat_id=self.faker.pyint,
             # If we don't use lambda here, then the same value will be used for all instances
+            # TODO think about these lambdas and how to make it more beautiful
             registration_telegram_bot_language=lambda: self.faker.random_element(
                 RegistrationTelegramBotLanguage.values
             ),
@@ -91,7 +92,6 @@ class FakeDataPopulationMaster(DataMigrationMaster):
             comment=self.faker.text,
             status=lambda: self.faker.random_element(StudentStatus.values),
             age_range=lambda: self.faker.random_element(AgeRange.objects.filter(type=AgeRangeType.STUDENT)),
-            # TODO think about this lambdas and how to make them better
             availability_slots=lambda: self._get_random_amount_of_objects(
                 DayAndTimeSlot, min_length=10, max_length=20
             ),
