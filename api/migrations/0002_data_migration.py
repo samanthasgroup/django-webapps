@@ -1,31 +1,19 @@
 import datetime
 
 from django.db import migrations
-from django.db.backends.postgresql.schema import DatabaseSchemaEditor
-from django.db.migrations.state import StateApps
 
+from api.models.age_ranges import AgeRangeType
 from api.models.constants import (
     STUDENT_AGE_RANGES,
     STUDENT_AGE_RANGES_FOR_MATCHING,
     STUDENT_AGE_RANGES_FOR_TEACHER,
 )
-from api.models.age_ranges import AgeRangeType
+from api.models.helpers import DataMigrationMaster
 
 APP_NAME = "api"
 
 
-class PrePopulationMaster:
-    """Class-based variation of functions for pre-populating the database with fixed data.
-    See Django docs: https://docs.djangoproject.com/en/stable/topics/migrations/#data-migrations
-    """
-
-    def __init__(self, apps: StateApps, schema_editor: DatabaseSchemaEditor):
-        self.apps = apps
-        self.schema_editor = schema_editor
-        # Adding __call__ to a class won't work because RunPython can't create an instance and then
-        # run it.  So we're running main() right after instantiating, which effectively makes
-        # PrePopulationMaster into a callable with instance attributes.
-        self.main()
+class InitialDataPopulationMaster(DataMigrationMaster):
 
     def main(self):
         """Runs pre-population operations."""
@@ -86,15 +74,15 @@ class PrePopulationMaster:
         languages = (
             Language(id=pair[0], name=pair[1])
             for pair in (
-                ("en", "English"),
-                ("fr", "French"),
-                ("de", "German"),
-                ("es", "Spanish"),
-                ("it", "Italian"),
-                ("pl", "Polish"),
-                ("cz", "Czech"),
-                ("se", "Swedish"),
-            )
+            ("en", "English"),
+            ("fr", "French"),
+            ("de", "German"),
+            ("es", "Spanish"),
+            ("it", "Italian"),
+            ("pl", "Polish"),
+            ("cz", "Czech"),
+            ("se", "Swedish"),
+        )
         )
         Language.objects.bulk_create(languages)
 
@@ -135,4 +123,4 @@ class Migration(migrations.Migration):
         (APP_NAME, "0001_initial"),
     ]
 
-    operations = [migrations.RunPython(PrePopulationMaster, reverse_code=migrations.RunPython.noop)]
+    operations = [migrations.RunPython(InitialDataPopulationMaster.run, reverse_code=migrations.RunPython.noop)]
