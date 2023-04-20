@@ -16,7 +16,7 @@ class DataMigrationMaster(abc.ABC):
 
     @abc.abstractmethod
     def main(self) -> None:
-        """Here should be placed data migration operations."""
+        """Override this method and put data migration operations in it."""
         pass
 
     @classmethod
