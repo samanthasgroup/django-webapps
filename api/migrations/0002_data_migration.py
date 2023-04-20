@@ -8,15 +8,15 @@ from api.models.constants import (
     STUDENT_AGE_RANGES_FOR_MATCHING,
     STUDENT_AGE_RANGES_FOR_TEACHER,
 )
-from api.models.helpers import DataMigrationMaster
+from api.models.data_migration_maker import DataMigrationMaker
 
 APP_NAME = "api"
 
 
-class InitialDataPopulationMaster(DataMigrationMaster):
+class InitialDataPopulator(DataMigrationMaker):
 
-    def main(self):
-        """Runs pre-population operations."""
+    def _populate(self):
+        """Populates the database with initial data."""
         self._write_age_ranges()
         self._write_day_and_time_slots()
         self._write_languages_and_levels()
@@ -123,4 +123,4 @@ class Migration(migrations.Migration):
         (APP_NAME, "0001_initial"),
     ]
 
-    operations = [migrations.RunPython(InitialDataPopulationMaster.run, reverse_code=migrations.RunPython.noop)]
+    operations = [migrations.RunPython(InitialDataPopulator.run, reverse_code=migrations.RunPython.noop)]

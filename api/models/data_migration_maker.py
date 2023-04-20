@@ -4,7 +4,7 @@ from django.db.backends.sqlite3.schema import DatabaseSchemaEditor
 from django.db.migrations.state import StateApps
 
 
-class DataMigrationMaster(abc.ABC):
+class DataMigrationMaker(abc.ABC):
     """
     Abstract class-based variation used to make data migrations.
     See Django docs: https://docs.djangoproject.com/en/stable/topics/migrations/#data-migrations
@@ -15,9 +15,8 @@ class DataMigrationMaster(abc.ABC):
         self.schema_editor = schema_editor
 
     @abc.abstractmethod
-    def main(self) -> None:
+    def _populate(self) -> None:
         """Override this method and put data migration operations in it."""
-        pass
 
     @classmethod
     def run(cls, apps: StateApps, schema_editor: DatabaseSchemaEditor) -> None:
@@ -26,4 +25,4 @@ class DataMigrationMaster(abc.ABC):
         This method is called by Django and should be passed into RunPython.
         """
         instance = cls(apps, schema_editor)
-        instance.main()
+        instance._populate()

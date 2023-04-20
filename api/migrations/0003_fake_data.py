@@ -14,7 +14,7 @@ from api.models.choices.registration_telegram_bot_language import (
     RegistrationTelegramBotLanguage,
 )
 from api.models.choices.statuses import CoordinatorStatus, StudentStatus, TeacherStatus, TeacherUnder18Status
-from api.models.helpers import DataMigrationMaster
+from api.models.data_migration_maker import DataMigrationMaker
 
 APP_NAME = "api"
 
@@ -24,7 +24,7 @@ AMOUNT_OF_TEACHERS = 25
 AMOUNT_OF_TEACHERS_UNDER_18 = 5
 
 
-class FakeDataPopulationMaster(DataMigrationMaster):
+class FakeDataPopulator(DataMigrationMaker):
     def __init__(self, apps: StateApps, schema_editor: DatabaseSchemaEditor):
         super().__init__(apps, schema_editor)
         self.faker: Faker = Faker()
@@ -168,7 +168,7 @@ class FakeDataPopulationMaster(DataMigrationMaster):
         """Makes fake teachers under 18."""
         self.teacher_under_18_recipe.make(_quantity=AMOUNT_OF_TEACHERS_UNDER_18)
 
-    def main(self):
+    def _populate(self):
         """Runs pre-population operations."""
         self._make_fake_students()
         self._make_fake_coordinators()
@@ -184,6 +184,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            FakeDataPopulationMaster.run, reverse_code=migrations.RunPython.noop
+            FakeDataPopulator.run, reverse_code=migrations.RunPython.noop
         )
     ]
