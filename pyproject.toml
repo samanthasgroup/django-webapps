@@ -48,7 +48,7 @@ django-phonenumber-field = {extras = ["phonenumberslite"], version = "^7.0.2"}
 django-extensions = "^3.2.1"
 psycopg2-binary = "^2.9.6"
 djangorestframework = "^3.14.0"
-drf-spectacular = "^0.26.0"
+drf-spectacular = "^0.26.2"
 django-filter = "^23.1"
 # this one definitely needs to be in main dependencies, django will break withouth its monkeypatch:
 django-stubs-ext = "^0.8.0"
