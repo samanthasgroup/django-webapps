@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, time
 
 from django.db import migrations, models
 from django.db.backends.sqlite3.schema import DatabaseSchemaEditor
@@ -39,7 +39,7 @@ AMOUNT_OF_SPEAKING_CLUBS = 7
 
 
 class FakeDataPopulator(DataMigrationMaker):
-    def __init__(self, apps: StateApps, schema_editor: DatabaseSchemaEditor):
+    def __init__(self, apps: StateApps, schema_editor: DatabaseSchemaEditor) -> None:
         super().__init__(apps, schema_editor)
         self.faker: Faker = Faker()
         self.personal_info_recipe = self._make_personal_info_recipe()
@@ -111,7 +111,7 @@ class FakeDataPopulator(DataMigrationMaker):
             ),
         )
 
-    def _make_coordinator_recipe(self):
+    def _make_coordinator_recipe(self) -> Recipe:
         return Recipe(
             APP_NAME + ".Coordinator",
             personal_info=foreign_key(self.personal_info_recipe, one_to_one=True),
@@ -121,7 +121,7 @@ class FakeDataPopulator(DataMigrationMaker):
             status=lambda: self.faker.random_element(CoordinatorStatus.values),
         )
 
-    def _make_student_recipe(self):
+    def _make_student_recipe(self) -> Recipe:
         return Recipe(
             APP_NAME + ".Student",
             personal_info=foreign_key(self.personal_info_recipe, one_to_one=True),
@@ -144,7 +144,7 @@ class FakeDataPopulator(DataMigrationMaker):
             ),
         )
 
-    def _make_teacher_recipe(self):
+    def _make_teacher_recipe(self) -> Recipe:
         """Makes fake teachers."""
         return Recipe(
             APP_NAME + ".Teacher",
@@ -177,7 +177,7 @@ class FakeDataPopulator(DataMigrationMaker):
             weekly_frequency_per_group=self.faker.pyint,
         )
 
-    def _make_teacher_under_18_recipe(self):
+    def _make_teacher_under_18_recipe(self) -> Recipe:
         return Recipe(
             # TODO: Think about recipe inheritance for Teacher, Person. See example with Group/SpeakingClub
             #  (https://model-bakery.readthedocs.io/en/latest/recipes.html#recipe-inheritance)
@@ -190,10 +190,10 @@ class FakeDataPopulator(DataMigrationMaker):
             is_validated=self.faker.pybool,
         )
 
-    def __get_random_time_or_none(self):
+    def __get_random_time_or_none(self) -> time | None:
         return self.faker.random_element([None, self.faker.time_object()])
 
-    def _make_group_recipe(self):
+    def _make_group_recipe(self) -> Recipe:
         group_common_recipe = self._make_group_common_recipe(
             APP_NAME + ".Group", teachers_min_value=1, teachers_max_value=3
         )
@@ -223,7 +223,7 @@ class FakeDataPopulator(DataMigrationMaker):
             sunday=self.__get_random_time_or_none,
         )
 
-    def _make_speaking_club_recipe(self):
+    def _make_speaking_club_recipe(self) -> Recipe:
         group_common_recipe = self._make_group_common_recipe(
             APP_NAME + ".SpeakingClub", teachers_min_value=0, teachers_max_value=2
         )
