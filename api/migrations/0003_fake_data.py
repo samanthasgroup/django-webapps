@@ -67,7 +67,7 @@ class FakeDataPopulator(DataPopulator):
         )
 
     def _make_group_common_recipe(
-        self, model_name: str, teachers_min_value: int, teachers_max_value: int
+        self, model_name: str,
     ) -> Recipe:
         return Recipe(
             model_name,
@@ -80,7 +80,7 @@ class FakeDataPopulator(DataPopulator):
             teachers=lambda: related(
                 *[self.teacher_recipe]
                 * self.faker.pyint(
-                    min_value=teachers_min_value, max_value=teachers_max_value
+                    min_value=1, max_value=2
                 )
             ),
             telegram_chat_url=self.faker.url,
@@ -195,7 +195,7 @@ class FakeDataPopulator(DataPopulator):
 
     def _make_group_recipe(self) -> Recipe:
         group_common_recipe = self._make_group_common_recipe(
-            APP_NAME + ".Group", teachers_min_value=1, teachers_max_value=3
+            APP_NAME + ".Group"
         )
         return group_common_recipe.extend(
             availability_slot=lambda: self._get_random_amount_of_objects(
@@ -225,7 +225,7 @@ class FakeDataPopulator(DataPopulator):
 
     def _make_speaking_club_recipe(self) -> Recipe:
         group_common_recipe = self._make_group_common_recipe(
-            APP_NAME + ".SpeakingClub", teachers_min_value=0, teachers_max_value=2
+            APP_NAME + ".SpeakingClub"
         )
         return group_common_recipe.extend(
             is_for_children=self.faker.pybool,
