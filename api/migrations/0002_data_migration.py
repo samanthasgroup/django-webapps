@@ -8,12 +8,12 @@ from api.models.constants import (
     STUDENT_AGE_RANGES_FOR_MATCHING,
     STUDENT_AGE_RANGES_FOR_TEACHER,
 )
-from api.models.data_migration_maker import Populator
+from api.models.data_populator import DataPopulator
 
 APP_NAME = "api"
 
 
-class InitialDataPopulator(Populator):
+class InitialDataPopulator(DataPopulator):
 
     def _populate(self):
         """Populates the database with initial data."""

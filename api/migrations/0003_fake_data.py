@@ -26,7 +26,7 @@ from api.models.choices.statuses import (
     TeacherUnder18Status,
     GroupStatus,
 )
-from api.models.data_migration_maker import Populator
+from api.models.data_populator import DataPopulator
 
 APP_NAME = "api"
 
@@ -38,7 +38,7 @@ AMOUNT_OF_TEACHERS_UNDER_18_WITHOUT_SPEAKING_CLUB = 5
 AMOUNT_OF_SPEAKING_CLUBS = 7
 
 
-class FakeDataPopulator(Populator):
+class FakeDataPopulator(DataPopulator):
     def __init__(self, apps: StateApps, schema_editor: DatabaseSchemaEditor) -> None:
         super().__init__(apps, schema_editor)
         self.faker: Faker = Faker()

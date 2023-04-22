@@ -4,7 +4,7 @@ from django.db.backends.sqlite3.schema import DatabaseSchemaEditor
 from django.db.migrations.state import StateApps
 
 
-class Populator(abc.ABC):
+class DataPopulator(abc.ABC):
     """
     Abstract class-based variation used to make data migrations.
     See Django docs: https://docs.djangoproject.com/en/stable/topics/migrations/#data-migrations
