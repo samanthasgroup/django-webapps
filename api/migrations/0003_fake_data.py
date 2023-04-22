@@ -37,6 +37,15 @@ AMOUNT_OF_TEACHERS_WITHOUT_GROUP = 5
 AMOUNT_OF_TEACHERS_UNDER_18_WITHOUT_SPEAKING_CLUB = 5
 AMOUNT_OF_SPEAKING_CLUBS = 7
 
+MIN_AMOUNT_OF_COORDINATORS_IN_GROUP = 1
+MAX_AMOUNT_OF_COORDINATORS_IN_GROUP = 2
+
+MIN_AMOUNT_OF_STUDENTS_IN_GROUP = 2
+MAX_AMOUNT_OF_STUDENTS_IN_GROUP = 10
+
+MIN_AMOUNT_OF_TEACHERS_IN_GROUP = 1
+MAX_AMOUNT_OF_TEACHERS_IN_GROUP = 2
+
 
 class FakeDataPopulator(DataPopulator):
     def __init__(self, apps: StateApps, schema_editor: DatabaseSchemaEditor) -> None:
@@ -72,15 +81,15 @@ class FakeDataPopulator(DataPopulator):
         return Recipe(
             model_name,
             coordinators=lambda: related(
-                *[self.coordinator_recipe] * self.faker.pyint(min_value=1, max_value=5)
+                *[self.coordinator_recipe] * self.faker.pyint(min_value=MIN_AMOUNT_OF_COORDINATORS_IN_GROUP, max_value=MAX_AMOUNT_OF_COORDINATORS_IN_GROUP)
             ),
             students=lambda: related(
-                *[self.student_recipe] * self.faker.pyint(min_value=5, max_value=25)
+                *[self.student_recipe] * self.faker.pyint(min_value=MIN_AMOUNT_OF_STUDENTS_IN_GROUP, max_value=MAX_AMOUNT_OF_STUDENTS_IN_GROUP)
             ),
             teachers=lambda: related(
                 *[self.teacher_recipe]
                 * self.faker.pyint(
-                    min_value=1, max_value=2
+                    min_value=MIN_AMOUNT_OF_TEACHERS_IN_GROUP, max_value=MAX_AMOUNT_OF_TEACHERS_IN_GROUP
                 )
             ),
             telegram_chat_url=self.faker.url,
