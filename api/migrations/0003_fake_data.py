@@ -199,7 +199,7 @@ class FakeDataPopulator(DataPopulator):
             is_validated=self.faker.pybool,
         )
 
-    def __get_random_time_or_none(self) -> time | None:
+    def _get_random_time_or_none(self) -> time | None:
         return self.faker.random_element([None, self.faker.time_object()])
 
     def _make_group_recipe(self) -> Recipe:
@@ -223,13 +223,13 @@ class FakeDataPopulator(DataPopulator):
             # FIXME: Sometimes all of the days are generated as None.
             #  It violates the model's constraint.
             #  Just restart the migration and pray to the God of Random.
-            monday=self.__get_random_time_or_none,
-            tuesday=self.__get_random_time_or_none,
-            wednesday=self.__get_random_time_or_none,
-            thursday=self.__get_random_time_or_none,
-            friday=self.__get_random_time_or_none,
-            saturday=self.__get_random_time_or_none,
-            sunday=self.__get_random_time_or_none,
+            monday=self._get_random_time_or_none,
+            tuesday=self._get_random_time_or_none,
+            wednesday=self._get_random_time_or_none,
+            thursday=self._get_random_time_or_none,
+            friday=self._get_random_time_or_none,
+            saturday=self._get_random_time_or_none,
+            sunday=self._get_random_time_or_none,
         )
 
     def _make_speaking_club_recipe(self) -> Recipe:
