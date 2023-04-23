@@ -6,7 +6,7 @@ from django.db.migrations.state import StateApps
 
 class DataPopulator(abc.ABC):
     """
-    Abstract class-based variation used to make data migrations.
+    Abstract class-based variation used to apply data migrations.
     See Django docs: https://docs.djangoproject.com/en/stable/topics/migrations/#data-migrations
     """
 
