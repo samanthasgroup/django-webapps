@@ -270,12 +270,12 @@ class FakeDataPopulator(DataPopulator):
         We need to recreate such objects to skip db constraints and be sure that needed amount is generated.
         """
         for _ in range(amount):
-            try:
-                while True:
+            while True:
+                try:
                     recipe.make()
                     break
-            except DatabaseError:
-                pass
+                except DatabaseError:
+                    pass
 
     def _make_fake_coordinators_without_group(self):
         """Makes fake coordinators without group."""
