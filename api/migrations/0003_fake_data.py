@@ -1,6 +1,6 @@
 from datetime import timedelta, time
 
-from django.db import migrations, models
+from django.db import migrations, models, DatabaseError
 from django.db.backends.sqlite3.schema import DatabaseSchemaEditor
 from django.db.migrations.state import StateApps
 from django.db.models import Q
@@ -46,6 +46,9 @@ MAX_AMOUNT_OF_STUDENTS_IN_GROUP = 10
 MIN_AMOUNT_OF_TEACHERS_IN_GROUP = 1
 MAX_AMOUNT_OF_TEACHERS_IN_GROUP = 2
 
+MIN_AMOUNT_OF_TEACHERS_UNDER_18_IN_SPEAKING_CLUB = 1
+MAX_AMOUNT_OF_TEACHERS_UNDER_18_IN_SPEAKING_CLUB = 2
+
 
 class FakeDataPopulator(DataPopulator):
     def __init__(self, apps: StateApps, schema_editor: DatabaseSchemaEditor) -> None:
@@ -58,6 +61,15 @@ class FakeDataPopulator(DataPopulator):
         self.teacher_under_18_recipe = self._make_teacher_under_18_recipe()
         self.group_recipe = self._make_group_recipe()
         self.speaking_club_recipe = self._make_speaking_club_recipe()
+
+    def _get_random_time_or_none(self) -> time | None:
+        return self.faker.random_element([None, self.faker.time_object()])
+
+    def _get_group_days_of_week(self) -> dict[str, time | None]:
+        return {
+            day_name.lower(): lambda: self._get_random_time_or_none()
+            for day_name in DayAndTimeSlot.DayOfWeek.labels
+        }
 
     def _get_random_amount_of_objects(
         self,
@@ -80,6 +92,7 @@ class FakeDataPopulator(DataPopulator):
     ) -> Recipe:
         return Recipe(
             model_name,
+            # For m2m fields, we need to use related() with args of m2m objects' recipes
             coordinators=lambda: related(
                 *[self.coordinator_recipe] * self.faker.pyint(min_value=MIN_AMOUNT_OF_COORDINATORS_IN_GROUP, max_value=MAX_AMOUNT_OF_COORDINATORS_IN_GROUP)
             ),
@@ -199,9 +212,6 @@ class FakeDataPopulator(DataPopulator):
             is_validated=self.faker.pybool,
         )
 
-    def _get_random_time_or_none(self) -> time | None:
-        return self.faker.random_element([None, self.faker.time_object()])
-
     def _make_group_recipe(self) -> Recipe:
         group_common_recipe = self._make_group_common_recipe(
             APP_NAME + ".Group"
@@ -220,16 +230,8 @@ class FakeDataPopulator(DataPopulator):
             status=lambda: self.faker.random_element(GroupStatus.values),
             start_date=self.faker.past_date,
             end_date=self.faker.future_date,
-            # FIXME: Sometimes all of the days are generated as None.
-            #  It violates the model's constraint.
-            #  Just restart the migration and pray to the God of Random.
-            monday=self._get_random_time_or_none,
-            tuesday=self._get_random_time_or_none,
-            wednesday=self._get_random_time_or_none,
-            thursday=self._get_random_time_or_none,
-            friday=self._get_random_time_or_none,
-            saturday=self._get_random_time_or_none,
-            sunday=self._get_random_time_or_none,
+            **self._get_group_days_of_week(),
+
         )
 
     def _make_speaking_club_recipe(self) -> Recipe:
@@ -241,7 +243,10 @@ class FakeDataPopulator(DataPopulator):
             language=lambda: self.faker.random_element(Language.objects.all()),
             teachers_under_18=lambda: related(
                 *[self.teacher_under_18_recipe]
-                * self.faker.pyint(min_value=0, max_value=2)
+                * self.faker.pyint(
+                    min_value=MIN_AMOUNT_OF_TEACHERS_UNDER_18_IN_SPEAKING_CLUB,
+                    max_value=MAX_AMOUNT_OF_TEACHERS_UNDER_18_IN_SPEAKING_CLUB
+                )
             ),
         )
 
@@ -265,7 +270,17 @@ class FakeDataPopulator(DataPopulator):
 
     def _make_fake_groups(self):
         """Makes fake groups."""
-        self.group_recipe.make(_quantity=AMOUNT_OF_GROUPS)
+
+        # Sometimes all the days are generated as None.
+        # It violates the model's constraint.
+        # So we use such a solution to make sure that the group is created.
+        for _ in range(AMOUNT_OF_GROUPS):
+            try:
+                while True:
+                    self.group_recipe.make()
+                    break
+            except DatabaseError:
+                pass
 
     def _make_fake_speaking_clubs(self):
         """Makes fake speaking_clubs."""
