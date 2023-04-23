@@ -314,7 +314,7 @@ class FakeDataPopulator(DataPopulator):
         )
 
     def _populate(self):
-        """Runs pre-population operations."""
+        """Runs operations required for populating the database with fake data."""
         self._make_fake_students_without_group()
         self._make_fake_coordinators_without_group()
         self._make_fake_teachers_without_group()
