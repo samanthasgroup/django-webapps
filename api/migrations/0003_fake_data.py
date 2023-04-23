@@ -260,6 +260,23 @@ class FakeDataPopulator(DataPopulator):
         super().__init__(apps, schema_editor)
         self.recipes = RecipeStorage()
 
+    def _make_amount_of_recipe_and_skip_database_error(
+        self, recipe: Recipe, amount: int
+    ) -> None:
+        """
+        Ensures that given amount of objects is made.
+
+        While generating objects by recipe, it is possible that some of them will violate any db constraint.
+        We need to recreate such objects to skip db constraints and be sure that needed amount is generated.
+        """
+        for _ in range(amount):
+            try:
+                while True:
+                    recipe.make()
+                    break
+            except DatabaseError:
+                pass
+
     def _make_fake_coordinators_without_group(self):
         """Makes fake coordinators without group."""
         self.recipes.coordinator.make(_quantity=AMOUNT_OF_COORDINATORS_WITHOUT_GROUP)
@@ -280,21 +297,15 @@ class FakeDataPopulator(DataPopulator):
 
     def _make_fake_groups(self):
         """Makes fake groups."""
-
-        # Sometimes all the days are generated as None.
-        # It violates the model's constraint.
-        # So we use such a solution to make sure that the group is created.
-        for _ in range(AMOUNT_OF_GROUPS):
-            try:
-                while True:
-                    self.recipes.group.make()
-                    break
-            except DatabaseError:
-                pass
+        self._make_amount_of_recipe_and_skip_database_error(
+            self.recipes.group, AMOUNT_OF_GROUPS
+        )
 
     def _make_fake_speaking_clubs(self):
         """Makes fake speaking_clubs."""
-        self.recipes.speaking_club.make(_quantity=AMOUNT_OF_SPEAKING_CLUBS)
+        self._make_amount_of_recipe_and_skip_database_error(
+            self.recipes.speaking_club, AMOUNT_OF_SPEAKING_CLUBS
+        )
 
     def _populate(self):
         """Runs pre-population operations."""
