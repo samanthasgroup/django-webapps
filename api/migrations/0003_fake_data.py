@@ -51,6 +51,12 @@ MAX_AMOUNT_OF_TEACHERS_UNDER_18_IN_SPEAKING_CLUB = 2
 
 
 class RecipeStorage:
+    """Helper class for producing recipes with fake data.
+    
+    For the sake of readability, this class is separated from class 
+    that populates database data produced from these recipes.
+    """
+
     def __init__(self):
         self.faker: Faker = Faker()
         self.personal_info = self._make_personal_info_recipe()
