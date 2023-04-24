@@ -148,3 +148,6 @@ from rest_framework import viewsets  # noqa
 django_stubs_ext.monkeypatch(
     extra_classes=[viewsets.ModelViewSet, viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet]
 )
+
+
+BAKER_CUSTOM_CLASS = "django_webapps.custom_baker.CallableM2MBaker"
