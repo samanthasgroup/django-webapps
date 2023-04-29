@@ -9,12 +9,8 @@ class AgeRangeSerializer(serializers.ModelSerializer[AgeRange]):
         fields = "__all__"
 
 
-class AgeRangeStringSerializer(serializers.ModelSerializer[AgeRange]):
-    """Serializer returns a string representation of an age range without type."""
-
-    class Meta:
-        model = AgeRange
-        fields = "__all__"
+class AgeRangeStringField(serializers.Field):  # type: ignore
+    """Field represents AgeRange as a string without type."""
 
     def to_representation(self, value: AgeRange) -> str:
         return f"{value.age_from}-{value.age_to}"

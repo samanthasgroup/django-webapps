@@ -6,7 +6,7 @@ from api.serializers import (
     DayAndTimeSlotSerializer,
     LanguageAndLevelSerializer,
 )
-from api.serializers.age_range import AgeRangeStringSerializer
+from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
 from api.serializers.language_and_level import MinifiedLanguageAndLevelSerializer
 from api.serializers.utc_timedelta import UTCTimedeltaField
@@ -32,7 +32,7 @@ class StudentReadSerializer(serializers.ModelSerializer[Student]):
 
 
 class PublicStudentSerializer(serializers.ModelSerializer[Student]):
-    age_range = AgeRangeStringSerializer()
+    age_range = AgeRangeStringField()
     teaching_languages_and_levels = MinifiedLanguageAndLevelSerializer(many=True, read_only=True)
     availability_slots = MinifiedDayAndTimeSlotSerializer(many=True, read_only=True)
     id = serializers.IntegerField(source="personal_info_id")
