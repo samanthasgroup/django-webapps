@@ -45,7 +45,7 @@ packages = [{include = "django_webapps"}]
 python = "^3.10"
 django = "^4.2"
 gunicorn = "^20.1.0"
-django-phonenumber-field = {extras = ["phonenumberslite"], version = "^7.0.2"}
+django-phonenumber-field = {extras = ["phonenumberslite"], version = "^7.1.0"}
 django-extensions = "^3.2.1"
 psycopg2-binary = "^2.9.6"
 djangorestframework = "^3.14.0"
