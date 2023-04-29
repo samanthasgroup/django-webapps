@@ -10,7 +10,11 @@ from api.serializers.personal_info import (
     PersonalInfoCheckExistenceSerializer,
     PersonalInfoSerializer,
 )
-from api.serializers.student import StudentReadSerializer, StudentWriteSerializer
+from api.serializers.student import (
+    PublicStudentSerializer,
+    StudentReadSerializer,
+    StudentWriteSerializer,
+)
 from api.serializers.teacher import TeacherReadSerializer, TeacherWriteSerializer
 from api.serializers.teacher_under_18 import (
     TeacherUnder18ReadSerializer,
@@ -25,6 +29,7 @@ __all__ = [
     "PersonalInfoCheckExistenceSerializer",
     "PersonalInfoSerializer",
     "StudentReadSerializer",
+    "PublicStudentSerializer",
     "StudentWriteSerializer",
     "TeacherReadSerializer",
     "TeacherWriteSerializer",

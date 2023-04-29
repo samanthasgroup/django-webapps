@@ -15,3 +15,12 @@ class DayAndTimeSlotSerializer(serializers.ModelSerializer[DayAndTimeSlot]):
     class Meta:
         model = DayAndTimeSlot
         fields = "__all__"
+
+
+class MinifiedDayAndTimeSlotSerializer(serializers.ModelSerializer[DayAndTimeSlot]):
+    from_utc_hour = serializers.TimeField(source="time_slot.from_utc_hour")
+    to_utc_hour = serializers.TimeField(source="time_slot.to_utc_hour")
+
+    class Meta:
+        model = DayAndTimeSlot
+        fields = ("day_of_week_index", "from_utc_hour", "to_utc_hour")

@@ -15,3 +15,12 @@ class LanguageAndLevelSerializer(serializers.ModelSerializer[LanguageAndLevel]):
     class Meta:
         model = LanguageAndLevel
         fields = "__all__"
+
+
+class MinifiedLanguageAndLevelSerializer(serializers.ModelSerializer[LanguageAndLevel]):
+    language = serializers.CharField(source="language.name")
+    level = serializers.CharField(source="level.id")
+
+    class Meta:
+        model = LanguageAndLevel
+        fields = ("language", "level")
