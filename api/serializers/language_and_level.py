@@ -18,6 +18,8 @@ class LanguageAndLevelSerializer(serializers.ModelSerializer[LanguageAndLevel]):
 
 
 class MinifiedLanguageAndLevelSerializer(serializers.ModelSerializer[LanguageAndLevel]):
+    """Represents LanguageAndLevel using Language name and Level id, not as a nested object."""
+
     language = serializers.CharField(source="language.name")
     level = serializers.CharField(source="level.id")
 
