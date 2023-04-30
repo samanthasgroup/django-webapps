@@ -38,7 +38,7 @@ internal_router.register(
 public_router = DefaultRouter()
 public_router.register(r"students", PublicStudentViewSet, basename="students")
 
-
+# "Internal" API is used by bot and "public" API is used by the Tooljet
 urlpatterns = [
     path("", include(internal_router.urls)),
     path("public/", include(public_router.urls)),
