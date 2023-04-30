@@ -32,6 +32,8 @@ class StudentReadSerializer(serializers.ModelSerializer[Student]):
 
 
 class PublicStudentSerializer(serializers.ModelSerializer[Student]):
+    """Representation of a Student that is used in 'All students' Tooljet view."""
+
     age_range = AgeRangeStringField()
     teaching_languages_and_levels = MinifiedLanguageAndLevelSerializer(many=True, read_only=True)
     availability_slots = MinifiedDayAndTimeSlotSerializer(many=True, read_only=True)
