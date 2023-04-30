@@ -178,7 +178,7 @@ class RecipeStorage:
             ),
             smalltalk_test_result=self.faker.json,
             teaching_languages_and_levels=lambda: self._get_random_amount_of_objects(
-                LanguageAndLevel, max_length=4
+                LanguageAndLevel, max_length=2
             ),
         )
 
