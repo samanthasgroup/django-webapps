@@ -1,3 +1,4 @@
+import sys
 from datetime import timedelta, time
 
 from django.db import migrations, models, DatabaseError
@@ -52,8 +53,8 @@ MAX_AMOUNT_OF_TEACHERS_UNDER_18_IN_SPEAKING_CLUB = 2
 
 class RecipeStorage:
     """Helper class for producing recipes with fake data.
-    
-    For the sake of readability, this class is separated from class 
+
+    For the sake of readability, this class is separated from class
     that populates database data produced from these recipes.
     """
 
@@ -144,7 +145,7 @@ class RecipeStorage:
             ),
             chatwoot_conversation_id=self.faker.pyint,
             utc_timedelta=lambda: timedelta(
-                self.faker.pyint(min_value=-12, max_value=12)
+                hours=self.faker.pyint(min_value=-12, max_value=12), minutes=self.faker.random_element([0, 30])
             ),
         )
 
@@ -177,7 +178,7 @@ class RecipeStorage:
             ),
             smalltalk_test_result=self.faker.json,
             teaching_languages_and_levels=lambda: self._get_random_amount_of_objects(
-                LanguageAndLevel
+                LanguageAndLevel, max_length=2
             ),
         )
 
@@ -332,4 +333,4 @@ class Migration(migrations.Migration):
         migrations.RunPython(
             FakeDataPopulator.run, reverse_code=migrations.RunPython.noop
         )
-    ]
+    ] if "test" not in " ".join(sys.argv) else []  # Skips this migration in tests

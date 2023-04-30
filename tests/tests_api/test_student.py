@@ -1,3 +1,5 @@
+import datetime
+
 import pytz
 from model_bakery import baker
 from rest_framework import status
@@ -103,6 +105,46 @@ def test_student_retrieve(api_client):
         # These are optional, so baker won't generate them (unless _fill_optional is True)
         "non_teaching_help_required": [],
         "smalltalk_test_result": None,
+    }
+
+
+def test_public_student_retrieve(api_client, faker):
+    utc_offset_hours = faker.pyint(min_value=-12, max_value=12)
+    sign = "+" if utc_offset_hours >= 0 else "-"
+    utc_offset_minutes = faker.random_element([0, 30])
+    utc_timedelta = datetime.timedelta(hours=utc_offset_hours, minutes=utc_offset_minutes)
+    student = baker.make(Student, make_m2m=True, personal_info__utc_timedelta=utc_timedelta)
+    response = api_client.get(f"/api/public/students/{student.personal_info.id}/")
+
+    response_json = response.json()
+    assert response.status_code == status.HTTP_200_OK
+    languages_and_levels = [
+        {
+            "language": language_and_level.language.name,
+            "level": language_and_level.level.id,
+        }
+        for language_and_level in student.teaching_languages_and_levels.all()
+    ]
+    availability_slots = [
+        {
+            "day_of_week_index": slot.day_of_week_index,
+            "from_utc_hour": slot.time_slot.from_utc_hour.isoformat(),
+            "to_utc_hour": slot.time_slot.to_utc_hour.isoformat(),
+        }
+        for slot in student.availability_slots.all()
+    ]
+    assert response_json == {
+        "id": student.personal_info.id,
+        "first_name": student.personal_info.first_name,
+        "last_name": student.personal_info.last_name,
+        "age_range": f"{student.age_range.age_from}-{student.age_range.age_to}",
+        "teaching_languages_and_levels": languages_and_levels,
+        "availability_slots": availability_slots,
+        "comment": student.comment,
+        "status": student.status,
+        "communication_language_mode": student.personal_info.communication_language_mode,
+        "is_member_of_speaking_club": student.is_member_of_speaking_club,
+        "utc_timedelta": f"UTC{sign}{utc_offset_hours:02}:{utc_offset_minutes:02}",
     }
 
 

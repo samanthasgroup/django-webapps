@@ -7,6 +7,9 @@ lint:
 makemigrations:
 	poetry run python manage.py makemigrations
 
+migrate:
+	poetry run python manage.py migrate
+
 recreate-first-migration:
 	poetry run python manage.py migrate api zero && \
 	poetry run python manage.py flush --no-input && \
