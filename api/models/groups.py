@@ -27,7 +27,7 @@ class GroupCommon(GroupOrPerson):
 class Group(GroupCommon):
     """Model for a regular language group."""
 
-    availability_slot = models.ManyToManyField(DayAndTimeSlot)
+    availability_slots = models.ManyToManyField(DayAndTimeSlot)
     is_for_staff_only = models.BooleanField(default=False)
     language_and_level = models.ForeignKey(LanguageAndLevel, on_delete=models.PROTECT)
     lesson_duration_in_minutes = models.PositiveSmallIntegerField()
