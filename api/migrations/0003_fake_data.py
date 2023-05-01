@@ -231,7 +231,7 @@ class RecipeStorage:
     def _make_group_recipe(self) -> Recipe:
         group_common_recipe = self._make_group_common_recipe(APP_NAME + ".Group")
         return group_common_recipe.extend(
-            availability_slot=lambda: self._get_random_amount_of_objects(
+            availability_slots=lambda: self._get_random_amount_of_objects(
                 DayAndTimeSlot, min_length=10, max_length=20
             ),
             is_for_staff_only=self.faker.pybool,
