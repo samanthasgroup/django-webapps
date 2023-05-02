@@ -4,7 +4,6 @@ from api.serializers.enrollment_test import (
     EnrollmentTestResultCreateSerializer,
     EnrollmentTestSerializer,
 )
-from api.serializers.group import PublicGroupSerializer
 from api.serializers.language_and_level import LanguageAndLevelSerializer
 from api.serializers.non_teaching_help import NonTeachingHelpSerializer
 from api.serializers.personal_info import (
@@ -21,6 +20,10 @@ from api.serializers.teacher_under_18 import (
     TeacherUnder18ReadSerializer,
     TeacherUnder18WriteSerializer,
 )
+
+# Should be imported at the end because of circular dependency
+from api.serializers.group import PublicGroupSerializer  # isort:skip
+
 
 __all__ = [
     "AgeRangeSerializer",
