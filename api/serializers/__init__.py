@@ -21,6 +21,10 @@ from api.serializers.teacher_under_18 import (
     TeacherUnder18WriteSerializer,
 )
 
+# Must be imported at the end because of circular dependency
+from api.serializers.group import PublicGroupSerializer  # isort:skip
+
+
 __all__ = [
     "AgeRangeSerializer",
     "DayAndTimeSlotSerializer",
@@ -28,6 +32,7 @@ __all__ = [
     "NonTeachingHelpSerializer",
     "PersonalInfoCheckExistenceSerializer",
     "PersonalInfoSerializer",
+    "PublicGroupSerializer",
     "PublicStudentSerializer",
     "StudentReadSerializer",
     "StudentWriteSerializer",
