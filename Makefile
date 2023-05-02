@@ -6,6 +6,7 @@ lint:
 
 makemigrations:
 	poetry run python manage.py makemigrations
+	$(MAKE) generate-erd
 
 migrate:
 	poetry run python manage.py migrate
@@ -20,6 +21,7 @@ recreate-first-migration:
 	mv ./api/migrations/0002_data_migration.py.bak ./api/migrations/0002_data_migration.py && \
 	mv ./api/migrations/0003_fake_data.py.bak ./api/migrations/0003_fake_data.py && \
 	poetry run python manage.py migrate
+	$(MAKE) generate-erd
 
 generate-erd:
 	poetry run python manage.py graph_models --output erd.dot --theme django2018 --layout fdp --rankdir TB --arrow crow --verbosity 2 api && \
