@@ -34,6 +34,6 @@ class PublicGroupSerializer(serializers.ModelSerializer[Group]):
             "telegram_chat_url",
             "coordinators",
             "teachers",
-            "students_count",  # This field should come from annotation.
+            "students_count",  # This field will be added in ViewSet by annotating a QuerySet.
             "is_for_staff_only",
         )
