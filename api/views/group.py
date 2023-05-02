@@ -7,7 +7,7 @@ from api.serializers import PublicGroupSerializer
 
 class PublicGroupViewSet(viewsets.ReadOnlyModelViewSet[Group]):
     """
-    Group public viewset. Used for public API (Tooljet).
+    Public viewset for groups. Used for public API (Tooljet).
     """
 
     queryset = Group.objects.annotate(students_count=models.Count("students")).all()
