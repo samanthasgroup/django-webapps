@@ -110,18 +110,9 @@ class InitialDataPopulator(DataPopulator):
         AgeRange = self.apps.get_model(APP_NAME, "AgeRange")
         Language = self.apps.get_model(APP_NAME, "Language")
 
-        english_test_for_adults = EnrollmentTest(
-            language=Language.objects.get(id="en"),
-        )
-
-        english_test_for_adults.save()
-        english_test_for_adults.age_ranges.set(
-            AgeRange.objects.filter(type=AgeRangeType.STUDENT, age_from__gte=18)
-        )
-
         path = (
             settings.BASE_DIR
-            / "api"
+            / APP_NAME
             / "migrations"
             / "data_migration_sources"
             / "enrollment_test_en.yaml"
@@ -129,35 +120,49 @@ class InitialDataPopulator(DataPopulator):
         with path.open(encoding="utf8") as fh:
             data = yaml.safe_load(fh)
 
-        data_for_adult_test = data["adult"]
-        assert len(data_for_adult_test) == 35
-
-        for question_data in data_for_adult_test:
-            question = EnrollmentTestQuestion(
-                enrollment_test=english_test_for_adults, text=question_data["text"]
+        for block in data:
+            enrollment_test = EnrollmentTest(
+                language=Language.objects.get(id=block["language"]),
             )
-            question.save()
 
-            # make sure exactly one option is marked as correct in each question
-            assert (
-                len([o for o in question_data["options"] if o["is_correct"] is True]) == 1
-            ), f"Exactly 1 option has to be marked as correct for {question_data=}"
+            enrollment_test.save()  # before adding m2m relationships
+            enrollment_test.age_ranges.set(
+                AgeRange.objects.filter(
+                    type=AgeRangeType.STUDENT,
+                    age_from__gte=block["age_from"],
+                    age_to__lte=block["age_to"],
+                )
+            )
 
-            for option_data in question_data["options"]:
+            questions = block["questions"]
+            assert len(questions) == 35
+
+            for item in questions:
+                question = EnrollmentTestQuestion(
+                    enrollment_test=enrollment_test, text=item["text"]
+                )
+                question.save()
+
+                # make sure exactly one option is marked as correct in each question
+                assert (
+                    len([o for o in item["options"] if o["is_correct"] is True]) == 1
+                ), f"Exactly 1 option has to be marked as correct for {item=}"
+
+                for option_data in item["options"]:
+                    EnrollmentTestQuestionOption.objects.create(
+                        question=question,
+                        text=option_data["text"],
+                        is_correct=option_data["is_correct"],
+                    )
+
+                # add "don't know" to each question
                 EnrollmentTestQuestionOption.objects.create(
                     question=question,
-                    text=option_data["text"],
-                    is_correct=option_data["is_correct"],
+                    text="(I don't know 😕)",
+                    is_correct=False,
                 )
 
-            # add "don't know" to each question
-            EnrollmentTestQuestionOption.objects.create(
-                question=question,
-                text="Don't know",
-                is_correct=False,
-            )
-
-        english_test_for_adults.save()
+            enrollment_test.save()
 
     def _write_non_teaching_help(self):
         HelpType = self.apps.get_model(APP_NAME, "NonTeachingHelp")

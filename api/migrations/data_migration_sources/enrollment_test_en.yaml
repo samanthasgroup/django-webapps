@@ -1,313 +1,316 @@
-adult:
-  - text: Where ... you from?
-    options:
-      - text: are
-        is_correct: true
-      - text: –
-        is_correct: false
-      - text: is
-        is_correct: false
-  - text: – How ... are you? – I’m 34.
-    options:
-      - text: much
-        is_correct: false
-      - text: old
-        is_correct: true
-      - text: –
-        is_correct: false
-  - text: He ... a doctor.
-    options:
-      - text: isn't
-        is_correct: true
-      - text: not
-        is_correct: false
-      - text: am
-        is_correct: false
-  - text: What ...? – I’m a manager.
-    options:
-      - text: are you do
-        is_correct: false
-      - text: do you do
-        is_correct: true
-      - text: are you doing
-        is_correct: false
-  - text: She is from the United States. She can speak ... .
-    options:
-      - text: on English
-        is_correct: false
-      - text: English
-        is_correct: true
-      - text: in the English
-        is_correct: false
-  - text: ... she speak French?
-    options:
-      - text: Does
-        is_correct: true
-      - text: Is
-        is_correct: false
-      - text: Do
-        is_correct: false
-  - text: There ... 5 people in the room.
-    options:
-      - text: is
-        is_correct: false
-      - text: are
-        is_correct: true
-      - text: am
-        is_correct: false
-  - text: ... you like Italian cars?
-    options:
-      - text: Does
-        is_correct: false
-      - text: Are
-        is_correct: false
-      - text: Do
-        is_correct: true
-  - text: I like to drink ... with milk.
-    options:
-      - text: tea
-        is_correct: true
-      - text: sugar
-        is_correct: false
-      - text: cake
-        is_correct: false
-  - text: I like ... . I think it’s a very beautiful language.
-    options:
-      - text: French
-        is_correct: true
-      - text: France
-        is_correct: false
-      - text: Paris
-        is_correct: false
-  - text: There are too ... words in this test.
-    options:
-      - text: much
-        is_correct: false
-      - text: –
-        is_correct: false
-      - text: many
-        is_correct: true
-  - text: She ... in New York. Can we visit her?
-    options:
-      - text: live
-        is_correct: false
-      - text: lives
-        is_correct: true
-      - text: leaves
-        is_correct: false
-  - text: It’s ... fantastic film! Did you watch it?
-    options:
-      - text: a
-        is_correct: true
-      - text: an
-        is_correct: false
-      - text: the
-        is_correct: false
-  - text: I ... help you, sorry. I’m really busy today.
-    options:
-      - text: can't
-        is_correct: true
-      - text: can
-        is_correct: false
-      - text: do
-        is_correct: false
-  - text: The opposite of ‘expensive’ is ... .
-    options:
-      - text: cheap
-        is_correct: true
-      - text: light
-        is_correct: false
-      - text: poor
-        is_correct: false
-  - text: I’m looking ... my glasses. Have you seen them?
-    options:
-      - text: at
-        is_correct: false
-      - text: in
-        is_correct: false
-      - text: for
-        is_correct: true
-  - text: We ... to Turkey last year.
-    options:
-      - text: went
-        is_correct: true
-      - text: go
-        is_correct: false
-      - text: have been
-        is_correct: false
-  - text: ... you go to Clare’s party last night?
-    options:
-      - text: Do
-        is_correct: false
-      - text: Doing
-        is_correct: false
-      - text: Did
-        is_correct: true
-  - text: They ... ice cream at the moment.
-    options:
-      - text: eats
-        is_correct: false
-      - text: eating
-        is_correct: false
-      - text: are eating
-        is_correct: true
-  - text: She likes ... expensive clothes.
-    options:
-      - text: wearing
-        is_correct: true
-      - text: to wearing
-        is_correct: false
-      - text: wear
-        is_correct: false
-      - text: is wearing
-        is_correct: false
-  - text: Harry ... his father’s car when the accident happened.
-    options:
-      - text: was driving
-        is_correct: true
-      - text: drove
-        is_correct: false
-      - text: had driven
-        is_correct: false
-      - text: has been driving
-        is_correct: false
-  - text: The weather has been awful. We’ve had very ... sunshine this summer.
-    options:
-      - text: little
-        is_correct: true
-      - text: a little
-        is_correct: false
-      - text: few
-        is_correct: false
-      - text: a few
-        is_correct: false
-  - text: Have you got time to discuss your work now or are you ... to leave?
-    options:
-      - text: thinking
-        is_correct: false
-      - text: round
-        is_correct: false
-      - text: planned
-        is_correct: false
-      - text: about
-        is_correct: true
-  - text: When I realised I had dropped my gloves, I decided to ... my steps.
-    options:
-      - text: retrace
-        is_correct: true
-      - text: regress
-        is_correct: false
-      - text: resume
-        is_correct: false
-      - text: return
-        is_correct: false
-  - text: My sister ... the cooking in our house.
-    options:
-      - text: does
-        is_correct: true
-      - text: makes
-        is_correct: false
-      - text: cooks
-        is_correct: false
-      - text: takes
-        is_correct: false
-  - text: She was in ... after watching a moving rom-com.
-    options:
-      - text: crying
-        is_correct: false
-      - text: tears
-        is_correct: true
-      - text: cries
-        is_correct: false
-      - text: tearful
-        is_correct: false
-  - text: Could you ... me that book for a couple of days, please?
-    options:
-      - text: lend
-        is_correct: true
-      - text: owe
-        is_correct: false
-      - text: borrow
-        is_correct: false
-      - text: rent
-        is_correct: false
-  - text: Who ... in that house?
-    options:
-      - text: does live
-        is_correct: false
-      - text: lives
-        is_correct: true
-      - text: does he live
-        is_correct: false
-      - text: he lives
-        is_correct: false
-  - text: I’ll call you when I ... home.
-    options:
-      - text: get
-        is_correct: true
-      - text: "'ll get"
-        is_correct: false
-      - text: "'ll have got"
-        is_correct: false
-      - text: "'m getting"
-        is_correct: false
-  - text: If you ... me, what would you do?
-    options:
-      - text: was
-        is_correct: false
-      - text: would be
-        is_correct: false
-      - text: were
-        is_correct: true
-      - text: have been
-        is_correct: false
-  - text: I don’t know where ... last night.
-    options:
-      - text: did he go
-        is_correct: false
-      - text: he did go
-        is_correct: false
-      - text: went he
-        is_correct: false
-      - text: he went
-        is_correct: true
-  - text: We had expected that they ... fluent English, but in fact they didn’t.
-    options:
-      - text: were speaking
-        is_correct: false
-      - text: would speak
-        is_correct: true
-      - text: had spoken
-        is_correct: false
-      - text: spoke
-        is_correct: false
-  - text: I’d rather I ... next weekend, but I do!
-    options:
-      - text: don’t have to work
-        is_correct: false
-      - text: didn’t have to work
-        is_correct: true
-      - text: wouldn’t work
-        is_correct: false
-      - text: wasn’t working
-        is_correct: false
-  - text: Before you enter the triathlon, please bear in ... that you’re not as young as you used to be!
-    options:
-      - text: thought
-        is_correct: false
-      - text: question
-        is_correct: false
-      - text: mind
-        is_correct: true
-      - text: opinion
-        is_correct: false
-  - text: The meeting was ... and not very interesting.
-    options:
-      - text: time-wasting
-        is_correct: false
-      - text: time-consuming
-        is_correct: true
-      - text: time-using
-        is_correct: false
-      - text: out of time
-        is_correct: false
+- age_from: 18
+  age_to: 95
+  language: en
+  questions:
+    - text: Where ... you from?
+      options:
+        - text: are
+          is_correct: true
+        - text: –
+          is_correct: false
+        - text: is
+          is_correct: false
+    - text: – How ... are you? – I’m 34.
+      options:
+        - text: much
+          is_correct: false
+        - text: old
+          is_correct: true
+        - text: –
+          is_correct: false
+    - text: He ... a doctor.
+      options:
+        - text: isn't
+          is_correct: true
+        - text: not
+          is_correct: false
+        - text: am
+          is_correct: false
+    - text: What ...? – I’m a manager.
+      options:
+        - text: are you do
+          is_correct: false
+        - text: do you do
+          is_correct: true
+        - text: are you doing
+          is_correct: false
+    - text: She is from the United States. She can speak ... .
+      options:
+        - text: on English
+          is_correct: false
+        - text: English
+          is_correct: true
+        - text: in the English
+          is_correct: false
+    - text: ... she speak French?
+      options:
+        - text: Does
+          is_correct: true
+        - text: Is
+          is_correct: false
+        - text: Do
+          is_correct: false
+    - text: There ... 5 people in the room.
+      options:
+        - text: is
+          is_correct: false
+        - text: are
+          is_correct: true
+        - text: am
+          is_correct: false
+    - text: ... you like Italian cars?
+      options:
+        - text: Does
+          is_correct: false
+        - text: Are
+          is_correct: false
+        - text: Do
+          is_correct: true
+    - text: I like to drink ... with milk.
+      options:
+        - text: tea
+          is_correct: true
+        - text: sugar
+          is_correct: false
+        - text: cake
+          is_correct: false
+    - text: I like ... . I think it’s a very beautiful language.
+      options:
+        - text: French
+          is_correct: true
+        - text: France
+          is_correct: false
+        - text: Paris
+          is_correct: false
+    - text: There are too ... words in this test.
+      options:
+        - text: much
+          is_correct: false
+        - text: –
+          is_correct: false
+        - text: many
+          is_correct: true
+    - text: She ... in New York. Can we visit her?
+      options:
+        - text: live
+          is_correct: false
+        - text: lives
+          is_correct: true
+        - text: leaves
+          is_correct: false
+    - text: It’s ... fantastic film! Did you watch it?
+      options:
+        - text: a
+          is_correct: true
+        - text: an
+          is_correct: false
+        - text: the
+          is_correct: false
+    - text: I ... help you, sorry. I’m really busy today.
+      options:
+        - text: can't
+          is_correct: true
+        - text: can
+          is_correct: false
+        - text: do
+          is_correct: false
+    - text: The opposite of ‘expensive’ is ... .
+      options:
+        - text: cheap
+          is_correct: true
+        - text: light
+          is_correct: false
+        - text: poor
+          is_correct: false
+    - text: I’m looking ... my glasses. Have you seen them?
+      options:
+        - text: at
+          is_correct: false
+        - text: in
+          is_correct: false
+        - text: for
+          is_correct: true
+    - text: We ... to Turkey last year.
+      options:
+        - text: went
+          is_correct: true
+        - text: go
+          is_correct: false
+        - text: have been
+          is_correct: false
+    - text: ... you go to Clare’s party last night?
+      options:
+        - text: Do
+          is_correct: false
+        - text: Doing
+          is_correct: false
+        - text: Did
+          is_correct: true
+    - text: They ... ice cream at the moment.
+      options:
+        - text: eats
+          is_correct: false
+        - text: eating
+          is_correct: false
+        - text: are eating
+          is_correct: true
+    - text: She likes ... expensive clothes.
+      options:
+        - text: wearing
+          is_correct: true
+        - text: to wearing
+          is_correct: false
+        - text: wear
+          is_correct: false
+        - text: is wearing
+          is_correct: false
+    - text: Harry ... his father’s car when the accident happened.
+      options:
+        - text: was driving
+          is_correct: true
+        - text: drove
+          is_correct: false
+        - text: had driven
+          is_correct: false
+        - text: has been driving
+          is_correct: false
+    - text: The weather has been awful. We’ve had very ... sunshine this summer.
+      options:
+        - text: little
+          is_correct: true
+        - text: a little
+          is_correct: false
+        - text: few
+          is_correct: false
+        - text: a few
+          is_correct: false
+    - text: Have you got time to discuss your work now or are you ... to leave?
+      options:
+        - text: thinking
+          is_correct: false
+        - text: round
+          is_correct: false
+        - text: planned
+          is_correct: false
+        - text: about
+          is_correct: true
+    - text: When I realised I had dropped my gloves, I decided to ... my steps.
+      options:
+        - text: retrace
+          is_correct: true
+        - text: regress
+          is_correct: false
+        - text: resume
+          is_correct: false
+        - text: return
+          is_correct: false
+    - text: My sister ... the cooking in our house.
+      options:
+        - text: does
+          is_correct: true
+        - text: makes
+          is_correct: false
+        - text: cooks
+          is_correct: false
+        - text: takes
+          is_correct: false
+    - text: She was in ... after watching a moving rom-com.
+      options:
+        - text: crying
+          is_correct: false
+        - text: tears
+          is_correct: true
+        - text: cries
+          is_correct: false
+        - text: tearful
+          is_correct: false
+    - text: Could you ... me that book for a couple of days, please?
+      options:
+        - text: lend
+          is_correct: true
+        - text: owe
+          is_correct: false
+        - text: borrow
+          is_correct: false
+        - text: rent
+          is_correct: false
+    - text: Who ... in that house?
+      options:
+        - text: does live
+          is_correct: false
+        - text: lives
+          is_correct: true
+        - text: does he live
+          is_correct: false
+        - text: he lives
+          is_correct: false
+    - text: I’ll call you when I ... home.
+      options:
+        - text: get
+          is_correct: true
+        - text: "'ll get"
+          is_correct: false
+        - text: "'ll have got"
+          is_correct: false
+        - text: "'m getting"
+          is_correct: false
+    - text: If you ... me, what would you do?
+      options:
+        - text: was
+          is_correct: false
+        - text: would be
+          is_correct: false
+        - text: were
+          is_correct: true
+        - text: have been
+          is_correct: false
+    - text: I don’t know where ... last night.
+      options:
+        - text: did he go
+          is_correct: false
+        - text: he did go
+          is_correct: false
+        - text: went he
+          is_correct: false
+        - text: he went
+          is_correct: true
+    - text: We had expected that they ... fluent English, but in fact they didn’t.
+      options:
+        - text: were speaking
+          is_correct: false
+        - text: would speak
+          is_correct: true
+        - text: had spoken
+          is_correct: false
+        - text: spoke
+          is_correct: false
+    - text: I’d rather I ... next weekend, but I do!
+      options:
+        - text: don’t have to work
+          is_correct: false
+        - text: didn’t have to work
+          is_correct: true
+        - text: wouldn’t work
+          is_correct: false
+        - text: wasn’t working
+          is_correct: false
+    - text: Before you enter the triathlon, please bear in ... that you’re not as young as you used to be!
+      options:
+        - text: thought
+          is_correct: false
+        - text: question
+          is_correct: false
+        - text: mind
+          is_correct: true
+        - text: opinion
+          is_correct: false
+    - text: The meeting was ... and not very interesting.
+      options:
+        - text: time-wasting
+          is_correct: false
+        - text: time-consuming
+          is_correct: true
+        - text: time-using
+          is_correct: false
+        - text: out of time
+          is_correct: false
