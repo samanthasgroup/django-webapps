@@ -135,7 +135,6 @@ class InitialDataPopulator(DataPopulator):
             )
 
             questions = block["questions"]
-            assert len(questions) == 35
 
             for item in questions:
                 question = EnrollmentTestQuestion(
