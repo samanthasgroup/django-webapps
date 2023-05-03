@@ -115,7 +115,7 @@ class InitialDataPopulator(DataPopulator):
             / APP_NAME
             / "migrations"
             / "data_migration_sources"
-            / "enrollment_test_en.yaml"
+            / "enrollment_tests.yaml"
         )
         with path.open(encoding="utf8") as fh:
             data = yaml.safe_load(fh)

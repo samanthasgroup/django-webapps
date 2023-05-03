@@ -212,15 +212,15 @@
           is_correct: false
         - text: it is been
           is_correct: false
-    - text: By the time I hand in this project, I ____ on it for three weeks!
+    - text: Could I possibly ____ some money for the bus fare home? I’ve lost my bag.
       options:
-        - text: "'ll be working"
+        - text: lend
           is_correct: false
-        - text: "'ll have been working"
+        - text: owe
+          is_correct: false
+        - text: borrow
           is_correct: true
-        - text: have worked
-          is_correct: false
-        - text: "'ll work"
+        - text: need
           is_correct: false
     - text: You should be very proud ____ what you’ve achieved over the last year.
       options:
