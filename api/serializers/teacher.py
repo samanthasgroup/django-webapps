@@ -24,3 +24,14 @@ class TeacherReadSerializer(serializers.ModelSerializer[Teacher]):
     class Meta:
         model = Teacher
         fields = "__all__"
+
+
+class MinifiedTeacherSerializer(serializers.ModelSerializer[Teacher]):
+    """Serializer for Teacher model with only id and full_name fields."""
+
+    full_name = serializers.CharField(source="personal_info.full_name")
+    id = serializers.IntegerField(source="personal_info_id")
+
+    class Meta:
+        model = Teacher
+        fields = ("id", "full_name")
