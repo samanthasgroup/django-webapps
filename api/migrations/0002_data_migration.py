@@ -119,6 +119,10 @@ class InitialDataPopulator(DataPopulator):
         with path.open(encoding="utf8") as fh:
             data = yaml.safe_load(fh)
 
+        # tests need to be saved to DB before adding questions to them,
+        # as do questions before adding options, but options can be bulk_create()'d at the end
+        question_options = []
+
         for block in data:
             # id for Language is a string, so no need to get object from database to get its id
             enrollment_test = EnrollmentTest.objects.create(language_id=block["language"])
@@ -143,7 +147,7 @@ class InitialDataPopulator(DataPopulator):
                     len([o for o in item["options"] if o["is_correct"] is True]) == 1
                 ), f"Exactly 1 option has to be marked as correct for {item=}"
 
-                options = [
+                question_options += [
                     EnrollmentTestQuestionOption(
                         question=question,
                         text=option_data["text"],
@@ -157,7 +161,8 @@ class InitialDataPopulator(DataPopulator):
                         is_correct=False,
                     )
                 ]
-                EnrollmentTestQuestionOption.objects.bulk_create(options)
+
+        EnrollmentTestQuestionOption.objects.bulk_create(question_options)
 
     def _write_non_teaching_help(self):
         HelpType = self.apps.get_model(APP_NAME, "NonTeachingHelp")
