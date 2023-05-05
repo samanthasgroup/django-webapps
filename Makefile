@@ -23,6 +23,16 @@ recreate-first-migration:
 	poetry run python manage.py migrate
 	$(MAKE) generate-erd
 
+repopulate-data:
+# Repopulates the data but keeps auth data intact (admin users, groups, permissions)
+# This script will need to be changed if model migrations are added after data migrations.
+	poetry run python manage.py migrate api 0001_initial && \
+	poetry run python manage.py dumpdata auth -o auth_dump.json.gz && \
+	poetry run python manage.py flush --no-input && \
+	poetry run python manage.py loaddata auth_dump.json.gz && \
+	poetry run python manage.py migrate && \
+	rm auth_dump.json.gz
+
 generate-erd:
 	poetry run python manage.py graph_models --output erd.dot --theme django2018 --layout fdp --rankdir TB --arrow crow --verbosity 2 api && \
 	dot -Tpng erd.dot -o ./api/models/erd.png && \
