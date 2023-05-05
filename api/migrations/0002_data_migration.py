@@ -1,5 +1,7 @@
 import datetime
 
+import yaml
+from django.conf import settings
 from django.db import migrations
 
 from api.models.age_ranges import AgeRangeType
@@ -14,12 +16,12 @@ APP_NAME = "api"
 
 
 class InitialDataPopulator(DataPopulator):
-
     def _populate(self):
         """Populates the database with initial data."""
         self._write_age_ranges()
         self._write_day_and_time_slots()
         self._write_languages_and_levels()
+        self._write_enrollment_tests()
         self._write_non_teaching_help()
 
     def _write_age_ranges(self):
@@ -74,15 +76,15 @@ class InitialDataPopulator(DataPopulator):
         languages = (
             Language(id=pair[0], name=pair[1])
             for pair in (
-            ("en", "English"),
-            ("fr", "French"),
-            ("de", "German"),
-            ("es", "Spanish"),
-            ("it", "Italian"),
-            ("pl", "Polish"),
-            ("cz", "Czech"),
-            ("se", "Swedish"),
-        )
+                ("en", "English"),
+                ("fr", "French"),
+                ("de", "German"),
+                ("es", "Spanish"),
+                ("it", "Italian"),
+                ("pl", "Polish"),
+                ("cz", "Czech"),
+                ("se", "Swedish"),
+            )
         )
         Language.objects.bulk_create(languages)
 
@@ -96,6 +98,71 @@ class InitialDataPopulator(DataPopulator):
             for level in Level.objects.iterator()
         )
         LanguageAndLevel.objects.bulk_create(language_and_level_objects)
+
+    def _write_enrollment_tests(self):
+        """Writes `EnrollmentTest`, `Question`, and `EnrollmentTestQuestionOption` to database."""
+        EnrollmentTest = self.apps.get_model(APP_NAME, "EnrollmentTest")
+        EnrollmentTestQuestion = self.apps.get_model(APP_NAME, "EnrollmentTestQuestion")
+        EnrollmentTestQuestionOption = self.apps.get_model(
+            APP_NAME, "EnrollmentTestQuestionOption"
+        )
+
+        AgeRange = self.apps.get_model(APP_NAME, "AgeRange")
+
+        path = (
+            settings.BASE_DIR
+            / APP_NAME
+            / "migrations"
+            / "data_migration_sources"
+            / "enrollment_tests.yaml"
+        )
+        with path.open(encoding="utf8") as fh:
+            data = yaml.safe_load(fh)
+
+        # tests need to be saved to DB before adding questions to them,
+        # as do questions before adding options, but options can be bulk_create()'d at the end
+        question_options = []
+
+        for block in data:
+            # id for Language is a string, so no need to get object from database to get its id
+            enrollment_test = EnrollmentTest.objects.create(language_id=block["language"])
+
+            enrollment_test.age_ranges.set(
+                AgeRange.objects.filter(
+                    type=AgeRangeType.STUDENT,
+                    age_from__gte=block["age_from"],
+                    age_to__lte=block["age_to"],
+                )
+            )
+
+            questions = block["questions"]
+
+            for item in questions:
+                question = EnrollmentTestQuestion.objects.create(
+                    enrollment_test=enrollment_test, text=item["text"]
+                )
+
+                # make sure exactly one option is marked as correct in each question
+                assert (
+                    len([o for o in item["options"] if o["is_correct"] is True]) == 1
+                ), f"Exactly 1 option has to be marked as correct for {item=}"
+
+                question_options += [
+                    EnrollmentTestQuestionOption(
+                        question=question,
+                        text=option_data["text"],
+                        is_correct=option_data["is_correct"],
+                    )
+                    for option_data in item["options"]
+                ] + [  # add "don't know" to each question
+                    EnrollmentTestQuestionOption(
+                        question=question,
+                        text="(I don't know 😕)",
+                        is_correct=False,
+                    )
+                ]
+
+        EnrollmentTestQuestionOption.objects.bulk_create(question_options)
 
     def _write_non_teaching_help(self):
         HelpType = self.apps.get_model(APP_NAME, "NonTeachingHelp")
@@ -123,4 +190,6 @@ class Migration(migrations.Migration):
         (APP_NAME, "0001_initial"),
     ]
 
-    operations = [migrations.RunPython(InitialDataPopulator.run, reverse_code=migrations.RunPython.noop)]
+    operations = [
+        migrations.RunPython(InitialDataPopulator.run, reverse_code=migrations.RunPython.noop)
+    ]

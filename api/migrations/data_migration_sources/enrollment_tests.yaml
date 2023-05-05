@@ -1,0 +1,570 @@
+- age_from: 13
+  age_to: 17
+  language: en
+  questions:
+    - text: ____ you interested in sport?
+      options:
+        - text: Be
+          is_correct: false
+        - text: Am
+          is_correct: false
+        - text: Is
+          is_correct: false
+        - text: Are
+          is_correct: true
+    - text: Paul is very ____. He’s very good at art.
+      options:
+        - text: honest
+          is_correct: false
+        - text: friendly
+          is_correct: false
+        - text: polite
+          is_correct: false
+        - text: creative
+          is_correct: true
+    - text: I ____ arrive at school before nine o’clock.
+      options:
+        - text: has to
+          is_correct: false
+        - text: have to
+          is_correct: true
+        - text: doesn't have to
+          is_correct: false
+        - text: haven't to
+          is_correct: false
+    - text: The beach was very crowded ____ Monday.
+      options:
+        - text: in
+          is_correct: false
+        - text: on
+          is_correct: true
+        - text: at
+          is_correct: false
+        - text: to
+          is_correct: false
+    - text: You ____ eat all that cake! It isn’t good for you.
+      options:
+        - text: don’t
+          is_correct: false
+        - text: may not
+          is_correct: false
+        - text: shouldn’t
+          is_correct: true
+        - text: will not
+          is_correct: false
+    - text: Cathy ____ a game on her computer at the moment.
+      options:
+        - text: plays
+          is_correct: false
+        - text: is playing
+          is_correct: true
+        - text: to play
+          is_correct: false
+        - text: play
+          is_correct: false
+    - text: ____ you like to come out with us tonight?
+      options:
+        - text: Do
+          is_correct: false
+        - text: Would
+          is_correct: true
+        - text: Are
+          is_correct: false
+        - text: Will
+          is_correct: false
+    - text: How ____ time have we got to do this exercise?
+      options:
+        - text: long
+          is_correct: false
+        - text: many
+          is_correct: false
+        - text: much
+          is_correct: true
+        - text: quick
+          is_correct: false
+    - text: Turn ____ and you’ll see the museum on the left.
+      options:
+        - text: on the right
+          is_correct: false
+        - text: rightly
+          is_correct: false
+        - text: by the right
+          is_correct: false
+        - text: right
+          is_correct: true
+    - text: Tom got the ____ marks in the class for his homework.
+      options:
+        - text: worse
+          is_correct: false
+        - text: worst
+          is_correct: true
+        - text: baddest
+          is_correct: false
+        - text: most bad
+          is_correct: false
+    - text: There wasn’t ____ milk for breakfast this morning so I had toast and orange juice.
+      options:
+        - text: a
+          is_correct: false
+        - text: some
+          is_correct: false
+        - text: the
+          is_correct: false
+        - text: any
+          is_correct: true
+    - text: Did you ____ shopping after school yesterday?
+      options:
+        - text: went
+          is_correct: false
+        - text: goed
+          is_correct: false
+        - text: going
+          is_correct: false
+        - text: go
+          is_correct: true
+    - text: Our teacher speaks English to us ____ so that we can understand her.
+      options:
+        - text: slow
+          is_correct: false
+        - text: slower
+          is_correct: false
+        - text: more slow
+          is_correct: false
+        - text: slowly
+          is_correct: true
+    - text: I ____ the new Batman film yet. Is it any good?
+      options:
+        - text: haven't seen
+          is_correct: true
+        - text: didn't see
+          is_correct: false
+        - text: don't see
+          is_correct: false
+        - text: am not seen
+          is_correct: false
+    - text: You ____ hurry as we’ve still got twenty minutes before the film starts.
+      options:
+        - text: mustn't
+          is_correct: false
+        - text: can't
+          is_correct: false
+        - text: may not
+          is_correct: false
+        - text: don't need to
+          is_correct: true
+    - text: I ____ you in the café at about 4.30 and we can discuss our plans then, OK?
+      options:
+        - text: "’ll see"
+          is_correct: true
+        - text: am going to see
+          is_correct: false
+        - text: am seeing
+          is_correct: false
+        - text: see
+          is_correct: false
+    - text: I really enjoy ____ new languages and I’d like to learn Italian soon.
+      options:
+        - text: to learn
+          is_correct: false
+        - text: learning
+          is_correct: true
+        - text: learn
+          is_correct: false
+        - text: learned
+          is_correct: false
+    - text: Sam asked me if I ____ a lift home after the concert.
+      options:
+        - text: had wanted
+          is_correct: false
+        - text: wanted
+          is_correct: true
+        - text: would want
+          is_correct: false
+        - text: want
+          is_correct: false
+    - text: I ____ for arriving so late but I was caught up in a traffic jam in the town centre.
+      options:
+        - text: sorry
+          is_correct: false
+        - text: regret
+          is_correct: false
+        - text: apologise
+          is_correct: true
+        - text: afraid
+          is_correct: false
+    - text: Look out for a petrol station because I think we’re going to run ____ of petrol soon.
+      options:
+        - text: down
+          is_correct: false
+        - text: out
+          is_correct: true
+        - text: off
+          is_correct: false
+        - text: through
+          is_correct: false
+    - text: It was great to see you at the party. I didn’t realise how long ____ since we last met.
+      options:
+        - text: it had been
+          is_correct: true
+        - text: it was been
+          is_correct: false
+        - text: it was being
+          is_correct: false
+        - text: it is been
+          is_correct: false
+    - text: Could I possibly ____ some money for the bus fare home? I’ve lost my bag.
+      options:
+        - text: lend
+          is_correct: false
+        - text: owe
+          is_correct: false
+        - text: borrow
+          is_correct: true
+        - text: need
+          is_correct: false
+    - text: You should be very proud ____ what you’ve achieved over the last year.
+      options:
+        - text: of
+          is_correct: true
+        - text: on
+          is_correct: false
+        - text: to
+          is_correct: false
+        - text: for
+          is_correct: false
+    - text: Last Tuesday the company told Ruth that they’d emailed her the job details the ____ day.
+      options:
+        - text: last
+          is_correct: false
+        - text: before
+          is_correct: false
+        - text: previous
+          is_correct: true
+        - text: earlier
+          is_correct: false
+    - text: I must remember ____ Ed to take notes for me while I’m away next week.
+      options:
+        - text: ask
+          is_correct: false
+        - text: to ask
+          is_correct: true
+        - text: asking
+          is_correct: false
+        - text: for asking
+          is_correct: false
+- age_from: 18
+  age_to: 95
+  language: en
+  questions:
+    - text: Where ... you from?
+      options:
+        - text: are
+          is_correct: true
+        - text: –
+          is_correct: false
+        - text: is
+          is_correct: false
+    - text: – How ... are you? – I’m 34.
+      options:
+        - text: much
+          is_correct: false
+        - text: old
+          is_correct: true
+        - text: –
+          is_correct: false
+    - text: He ... a doctor.
+      options:
+        - text: isn't
+          is_correct: true
+        - text: not
+          is_correct: false
+        - text: am
+          is_correct: false
+    - text: What ...? – I’m a manager.
+      options:
+        - text: are you do
+          is_correct: false
+        - text: do you do
+          is_correct: true
+        - text: are you doing
+          is_correct: false
+    - text: She is from the United States. She can speak ... .
+      options:
+        - text: on English
+          is_correct: false
+        - text: English
+          is_correct: true
+        - text: in the English
+          is_correct: false
+    - text: ... she speak French?
+      options:
+        - text: Does
+          is_correct: true
+        - text: Is
+          is_correct: false
+        - text: Do
+          is_correct: false
+    - text: There ... 5 people in the room.
+      options:
+        - text: is
+          is_correct: false
+        - text: are
+          is_correct: true
+        - text: am
+          is_correct: false
+    - text: ... you like Italian cars?
+      options:
+        - text: Does
+          is_correct: false
+        - text: Are
+          is_correct: false
+        - text: Do
+          is_correct: true
+    - text: I like to drink ... with milk.
+      options:
+        - text: tea
+          is_correct: true
+        - text: sugar
+          is_correct: false
+        - text: cake
+          is_correct: false
+    - text: I like ... . I think it’s a very beautiful language.
+      options:
+        - text: French
+          is_correct: true
+        - text: France
+          is_correct: false
+        - text: Paris
+          is_correct: false
+    - text: There are too ... words in this test.
+      options:
+        - text: much
+          is_correct: false
+        - text: –
+          is_correct: false
+        - text: many
+          is_correct: true
+    - text: She ... in New York. Can we visit her?
+      options:
+        - text: live
+          is_correct: false
+        - text: lives
+          is_correct: true
+        - text: leaves
+          is_correct: false
+    - text: It’s ... fantastic film! Did you watch it?
+      options:
+        - text: a
+          is_correct: true
+        - text: an
+          is_correct: false
+        - text: the
+          is_correct: false
+    - text: I ... help you, sorry. I’m really busy today.
+      options:
+        - text: can't
+          is_correct: true
+        - text: can
+          is_correct: false
+        - text: do
+          is_correct: false
+    - text: The opposite of ‘expensive’ is ... .
+      options:
+        - text: cheap
+          is_correct: true
+        - text: light
+          is_correct: false
+        - text: poor
+          is_correct: false
+    - text: I’m looking ... my glasses. Have you seen them?
+      options:
+        - text: at
+          is_correct: false
+        - text: in
+          is_correct: false
+        - text: for
+          is_correct: true
+    - text: We ... to Turkey last year.
+      options:
+        - text: went
+          is_correct: true
+        - text: go
+          is_correct: false
+        - text: have been
+          is_correct: false
+    - text: ... you go to Clare’s party last night?
+      options:
+        - text: Do
+          is_correct: false
+        - text: Doing
+          is_correct: false
+        - text: Did
+          is_correct: true
+    - text: They ... ice cream at the moment.
+      options:
+        - text: eats
+          is_correct: false
+        - text: eating
+          is_correct: false
+        - text: are eating
+          is_correct: true
+    - text: She likes ... expensive clothes.
+      options:
+        - text: wearing
+          is_correct: true
+        - text: to wearing
+          is_correct: false
+        - text: wear
+          is_correct: false
+        - text: is wearing
+          is_correct: false
+    - text: Harry ... his father’s car when the accident happened.
+      options:
+        - text: was driving
+          is_correct: true
+        - text: drove
+          is_correct: false
+        - text: had driven
+          is_correct: false
+        - text: has been driving
+          is_correct: false
+    - text: The weather has been awful. We’ve had very ... sunshine this summer.
+      options:
+        - text: little
+          is_correct: true
+        - text: a little
+          is_correct: false
+        - text: few
+          is_correct: false
+        - text: a few
+          is_correct: false
+    - text: Have you got time to discuss your work now or are you ... to leave?
+      options:
+        - text: thinking
+          is_correct: false
+        - text: round
+          is_correct: false
+        - text: planned
+          is_correct: false
+        - text: about
+          is_correct: true
+    - text: When I realised I had dropped my gloves, I decided to ... my steps.
+      options:
+        - text: retrace
+          is_correct: true
+        - text: regress
+          is_correct: false
+        - text: resume
+          is_correct: false
+        - text: return
+          is_correct: false
+    - text: My sister ... the cooking in our house.
+      options:
+        - text: does
+          is_correct: true
+        - text: makes
+          is_correct: false
+        - text: cooks
+          is_correct: false
+        - text: takes
+          is_correct: false
+    - text: She was in ... after watching a moving rom-com.
+      options:
+        - text: crying
+          is_correct: false
+        - text: tears
+          is_correct: true
+        - text: cries
+          is_correct: false
+        - text: tearful
+          is_correct: false
+    - text: Could you ... me that book for a couple of days, please?
+      options:
+        - text: lend
+          is_correct: true
+        - text: owe
+          is_correct: false
+        - text: borrow
+          is_correct: false
+        - text: rent
+          is_correct: false
+    - text: Who ... in that house?
+      options:
+        - text: does live
+          is_correct: false
+        - text: lives
+          is_correct: true
+        - text: does he live
+          is_correct: false
+        - text: he lives
+          is_correct: false
+    - text: I’ll call you when I ... home.
+      options:
+        - text: get
+          is_correct: true
+        - text: "'ll get"
+          is_correct: false
+        - text: "'ll have got"
+          is_correct: false
+        - text: "'m getting"
+          is_correct: false
+    - text: If you ... me, what would you do?
+      options:
+        - text: was
+          is_correct: false
+        - text: would be
+          is_correct: false
+        - text: were
+          is_correct: true
+        - text: have been
+          is_correct: false
+    - text: I don’t know where ... last night.
+      options:
+        - text: did he go
+          is_correct: false
+        - text: he did go
+          is_correct: false
+        - text: went he
+          is_correct: false
+        - text: he went
+          is_correct: true
+    - text: We had expected that they ... fluent English, but in fact they didn’t.
+      options:
+        - text: were speaking
+          is_correct: false
+        - text: would speak
+          is_correct: true
+        - text: had spoken
+          is_correct: false
+        - text: spoke
+          is_correct: false
+    - text: I’d rather I ... next weekend, but I do!
+      options:
+        - text: don’t have to work
+          is_correct: false
+        - text: didn’t have to work
+          is_correct: true
+        - text: wouldn’t work
+          is_correct: false
+        - text: wasn’t working
+          is_correct: false
+    - text: Before you enter the triathlon, please bear in ... that you’re not as young as you used to be!
+      options:
+        - text: thought
+          is_correct: false
+        - text: question
+          is_correct: false
+        - text: mind
+          is_correct: true
+        - text: opinion
+          is_correct: false
+    - text: The meeting was ... and not very interesting.
+      options:
+        - text: time-wasting
+          is_correct: false
+        - text: time-consuming
+          is_correct: true
+        - text: time-using
+          is_correct: false
+        - text: out of time
+          is_correct: false
