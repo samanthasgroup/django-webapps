@@ -100,7 +100,7 @@ class InitialDataPopulator(DataPopulator):
         LanguageAndLevel.objects.bulk_create(language_and_level_objects)
 
     def _write_enrollment_tests(self):
-        """Writes `EnrollmentTest', `Question`, and `EnrollmentTestQuestionOption` to database."""
+        """Writes `EnrollmentTest`, `Question`, and `EnrollmentTestQuestionOption` to database."""
         EnrollmentTest = self.apps.get_model(APP_NAME, "EnrollmentTest")
         EnrollmentTestQuestion = self.apps.get_model(APP_NAME, "EnrollmentTestQuestion")
         EnrollmentTestQuestionOption = self.apps.get_model(
