@@ -121,11 +121,10 @@ class InitialDataPopulator(DataPopulator):
             data = yaml.safe_load(fh)
 
         for block in data:
-            enrollment_test = EnrollmentTest(
+            enrollment_test = EnrollmentTest.objects.create(
                 language=Language.objects.get(id=block["language"]),
             )
 
-            enrollment_test.save()  # before adding m2m relationships
             enrollment_test.age_ranges.set(
                 AgeRange.objects.filter(
                     type=AgeRangeType.STUDENT,
@@ -137,10 +136,9 @@ class InitialDataPopulator(DataPopulator):
             questions = block["questions"]
 
             for item in questions:
-                question = EnrollmentTestQuestion(
+                question = EnrollmentTestQuestion.objects.create(
                     enrollment_test=enrollment_test, text=item["text"]
                 )
-                question.save()
 
                 # make sure exactly one option is marked as correct in each question
                 assert (
