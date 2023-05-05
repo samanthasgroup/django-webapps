@@ -145,19 +145,21 @@ class InitialDataPopulator(DataPopulator):
                     len([o for o in item["options"] if o["is_correct"] is True]) == 1
                 ), f"Exactly 1 option has to be marked as correct for {item=}"
 
-                for option_data in item["options"]:
-                    EnrollmentTestQuestionOption.objects.create(
+                options = [
+                    EnrollmentTestQuestionOption(
                         question=question,
                         text=option_data["text"],
                         is_correct=option_data["is_correct"],
                     )
-
-                # add "don't know" to each question
-                EnrollmentTestQuestionOption.objects.create(
-                    question=question,
-                    text="(I don't know 😕)",
-                    is_correct=False,
-                )
+                    for option_data in item["options"]
+                ] + [  # add "don't know" to each question
+                    EnrollmentTestQuestionOption(
+                        question=question,
+                        text="(I don't know 😕)",
+                        is_correct=False,
+                    )
+                ]
+                EnrollmentTestQuestionOption.objects.bulk_create(options)
 
     def _write_non_teaching_help(self):
         HelpType = self.apps.get_model(APP_NAME, "NonTeachingHelp")
