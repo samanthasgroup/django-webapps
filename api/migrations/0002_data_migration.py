@@ -161,8 +161,6 @@ class InitialDataPopulator(DataPopulator):
                     is_correct=False,
                 )
 
-            enrollment_test.save()
-
     def _write_non_teaching_help(self):
         HelpType = self.apps.get_model(APP_NAME, "NonTeachingHelp")
 
