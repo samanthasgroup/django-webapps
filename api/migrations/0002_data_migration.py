@@ -108,7 +108,6 @@ class InitialDataPopulator(DataPopulator):
         )
 
         AgeRange = self.apps.get_model(APP_NAME, "AgeRange")
-        Language = self.apps.get_model(APP_NAME, "Language")
 
         path = (
             settings.BASE_DIR
@@ -121,9 +120,8 @@ class InitialDataPopulator(DataPopulator):
             data = yaml.safe_load(fh)
 
         for block in data:
-            enrollment_test = EnrollmentTest.objects.create(
-                language=Language.objects.get(id=block["language"]),
-            )
+            # id for Language is a string, so no need to get object from database to get its id
+            enrollment_test = EnrollmentTest.objects.create(language_id=block["language"])
 
             enrollment_test.age_ranges.set(
                 AgeRange.objects.filter(
