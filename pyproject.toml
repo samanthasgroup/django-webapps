@@ -50,7 +50,7 @@ django-extensions = "^3.2.1"
 psycopg2-binary = "^2.9.6"
 djangorestframework = "^3.14.0"
 drf-spectacular = "^0.26.2"
-django-filter = "^23.1"
+django-filter = "^23.2"
 # this one definitely needs to be in main dependencies, django will break withouth its monkeypatch:
 django-stubs-ext = "^4.2.0"
 
