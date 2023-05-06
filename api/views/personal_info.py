@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.http import Http404, HttpResponseBadRequest
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -36,11 +36,12 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
         ],
         responses={
             200: OpenApiResponse(description="Chat ID is found"),
+            400: OpenApiResponse(description="No chat ID passed"),
             404: OpenApiResponse(description="Chat ID not found"),
         },
     )
     @action(detail=False, methods=["get"])
-    def check_existence_of_chat_id(self, request: Request) -> Response:
+    def check_existence_of_chat_id(self, request: Request) -> Response | HttpResponseBadRequest:
         """
         Check if PersonalInfo with given ``registration_telegram_bot_chat_id`` exists.
         """
@@ -53,8 +54,12 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
         # hence success is reported if no user was found.
         # Here we use GET and the responses are different.
 
+        if request.GET.get("chat_id", None) is None:
+            return HttpResponseBadRequest("No chat ID passed")
+
         if PersonalInfo.objects.filter(
-            registration_telegram_bot_chat_id=request.GET.get("chat_id")
+            registration_telegram_bot_chat_id=request.GET["chat_id"]
         ).exists():
             return Response(status.HTTP_200_OK)
+
         raise Http404
