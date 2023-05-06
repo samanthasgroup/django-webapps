@@ -100,7 +100,7 @@ class PersonalInfo(GroupOrPerson):
 
         self.first_name = capitalize_each_word(self.first_name)
         self.last_name = capitalize_each_word(self.last_name)
-        self.email = self.email.casefold()
+        self.email = self.email.lower()
         super().save(
             force_insert=force_insert,
             force_update=force_update,
