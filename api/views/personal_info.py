@@ -1,3 +1,4 @@
+from django.http import Http404
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -56,4 +57,4 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
             registration_telegram_bot_chat_id=request.GET.get("chat_id")
         ).exists():
             return Response(status.HTTP_200_OK)
-        return Response(status.HTTP_404_NOT_FOUND)
+        raise Http404
