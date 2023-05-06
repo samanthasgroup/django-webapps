@@ -1,4 +1,5 @@
 import uuid
+from collections.abc import Iterable
 from datetime import timedelta
 
 from django.db import models
@@ -86,6 +87,26 @@ class PersonalInfo(GroupOrPerson):
 
     def __str__(self) -> str:
         return f"{self.full_name} ({self.pk})"
+
+    def save(
+        self,
+        force_insert: bool = False,
+        force_update: bool = False,
+        using: str | None = None,
+        update_fields: Iterable[str] | None = None,
+    ) -> None:
+        def capitalize_each_word(str_: str) -> str:
+            return " ".join(part.capitalize() for part in str_.split())
+
+        self.first_name = capitalize_each_word(self.first_name)
+        self.last_name = capitalize_each_word(self.last_name)
+        self.email = self.email.casefold()
+        super().save(
+            force_insert=force_insert,
+            force_update=force_update,
+            using=using,
+            update_fields=update_fields,
+        )
 
     @property
     def full_name(self) -> str:
