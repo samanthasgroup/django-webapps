@@ -40,7 +40,7 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
     @action(detail=False, methods=["get"])
     def check_existence_of_chat_id(self, request: Request) -> Response:
         """
-        Check if PersonalInfo with given ``registration_telegram_bot_chat_id`` exists.
+        Check if `PersonalInfo` with given ``registration_telegram_bot_chat_id`` exists.
 
         Method GET is used because one cannot create a `PersonalInfo` instance with just chat ID.
         """
