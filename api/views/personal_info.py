@@ -40,11 +40,11 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
     @action(detail=False, methods=["get"])
     def check_existence_of_chat_id(self, request: Request) -> Response:
         """
-        Check if `PersonalInfo` with given ``registration_telegram_bot_chat_id`` exists.
+        Checks if `PersonalInfo` with given ``registration_telegram_bot_chat_id`` exists.
 
         Method GET is used because one cannot create a `PersonalInfo` instance with just chat ID.
         """
 
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
-        return Response(status.HTTP_200_OK)
+        return Response(request.query_params)
