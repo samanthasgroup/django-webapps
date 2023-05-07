@@ -18,6 +18,16 @@ class PersonalInfoCheckExistenceSerializer(serializers.ModelSerializer[PersonalI
             raise serializers.ValidationError("User with this information already exists.")
         return attrs
 
+
+class CheckNameAndEmailExistenceSerializer(PersonalInfoCheckExistenceSerializer):
     class Meta:
         model = PersonalInfo
         fields = ["first_name", "last_name", "email"]
+
+
+class CheckChatIdExistenceSerializer(PersonalInfoCheckExistenceSerializer):
+    """A serializer used to check if chat ID from telegram registration bot exists in database."""
+
+    class Meta:
+        model = PersonalInfo
+        fields = ["registration_telegram_bot_chat_id"]

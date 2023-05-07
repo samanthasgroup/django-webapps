@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
 from api.models import PersonalInfo
-from api.serializers import PersonalInfoCheckExistenceSerializer, PersonalInfoSerializer
+from api.serializers import CheckNameAndEmailExistenceSerializer, PersonalInfoSerializer
 
 
 class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
@@ -15,7 +15,7 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
 
     def get_serializer_class(self) -> type[BaseSerializer[PersonalInfo]]:
         if self.action == "check_existence":
-            return PersonalInfoCheckExistenceSerializer
+            return CheckNameAndEmailExistenceSerializer
         return PersonalInfoSerializer
 
     @action(detail=False, methods=["post"])

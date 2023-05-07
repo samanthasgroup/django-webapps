@@ -7,7 +7,8 @@ from api.serializers.enrollment_test import (
 from api.serializers.language_and_level import LanguageAndLevelSerializer
 from api.serializers.non_teaching_help import NonTeachingHelpSerializer
 from api.serializers.personal_info import (
-    PersonalInfoCheckExistenceSerializer,
+    CheckChatIdExistenceSerializer,
+    CheckNameAndEmailExistenceSerializer,
     PersonalInfoSerializer,
 )
 from api.serializers.student import (
@@ -30,7 +31,8 @@ __all__ = [
     "DayAndTimeSlotSerializer",
     "LanguageAndLevelSerializer",
     "NonTeachingHelpSerializer",
-    "PersonalInfoCheckExistenceSerializer",
+    "CheckChatIdExistenceSerializer",
+    "CheckNameAndEmailExistenceSerializer",
     "PersonalInfoSerializer",
     "PublicGroupSerializer",
     "PublicStudentSerializer",
