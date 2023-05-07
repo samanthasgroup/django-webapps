@@ -1,5 +1,4 @@
-from django.http import Http404, HttpResponseBadRequest
-from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.request import Request
@@ -7,7 +6,11 @@ from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
 from api.models import PersonalInfo
-from api.serializers import CheckNameAndEmailExistenceSerializer, PersonalInfoSerializer
+from api.serializers import (
+    CheckChatIdExistenceSerializer,
+    CheckNameAndEmailExistenceSerializer,
+    PersonalInfoSerializer,
+)
 
 
 class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
@@ -16,6 +19,8 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
     def get_serializer_class(self) -> type[BaseSerializer[PersonalInfo]]:
         if self.action == "check_existence":
             return CheckNameAndEmailExistenceSerializer
+        if self.action == "check_existence_of_chat_id":
+            return CheckChatIdExistenceSerializer
         return PersonalInfoSerializer
 
     @action(detail=False, methods=["post"])
@@ -28,38 +33,18 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
         return Response(status.HTTP_200_OK)
 
     @extend_schema(
-        description=(
-            "Checks if personal info exists with this chat ID of Telegram registration bot."
-        ),
         parameters=[
-            OpenApiParameter(name="chat_id", type=str, required=True),
+            OpenApiParameter(name="registration_telegram_bot_chat_id", type=int, required=True),
         ],
-        responses={
-            200: OpenApiResponse(description="Chat ID is found"),
-            400: OpenApiResponse(description="No chat ID passed"),
-            404: OpenApiResponse(description="Chat ID not found"),
-        },
     )
     @action(detail=False, methods=["get"])
-    def check_existence_of_chat_id(self, request: Request) -> Response | HttpResponseBadRequest:
+    def check_existence_of_chat_id(self, request: Request) -> Response:
         """
         Check if PersonalInfo with given ``registration_telegram_bot_chat_id`` exists.
+
+        Method GET is used because one cannot create a `PersonalInfo` instance with just chat ID.
         """
-        # This method is used without a serializer because this seems to be overkill
-        # for a simple GET request with a single parameter.  Since name and e-mail are required
-        # fields for PersonalInfo (and we only have chat ID), we cannot use the same technique
-        # as in .check_existence(). Note that .check_existence() above returns 200 OK if the
-        # personal info does NOT exist and 400 BAD REQUEST if it DOES exist.
-        # This is because POST method is used up there, so non-existent user can be "created",
-        # hence success is reported if no user was found.
-        # Here we use GET and the responses are different.
 
-        if request.GET.get("chat_id", None) is None:
-            return HttpResponseBadRequest("No chat ID passed")
-
-        if PersonalInfo.objects.filter(
-            registration_telegram_bot_chat_id=request.GET["chat_id"]
-        ).exists():
-            return Response(status.HTTP_200_OK)
-
-        raise Http404
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(status.HTTP_200_OK)
