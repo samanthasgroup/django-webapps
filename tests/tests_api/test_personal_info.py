@@ -101,4 +101,4 @@ def test_personal_info_check_existence_of_chat_id_returns_400_with_no_id(
         path="/api/personal_info/check_existence_of_chat_id/",
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"non_field_errors": ["Not all necessary query params were passed."]}
+    assert response.json() == {"registration_telegram_bot_chat_id": ["This field is required."]}

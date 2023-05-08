@@ -37,10 +37,6 @@ class CheckChatIdExistenceSerializer(serializers.ModelSerializer[PersonalInfo]):
     """
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        # self.fields.keys() keeps mypy happy, but ruff will remove .keys() and make mypy complain
-        if not all(f in attrs for f in self.fields.fields):
-            raise serializers.ValidationError("Not all necessary query params were passed.")
-
         if PersonalInfo.objects.filter(**attrs).exists():
             return attrs
         raise serializers.ValidationError(f"No user with {attrs=} was found.")
@@ -48,3 +44,4 @@ class CheckChatIdExistenceSerializer(serializers.ModelSerializer[PersonalInfo]):
     class Meta:
         model = PersonalInfo
         fields = ["registration_telegram_bot_chat_id"]
+        extra_kwargs = {"registration_telegram_bot_chat_id": {"required": True}}
