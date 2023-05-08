@@ -59,3 +59,46 @@ def test_personal_info_check_existence_returns_400_with_existing_info(api_client
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == {"non_field_errors": ["User with this information already exists."]}
+
+
+def test_personal_info_check_existence_of_chat_id_returns_200_with_existing_id(
+    api_client, fake_personal_info_data
+):
+    api_client.post("/api/personal_info/", data=fake_personal_info_data)
+    response = api_client.get(
+        path="/api/personal_info/check_existence_of_chat_id/",
+        data={
+            "registration_telegram_bot_chat_id": fake_personal_info_data[
+                "registration_telegram_bot_chat_id"
+            ]
+        },
+    )
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_personal_info_check_existence_of_chat_id_returns_400_with_unknown_id(
+    api_client, fake_personal_info_data
+):
+    api_client.post("/api/personal_info/", data=fake_personal_info_data)
+    response = api_client.get(
+        path="/api/personal_info/check_existence_of_chat_id/",
+        data={
+            "registration_telegram_bot_chat_id": fake_personal_info_data[
+                "registration_telegram_bot_chat_id"
+            ]
+            + 1
+        },
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "No user with" in response.json()["non_field_errors"][0]
+
+
+def test_personal_info_check_existence_of_chat_id_returns_400_with_no_id(
+    api_client, fake_personal_info_data
+):
+    api_client.post("/api/personal_info/", data=fake_personal_info_data)
+    response = api_client.get(
+        path="/api/personal_info/check_existence_of_chat_id/",
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {"registration_telegram_bot_chat_id": ["This field is required."]}
