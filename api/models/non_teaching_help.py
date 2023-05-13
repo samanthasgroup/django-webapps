@@ -11,10 +11,10 @@ class NonTeachingHelp(models.Model):
     provide this kind of help, while a student requires this kind of help.
     """
 
-    id = models.CharField(max_length=20, primary_key=True)  # for easier connection with bot
-    name = models.CharField(
-        max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True, choices=NonTeachingHelpType.choices
-    )
+    id = models.CharField(
+        max_length=20, primary_key=True, choices=NonTeachingHelpType.choices
+    )  # for easier connection with bot
+    name = models.CharField(max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True)
 
     def __str__(self) -> str:
         return self.name
