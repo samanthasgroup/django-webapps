@@ -90,3 +90,15 @@ LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS = {
     40: "B1",
     60: "B2",
 }
+
+TEACHER_PEER_SUPPORT_FIELD_NAME_PREFIX = "peer_support_"
+
+TEACHER_PEER_SUPPORT_OPTIONS = [
+    "can_check_syllabus",
+    "can_host_mentoring_sessions",
+    "can_give_feedback",
+    "can_help_with_childrens_groups",
+    "can_provide_materials",
+    "can_invite_to_class",
+    "can_work_in_tandem",
+]

@@ -6,7 +6,7 @@ from api.views.language_and_level import LanguageAndLevelViewSet
 from api.views.non_teaching_help import NonTeachingHelpViewSet
 from api.views.personal_info import PersonalInfoViewSet
 from api.views.student import PublicStudentViewSet, StudentViewSet
-from api.views.teacher import TeacherViewSet
+from api.views.teacher import PublicTeacherViewSet, TeacherViewSet
 from api.views.teacher_under_18 import TeacherUnder18ViewSet
 
 __all__ = [
@@ -18,6 +18,7 @@ __all__ = [
     "StudentViewSet",
     "PublicGroupViewSet",
     "PublicStudentViewSet",
+    "PublicTeacherViewSet",
     "TeacherViewSet",
     "TeacherUnder18ViewSet",
     "EnrollmentTestViewSet",
