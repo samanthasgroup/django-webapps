@@ -1,5 +1,6 @@
 from django.db import models
 
+from api.models.choices.non_teaching_help import NonTeachingHelpType
 from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 
 
@@ -11,7 +12,9 @@ class NonTeachingHelp(models.Model):
     """
 
     id = models.CharField(max_length=20, primary_key=True)  # for easier connection with bot
-    name = models.CharField(max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True)
+    name = models.CharField(
+        max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True, choices=NonTeachingHelpType.choices
+    )
 
     def __str__(self) -> str:
         return self.name

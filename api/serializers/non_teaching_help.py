@@ -11,10 +11,9 @@ class NonTeachingHelpSerializer(serializers.ModelSerializer[NonTeachingHelp]):
         fields = "__all__"
 
 
-class NonTeachingHelpPublicSerializerField(serializers.Field):  # type: ignore
+class NonTeachingHelpSerializerField(serializers.Field):  # type: ignore
     """
-    Representation of all possible NonTeachingHelp values for teacher
-    that is used in 'All teachers' Tooljet view.
+    Representation of all possible NonTeachingHelp values as nested object.
     """
 
     def to_representation(self, value: QuerySet[NonTeachingHelp]) -> dict[str, bool]:

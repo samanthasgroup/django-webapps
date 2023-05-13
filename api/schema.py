@@ -42,11 +42,11 @@ class CustomSchema(AutoSchema):
 
 class TeacherNonTeachingHelpProvidedFieldFix(OpenApiSerializerFieldExtension):
     """
-    This class automatically extends schema for NonTeachingHelpPublicSerializerField,
+    This class automatically extends schema for NonTeachingHelpSerializerField,
     showing this object properly in docs.
     """
 
-    target_class = "api.serializers.non_teaching_help.NonTeachingHelpPublicSerializerField"
+    target_class = "api.serializers.non_teaching_help.NonTeachingHelpSerializerField"
 
     def map_serializer_field(
         self, auto_schema: AutoSchema, direction: Literal["request", "response"]  # noqa: ARG002
@@ -61,7 +61,7 @@ class TeacherNonTeachingHelpProvidedFieldFix(OpenApiSerializerFieldExtension):
 
 class TeacherPeerSupportFieldFix(OpenApiSerializerFieldExtension):
     """
-    This class automatically extends schema for NonTeachingHelpPublicSerializerField,
+    This class automatically extends schema for NonTeachingHelpSerializerField,
     showing this object properly in docs.
     """
 
