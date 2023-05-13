@@ -2,7 +2,7 @@ from django.db.models import QuerySet
 from rest_framework import serializers
 
 from api.models import NonTeachingHelp, Teacher
-from api.models.choices.non_teaching_help import NonTeachingHelpType
+from api.models.choices.non_teaching_help_type import NonTeachingHelpType
 
 
 class NonTeachingHelpSerializer(serializers.ModelSerializer[NonTeachingHelp]):

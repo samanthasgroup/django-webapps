@@ -6,9 +6,11 @@ from drf_spectacular.plumbing import build_basic_type, build_object_type
 from drf_spectacular.types import OpenApiTypes
 from rest_framework.permissions import SAFE_METHODS
 
-from api.models.choices.non_teaching_help import NonTeachingHelpType
+from api.models.choices.non_teaching_help_type import NonTeachingHelpType
 from api.models.constants import TEACHER_PEER_SUPPORT_OPTIONS
 from api.serializers.errors import ValidationErrorSerializer
+
+DirectionLiteral = Literal["request", "response"]
 
 
 class CustomSchema(AutoSchema):
@@ -30,7 +32,7 @@ class CustomSchema(AutoSchema):
         view_set_tag_name = self.view.__class__.__name__.replace("ViewSet", "")
         return tags + [view_set_tag_name]
 
-    def _get_response_bodies(self, direction: str = "response") -> dict[str, Any]:
+    def _get_response_bodies(self, direction: DirectionLiteral = "response") -> dict[str, Any]:
         bodies = super()._get_response_bodies(direction)
         if self.method not in SAFE_METHODS and direction == "response":
             bodies["400"] = self._get_response_for_code(
@@ -42,14 +44,13 @@ class CustomSchema(AutoSchema):
 
 class TeacherNonTeachingHelpProvidedFieldFix(OpenApiSerializerFieldExtension):
     """
-    This class automatically extends schema for NonTeachingHelpSerializerField,
-    showing this object properly in docs.
+    Extends schema for `TeacherNonTeachingHelpProvidedField` for proper representation in docs.
     """
 
     target_class = "api.serializers.non_teaching_help.NonTeachingHelpSerializerField"
 
     def map_serializer_field(
-        self, auto_schema: AutoSchema, direction: Literal["request", "response"]  # noqa: ARG002
+        self, auto_schema: AutoSchema, direction: DirectionLiteral  # noqa: ARG002
     ) -> dict[str, Any]:
         return build_object_type(
             properties={
@@ -60,15 +61,12 @@ class TeacherNonTeachingHelpProvidedFieldFix(OpenApiSerializerFieldExtension):
 
 
 class TeacherPeerSupportFieldFix(OpenApiSerializerFieldExtension):
-    """
-    This class automatically extends schema for NonTeachingHelpSerializerField,
-    showing this object properly in docs.
-    """
+    """Extends schema for `TeacherPeerSupportField` for proper representation in docs."""
 
     target_class = "api.serializers.teacher.PeerSupportField"
 
     def map_serializer_field(
-        self, auto_schema: AutoSchema, direction: Literal["request", "response"]  # noqa: ARG002
+        self, auto_schema: AutoSchema, direction: DirectionLiteral  # noqa: ARG002
     ) -> dict[str, Any]:
         return build_object_type(
             properties={

@@ -1,6 +1,6 @@
 from django.db import models
 
-from api.models.choices.non_teaching_help import NonTeachingHelpType
+from api.models.choices.non_teaching_help_type import NonTeachingHelpType
 from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 
 

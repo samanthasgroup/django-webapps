@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import migrations
 
 from api.models.age_ranges import AgeRangeType
-from api.models.choices.non_teaching_help import NonTeachingHelpType
+from api.models.choices.non_teaching_help_type import NonTeachingHelpType
 from api.models.constants import (
     STUDENT_AGE_RANGES,
     STUDENT_AGE_RANGES_FOR_MATCHING,
