@@ -1,8 +1,13 @@
-from typing import Any
+from typing import Any, Literal
 
+from drf_spectacular.extensions import OpenApiSerializerFieldExtension
 from drf_spectacular.openapi import AutoSchema
+from drf_spectacular.plumbing import build_basic_type, build_object_type
+from drf_spectacular.types import OpenApiTypes
 from rest_framework.permissions import SAFE_METHODS
 
+from api.models.choices.non_teaching_help import NonTeachingHelpType
+from api.models.constants import TEACHER_PEER_SUPPORT_OPTIONS
 from api.serializers.errors import ValidationErrorSerializer
 
 
@@ -33,3 +38,41 @@ class CustomSchema(AutoSchema):
                 status_code="400",
             )
         return bodies
+
+
+class TeacherNonTeachingHelpProvidedFieldFix(OpenApiSerializerFieldExtension):
+    """
+    This class automatically extends schema for NonTeachingHelpPublicSerializerField,
+    showing this object properly in docs.
+    """
+
+    target_class = "api.serializers.non_teaching_help.NonTeachingHelpPublicSerializerField"
+
+    def map_serializer_field(
+        self, auto_schema: AutoSchema, direction: Literal["request", "response"]  # noqa: ARG002
+    ) -> dict[str, Any]:
+        return build_object_type(
+            properties={
+                option: build_basic_type(OpenApiTypes.BOOL)
+                for option in NonTeachingHelpType.values
+            }
+        )
+
+
+class TeacherPeerSupportFieldFix(OpenApiSerializerFieldExtension):
+    """
+    This class automatically extends schema for NonTeachingHelpPublicSerializerField,
+    showing this object properly in docs.
+    """
+
+    target_class = "api.serializers.teacher.PeerSupportField"
+
+    def map_serializer_field(
+        self, auto_schema: AutoSchema, direction: Literal["request", "response"]  # noqa: ARG002
+    ) -> dict[str, Any]:
+        return build_object_type(
+            properties={
+                option: build_basic_type(OpenApiTypes.BOOL)
+                for option in TEACHER_PEER_SUPPORT_OPTIONS
+            }
+        )

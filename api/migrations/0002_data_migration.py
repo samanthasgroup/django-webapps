@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db import migrations
 
 from api.models.age_ranges import AgeRangeType
+from api.models.choices.non_teaching_help import NonTeachingHelpType
 from api.models.constants import (
     STUDENT_AGE_RANGES,
     STUDENT_AGE_RANGES_FOR_MATCHING,
@@ -165,24 +166,13 @@ class InitialDataPopulator(DataPopulator):
         EnrollmentTestQuestionOption.objects.bulk_create(question_options)
 
     def _write_non_teaching_help(self):
-        HelpType = self.apps.get_model(APP_NAME, "NonTeachingHelp")
+        NonTeachingHelp = self.apps.get_model(APP_NAME, "NonTeachingHelp")
 
         help_types = []
-        for id_, name in (
-            ("cv_write_edit", "CV and cover letter (write or edit)"),
-            ("cv_proofread", "CV and cover letter (proofread)"),
-            ("mock_interview", "Mock interview"),
-            ("job_search", "Job search"),
-            ("career_strategy", "Career strategy"),
-            ("linkedin", "LinkedIn profile"),
-            ("career_switch", "Career switch"),
-            ("portfolio", "Portfolio for creative industries"),
-            ("uni_abroad", "Entering a university abroad"),
-            ("translate_docs", "Translation of documents"),
-        ):
-            help_types.append(HelpType(id=id_, name=name))
+        for id_, name in NonTeachingHelpType.choices:
+            help_types.append(NonTeachingHelp(id=id_, name=name))
 
-        HelpType.objects.bulk_create(help_types)
+        NonTeachingHelp.objects.bulk_create(help_types)
 
 
 class Migration(migrations.Migration):
