@@ -60,7 +60,6 @@ class RecipeStorage:
 
     def __init__(self):
         self.faker: Faker = Faker()
-        Faker.seed(0)
         self.personal_info = self._make_personal_info_recipe()
         self.coordinator = self._make_coordinator_recipe()
         self.student = self._make_student_recipe()
