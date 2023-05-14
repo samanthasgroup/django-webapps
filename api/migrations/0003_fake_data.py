@@ -1,7 +1,7 @@
 import sys
 from datetime import timedelta, time
 
-from django.db import migrations, models, transaction, IntegrityError
+from django.db import migrations, models, transaction, DatabaseError
 from django.db.backends.sqlite3.schema import DatabaseSchemaEditor
 from django.db.migrations.state import StateApps
 from django.db.models import Q
@@ -286,7 +286,7 @@ class FakeDataPopulator(DataPopulator):
                     with transaction.atomic():
                         recipe.make()
                         break
-                except IntegrityError as e:
+                except DatabaseError as e:
                     print(f"Error: {str(e)}. Regenerating fake data...")
 
     def _make_fake_coordinators_without_group(self):
