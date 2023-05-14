@@ -279,6 +279,7 @@ class FakeDataPopulator(DataPopulator):
         for _ in range(amount):
             while True:
                 # Violation of CHECK OR UNIQUE constraint will trigger IntegrityError
+                # (a subclass of DatabaseError)
                 try:
                     # context manager has to be used to avoid TransactionManagementError.
                     # See section "Controlling transactions explicitly" in
