@@ -134,7 +134,7 @@ class RecipeStorage:
             communication_language_mode=self.faker.random_element(
                 CommunicationLanguageMode.values
             ),
-            telegram_username=self.faker.unique.user_name,
+            telegram_username=self.faker.user_name,
             phone=self.faker.numerify("+3531#######"),
             information_source=self.faker.text,
             registration_telegram_bot_chat_id=self.faker.pyint,
