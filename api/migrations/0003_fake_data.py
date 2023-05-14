@@ -1,7 +1,7 @@
 import sys
 from datetime import timedelta, time
 
-from django.db import migrations, models, DatabaseError
+from django.db import migrations, models, transaction, DatabaseError
 from django.db.backends.sqlite3.schema import DatabaseSchemaEditor
 from django.db.migrations.state import StateApps
 from django.db.models import Q
@@ -278,11 +278,17 @@ class FakeDataPopulator(DataPopulator):
         """
         for _ in range(amount):
             while True:
+                # Violation of CHECK OR UNIQUE constraint will trigger IntegrityError
+                # (a subclass of DatabaseError)
                 try:
-                    recipe.make()
-                    break
-                except DatabaseError:
-                    pass
+                    # context manager has to be used to avoid TransactionManagementError.
+                    # See section "Controlling transactions explicitly" in
+                    # https://docs.djangoproject.com/en/dev/topics/db/transactions/
+                    with transaction.atomic():
+                        recipe.make()
+                        break
+                except DatabaseError as e:
+                    print(f"Error: {str(e)}. Regenerating fake data...")
 
     def _make_fake_coordinators_without_group(self):
         """Makes fake coordinators without group."""
