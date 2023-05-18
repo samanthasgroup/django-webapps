@@ -10,6 +10,7 @@ from api.models import (
     PersonalInfo,
     Teacher,
 )
+from api.models.choices.statuses import TeacherStatus
 
 
 def test_teacher_create(api_client, faker):
@@ -48,6 +49,7 @@ def test_teacher_create(api_client, faker):
         "simultaneous_groups": faker.pyint(),
         "weekly_frequency_per_group": faker.pyint(),
         "can_host_speaking_club": faker.pybool(),
+        "status": TeacherStatus.AWAITING_OFFER.value,
         "status_since": faker.date_time(tzinfo=pytz.utc),
         "has_hosted_speaking_club": faker.pybool(),
         "is_validated": faker.pybool(),

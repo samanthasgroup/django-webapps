@@ -12,6 +12,7 @@ from api.models import (
     PersonalInfo,
     Student,
 )
+from api.models.choices.statuses import StudentStatus
 
 
 def test_student_create(api_client, faker):
@@ -33,6 +34,7 @@ def test_student_create(api_client, faker):
     data = {
         "personal_info": personal_info.id,
         "comment": faker.text(),
+        "status": StudentStatus.AWAITING_OFFER.value,
         "status_since": faker.date_time(tzinfo=pytz.utc),
         "age_range": age_range_id,
         "teaching_languages_and_levels": teaching_languages_and_levels_ids,

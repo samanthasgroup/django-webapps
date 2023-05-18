@@ -15,10 +15,7 @@ from api.serializers.utc_timedelta import UTCTimedeltaField
 class StudentWriteSerializer(serializers.ModelSerializer[Student]):
     class Meta:
         model = Student
-        exclude = (
-            "children",
-            "status",
-        )
+        exclude = ("children",)
 
 
 class StudentReadSerializer(serializers.ModelSerializer[Student]):
