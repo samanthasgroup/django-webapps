@@ -59,7 +59,7 @@ class RecipeStorage:
     """
 
     def __init__(self):
-        self.faker: Faker = Faker()
+        self.faker: Faker = Faker(locale="uk_UA")
         self.personal_info = self._make_personal_info_recipe()
         self.coordinator = self._make_coordinator_recipe()
         self.student = self._make_student_recipe()
