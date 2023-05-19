@@ -132,9 +132,9 @@ REST_FRAMEWORK = {
 SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
     "ENUM_NAME_OVERRIDES": {
-        "CoordinatorStatus": "api.models.people.Coordinator.Status.choices",
-        "StudentStatus": "api.models.people.Student.Status.choices",
-        "TeacherStatus": "api.models.people.Teacher.Status.choices",
+        "CoordinatorStatus": "api.models.choices.statuses.CoordinatorStatus",
+        "StudentStatus": "api.models.choices.statuses.StudentStatus",
+        "TeacherStatus": "api.models.choices.statuses.TeacherStatus",
     },
 }
 
