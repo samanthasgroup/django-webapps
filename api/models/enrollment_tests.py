@@ -1,7 +1,7 @@
 from django.db import models
 
 from api.models.age_ranges import AgeRange
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 from api.models.languages_levels import Language
 from api.models.people import Student
 
@@ -81,11 +81,26 @@ class EnrollmentTestResult(models.Model):
     @property
     def resulting_level(self) -> str:
         """Returns language level of the student based on amount of correct answers."""
-        correct_answers = self.answers.filter(is_correct=True).count()
-        total_answers = self.answers.count()
-        percentage = correct_answers / total_answers * 100
-        closest_percentage = min(
-            LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS, key=lambda x: abs(x - percentage)
-        )
 
-        return LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS[closest_percentage]
+        # depending on number of questions in test, the thresholds are different
+        thresholds_for_number_of_questions = {
+            25: {6: "A1", 11: "A2", 19: "B1"},
+            35: {6: "A1", 13: "A2", 20: "B1", 27: "B2", 32: "C1"},
+        }
+        total_answers = self.answers.count()
+
+        # All answers must be filled, so it is safe to check number of answers, not questions
+        if total_answers not in thresholds_for_number_of_questions:
+            raise NotImplementedError(
+                f"Enrollment test with {total_answers} questions is not supported"
+            )
+
+        number_of_correct_answers = self.answers.filter(is_correct=True).count()
+        level = "A0"
+        for threshold in thresholds_for_number_of_questions[total_answers]:
+            if number_of_correct_answers >= threshold:
+                level = thresholds_for_number_of_questions[total_answers][threshold]
+            else:
+                break
+
+        return level
