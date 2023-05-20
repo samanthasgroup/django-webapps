@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from typing import Any
 
 from rest_framework import serializers
@@ -73,20 +74,20 @@ class EnrollmentTestResultLevelSerializer(serializers.ModelSerializer[Enrollment
             )
         return attrs
 
-    def get_resulting_level(self, obj: Any) -> str:  # noqa
+    def get_resulting_level(self, obj: OrderedDict[str, Any]) -> str:
         """Calculates language level depending on amount of correct answers."""
-        answer_ids = tuple(a.id for a in self.validated_data["answers"])
-        # depending on number of questions in test, the thresholds are different
-        total_answers = len(answer_ids)
+        # level thresholds (= numbers of correct answers required to reach that level)
+        # depend on total number of questions
+        level_for_threshold = ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS[
+            len(obj["answers"])
+        ]
 
-        answers = EnrollmentTestQuestionOption.objects.filter(id__in=answer_ids)
-        number_of_correct_answers = answers.filter(is_correct=True).count()
+        number_of_correct_answers = len([answer for answer in obj["answers"] if answer.is_correct])
+
         level = LanguageLevelId.A0_BEGINNER
-        for threshold in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS[total_answers]:
+        for threshold in level_for_threshold:
             if number_of_correct_answers >= threshold:
-                level = ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS[total_answers][
-                    threshold
-                ]
+                level = level_for_threshold[threshold]
             else:
                 break
 
