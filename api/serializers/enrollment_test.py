@@ -66,9 +66,7 @@ class EnrollmentTestResultLevelSerializer(serializers.ModelSerializer[Enrollment
     class Meta:
         model = EnrollmentTestResult
         fields = ("answers", "resulting_level")
-        extra_kwargs = {
-            "answers": {"write_only": True}  # to exclude from serializer.data in ViewSet
-        }
+        extra_kwargs = {"answers": {"write_only": True}}
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         number_of_answers = len(attrs["answers"])
