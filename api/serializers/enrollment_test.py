@@ -68,9 +68,10 @@ class EnrollmentTestResultLevelSerializer(serializers.ModelSerializer[Enrollment
         fields = ("answers", "resulting_level")
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        if len(attrs["answers"]) not in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS:
+        number_of_answers = len(attrs["answers"])
+        if number_of_answers not in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS:
             raise serializers.ValidationError(
-                f"Enrollment test with {len(attrs['answers'])} questions is not supported"
+                f"Enrollment test with {number_of_answers} questions is not supported"
             )
         return attrs
 
