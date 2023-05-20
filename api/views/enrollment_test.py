@@ -39,5 +39,9 @@ class EnrollmentTestResultViewSet(CreateModelMixin, GenericViewSet[EnrollmentTes
         answer_ids = cast(list[int], request.POST.getlist("answers"))
         try:
             return Response(EnrollmentTestResultLevelSerializer.calculate_level(answer_ids))
-        except TypeError as e:
-            raise ValidationError(str(e))
+        except NotImplementedError:
+            # Repeating the message rather than putting str(e), otherwise CodeQL complains about
+            # stack trace information exposure.
+            raise ValidationError(
+                f"Enrollment test with {len(answer_ids)} questions is not supported"
+            )
