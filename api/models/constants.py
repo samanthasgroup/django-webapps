@@ -6,13 +6,13 @@ class CoordinatorGroupLimit(IntEnum):
     MAX = 20
 
 
-STUDENT_CLASS_MISS_LIMIT = 3
-"""If a student misses this amount of classes **in a row** and **without notifying**
-the teacher, they can be expelled.
-"""
-
 DEFAULT_CHAR_FIELD_MAX_LEN = 255
 DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH = 50
+
+LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS_IN_ENROLLMENT_TEST = {
+    25: {5: "A1", 11: "A2", 19: "B1"},
+    35: {6: "A1", 13: "A2", 20: "B1", 27: "B2", 32: "C1"},
+}
 
 # IMPORTANT: the boundaries of larger ranges must match the boundaries of the smaller ones
 
@@ -78,6 +78,11 @@ STUDENT_AGE_RANGES_FOR_MATCHING = {
         (86, 95),
     )
 }
+
+STUDENT_CLASS_MISS_LIMIT = 3
+"""If a student misses this amount of classes **in a row** and **without notifying**
+the teacher, they can be expelled.
+"""
 
 TEACHER_PEER_SUPPORT_FIELD_NAME_PREFIX = "peer_support_"
 

@@ -5,7 +5,10 @@ from django.db import models
 from django.db.models import QuerySet
 
 from api.models.age_ranges import AgeRange
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
+from api.models.constants import (
+    DEFAULT_CHAR_FIELD_MAX_LEN,
+    LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS_IN_ENROLLMENT_TEST,
+)
 from api.models.languages_levels import Language
 from api.models.people import Student
 
@@ -94,14 +97,10 @@ class EnrollmentTestResult(models.Model):
         This method can be called from outside without creating any `EnrollmentTestResult` objects.
         """
         # depending on number of questions in test, the thresholds are different
-        thresholds_for_number_of_questions = {
-            25: {5: "A1", 11: "A2", 19: "B1"},
-            35: {6: "A1", 13: "A2", 20: "B1", 27: "B2", 32: "C1"},
-        }
         total_answers = len(answer_ids)
 
         # All answers must be filled, so it is safe to check number of answers, not questions
-        if total_answers not in thresholds_for_number_of_questions:
+        if total_answers not in LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS_IN_ENROLLMENT_TEST:
             raise NotImplementedError(
                 f"Enrollment test with {total_answers} questions is not supported"
             )
@@ -109,9 +108,13 @@ class EnrollmentTestResult(models.Model):
         answers = EnrollmentTestQuestionOption.objects.filter(id__in=answer_ids)
         number_of_correct_answers = answers.filter(is_correct=True).count()
         level = "A0"
-        for threshold in thresholds_for_number_of_questions[total_answers]:
+        for threshold in LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS_IN_ENROLLMENT_TEST[
+            total_answers
+        ]:
             if number_of_correct_answers >= threshold:
-                level = thresholds_for_number_of_questions[total_answers][threshold]
+                level = LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS_IN_ENROLLMENT_TEST[total_answers][
+                    threshold
+                ]
             else:
                 break
 
