@@ -1,6 +1,5 @@
 from django_filters import rest_framework as filters
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -33,10 +32,4 @@ class EnrollmentTestResultViewSet(CreateModelMixin, GenericViewSet[EnrollmentTes
         """Calculates level of language based on number of correct answers."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        try:
-            return Response(serializer.data)
-        except NotImplementedError:
-            raise ValidationError(
-                f"Enrollment test with {len(serializer.validated_data['answers'])} "
-                "questions is not supported"
-            )
+        return Response(serializer.data)
