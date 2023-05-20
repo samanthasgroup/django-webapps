@@ -62,6 +62,10 @@ class EnrollmentTestResultLevelSerializer(serializers.ModelSerializer[Enrollment
 
     resulting_level = serializers.SerializerMethodField()
 
+    class Meta:
+        model = EnrollmentTestResult
+        fields = ["answers", "resulting_level"]
+
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         if len(attrs["answers"]) not in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS:
             raise serializers.ValidationError(
@@ -87,7 +91,3 @@ class EnrollmentTestResultLevelSerializer(serializers.ModelSerializer[Enrollment
                 break
 
         return level
-
-    class Meta:
-        model = EnrollmentTestResult
-        fields = ["answers", "resulting_level"]
