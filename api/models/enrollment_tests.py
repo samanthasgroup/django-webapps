@@ -89,11 +89,11 @@ class EnrollmentTestResult(models.Model):
     def calculate_level(answer_ids: Sequence[int]) -> str:
         """Calculates language level depending on amount of correct answers.
 
-        This is a static method that can be called from outside without creating any records.
+        This method can be called from outside without creating any `EnrollmentTestResult` objects.
         """
         # depending on number of questions in test, the thresholds are different
         thresholds_for_number_of_questions = {
-            25: {6: "A1", 11: "A2", 19: "B1"},
+            25: {5: "A1", 11: "A2", 19: "B1"},
             35: {6: "A1", 13: "A2", 20: "B1", 27: "B2", 32: "C1"},
         }
         total_answers = len(answer_ids)
