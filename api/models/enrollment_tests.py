@@ -76,4 +76,8 @@ class EnrollmentTestResult(models.Model):
     answers = models.ManyToManyField(EnrollmentTestQuestionOption)
 
     def __str__(self) -> str:
-        return f"Answers to enrollment test by {self.student}"
+        return (
+            f"Answers to enrollment test by {self.student} "
+            f"({self.answers.filter(is_correct=True).count()} correct "
+            f"out of {self.answers.count()})"
+        )

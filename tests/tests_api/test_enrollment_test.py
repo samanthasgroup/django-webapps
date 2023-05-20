@@ -91,7 +91,9 @@ def test_get_level_raises_400_with_wrong_number_of_answers(api_client):
         data={"answers": correct_answers_ids},
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == ["Enrollment test with 34 questions is not supported"]
+    assert response.json() == {
+        "non_field_errors": ["Enrollment test with 34 questions is not supported"]
+    }
 
 
 def test_create_student_enrollment_test_result(api_client):

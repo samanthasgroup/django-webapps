@@ -62,17 +62,18 @@ class EnrollmentTestResultLevelSerializer(serializers.ModelSerializer[Enrollment
 
     resulting_level = serializers.SerializerMethodField()
 
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        if len(attrs["answers"]) not in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS:
+            raise serializers.ValidationError(
+                f"Enrollment test with {len(attrs['answers'])} questions is not supported"
+            )
+        return attrs
+
     def get_resulting_level(self, obj: Any) -> str:  # noqa
         """Calculates language level depending on amount of correct answers."""
-        answer_ids = [a.id for a in self.validated_data["answers"]]
+        answer_ids = tuple(a.id for a in self.validated_data["answers"])
         # depending on number of questions in test, the thresholds are different
         total_answers = len(answer_ids)
-
-        # All answers must be filled, so it is safe to check number of answers, not questions
-        if total_answers not in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS:
-            raise NotImplementedError(
-                f"Enrollment test with {total_answers} questions is not supported"
-            )
 
         answers = EnrollmentTestQuestionOption.objects.filter(id__in=answer_ids)
         number_of_correct_answers = answers.filter(is_correct=True).count()
