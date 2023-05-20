@@ -1,6 +1,8 @@
 from collections.abc import Sequence
+from typing import Any
 
 from django.db import models
+from django.db.models import QuerySet
 
 from api.models.age_ranges import AgeRange
 from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
@@ -83,10 +85,10 @@ class EnrollmentTestResult(models.Model):
     @property
     def resulting_level(self) -> str:
         """Returns language level of the student based on amount of correct answers."""
-        return self.calculate_level([answer.id for answer in self.answers.all()])
+        return self.calculate_level(self.answers.values_list("id", flat=True))
 
     @staticmethod
-    def calculate_level(answer_ids: Sequence[int]) -> str:
+    def calculate_level(answer_ids: Sequence[int] | QuerySet[Any]) -> str:
         """Calculates language level depending on amount of correct answers.
 
         This method can be called from outside without creating any `EnrollmentTestResult` objects.
