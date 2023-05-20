@@ -26,7 +26,7 @@ class CheckNameAndEmailExistenceSerializer(serializers.ModelSerializer[PersonalI
 
     class Meta:
         model = PersonalInfo
-        fields = ["first_name", "last_name", "email"]
+        fields = ("first_name", "last_name", "email")
 
 
 class CheckChatIdExistenceSerializer(serializers.ModelSerializer[PersonalInfo]):
@@ -43,5 +43,5 @@ class CheckChatIdExistenceSerializer(serializers.ModelSerializer[PersonalInfo]):
 
     class Meta:
         model = PersonalInfo
-        fields = ["registration_telegram_bot_chat_id"]
+        fields = ("registration_telegram_bot_chat_id",)
         extra_kwargs = {"registration_telegram_bot_chat_id": {"required": True}}
