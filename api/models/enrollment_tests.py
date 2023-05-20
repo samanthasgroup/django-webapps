@@ -78,6 +78,10 @@ class EnrollmentTestResult(models.Model):
     def __str__(self) -> str:
         return (
             f"Answers to enrollment test by {self.student} "
-            f"({self.answers.filter(is_correct=True).count()} correct "
+            f"({self.correct_answers_count} correct "
             f"out of {self.answers.count()})"
         )
+
+    @property
+    def correct_answers_count(self) -> int:
+        return self.answers.filter(is_correct=True).count()
