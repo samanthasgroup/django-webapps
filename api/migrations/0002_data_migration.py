@@ -9,7 +9,7 @@ from api.models.choices.non_teaching_help_type import NonTeachingHelpType
 from api.models.constants import (
     STUDENT_AGE_RANGES,
     STUDENT_AGE_RANGES_FOR_MATCHING,
-    STUDENT_AGE_RANGES_FOR_TEACHER,
+    STUDENT_AGE_RANGES_FOR_TEACHER, LanguageLevelId,
 )
 from api.models.data_populator import DataPopulator
 
@@ -89,8 +89,16 @@ class InitialDataPopulator(DataPopulator):
         )
         Language.objects.bulk_create(languages)
 
-        # no C2 at this school
-        levels = (Level(id=id_) for id_ in ("A0", "A1", "A2", "B1", "B2", "C1"))
+        levels = (
+            Level(id=id_) for id_ in (
+            LanguageLevelId.A0_BEGINNER,
+            LanguageLevelId.A1_ELEMENTARY,
+            LanguageLevelId.A2_PRE_INTERMEDIATE,
+            LanguageLevelId.B1_INTERMEDIATE,
+            LanguageLevelId.B2_UPPER_INTERMEDIATE,
+            LanguageLevelId.C1_PRE_ADVANCED
+            )
+        )
         Level.objects.bulk_create(levels)
 
         # English is taught at all levels, all other languages at levels A0 through A2

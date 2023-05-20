@@ -7,7 +7,8 @@ from django.db.models import QuerySet
 from api.models.age_ranges import AgeRange
 from api.models.constants import (
     DEFAULT_CHAR_FIELD_MAX_LEN,
-    LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS_IN_ENROLLMENT_TEST,
+    ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS,
+    LanguageLevelId,
 )
 from api.models.languages_levels import Language
 from api.models.people import Student
@@ -97,19 +98,17 @@ class EnrollmentTestResult(models.Model):
         total_answers = len(answer_ids)
 
         # All answers must be filled, so it is safe to check number of answers, not questions
-        if total_answers not in LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS_IN_ENROLLMENT_TEST:
+        if total_answers not in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS:
             raise NotImplementedError(
                 f"Enrollment test with {total_answers} questions is not supported"
             )
 
         answers = EnrollmentTestQuestionOption.objects.filter(id__in=answer_ids)
         number_of_correct_answers = answers.filter(is_correct=True).count()
-        level = "A0"
-        for threshold in LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS_IN_ENROLLMENT_TEST[
-            total_answers
-        ]:
+        level = LanguageLevelId.A0_BEGINNER
+        for threshold in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS[total_answers]:
             if number_of_correct_answers >= threshold:
-                level = LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS_IN_ENROLLMENT_TEST[total_answers][
+                level = ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS[total_answers][
                     threshold
                 ]
             else:

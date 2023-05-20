@@ -1,4 +1,4 @@
-from enum import IntEnum
+from enum import Enum, IntEnum
 
 
 class CoordinatorGroupLimit(IntEnum):
@@ -6,12 +6,32 @@ class CoordinatorGroupLimit(IntEnum):
     MAX = 20
 
 
+class LanguageLevelId(str, Enum):
+    A0_BEGINNER = "A0"
+    A1_ELEMENTARY = "A1"
+    A2_PRE_INTERMEDIATE = "A2"
+    B1_INTERMEDIATE = "B1"
+    B2_UPPER_INTERMEDIATE = "B2"
+    C1_PRE_ADVANCED = "C1"
+    # no C2 at this school
+
+
 DEFAULT_CHAR_FIELD_MAX_LEN = 255
 DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH = 50
 
-LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS_IN_ENROLLMENT_TEST = {
-    25: {5: "A1", 11: "A2", 19: "B1"},
-    35: {6: "A1", 13: "A2", 20: "B1", 27: "B2", 32: "C1"},
+ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS = {
+    25: {
+        5: LanguageLevelId.A1_ELEMENTARY,
+        11: LanguageLevelId.A2_PRE_INTERMEDIATE,
+        19: LanguageLevelId.B1_INTERMEDIATE,
+    },
+    35: {
+        6: LanguageLevelId.A1_ELEMENTARY,
+        13: LanguageLevelId.A2_PRE_INTERMEDIATE,
+        20: LanguageLevelId.B1_INTERMEDIATE,
+        27: LanguageLevelId.B2_UPPER_INTERMEDIATE,
+        32: LanguageLevelId.C1_PRE_ADVANCED,
+    },
 }
 
 # IMPORTANT: the boundaries of larger ranges must match the boundaries of the smaller ones
