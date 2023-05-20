@@ -34,7 +34,7 @@ class EnrollmentTestResultViewSet(CreateModelMixin, GenericViewSet[EnrollmentTes
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
-            return Response({"resulting_level": serializer.data["resulting_level"]})
+            return Response(serializer.data)
         except NotImplementedError:
             raise ValidationError(
                 f"Enrollment test with {len(serializer.validated_data['answers'])} "
