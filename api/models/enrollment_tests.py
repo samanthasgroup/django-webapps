@@ -1,15 +1,7 @@
-from collections.abc import Sequence
-from typing import Any
-
 from django.db import models
-from django.db.models import QuerySet
 
 from api.models.age_ranges import AgeRange
-from api.models.constants import (
-    DEFAULT_CHAR_FIELD_MAX_LEN,
-    ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS,
-    LanguageLevelId,
-)
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 from api.models.languages_levels import Language
 from api.models.people import Student
 
@@ -84,34 +76,4 @@ class EnrollmentTestResult(models.Model):
     answers = models.ManyToManyField(EnrollmentTestQuestionOption)
 
     def __str__(self) -> str:
-        return f"Test results of {self.student}"
-
-    @property
-    def resulting_level(self) -> str:
-        """Returns language level of the student based on amount of correct answers."""
-        return self.calculate_level(self.answers.values_list("id", flat=True))
-
-    @staticmethod
-    def calculate_level(answer_ids: Sequence[int] | QuerySet[Any]) -> str:
-        """Calculates language level depending on amount of correct answers."""
-        # depending on number of questions in test, the thresholds are different
-        total_answers = len(answer_ids)
-
-        # All answers must be filled, so it is safe to check number of answers, not questions
-        if total_answers not in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS:
-            raise NotImplementedError(
-                f"Enrollment test with {total_answers} questions is not supported"
-            )
-
-        answers = EnrollmentTestQuestionOption.objects.filter(id__in=answer_ids)
-        number_of_correct_answers = answers.filter(is_correct=True).count()
-        level = LanguageLevelId.A0_BEGINNER
-        for threshold in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS[total_answers]:
-            if number_of_correct_answers >= threshold:
-                level = ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS[total_answers][
-                    threshold
-                ]
-            else:
-                break
-
-        return level
+        return f"Answers to enrollment test by {self.student}"

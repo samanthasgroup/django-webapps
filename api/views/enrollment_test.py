@@ -1,5 +1,3 @@
-from typing import cast
-
 from django_filters import rest_framework as filters
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -35,11 +33,10 @@ class EnrollmentTestResultViewSet(CreateModelMixin, GenericViewSet[EnrollmentTes
         """Calculates level of language based on number of correct answers."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        answer_ids = cast(list[int], request.POST.getlist("answers"))
         try:
-            return Response(EnrollmentTestResultLevelSerializer.calculate_level(answer_ids))
+            return Response({"resulting_level": serializer.data["resulting_level"]})
         except NotImplementedError:
             raise ValidationError(
-                f"Enrollment test with {len(answer_ids)} questions is not supported"
+                f"Enrollment test with {len(serializer.validated_data['answers'])} "
+                "questions is not supported"
             )

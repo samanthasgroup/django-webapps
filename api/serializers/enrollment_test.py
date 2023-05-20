@@ -1,4 +1,4 @@
-from collections.abc import Sequence
+from typing import Any
 
 from rest_framework import serializers
 
@@ -7,6 +7,10 @@ from api.models import (
     EnrollmentTestQuestion,
     EnrollmentTestQuestionOption,
     EnrollmentTestResult,
+)
+from api.models.constants import (
+    ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS,
+    LanguageLevelId,
 )
 
 
@@ -47,7 +51,6 @@ class EnrollmentTestResultCreateSerializer(serializers.ModelSerializer[Enrollmen
         fields = (
             "student",
             "answers",
-            "resulting_level",
         )
 
     # TODO Think about some validation, e.g. answers should be unique for each question
@@ -57,11 +60,33 @@ class EnrollmentTestResultCreateSerializer(serializers.ModelSerializer[Enrollmen
 class EnrollmentTestResultLevelSerializer(serializers.ModelSerializer[EnrollmentTestResult]):
     """A serializer used to get level of language based on how many answers are correct."""
 
-    @staticmethod
-    def calculate_level(answer_ids: Sequence[int]) -> dict[str, str]:
-        # returning dictionary to match regular JSON format
-        return {"resulting_level": EnrollmentTestResult.calculate_level(answer_ids=answer_ids)}
+    resulting_level = serializers.SerializerMethodField()
+
+    def get_resulting_level(self, obj: Any) -> str:  # noqa
+        """Calculates language level depending on amount of correct answers."""
+        answer_ids = [a.id for a in self.validated_data["answers"]]
+        # depending on number of questions in test, the thresholds are different
+        total_answers = len(answer_ids)
+
+        # All answers must be filled, so it is safe to check number of answers, not questions
+        if total_answers not in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS:
+            raise NotImplementedError(
+                f"Enrollment test with {total_answers} questions is not supported"
+            )
+
+        answers = EnrollmentTestQuestionOption.objects.filter(id__in=answer_ids)
+        number_of_correct_answers = answers.filter(is_correct=True).count()
+        level = LanguageLevelId.A0_BEGINNER
+        for threshold in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS[total_answers]:
+            if number_of_correct_answers >= threshold:
+                level = ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS[total_answers][
+                    threshold
+                ]
+            else:
+                break
+
+        return level
 
     class Meta:
         model = EnrollmentTestResult
-        fields = ("answers",)
+        fields = ["answers", "resulting_level"]
