@@ -1,7 +1,7 @@
 from django.db import models
 
 from api.models.age_ranges import AgeRange
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN, LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS
+from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 from api.models.languages_levels import Language
 from api.models.people import Student
 
@@ -76,16 +76,12 @@ class EnrollmentTestResult(models.Model):
     answers = models.ManyToManyField(EnrollmentTestQuestionOption)
 
     def __str__(self) -> str:
-        return f"Test results of {self.student}"
-
-    @property
-    def resulting_level(self) -> str:
-        """Returns language level of the student based on amount of correct answers."""
-        correct_answers = self.answers.filter(is_correct=True).count()
-        total_answers = self.answers.count()
-        percentage = correct_answers / total_answers * 100
-        closest_percentage = min(
-            LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS, key=lambda x: abs(x - percentage)
+        return (
+            f"Answers to enrollment test by {self.student} "
+            f"({self.correct_answers_count} correct "
+            f"out of {self.answers.count()})"
         )
 
-        return LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS[closest_percentage]
+    @property
+    def correct_answers_count(self) -> int:
+        return self.answers.filter(is_correct=True).count()

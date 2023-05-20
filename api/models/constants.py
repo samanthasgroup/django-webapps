@@ -1,4 +1,4 @@
-from enum import IntEnum
+from enum import Enum, IntEnum
 
 
 class CoordinatorGroupLimit(IntEnum):
@@ -6,13 +6,33 @@ class CoordinatorGroupLimit(IntEnum):
     MAX = 20
 
 
-STUDENT_CLASS_MISS_LIMIT = 3
-"""If a student misses this amount of classes **in a row** and **without notifying**
-the teacher, they can be expelled.
-"""
+class LanguageLevelId(str, Enum):
+    A0_BEGINNER = "A0"
+    A1_ELEMENTARY = "A1"
+    A2_PRE_INTERMEDIATE = "A2"
+    B1_INTERMEDIATE = "B1"
+    B2_UPPER_INTERMEDIATE = "B2"
+    C1_PRE_ADVANCED = "C1"
+    # no C2 at this school
+
 
 DEFAULT_CHAR_FIELD_MAX_LEN = 255
 DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH = 50
+
+ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS = {
+    25: {
+        5: LanguageLevelId.A1_ELEMENTARY,
+        11: LanguageLevelId.A2_PRE_INTERMEDIATE,
+        19: LanguageLevelId.B1_INTERMEDIATE,
+    },
+    35: {
+        6: LanguageLevelId.A1_ELEMENTARY,
+        13: LanguageLevelId.A2_PRE_INTERMEDIATE,
+        20: LanguageLevelId.B1_INTERMEDIATE,
+        27: LanguageLevelId.B2_UPPER_INTERMEDIATE,
+        32: LanguageLevelId.C1_PRE_ADVANCED,
+    },
+}
 
 # IMPORTANT: the boundaries of larger ranges must match the boundaries of the smaller ones
 
@@ -79,17 +99,10 @@ STUDENT_AGE_RANGES_FOR_MATCHING = {
     )
 }
 
-
-ENROLLMENT_TEST_PASS_THRESHOLD = 0.7
-
-# FIXME Just an example, subject to change,
-#  and also probably levels should be TextChoices
-LEVEL_BY_PERCENTAGE_OF_CORRECT_ANSWERS = {
-    10: "A1",
-    20: "A2",
-    40: "B1",
-    60: "B2",
-}
+STUDENT_CLASS_MISS_LIMIT = 3
+"""If a student misses this amount of classes **in a row** and **without notifying**
+the teacher, they can be expelled.
+"""
 
 TEACHER_PEER_SUPPORT_FIELD_NAME_PREFIX = "peer_support_"
 
