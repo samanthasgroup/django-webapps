@@ -100,9 +100,7 @@ class EnrollmentTestResult(models.Model):
 
         # All answers must be filled, so it is safe to check number of answers, not questions
         if total_answers not in thresholds_for_number_of_questions:
-            raise NotImplementedError(
-                f"Enrollment test with {total_answers} questions is not supported"
-            )
+            raise TypeError(f"Enrollment test with {total_answers} questions is not supported")
 
         answers = EnrollmentTestQuestionOption.objects.filter(id__in=answer_ids)
         number_of_correct_answers = answers.filter(is_correct=True).count()

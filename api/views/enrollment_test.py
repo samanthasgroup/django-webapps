@@ -39,5 +39,5 @@ class EnrollmentTestResultViewSet(CreateModelMixin, GenericViewSet[EnrollmentTes
         answer_ids = cast(list[int], request.POST.getlist("answers"))
         try:
             return Response(EnrollmentTestResultLevelSerializer.calculate_level(answer_ids))
-        except NotImplementedError as e:
+        except TypeError as e:
             raise ValidationError(str(e))
