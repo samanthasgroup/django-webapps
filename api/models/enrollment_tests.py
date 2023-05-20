@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from django.db import models
 
 from api.models.age_ranges import AgeRange
@@ -81,13 +83,20 @@ class EnrollmentTestResult(models.Model):
     @property
     def resulting_level(self) -> str:
         """Returns language level of the student based on amount of correct answers."""
+        return self.calculate_level([answer.id for answer in self.answers.all()])
 
+    @staticmethod
+    def calculate_level(answer_ids: Sequence[int]) -> str:
+        """Calculates language level depending on amount of correct answers.
+
+        This is a static method that can be called from outside without creating any records.
+        """
         # depending on number of questions in test, the thresholds are different
         thresholds_for_number_of_questions = {
             25: {6: "A1", 11: "A2", 19: "B1"},
             35: {6: "A1", 13: "A2", 20: "B1", 27: "B2", 32: "C1"},
         }
-        total_answers = self.answers.count()
+        total_answers = len(answer_ids)
 
         # All answers must be filled, so it is safe to check number of answers, not questions
         if total_answers not in thresholds_for_number_of_questions:
@@ -95,7 +104,8 @@ class EnrollmentTestResult(models.Model):
                 f"Enrollment test with {total_answers} questions is not supported"
             )
 
-        number_of_correct_answers = self.answers.filter(is_correct=True).count()
+        answers = EnrollmentTestQuestionOption.objects.filter(id__in=answer_ids)
+        number_of_correct_answers = answers.filter(is_correct=True).count()
         level = "A0"
         for threshold in thresholds_for_number_of_questions[total_answers]:
             if number_of_correct_answers >= threshold:
