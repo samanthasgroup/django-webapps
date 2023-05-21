@@ -29,7 +29,12 @@ class EnrollmentTestResultViewSet(CreateModelMixin, GenericViewSet[EnrollmentTes
 
     @action(detail=False, methods=["post"])
     def get_level(self, request: Request) -> Response:
-        """Calculates level of language based on number of correct answers."""
+        """Calculates level of language based on number of correct answers and number of questions.
+
+        The number of questions is passed explicitly to allow incomplete list of answers
+        (which will be the case if user aborts the test) and avoid inferring the number of
+        questions from the number of answers.
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data)

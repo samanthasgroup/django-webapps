@@ -79,7 +79,7 @@ class EnrollmentTestResult(models.Model):
         return (
             f"Answers to enrollment test by {self.student} "
             f"({self.correct_answers_count} correct "
-            f"out of {self.answers.count()})"
+            f"out of {self.answers.count()} answers given)"
         )
 
     @property
