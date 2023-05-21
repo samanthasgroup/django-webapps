@@ -6,7 +6,7 @@ from api.models import TeacherUnder18
 class TeacherUnder18WriteSerializer(serializers.ModelSerializer[TeacherUnder18]):
     class Meta:
         model = TeacherUnder18
-        exclude = ()
+        fields = "__all__"
 
 
 class TeacherUnder18ReadSerializer(serializers.ModelSerializer[TeacherUnder18]):
