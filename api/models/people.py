@@ -246,6 +246,17 @@ class TeacherCommon(Person):
     is_validated = models.BooleanField(
         help_text="Has an initial validation interview been conducted with this teacher?"
     )
+    non_teaching_help_provided_comment = models.CharField(
+        max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
+        blank=True,
+        verbose_name="comment on additional non-teaching skills",
+        help_text=(
+            "For adult teacher: other ways in which the applicant could help the students beside "
+            "listed ones. For teacher under 18: applicant's free-text comment on how they can "
+            "help our students apart from hosting speaking clubs."
+        ),
+    )
+    teaching_languages_and_levels = models.ManyToManyField(LanguageAndLevel)
 
     class Meta:
         abstract = True
@@ -266,12 +277,6 @@ class Teacher(TeacherCommon):
         blank=True,
         related_name="teachers",
         verbose_name="Types of non-teaching help this teacher can provide to students",
-    )
-    non_teaching_help_provided_comment = models.CharField(
-        max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
-        blank=True,
-        verbose_name="comment on additional non-teaching skills",
-        help_text="other ways in which the applicant could help the students beside listed ones",
     )
 
     # Peer support. When a new teacher is added, they cannot have these set to True unless they
@@ -319,7 +324,6 @@ class Teacher(TeacherCommon):
         "The 'from's and 'to's of these ranges are wider than those the students choose "
         "for themselves.",
     )
-    teaching_languages_and_levels = models.ManyToManyField(LanguageAndLevel)
     weekly_frequency_per_group = models.PositiveSmallIntegerField(
         help_text=(
             "number of times per week the teacher can have classes with each group. "
