@@ -77,7 +77,7 @@ def test_get_enrollment_test(api_client):
         (25, 5, 0, "A0"),
     ],
 )
-def test_get_level_with_not_all_answers(
+def test_get_level(
     api_client, number_of_questions, total_answers, correct_answers, expected_level
 ):
     """Test calculating the resulting level of enrollment test."""
