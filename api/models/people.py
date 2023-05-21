@@ -256,6 +256,7 @@ class TeacherCommon(Person):
             "help our students apart from hosting speaking clubs."
         ),
     )
+    teaching_languages_and_levels = models.ManyToManyField(LanguageAndLevel)
 
     class Meta:
         abstract = True
@@ -323,7 +324,6 @@ class Teacher(TeacherCommon):
         "The 'from's and 'to's of these ranges are wider than those the students choose "
         "for themselves.",
     )
-    teaching_languages_and_levels = models.ManyToManyField(LanguageAndLevel)
     weekly_frequency_per_group = models.PositiveSmallIntegerField(
         help_text=(
             "number of times per week the teacher can have classes with each group. "
