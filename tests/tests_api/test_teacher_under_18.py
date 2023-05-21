@@ -3,6 +3,7 @@ from model_bakery import baker
 from rest_framework import status
 
 from api.models import PersonalInfo, TeacherUnder18
+from api.models.choices.statuses import TeacherUnder18Status
 
 
 def test_teacher_under_18_create(api_client, faker):
@@ -13,9 +14,11 @@ def test_teacher_under_18_create(api_client, faker):
         "personal_info": personal_info.id,
         "can_host_speaking_club": faker.pybool(),
         "comment": faker.text(),
+        "status": TeacherUnder18Status.ACTIVE.value,
         "status_since": faker.date_time(tzinfo=pytz.utc),
         "has_hosted_speaking_club": faker.pybool(),
         "is_validated": faker.pybool(),
+        "non_teaching_help_provided_comment": faker.text(),
     }
     response = api_client.post("/api/teachers_under_18/", data=data)
     assert response.status_code == status.HTTP_201_CREATED
@@ -37,4 +40,5 @@ def test_teacher_under_18_retrieve(api_client):
         "status_since": teacher_under_18.status_since.isoformat().replace("+00:00", "Z"),
         "has_hosted_speaking_club": teacher_under_18.has_hosted_speaking_club,
         "is_validated": teacher_under_18.is_validated,
+        "non_teaching_help_provided_comment": teacher_under_18.non_teaching_help_provided_comment,
     }
