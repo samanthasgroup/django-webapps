@@ -62,17 +62,18 @@ class EnrollmentTestResultLevelSerializer(serializers.ModelSerializer[Enrollment
     """A serializer used to get level of language based on how many answers are correct."""
 
     resulting_level = serializers.SerializerMethodField()
+    number_of_questions = serializers.IntegerField(min_value=1, max_value=50, write_only=True)
 
     class Meta:
         model = EnrollmentTestResult
-        fields = ("answers", "resulting_level")
+        fields = ("answers", "number_of_questions", "resulting_level")
         extra_kwargs = {"answers": {"write_only": True}}
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        number_of_answers = len(attrs["answers"])
-        if number_of_answers not in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS:
+        number_of_questions = attrs["number_of_questions"]
+        if number_of_questions not in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS:
             raise serializers.ValidationError(
-                f"Enrollment test with {number_of_answers} questions is not supported"
+                f"Enrollment test with {number_of_questions} questions is not supported"
             )
         return attrs
 
@@ -81,7 +82,7 @@ class EnrollmentTestResultLevelSerializer(serializers.ModelSerializer[Enrollment
         # level thresholds (= numbers of correct answers required to reach that level)
         # depend on total number of questions
         level_for_threshold = ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS[
-            len(obj["answers"])
+            obj["number_of_questions"]
         ]
 
         number_of_correct_answers = len([answer for answer in obj["answers"] if answer.is_correct])
