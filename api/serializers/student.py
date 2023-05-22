@@ -13,6 +13,10 @@ from api.serializers.utc_timedelta import UTCTimedeltaField
 
 
 class StudentWriteSerializer(serializers.ModelSerializer[Student]):
+    # For Student, we need Student.id (and not just personal_info.id) so we can pass it
+    # from the bot to the backend when we send the enrollment test.
+    internal_id = serializers.IntegerField(source="pk", read_only=True)
+
     class Meta:
         model = Student
         exclude = ("children",)
