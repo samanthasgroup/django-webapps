@@ -37,7 +37,7 @@
       options:
         - text: in
           is_correct: false
-        - text: on
+        - text: "on"
           is_correct: true
         - text: at
           is_correct: false
@@ -227,7 +227,7 @@
       options:
         - text: of
           is_correct: true
-        - text: on
+        - text: "on"
           is_correct: false
         - text: to
           is_correct: false
