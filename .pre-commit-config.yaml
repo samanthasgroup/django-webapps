@@ -28,7 +28,7 @@ repos:
             - "django-filter"
 -   repo: https://github.com/charliermarsh/ruff-pre-commit
     # Ruff version.
-    rev: 'v0.0.267'
+    rev: 'v0.0.269'
     hooks:
     -   id: ruff
         name: ruff
