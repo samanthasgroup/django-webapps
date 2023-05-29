@@ -37,7 +37,7 @@
       options:
         - text: in
           is_correct: false
-        - text: on
+        - text: "on"
           is_correct: true
         - text: at
           is_correct: false
@@ -227,7 +227,7 @@
       options:
         - text: of
           is_correct: true
-        - text: on
+        - text: "on"
           is_correct: false
         - text: to
           is_correct: false
@@ -257,7 +257,7 @@
   age_to: 95
   language: en
   questions:
-    - text: Where ... you from?
+    - text: Where ____ you from?
       options:
         - text: are
           is_correct: true
@@ -265,7 +265,7 @@
           is_correct: false
         - text: is
           is_correct: false
-    - text: – How ... are you? – I’m 34.
+    - text: – How ____ are you? – I’m 34.
       options:
         - text: much
           is_correct: false
@@ -273,7 +273,7 @@
           is_correct: true
         - text: –
           is_correct: false
-    - text: He ... a doctor.
+    - text: He ____ a doctor.
       options:
         - text: isn't
           is_correct: true
@@ -281,7 +281,7 @@
           is_correct: false
         - text: am
           is_correct: false
-    - text: What ...? – I’m a manager.
+    - text: What ____? – I’m a manager.
       options:
         - text: are you do
           is_correct: false
@@ -289,7 +289,7 @@
           is_correct: true
         - text: are you doing
           is_correct: false
-    - text: She is from the United States. She can speak ... .
+    - text: She is from the United States. She can speak ____ .
       options:
         - text: on English
           is_correct: false
@@ -297,7 +297,7 @@
           is_correct: true
         - text: in the English
           is_correct: false
-    - text: ... she speak French?
+    - text: ____ she speak French?
       options:
         - text: Does
           is_correct: true
@@ -305,7 +305,7 @@
           is_correct: false
         - text: Do
           is_correct: false
-    - text: There ... 5 people in the room.
+    - text: There ____ 5 people in the room.
       options:
         - text: is
           is_correct: false
@@ -313,7 +313,7 @@
           is_correct: true
         - text: am
           is_correct: false
-    - text: ... you like Italian cars?
+    - text: ____ you like Italian cars?
       options:
         - text: Does
           is_correct: false
@@ -321,7 +321,7 @@
           is_correct: false
         - text: Do
           is_correct: true
-    - text: I like to drink ... with milk.
+    - text: I like to drink ____ with milk.
       options:
         - text: tea
           is_correct: true
@@ -329,7 +329,7 @@
           is_correct: false
         - text: cake
           is_correct: false
-    - text: I like ... . I think it’s a very beautiful language.
+    - text: I like ____ . I think it’s a very beautiful language.
       options:
         - text: French
           is_correct: true
@@ -337,7 +337,7 @@
           is_correct: false
         - text: Paris
           is_correct: false
-    - text: There are too ... words in this test.
+    - text: There are too ____ words in this test.
       options:
         - text: much
           is_correct: false
@@ -345,7 +345,7 @@
           is_correct: false
         - text: many
           is_correct: true
-    - text: She ... in New York. Can we visit her?
+    - text: She ____ in New York. Can we visit her?
       options:
         - text: live
           is_correct: false
@@ -353,7 +353,7 @@
           is_correct: true
         - text: leaves
           is_correct: false
-    - text: It’s ... fantastic film! Did you watch it?
+    - text: It’s ____ fantastic film! Did you watch it?
       options:
         - text: a
           is_correct: true
@@ -361,7 +361,7 @@
           is_correct: false
         - text: the
           is_correct: false
-    - text: I ... help you, sorry. I’m really busy today.
+    - text: I ____ help you, sorry. I’m really busy today.
       options:
         - text: can't
           is_correct: true
@@ -369,7 +369,7 @@
           is_correct: false
         - text: do
           is_correct: false
-    - text: The opposite of ‘expensive’ is ... .
+    - text: The opposite of ‘expensive’ is ____ .
       options:
         - text: cheap
           is_correct: true
@@ -377,7 +377,7 @@
           is_correct: false
         - text: poor
           is_correct: false
-    - text: I’m looking ... my glasses. Have you seen them?
+    - text: I’m looking ____ my glasses. Have you seen them?
       options:
         - text: at
           is_correct: false
@@ -385,7 +385,7 @@
           is_correct: false
         - text: for
           is_correct: true
-    - text: We ... to Turkey last year.
+    - text: We ____ to Turkey last year.
       options:
         - text: went
           is_correct: true
@@ -393,7 +393,7 @@
           is_correct: false
         - text: have been
           is_correct: false
-    - text: ... you go to Clare’s party last night?
+    - text: ____ you go to Clare’s party last night?
       options:
         - text: Do
           is_correct: false
@@ -401,7 +401,7 @@
           is_correct: false
         - text: Did
           is_correct: true
-    - text: They ... ice cream at the moment.
+    - text: They ____ ice cream at the moment.
       options:
         - text: eats
           is_correct: false
@@ -409,7 +409,7 @@
           is_correct: false
         - text: are eating
           is_correct: true
-    - text: She likes ... expensive clothes.
+    - text: She likes ____ expensive clothes.
       options:
         - text: wearing
           is_correct: true
@@ -419,7 +419,7 @@
           is_correct: false
         - text: is wearing
           is_correct: false
-    - text: Harry ... his father’s car when the accident happened.
+    - text: Harry ____ his father’s car when the accident happened.
       options:
         - text: was driving
           is_correct: true
@@ -429,7 +429,7 @@
           is_correct: false
         - text: has been driving
           is_correct: false
-    - text: The weather has been awful. We’ve had very ... sunshine this summer.
+    - text: The weather has been awful. We’ve had very ____ sunshine this summer.
       options:
         - text: little
           is_correct: true
@@ -439,7 +439,7 @@
           is_correct: false
         - text: a few
           is_correct: false
-    - text: Have you got time to discuss your work now or are you ... to leave?
+    - text: Have you got time to discuss your work now or are you ____ to leave?
       options:
         - text: thinking
           is_correct: false
@@ -449,7 +449,7 @@
           is_correct: false
         - text: about
           is_correct: true
-    - text: When I realised I had dropped my gloves, I decided to ... my steps.
+    - text: When I realised I had dropped my gloves, I decided to ____ my steps.
       options:
         - text: retrace
           is_correct: true
@@ -459,7 +459,7 @@
           is_correct: false
         - text: return
           is_correct: false
-    - text: My sister ... the cooking in our house.
+    - text: My sister ____ the cooking in our house.
       options:
         - text: does
           is_correct: true
@@ -469,7 +469,7 @@
           is_correct: false
         - text: takes
           is_correct: false
-    - text: She was in ... after watching a moving rom-com.
+    - text: She was in ____ after watching a moving rom-com.
       options:
         - text: crying
           is_correct: false
@@ -479,7 +479,7 @@
           is_correct: false
         - text: tearful
           is_correct: false
-    - text: Could you ... me that book for a couple of days, please?
+    - text: Could you ____ me that book for a couple of days, please?
       options:
         - text: lend
           is_correct: true
@@ -489,7 +489,7 @@
           is_correct: false
         - text: rent
           is_correct: false
-    - text: Who ... in that house?
+    - text: Who ____ in that house?
       options:
         - text: does live
           is_correct: false
@@ -499,7 +499,7 @@
           is_correct: false
         - text: he lives
           is_correct: false
-    - text: I’ll call you when I ... home.
+    - text: I’ll call you when I ____ home.
       options:
         - text: get
           is_correct: true
@@ -509,7 +509,7 @@
           is_correct: false
         - text: "'m getting"
           is_correct: false
-    - text: If you ... me, what would you do?
+    - text: If you ____ me, what would you do?
       options:
         - text: was
           is_correct: false
@@ -519,7 +519,7 @@
           is_correct: true
         - text: have been
           is_correct: false
-    - text: I don’t know where ... last night.
+    - text: I don’t know where ____ last night.
       options:
         - text: did he go
           is_correct: false
@@ -529,7 +529,7 @@
           is_correct: false
         - text: he went
           is_correct: true
-    - text: We had expected that they ... fluent English, but in fact they didn’t.
+    - text: We had expected that they ____ fluent English, but in fact they didn’t.
       options:
         - text: were speaking
           is_correct: false
@@ -539,7 +539,7 @@
           is_correct: false
         - text: spoke
           is_correct: false
-    - text: I’d rather I ... next weekend, but I do!
+    - text: I’d rather I ____ next weekend, but I do!
       options:
         - text: don’t have to work
           is_correct: false
@@ -549,7 +549,7 @@
           is_correct: false
         - text: wasn’t working
           is_correct: false
-    - text: Before you enter the triathlon, please bear in ... that you’re not as young as you used to be!
+    - text: Before you enter the triathlon, please bear in ____ that you’re not as young as you used to be!
       options:
         - text: thought
           is_correct: false
@@ -559,7 +559,7 @@
           is_correct: true
         - text: opinion
           is_correct: false
-    - text: The meeting was ... and not very interesting.
+    - text: The meeting was ____ and not very interesting.
       options:
         - text: time-wasting
           is_correct: false
