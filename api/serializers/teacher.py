@@ -109,6 +109,8 @@ class PublicTeacherWithPersonalInfoSerializer(CommonPublicTeacherSerializer):
     personal_info = PublicPersonalInfoSerializer()
     date_and_time_added = serializers.DateTimeField(source="personal_info.date_and_time_added")
 
+    # TODO LogEvent ?
+
     class Meta(CommonPublicTeacherSerializer.Meta):
         fields = CommonPublicTeacherSerializer.Meta.fields + (
             "personal_info",
