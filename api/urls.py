@@ -11,7 +11,9 @@ from api.views import (
     PersonalInfoViewSet,
     PublicGroupViewSet,
     PublicStudentViewSet,
+    PublicStudentWithPersonalInfoViewSet,
     PublicTeacherViewSet,
+    PublicTeacherWithPersonalInfoViewSet,
     StudentViewSet,
     TeacherUnder18ViewSet,
     TeacherViewSet,
@@ -39,8 +41,18 @@ internal_router.register(
 
 public_router = DefaultRouter()
 public_router.register(r"students", PublicStudentViewSet, basename="students")
+public_router.register(
+    r"students_with_personal_info",
+    PublicStudentWithPersonalInfoViewSet,
+    basename="students_with_personal_info",
+)
 public_router.register(r"groups", PublicGroupViewSet, basename="groups")
 public_router.register(r"teachers", PublicTeacherViewSet, basename="teachers")
+public_router.register(
+    r"teachers_with_personal_info",
+    PublicTeacherWithPersonalInfoViewSet,
+    basename="teachers_with_personal_info",
+)
 
 # "Internal" API is used by bot and "public" API is used by the Tooljet
 urlpatterns = [

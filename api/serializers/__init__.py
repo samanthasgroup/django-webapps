@@ -10,14 +10,17 @@ from api.serializers.personal_info import (
     CheckChatIdExistenceSerializer,
     CheckNameAndEmailExistenceSerializer,
     PersonalInfoSerializer,
+    PublicPersonalInfoSerializer,
 )
 from api.serializers.student import (
     PublicStudentSerializer,
+    PublicStudentWithPersonalInfoSerializer,
     StudentReadSerializer,
     StudentWriteSerializer,
 )
 from api.serializers.teacher import (
     PublicTeacherSerializer,
+    PublicTeacherWithPersonalInfoSerializer,
     TeacherReadSerializer,
     TeacherWriteSerializer,
 )
@@ -38,9 +41,12 @@ __all__ = [
     "CheckChatIdExistenceSerializer",
     "CheckNameAndEmailExistenceSerializer",
     "PersonalInfoSerializer",
+    "PublicPersonalInfoSerializer",
     "PublicGroupSerializer",
     "PublicStudentSerializer",
+    "PublicStudentWithPersonalInfoSerializer",
     "PublicTeacherSerializer",
+    "PublicTeacherWithPersonalInfoSerializer",
     "StudentReadSerializer",
     "StudentWriteSerializer",
     "TeacherReadSerializer",

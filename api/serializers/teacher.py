@@ -10,6 +10,7 @@ from api.serializers import (
     DayAndTimeSlotSerializer,
     LanguageAndLevelSerializer,
     NonTeachingHelpSerializer,
+    PublicPersonalInfoSerializer,
 )
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
@@ -59,9 +60,7 @@ class PeerSupportField(serializers.SerializerMethodField):
         }
 
 
-class PublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
-    """Representation of a Teacher that is used in 'All teachers' Tooljet view."""
-
+class CommonPublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
     id = serializers.IntegerField(source="personal_info_id")
     first_name = serializers.CharField(source="personal_info.first_name")
     last_name = serializers.CharField(source="personal_info.last_name")
@@ -77,7 +76,7 @@ class PublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
 
     class Meta:
         model = Teacher
-        fields = (
+        fields: tuple[str, ...] = (
             "id",
             "first_name",
             "last_name",
@@ -95,3 +94,23 @@ class PublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
             "peer_support",
         )
         read_only_fields = fields
+
+
+class PublicTeacherSerializer(CommonPublicTeacherSerializer):
+    """Representation of a Teacher that is used in 'All teachers' Tooljet view."""
+
+    class Meta(CommonPublicTeacherSerializer.Meta):
+        pass
+
+
+class PublicTeacherWithPersonalInfoSerializer(CommonPublicTeacherSerializer):
+    """Representation of a Teacher that is used in 'Teacher by coordinator' Tooljet view."""
+
+    personal_info = PublicPersonalInfoSerializer()
+    date_and_time_added = serializers.DateTimeField(source="personal_info.date_and_time_added")
+
+    class Meta(CommonPublicTeacherSerializer.Meta):
+        fields = CommonPublicTeacherSerializer.Meta.fields + (
+            "personal_info",
+            "date_and_time_added",
+        )

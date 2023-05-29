@@ -1,7 +1,12 @@
 from rest_framework import viewsets
 
 from api.models import Teacher
-from api.serializers import PublicTeacherSerializer, TeacherReadSerializer, TeacherWriteSerializer
+from api.serializers import (
+    PublicTeacherSerializer,
+    PublicTeacherWithPersonalInfoSerializer,
+    TeacherReadSerializer,
+    TeacherWriteSerializer,
+)
 from api.views.mixins import ReadWriteSerializersMixin
 
 
@@ -22,3 +27,15 @@ class PublicTeacherViewSet(viewsets.ReadOnlyModelViewSet[Teacher]):
     lookup_field = "personal_info_id"
     queryset = Teacher.objects.all()
     serializer_class = PublicTeacherSerializer
+
+
+class PublicTeacherWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Teacher]):
+    """
+    Teacher public viewset with personal info. Used for public API (Tooljet).
+    """
+
+    # TODO permissions?
+    # TODO filter by coordinator
+    lookup_field = "personal_info_id"
+    queryset = Teacher.objects.all()
+    serializer_class = PublicTeacherWithPersonalInfoSerializer
