@@ -38,6 +38,7 @@ class PublicTeacherWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Teacher
     """
 
     # TODO permissions?
+    # TODO test this API
     lookup_field = "personal_info_id"
     queryset = Teacher.objects.prefetch_related(
         Prefetch("groups", queryset=Group.objects.annotate(students_count=Count("students"))),

@@ -37,6 +37,7 @@ class PublicStudentWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Student
     """
 
     # TODO permissions?
+    # TODO test this API
     lookup_field = "personal_info_id"
     queryset = Student.objects.all()
     serializer_class = PublicStudentWithPersonalInfoSerializer
