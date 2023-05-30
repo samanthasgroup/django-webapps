@@ -147,6 +147,18 @@ def test_public_student_retrieve(api_client, faker):
         "communication_language_mode": student.personal_info.communication_language_mode,
         "is_member_of_speaking_club": student.is_member_of_speaking_club,
         "utc_timedelta": f"UTC{sign}{utc_offset_hours:02}:{utc_offset_minutes:02}",
+        "non_teaching_help_required": {
+            "career_strategy": False,
+            "career_switch": False,
+            "cv_proofread": False,
+            "cv_write_edit": False,
+            "job_search": False,
+            "linkedin": False,
+            "mock_interview": False,
+            "portfolio": False,
+            "translate_docs": False,
+            "uni_abroad": False,
+        },
     }
 
 

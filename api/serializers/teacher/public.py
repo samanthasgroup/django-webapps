@@ -10,9 +10,11 @@ from api.serializers import (
     DayAndTimeSlotSerializer,
     LanguageAndLevelSerializer,
     NonTeachingHelpSerializer,
+    PublicPersonalInfoSerializer,
 )
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
+from api.serializers.group.minified import MinifiedGroupSerializer
 from api.serializers.language_and_level import MinifiedLanguageAndLevelSerializer
 from api.serializers.non_teaching_help import NonTeachingHelpSerializerField
 from api.serializers.utc_timedelta import UTCTimedeltaField
@@ -35,17 +37,6 @@ class TeacherReadSerializer(serializers.ModelSerializer[Teacher]):
         fields = "__all__"
 
 
-class MinifiedTeacherSerializer(serializers.ModelSerializer[Teacher]):
-    """Serializer for Teacher model with only id and full_name fields."""
-
-    full_name = serializers.CharField(source="personal_info.full_name")
-    id = serializers.IntegerField(source="personal_info_id")
-
-    class Meta:
-        model = Teacher
-        fields = ("id", "full_name")
-
-
 class PeerSupportField(serializers.SerializerMethodField):
     """
     Field to show fields with prefix from `TEACHER_PEER_SUPPORT_FIELD_NAME_PREFIX`
@@ -59,9 +50,7 @@ class PeerSupportField(serializers.SerializerMethodField):
         }
 
 
-class PublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
-    """Representation of a Teacher that is used in 'All teachers' Tooljet view."""
-
+class CommonPublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
     id = serializers.IntegerField(source="personal_info_id")
     first_name = serializers.CharField(source="personal_info.first_name")
     last_name = serializers.CharField(source="personal_info.last_name")
@@ -74,10 +63,11 @@ class PublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
     teaching_languages_and_levels = MinifiedLanguageAndLevelSerializer(many=True, read_only=True)
     non_teaching_help_provided = NonTeachingHelpSerializerField()
     peer_support = PeerSupportField()
+    date_and_time_added = serializers.DateTimeField(source="personal_info.date_and_time_added")
 
     class Meta:
         model = Teacher
-        fields = (
+        fields: tuple[str, ...] = (
             "id",
             "first_name",
             "last_name",
@@ -93,5 +83,28 @@ class PublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
             "non_teaching_help_provided_comment",
             "non_teaching_help_provided",
             "peer_support",
+            "date_and_time_added",
         )
         read_only_fields = fields
+
+
+class PublicTeacherSerializer(CommonPublicTeacherSerializer):
+    """Representation of a Teacher that is used in 'All teachers' Tooljet view."""
+
+    class Meta(CommonPublicTeacherSerializer.Meta):
+        pass
+
+
+class PublicTeacherWithPersonalInfoSerializer(CommonPublicTeacherSerializer):
+    """Representation of a Teacher that is used in 'Teacher by coordinator' Tooljet view."""
+
+    personal_info = PublicPersonalInfoSerializer()
+    groups = MinifiedGroupSerializer(many=True, read_only=True)
+
+    # TODO LogEvent ?
+
+    class Meta(CommonPublicTeacherSerializer.Meta):
+        fields = CommonPublicTeacherSerializer.Meta.fields + (
+            "personal_info",
+            "groups",
+        )
