@@ -1,6 +1,8 @@
 from django.db.models import Count, Prefetch
+from django_filters import rest_framework as filters
 from rest_framework import viewsets
 
+from api.filters import TeacherFilter
 from api.models import Group, Teacher
 from api.serializers import (
     PublicTeacherSerializer,
@@ -36,9 +38,10 @@ class PublicTeacherWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Teacher
     """
 
     # TODO permissions?
-    # TODO filter by coordinator
     lookup_field = "personal_info_id"
     queryset = Teacher.objects.prefetch_related(
         Prefetch("groups", queryset=Group.objects.annotate(students_count=Count("students"))),
     ).all()
     serializer_class = PublicTeacherWithPersonalInfoSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = TeacherFilter

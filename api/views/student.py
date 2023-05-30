@@ -1,5 +1,7 @@
+from django_filters import rest_framework as filters
 from rest_framework import viewsets
 
+from api.filters import StudentFilter
 from api.models import Student
 from api.serializers import (
     PublicStudentSerializer,
@@ -35,7 +37,8 @@ class PublicStudentWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Student
     """
 
     # TODO permissions?
-    # TODO filter by coordinator
     lookup_field = "personal_info_id"
     queryset = Student.objects.all()
     serializer_class = PublicStudentWithPersonalInfoSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = StudentFilter

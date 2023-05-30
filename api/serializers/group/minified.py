@@ -17,6 +17,7 @@ class MinifiedGroupSerializer(serializers.ModelSerializer[Group]):
     class Meta:
         model = Group
         fields = (
+            "id",
             "language_and_level",
             "students_count",
             "teachers",
