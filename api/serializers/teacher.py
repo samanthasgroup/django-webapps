@@ -73,6 +73,7 @@ class CommonPublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
     teaching_languages_and_levels = MinifiedLanguageAndLevelSerializer(many=True, read_only=True)
     non_teaching_help_provided = NonTeachingHelpSerializerField()
     peer_support = PeerSupportField()
+    date_and_time_added = serializers.DateTimeField(source="personal_info.date_and_time_added")
 
     class Meta:
         model = Teacher
@@ -92,6 +93,7 @@ class CommonPublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
             "non_teaching_help_provided_comment",
             "non_teaching_help_provided",
             "peer_support",
+            "date_and_time_added",
         )
         read_only_fields = fields
 
@@ -107,12 +109,8 @@ class PublicTeacherWithPersonalInfoSerializer(CommonPublicTeacherSerializer):
     """Representation of a Teacher that is used in 'Teacher by coordinator' Tooljet view."""
 
     personal_info = PublicPersonalInfoSerializer()
-    date_and_time_added = serializers.DateTimeField(source="personal_info.date_and_time_added")
 
     # TODO LogEvent ?
 
     class Meta(CommonPublicTeacherSerializer.Meta):
-        fields = CommonPublicTeacherSerializer.Meta.fields + (
-            "personal_info",
-            "date_and_time_added",
-        )
+        fields = CommonPublicTeacherSerializer.Meta.fields + ("personal_info",)
