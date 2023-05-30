@@ -1,8 +1,9 @@
 from django.db import models
 from rest_framework import viewsets
+from rest_framework.serializers import BaseSerializer
 
 from api.models import Group
-from api.serializers import PublicGroupSerializer
+from api.serializers import PublicGroupSerializer, PublicGroupWithStudentsSerializer
 
 
 class PublicGroupViewSet(viewsets.ReadOnlyModelViewSet[Group]):
@@ -11,4 +12,11 @@ class PublicGroupViewSet(viewsets.ReadOnlyModelViewSet[Group]):
     """
 
     queryset = Group.objects.annotate(students_count=models.Count("students")).all()
-    serializer_class = PublicGroupSerializer
+
+    def get_serializer_class(self) -> type[BaseSerializer[Group]]:
+        if self.action == "list":
+            return PublicGroupSerializer
+        if self.action == "retrieve":
+            return PublicGroupWithStudentsSerializer
+
+        raise NotImplementedError(f"Unknown action: {self.action}")

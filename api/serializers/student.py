@@ -30,6 +30,17 @@ class StudentReadSerializer(serializers.ModelSerializer[Student]):
         exclude = ("children",)
 
 
+class MinifiedStudentSerializer(serializers.ModelSerializer[Student]):
+    """Serializer for Student model with only id and full_name fields."""
+
+    full_name = serializers.CharField(source="personal_info.full_name")
+    id = serializers.IntegerField(source="personal_info_id")
+
+    class Meta:
+        model = Student
+        fields = ("id", "full_name")
+
+
 class CommonPublicStudentSerializer(serializers.ModelSerializer[Student]):
     age_range = AgeRangeStringField()
     teaching_languages_and_levels = MinifiedLanguageAndLevelSerializer(many=True, read_only=True)

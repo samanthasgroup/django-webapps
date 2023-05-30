@@ -13,6 +13,7 @@ from api.serializers.personal_info import (
     PublicPersonalInfoSerializer,
 )
 from api.serializers.student import (
+    MinifiedStudentSerializer,
     PublicStudentSerializer,
     PublicStudentWithPersonalInfoSerializer,
     StudentReadSerializer,
@@ -30,8 +31,10 @@ from api.serializers.teacher_under_18 import (
 )
 
 # Must be imported at the end because of circular dependency
-from api.serializers.group import PublicGroupSerializer  # isort:skip
-
+from api.serializers.group import (  # isort:skip
+    PublicGroupSerializer,
+    PublicGroupWithStudentsSerializer,
+)
 
 __all__ = [
     "AgeRangeSerializer",
@@ -43,12 +46,14 @@ __all__ = [
     "PersonalInfoSerializer",
     "PublicPersonalInfoSerializer",
     "PublicGroupSerializer",
+    "PublicGroupWithStudentsSerializer",
     "PublicStudentSerializer",
     "PublicStudentWithPersonalInfoSerializer",
     "PublicTeacherSerializer",
     "PublicTeacherWithPersonalInfoSerializer",
     "StudentReadSerializer",
     "StudentWriteSerializer",
+    "MinifiedStudentSerializer",
     "TeacherReadSerializer",
     "TeacherWriteSerializer",
     "TeacherUnder18ReadSerializer",
