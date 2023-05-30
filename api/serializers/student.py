@@ -41,6 +41,7 @@ class CommonPublicStudentSerializer(serializers.ModelSerializer[Student]):
     communication_language_mode = serializers.CharField(
         source="personal_info.communication_language_mode"
     )
+    non_teaching_help_required = NonTeachingHelpSerializerField()
 
     class Meta:
         model = Student
@@ -56,6 +57,7 @@ class CommonPublicStudentSerializer(serializers.ModelSerializer[Student]):
             "status",
             "is_member_of_speaking_club",
             "teaching_languages_and_levels",
+            "non_teaching_help_required",
         )
 
 
@@ -78,7 +80,4 @@ class PublicStudentWithPersonalInfoSerializer(CommonPublicStudentSerializer):
     # TODO LogEvent?
 
     class Meta(CommonPublicStudentSerializer.Meta):
-        fields = CommonPublicStudentSerializer.Meta.fields + (
-            "personal_info",
-            "non_teaching_help_required",
-        )
+        fields = CommonPublicStudentSerializer.Meta.fields + ("personal_info",)
