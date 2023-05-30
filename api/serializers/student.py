@@ -86,7 +86,6 @@ class PublicStudentWithPersonalInfoSerializer(CommonPublicStudentSerializer):
     """
 
     personal_info = PublicPersonalInfoSerializer(read_only=True)
-    non_teaching_help_required = NonTeachingHelpSerializerField()
 
     # TODO LogEvent?
 
