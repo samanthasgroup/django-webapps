@@ -19,7 +19,7 @@ from api.serializers.student import (
     StudentReadSerializer,
     StudentWriteSerializer,
 )
-from api.serializers.teacher import (
+from api.serializers.teacher.public import (
     PublicTeacherSerializer,
     PublicTeacherWithPersonalInfoSerializer,
     TeacherReadSerializer,
@@ -31,7 +31,7 @@ from api.serializers.teacher_under_18 import (
 )
 
 # Must be imported at the end because of circular dependency
-from api.serializers.group import (  # isort:skip
+from api.serializers.group.public import (  # isort:skip
     PublicGroupSerializer,
     PublicGroupWithStudentsSerializer,
 )

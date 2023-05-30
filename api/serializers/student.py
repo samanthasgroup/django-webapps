@@ -9,6 +9,7 @@ from api.serializers import (
 )
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
+from api.serializers.group.minified import MinifiedGroupSerializer
 from api.serializers.language_and_level import MinifiedLanguageAndLevelSerializer
 from api.serializers.non_teaching_help import NonTeachingHelpSerializerField
 from api.serializers.utc_timedelta import UTCTimedeltaField
@@ -86,8 +87,12 @@ class PublicStudentWithPersonalInfoSerializer(CommonPublicStudentSerializer):
     """
 
     personal_info = PublicPersonalInfoSerializer(read_only=True)
+    groups = MinifiedGroupSerializer(many=True, read_only=True)
 
     # TODO LogEvent?
 
     class Meta(CommonPublicStudentSerializer.Meta):
-        fields = CommonPublicStudentSerializer.Meta.fields + ("personal_info",)
+        fields = CommonPublicStudentSerializer.Meta.fields + (
+            "personal_info",
+            "groups",
+        )

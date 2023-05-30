@@ -4,7 +4,7 @@ from api.models import Group
 from api.serializers import MinifiedStudentSerializer
 from api.serializers.coordinator import MinifiedCoordinatorSerializer
 from api.serializers.language_and_level import MinifiedLanguageAndLevelSerializer
-from api.serializers.teacher import MinifiedTeacherSerializer
+from api.serializers.teacher.minified import MinifiedTeacherSerializer
 
 
 class CommonPublicGroupSerializer(serializers.ModelSerializer[Group]):

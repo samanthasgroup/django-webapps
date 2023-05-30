@@ -1,6 +1,7 @@
+from django.db.models import Count, Prefetch
 from rest_framework import viewsets
 
-from api.models import Teacher
+from api.models import Group, Teacher
 from api.serializers import (
     PublicTeacherSerializer,
     PublicTeacherWithPersonalInfoSerializer,
@@ -37,5 +38,7 @@ class PublicTeacherWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Teacher
     # TODO permissions?
     # TODO filter by coordinator
     lookup_field = "personal_info_id"
-    queryset = Teacher.objects.all()
+    queryset = Teacher.objects.prefetch_related(
+        Prefetch("groups", queryset=Group.objects.annotate(students_count=Count("students"))),
+    ).all()
     serializer_class = PublicTeacherWithPersonalInfoSerializer
