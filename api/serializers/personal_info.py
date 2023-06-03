@@ -19,7 +19,13 @@ class CheckNameAndEmailExistenceSerializer(serializers.ModelSerializer[PersonalI
     """
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        if PersonalInfo.objects.filter(**attrs).exists():
+        prepared_attrs = {
+            attr: PersonalInfo.capitalize_each_word(attrs[attr])
+            for attr in ("first_name", "last_name")
+        }
+        prepared_attrs["email"] = attrs["email"].lower()
+
+        if PersonalInfo.objects.filter(**prepared_attrs).exists():
             # TODO: Discuss errors format.
             raise serializers.ValidationError("User with this information already exists.")
         return attrs
