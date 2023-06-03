@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import admin
 
 from api import models
+from api.utils import capitalize_each_word
 
 
 class PersonalInfoAdminForm(forms.ModelForm[models.PersonalInfo]):
@@ -22,7 +23,7 @@ class PersonalInfoAdminForm(forms.ModelForm[models.PersonalInfo]):
 
     def clean(self) -> None:
         params = {
-            param: self.Meta.model.capitalize_each_word(self.cleaned_data[param])
+            param: capitalize_each_word(self.cleaned_data[param])
             for param in ("first_name", "last_name")
         }
         params["email"] = self.cleaned_data["email"].lower()

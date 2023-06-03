@@ -22,6 +22,7 @@ from api.models.constants import (
 from api.models.days_time_slots import DayAndTimeSlot
 from api.models.languages_levels import LanguageAndLevel
 from api.models.non_teaching_help import NonTeachingHelp
+from api.utils import capitalize_each_word
 
 
 # One person can perform several roles.  Therefore, the logic proposed is as follows: first,
@@ -95,8 +96,8 @@ class PersonalInfo(GroupOrPerson):
         using: str | None = None,
         update_fields: Iterable[str] | None = None,
     ) -> None:
-        self.first_name = self.capitalize_each_word(self.first_name)
-        self.last_name = self.capitalize_each_word(self.last_name)
+        self.first_name = capitalize_each_word(self.first_name)
+        self.last_name = capitalize_each_word(self.last_name)
         self.email = self.email.lower()
         super().save(
             force_insert=force_insert,
@@ -104,10 +105,6 @@ class PersonalInfo(GroupOrPerson):
             using=using,
             update_fields=update_fields,
         )
-
-    @staticmethod
-    def capitalize_each_word(str_: str) -> str:
-        return " ".join(part.capitalize() for part in str_.split())
 
     @property
     def full_name(self) -> str:

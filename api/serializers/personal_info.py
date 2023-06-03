@@ -3,6 +3,7 @@ from typing import Any
 from rest_framework import serializers
 
 from api.models import PersonalInfo
+from api.utils import capitalize_each_word
 
 
 class PersonalInfoSerializer(serializers.ModelSerializer[PersonalInfo]):
@@ -20,8 +21,7 @@ class CheckNameAndEmailExistenceSerializer(serializers.ModelSerializer[PersonalI
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         prepared_attrs = {
-            attr: PersonalInfo.capitalize_each_word(attrs[attr])
-            for attr in ("first_name", "last_name")
+            attr: capitalize_each_word(attrs[attr]) for attr in ("first_name", "last_name")
         }
         prepared_attrs["email"] = attrs["email"].lower()
 
