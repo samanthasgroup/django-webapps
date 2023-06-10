@@ -618,13 +618,13 @@ format-nongpl = ["fqdn", "idna", "isoduration", "jsonpointer (>1.13)", "rfc3339-
 
 [[package]]
 name = "model-bakery"
-version = "1.11.0"
+version = "1.12.0"
 description = "Smart object creation facility for Django."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "model_bakery-1.11.0-py3-none-any.whl", hash = "sha256:d38a72502979be20c9c5c2b1682faefde9da4eae935c028cc35832d484ea1039"},
-    {file = "model_bakery-1.11.0.tar.gz", hash = "sha256:d516d93315f66fc7f2cef0a85e1ca9e1ebb656cca5e383f17127f023b4bbdb8c"},
+    {file = "model_bakery-1.12.0-py3-none-any.whl", hash = "sha256:70e991dd503e3f1956632c621946bb8e71012172db740bab75cd9d2a447283a3"},
+    {file = "model_bakery-1.12.0.tar.gz", hash = "sha256:bfa5d118f91f08ef4694d4aaab168c98efc91dab086aee587e71d66a7001701a"},
 ]
 
 [package.dependencies]
@@ -1255,4 +1255,4 @@ test = ["covdefaults (>=2.2.2)", "coverage (>=7.1)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "71c15719c1e0d13059f815c30bf814f39e15390a093d08b1cf14d5bc1e28e375"
+content-hash = "c76f6b15bf65d36aaa32fd762b4327c6a09513e4d290e2448c36e2e853b20e2b"
