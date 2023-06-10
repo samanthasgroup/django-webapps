@@ -7,7 +7,8 @@ from api.models import (
     TeacherLogEvent,
     TeacherUnder18LogEvent,
 )
-from api.serializers import MinifiedStudentSerializer
+from api.serializers import MinifiedStudentSerializer, TeacherUnder18ReadSerializer
+from api.serializers.coordinator import MinifiedCoordinatorSerializer
 from api.serializers.group.minified import MinifiedGroupSerializer
 from api.serializers.teacher.minified import MinifiedTeacherSerializer
 
@@ -15,7 +16,7 @@ from api.serializers.teacher.minified import MinifiedTeacherSerializer
 class CoordinatorLogEventReadSerializer(serializers.ModelSerializer[CoordinatorLogEvent]):
     """A serializer for reading coordinator's log events."""
 
-    coordinator = serializers.CharField(read_only=True)  # FIXME coordinator serializer
+    coordinator = MinifiedCoordinatorSerializer(read_only=True)
 
     from_group = MinifiedGroupSerializer(read_only=True)
     to_group = MinifiedGroupSerializer(read_only=True)
@@ -113,7 +114,7 @@ class TeacherLogEventWriteSerializer(serializers.ModelSerializer[TeacherLogEvent
 class TeacherUnder18LogEventReadSerializer(serializers.ModelSerializer[TeacherUnder18LogEvent]):
     """A serializer for reading young teacher's log events."""
 
-    teacher = MinifiedTeacherSerializer(read_only=True)
+    teacher = TeacherUnder18ReadSerializer(read_only=True)
 
     class Meta:
         model = TeacherUnder18LogEvent
