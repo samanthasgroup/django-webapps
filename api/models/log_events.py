@@ -1,3 +1,7 @@
+from collections.abc import Iterable
+from datetime import datetime
+
+import pytz
 from django.db import models
 
 from api.models.choices.log_event_types import (
@@ -7,6 +11,7 @@ from api.models.choices.log_event_types import (
     TeacherLogEventType,
     TeacherUnder18LogEventType,
 )
+from api.models.choices.statuses import CoordinatorStatus
 from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.groups import Group
 from api.models.people import Coordinator, Student, Teacher, TeacherUnder18
@@ -62,6 +67,25 @@ class CoordinatorLogEvent(LogEvent):
         return (
             f"{self.date_as_str}: coordinator {self.coordinator.personal_info.full_name} "
             f"{self.get_type_display()}"
+        )
+
+    def save(
+        self,
+        force_insert: bool = False,
+        force_update: bool = False,
+        using: str | None = None,
+        update_fields: Iterable[str] | None = None,
+    ) -> None:
+        # TODO rules needed here. This is just a quick proof of concept
+        self.coordinator.status = CoordinatorStatus.WORKING_LIMIT_REACHED
+        self.coordinator.status_since = datetime.now(tz=pytz.utc)
+        self.coordinator.save()
+
+        super().save(
+            force_insert=force_insert,
+            force_update=force_update,
+            using=using,
+            update_fields=update_fields,
         )
 
 
