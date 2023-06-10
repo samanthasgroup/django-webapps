@@ -7,10 +7,26 @@ from api.models import (
     TeacherLogEvent,
     TeacherUnder18LogEvent,
 )
+from api.serializers import MinifiedStudentSerializer
+from api.serializers.group.minified import MinifiedGroupSerializer
+from api.serializers.teacher.minified import MinifiedTeacherSerializer
 
 
-class CoordinatorLogEventSerializer(serializers.ModelSerializer[CoordinatorLogEvent]):
-    """A serializer for coordinator's log events."""
+class CoordinatorLogEventReadSerializer(serializers.ModelSerializer[CoordinatorLogEvent]):
+    """A serializer for reading coordinator's log events."""
+
+    coordinator = serializers.CharField(read_only=True)  # FIXME coordinator serializer
+
+    from_group = MinifiedGroupSerializer(read_only=True)
+    to_group = MinifiedGroupSerializer(read_only=True)
+
+    class Meta:
+        model = CoordinatorLogEvent
+        fields = ("coordinator", "date_time", "type", "from_group", "to_group", "comment")
+
+
+class CoordinatorLogEventWriteSerializer(serializers.ModelSerializer[CoordinatorLogEvent]):
+    """A serializer for writing coordinator's log events."""
 
     coordinator_id = serializers.IntegerField(source="coordinator_id", required=True)
 
@@ -22,8 +38,18 @@ class CoordinatorLogEventSerializer(serializers.ModelSerializer[CoordinatorLogEv
         fields = ("date_time", "type", "coordinator_id", "from_group_id", "to_group_id", "comment")
 
 
-class GroupLogEventSerializer(serializers.ModelSerializer[GroupLogEvent]):
-    """A serializer for group's log events."""
+class GroupLogEventReadSerializer(serializers.ModelSerializer[GroupLogEvent]):
+    """A serializer for reading group's log events."""
+
+    group = MinifiedGroupSerializer(read_only=True)
+
+    class Meta:
+        model = GroupLogEvent
+        fields = ("group", "date_time", "type", "comment")
+
+
+class GroupLogEventWriteSerializer(serializers.ModelSerializer[GroupLogEvent]):
+    """A serializer for writing group's log events."""
 
     group_id = serializers.IntegerField(source="group_id", required=True)
 
@@ -32,8 +58,21 @@ class GroupLogEventSerializer(serializers.ModelSerializer[GroupLogEvent]):
         fields = ("date_time", "type", "group_id", "comment")
 
 
-class StudentLogEventSerializer(serializers.ModelSerializer[StudentLogEvent]):
-    """A serializer for student's log events."""
+class StudentLogEventReadSerializer(serializers.ModelSerializer[StudentLogEvent]):
+    """A serializer for reading student's log events."""
+
+    student = MinifiedStudentSerializer(read_only=True)
+
+    from_group = MinifiedGroupSerializer(read_only=True)
+    to_group = MinifiedGroupSerializer(read_only=True)
+
+    class Meta:
+        model = StudentLogEvent
+        fields = ("student", "date_time", "type", "from_group", "to_group", "comment")
+
+
+class StudentLogEventWriteSerializer(serializers.ModelSerializer[StudentLogEvent]):
+    """A serializer for writing student's log events."""
 
     student_id = serializers.IntegerField(source="student_id", required=True)
 
@@ -45,8 +84,21 @@ class StudentLogEventSerializer(serializers.ModelSerializer[StudentLogEvent]):
         fields = ("date_time", "type", "student_id", "from_group_id", "to_group_id", "comment")
 
 
-class TeacherLogEventSerializer(serializers.ModelSerializer[TeacherLogEvent]):
-    """A serializer for adult teacher's log events."""
+class TeacherLogEventReadSerializer(serializers.ModelSerializer[TeacherLogEvent]):
+    """A serializer for reading adult teacher's log events."""
+
+    teacher = MinifiedTeacherSerializer(read_only=True)
+
+    from_group = MinifiedGroupSerializer(read_only=True)
+    to_group = MinifiedGroupSerializer(read_only=True)
+
+    class Meta:
+        model = TeacherLogEvent
+        fields = ("teacher", "date_time", "type", "from_group", "to_group", "comment")
+
+
+class TeacherLogEventWriteSerializer(serializers.ModelSerializer[TeacherLogEvent]):
+    """A serializer for writing adult teacher's log events."""
 
     teacher_id = serializers.IntegerField(source="teacher_id", required=True)
 
@@ -58,8 +110,18 @@ class TeacherLogEventSerializer(serializers.ModelSerializer[TeacherLogEvent]):
         fields = ("date_time", "type", "teacher_id", "from_group_id", "to_group_id", "comment")
 
 
-class TeacherUnder18LogEventSerializer(serializers.ModelSerializer[TeacherUnder18LogEvent]):
-    """A serializer for young teacher's log events."""
+class TeacherUnder18LogEventReadSerializer(serializers.ModelSerializer[TeacherUnder18LogEvent]):
+    """A serializer for reading young teacher's log events."""
+
+    teacher = MinifiedTeacherSerializer(read_only=True)
+
+    class Meta:
+        model = TeacherUnder18LogEvent
+        fields = ("teacher", "date_time", "type", "comment")
+
+
+class TeacherUnder18LogEventWriteSerializer(serializers.ModelSerializer[TeacherUnder18LogEvent]):
+    """A serializer for writing young teacher's log events."""
 
     teacher_id = serializers.IntegerField(source="teacher_id", required=True)
 
