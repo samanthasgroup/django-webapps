@@ -18,6 +18,7 @@ from api.views import (
     TeacherUnder18ViewSet,
     TeacherViewSet,
 )
+from api.views.log_event import CoordinatorLogEventViewSet
 
 internal_router = DefaultRouter()
 internal_router.register(r"personal_info", PersonalInfoViewSet, basename="personal_info")
@@ -37,6 +38,9 @@ internal_router.register(
 )
 internal_router.register(
     r"non_teaching_help", NonTeachingHelpViewSet, basename="non_teaching_help"
+)
+internal_router.register(
+    r"coordinator_log_events", CoordinatorLogEventViewSet, basename="coordinator_log_events"
 )
 
 public_router = DefaultRouter()

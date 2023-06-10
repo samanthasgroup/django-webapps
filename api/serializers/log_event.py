@@ -29,14 +29,9 @@ class CoordinatorLogEventReadSerializer(serializers.ModelSerializer[CoordinatorL
 class CoordinatorLogEventWriteSerializer(serializers.ModelSerializer[CoordinatorLogEvent]):
     """A serializer for writing coordinator's log events."""
 
-    coordinator_id = serializers.IntegerField(source="coordinator_id", required=True)
-
-    from_group_id = serializers.IntegerField(source="from_group_id")
-    to_group_id = serializers.IntegerField(source="to_group_id")
-
     class Meta:
         model = CoordinatorLogEvent
-        fields = ("date_time", "type", "coordinator_id", "from_group_id", "to_group_id", "comment")
+        fields = ("type", "coordinator_id", "group_id", "comment")
 
 
 class GroupLogEventReadSerializer(serializers.ModelSerializer[GroupLogEvent]):
@@ -52,11 +47,9 @@ class GroupLogEventReadSerializer(serializers.ModelSerializer[GroupLogEvent]):
 class GroupLogEventWriteSerializer(serializers.ModelSerializer[GroupLogEvent]):
     """A serializer for writing group's log events."""
 
-    group_id = serializers.IntegerField(source="group_id", required=True)
-
     class Meta:
         model = GroupLogEvent
-        fields = ("date_time", "type", "group_id", "comment")
+        fields = ("type", "group_id", "comment")
 
 
 class StudentLogEventReadSerializer(serializers.ModelSerializer[StudentLogEvent]):
@@ -75,14 +68,9 @@ class StudentLogEventReadSerializer(serializers.ModelSerializer[StudentLogEvent]
 class StudentLogEventWriteSerializer(serializers.ModelSerializer[StudentLogEvent]):
     """A serializer for writing student's log events."""
 
-    student_id = serializers.IntegerField(source="student_id", required=True)
-
-    from_group_id = serializers.IntegerField(source="from_group_id")
-    to_group_id = serializers.IntegerField(source="to_group_id")
-
     class Meta:
         model = StudentLogEvent
-        fields = ("date_time", "type", "student_id", "from_group_id", "to_group_id", "comment")
+        fields = ("type", "student_id", "from_group_id", "to_group_id", "comment")
 
 
 class TeacherLogEventReadSerializer(serializers.ModelSerializer[TeacherLogEvent]):
@@ -101,14 +89,9 @@ class TeacherLogEventReadSerializer(serializers.ModelSerializer[TeacherLogEvent]
 class TeacherLogEventWriteSerializer(serializers.ModelSerializer[TeacherLogEvent]):
     """A serializer for writing adult teacher's log events."""
 
-    teacher_id = serializers.IntegerField(source="teacher_id", required=True)
-
-    from_group_id = serializers.IntegerField(source="from_group_id")
-    to_group_id = serializers.IntegerField(source="to_group_id")
-
     class Meta:
         model = TeacherLogEvent
-        fields = ("date_time", "type", "teacher_id", "from_group_id", "to_group_id", "comment")
+        fields = ("type", "teacher_id", "from_group_id", "to_group_id", "comment")
 
 
 class TeacherUnder18LogEventReadSerializer(serializers.ModelSerializer[TeacherUnder18LogEvent]):
@@ -124,8 +107,6 @@ class TeacherUnder18LogEventReadSerializer(serializers.ModelSerializer[TeacherUn
 class TeacherUnder18LogEventWriteSerializer(serializers.ModelSerializer[TeacherUnder18LogEvent]):
     """A serializer for writing young teacher's log events."""
 
-    teacher_id = serializers.IntegerField(source="teacher_id", required=True)
-
     class Meta:
         model = TeacherUnder18LogEvent
-        fields = ("date_time", "type", "teacher_id", "comment")
+        fields = ("type", "teacher_id", "comment")
