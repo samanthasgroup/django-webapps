@@ -46,7 +46,7 @@ python = "^3.10"
 django = "^4.2"
 gunicorn = "^20.1.0"
 django-phonenumber-field = {extras = ["phonenumberslite"], version = "^7.1.0"}
-django-extensions = "^3.2.1"
+django-extensions = "^3.2.3"
 psycopg2-binary = "^2.9.6"
 djangorestframework = "^3.14.0"
 drf-spectacular = "^0.26.2"
@@ -69,7 +69,7 @@ pytest = "^7.3.1"
 pytest-django = "^4.5.2"
 pytest-asyncio = "^0.21.0"
 faker = "^18.10.1"
-model-bakery = "^1.11.0"
+model-bakery = "^1.12.0"
 
 [tool.ruff]
 line-length = 99
