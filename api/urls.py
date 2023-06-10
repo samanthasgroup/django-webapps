@@ -18,7 +18,13 @@ from api.views import (
     TeacherUnder18ViewSet,
     TeacherViewSet,
 )
-from api.views.log_event import CoordinatorLogEventViewSet
+from api.views.log_event import (
+    CoordinatorLogEventViewSet,
+    GroupLogEventViewSet,
+    StudentLogEventViewSet,
+    TeacherLogEventViewSet,
+    TeacherUnder18LogEventViewSet,
+)
 
 internal_router = DefaultRouter()
 internal_router.register(r"personal_info", PersonalInfoViewSet, basename="personal_info")
@@ -42,6 +48,19 @@ internal_router.register(
 internal_router.register(
     r"coordinator_log_events", CoordinatorLogEventViewSet, basename="coordinator_log_events"
 )
+internal_router.register(r"group_log_events", GroupLogEventViewSet, basename="group_log_events")
+internal_router.register(
+    r"student_log_events", StudentLogEventViewSet, basename="student_log_events"
+)
+internal_router.register(
+    r"teacher_log_events", TeacherLogEventViewSet, basename="teacher_log_events"
+)
+internal_router.register(
+    r"teacher_under_18_log_events",
+    TeacherUnder18LogEventViewSet,
+    basename="teacher_under_18_log_events",
+)
+
 
 public_router = DefaultRouter()
 public_router.register(r"students", PublicStudentViewSet, basename="students")
