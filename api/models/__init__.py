@@ -39,6 +39,7 @@ __all__ = [
     "TeacherUnder18LogEvent",
     "Language",
     "LanguageAndLevel",
+    "LogEvent",
     "AgeRange",
     "TimeSlot",
     "DayAndTimeSlot",

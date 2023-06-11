@@ -32,6 +32,9 @@ class LogEvent(models.Model):
 
     comment = models.TextField()
     date_time = models.DateTimeField(auto_now_add=True)
+    # type will be overridden in each subclass, but it's needed here for attribute hinting
+    # when writing rules log events:
+    type = models.CharField(max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH)
 
     class Meta:
         abstract = True
