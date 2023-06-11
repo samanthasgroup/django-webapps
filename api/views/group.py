@@ -1,9 +1,7 @@
 from django.db import models
-from django.http import HttpResponse, HttpResponseBadRequest
 from django_filters import rest_framework as filters
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.generics import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
@@ -32,13 +30,7 @@ class PublicGroupViewSet(viewsets.ReadOnlyModelViewSet[Group]):
         raise NotImplementedError(f"Unknown action: {self.action}")
 
     @action(detail=True, methods=["post"])
-    def start(self, request: Request) -> Response | HttpResponse:
-        data = request.data
-        try:
-            group_id = data["id"]
-        except KeyError:
-            return HttpResponseBadRequest("Pass 'id' of the group in 'id' field.")
-
-        group = get_object_or_404(Group, pk=group_id)
+    def start(self, request: Request) -> Response:  # noqa: ARG002
+        group = self.get_object()
         GroupProcessor.start(group)
-        return Response(data=data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED)
