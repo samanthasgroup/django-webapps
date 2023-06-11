@@ -3,7 +3,13 @@ from datetime import datetime
 import pytz
 from django.db.models import F
 
-from api.models import Group
+from api.models import CoordinatorLogEvent, Group, GroupLogEvent, StudentLogEvent, TeacherLogEvent
+from api.models.choices.log_event_types import (
+    CoordinatorLogEventType,
+    GroupLogEventType,
+    StudentLogEventType,
+    TeacherLogEventType,
+)
 from api.models.choices.statuses import (
     CoordinatorStatus,
     GroupStatus,
@@ -17,6 +23,34 @@ from api.processors.base import Processor
 class GroupProcessor(Processor):
     @classmethod
     def start(cls, group: Group) -> None:
+        cls._create_log_events_start(group)
+        cls._set_statuses_start(group)
+
+    @classmethod
+    def _create_log_events_start(cls, group: Group) -> None:
+        GroupLogEvent.objects.create(group=group, type=GroupLogEventType.STARTED)
+
+        CoordinatorLogEvent.objects.bulk_create(
+            CoordinatorLogEvent(
+                coordinator=coordinator,
+                group=group,
+                type=CoordinatorLogEventType.TOOK_NEW_GROUP,
+            )
+            for coordinator in group.coordinators.iterator()
+        )
+
+        StudentLogEvent.objects.bulk_create(
+            StudentLogEvent(student=student, to_group=group, type=StudentLogEventType.STUDY_START)
+            for student in group.students.iterator()
+        )
+
+        TeacherLogEvent.objects.bulk_create(
+            TeacherLogEvent(teacher=teacher, to_group=group, type=TeacherLogEventType.STUDY_START)
+            for teacher in group.teachers.iterator()
+        )
+
+    @classmethod
+    def _set_statuses_start(cls, group: Group) -> None:
         timestamp = datetime.now(tz=pytz.UTC)
 
         cls._set_status(obj=group, status=GroupStatus.WORKING, status_since=timestamp)
