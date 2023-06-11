@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django_filters import rest_framework as filters
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
@@ -38,10 +39,6 @@ class PublicGroupViewSet(viewsets.ReadOnlyModelViewSet[Group]):
         except KeyError:
             return HttpResponseBadRequest("Pass 'id' of the group in 'id' field.")
 
-        try:
-            group = Group.objects.get(pk=group_id)
-        except Group.DoesNotExist:
-            return HttpResponseBadRequest(f"Group with id {group_id} not found")
-
+        group = get_object_or_404(Group, pk=group_id)
         GroupProcessor.start(group)
         return Response(data=data, status=status.HTTP_201_CREATED)
