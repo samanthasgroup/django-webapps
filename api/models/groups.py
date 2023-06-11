@@ -34,6 +34,7 @@ class Group(GroupCommon):
     status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=GroupStatus.choices
     )
+    status_since = models.DateTimeField(verbose_name="status in place since")
     start_date = models.DateField(null=True, blank=True)
     # this field could be useful for overview, but can be filled automatically when
     # a corresponding log event is created:
