@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pytz
+from django.db.models import F
 
 from api.models import Group
 from api.models.choices.statuses import (
@@ -20,7 +21,8 @@ class GroupProcessor(Processor):
 
         cls._set_status(obj=group, status=GroupStatus.WORKING, status_since=timestamp)
 
-        # cannot use "has_enough_groups" or "has_reached_group_limit" because they are properties
+        # Resulting status of coordinator depends on how many groups they now have.
+        # We can't use "has_enough_groups" or "has_reached_group_limit" because they are properties
         group.coordinators.filter(groups__count_lt=CoordinatorGroupLimit.MIN).update(
             status=CoordinatorStatus.WORKING_BELOW_THRESHOLD, status_since=timestamp
         )
@@ -34,13 +36,17 @@ class GroupProcessor(Processor):
             status=CoordinatorStatus.WORKING_LIMIT_REACHED, status_since=timestamp
         )
 
-        # FIXME set status depending on max_groups of teacher
-        group.teachers.update(
-            status=TeacherStatus.TEACHING_NOT_ACCEPTING_MORE,
+        group.students.update(
+            status=StudentStatus.STUDYING,
             status_since=timestamp,
         )
 
-        group.students.update(
-            status=StudentStatus.STUDYING,
+        group.teachers.filter(groups__count__lt=F("simultaneous_groups")).update(
+            status=TeacherStatus.TEACHING_ACCEPTING_MORE,
+            status_since=timestamp,
+        )
+
+        group.teachers.filter(groups__count__gte=F("simultaneous_groups")).update(
+            status=TeacherStatus.TEACHING_NOT_ACCEPTING_MORE,
             status_since=timestamp,
         )
