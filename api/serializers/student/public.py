@@ -1,45 +1,13 @@
 from rest_framework import serializers
 
 from api.models import Student
-from api.serializers import (
-    AgeRangeSerializer,
-    DayAndTimeSlotSerializer,
-    LanguageAndLevelSerializer,
-    PublicPersonalInfoSerializer,
-)
+from api.serializers import PublicPersonalInfoSerializer
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
 from api.serializers.group.minified import MinifiedGroupSerializer
 from api.serializers.language_and_level import MinifiedLanguageAndLevelSerializer
 from api.serializers.non_teaching_help import NonTeachingHelpSerializerField
 from api.serializers.utc_timedelta import UTCTimedeltaField
-
-
-class StudentWriteSerializer(serializers.ModelSerializer[Student]):
-    class Meta:
-        model = Student
-        exclude = ("children",)
-
-
-class StudentReadSerializer(serializers.ModelSerializer[Student]):
-    age_range = AgeRangeSerializer(read_only=True)
-    teaching_languages_and_levels = LanguageAndLevelSerializer(many=True, read_only=True)
-    availability_slots = DayAndTimeSlotSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Student
-        exclude = ("children",)
-
-
-class MinifiedStudentSerializer(serializers.ModelSerializer[Student]):
-    """Serializer for Student model with only id and full_name fields."""
-
-    full_name = serializers.CharField(source="personal_info.full_name")
-    id = serializers.IntegerField(source="personal_info_id")
-
-    class Meta:
-        model = Student
-        fields = ("id", "full_name")
 
 
 class CommonPublicStudentSerializer(serializers.ModelSerializer[Student]):
