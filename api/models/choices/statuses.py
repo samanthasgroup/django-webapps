@@ -112,3 +112,6 @@ class TeacherUnder18Status(models.TextChoices):
     FINISHED_STAYS = "finished_stays", "Finished teaching but remains in the project"
     BANNED = "banned", "Banned from the project"
     REMOVED = "removed", "All access revoked, accounts closed"
+
+
+Status = CoordinatorStatus | GroupStatus | StudentStatus | TeacherStatus | TeacherUnder18Status

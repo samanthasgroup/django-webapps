@@ -121,6 +121,8 @@ class Person(models.Model):
         primary_key=True,
         related_name="as_%(class)s",  # produces `.as_coordinator` etc.
     )
+    # this will be overridden in each model: putting this here for mypy
+    status = models.CharField(max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH)
 
     # This field is not just as a shortcut for log event timestamps: not all statuses have
     # corresponding LogEvent... objects.
