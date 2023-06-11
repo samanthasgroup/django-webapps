@@ -1,3 +1,7 @@
+from datetime import datetime
+
+import pytz
+
 from api.models import Group
 from api.models.choices.statuses import (
     CoordinatorStatus,
@@ -11,15 +15,20 @@ from api.processors.base import Processor
 class GroupProcessor(Processor):
     @classmethod
     def start(cls, group: Group) -> None:
-        cls._set_status(obj=group, status=GroupStatus.WORKING)
+        timestamp = datetime.now(tz=pytz.UTC)
 
-        # FIXME things below depend on teacher's/coordinator's params, just showing general logic
+        cls._set_status(obj=group, status=GroupStatus.WORKING, status_since=timestamp)
 
-        for coordinator in group.coordinators.iterator():
-            cls._set_status(obj=coordinator, status=CoordinatorStatus.WORKING_OK)
+        # FIXME set status depending on whether the threshold or limit is reached
+        group.coordinators.update(status=CoordinatorStatus.WORKING_OK, status_since=timestamp)
 
-        for teacher in group.teachers.iterator():
-            cls._set_status(obj=teacher, status=TeacherStatus.TEACHING_NOT_ACCEPTING_MORE)
+        # FIXME set status depending on max_groups of teacher
+        group.teachers.update(
+            status=TeacherStatus.TEACHING_NOT_ACCEPTING_MORE,
+            status_since=timestamp,
+        )
 
-        for student in group.students.iterator():
-            cls._set_status(obj=student, status=StudentStatus.STUDYING)
+        group.students.update(
+            status=StudentStatus.STUDYING,
+            status_since=timestamp,
+        )
