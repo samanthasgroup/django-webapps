@@ -98,3 +98,9 @@ def test_public_group_retrieve(api_client):
         ],
         "is_for_staff_only": group.is_for_staff_only,
     }
+
+
+def test_public_group_start(api_client):
+    group = baker.make(Group, _fill_optional=True)
+    response = api_client.post(f"/api/public/groups/{group.id}/start/")
+    assert response.status_code == status.HTTP_201_CREATED

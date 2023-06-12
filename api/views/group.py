@@ -30,7 +30,7 @@ class PublicGroupViewSet(viewsets.ReadOnlyModelViewSet[Group]):
         raise NotImplementedError(f"Unknown action: {self.action}")
 
     @action(detail=True, methods=["post"])
-    def start(self, request: Request) -> Response:  # noqa: ARG002
+    def start(self, request: Request, pk: int) -> Response:  # noqa: ARG002
         group = self.get_object()
         GroupProcessor.start(group)
         return Response(status=status.HTTP_201_CREATED)

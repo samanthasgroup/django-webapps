@@ -1,7 +1,6 @@
 import datetime
 
 from django.db import transaction
-from django.db.models import F
 from django.utils import timezone
 
 from api.models import CoordinatorLogEvent, Group, GroupLogEvent, StudentLogEvent, TeacherLogEvent
@@ -17,7 +16,7 @@ from api.models.choices.statuses import (
     StudentStatus,
     TeacherStatus,
 )
-from api.models.people import CoordinatorManager
+from api.models.people import CoordinatorManager, TeacherManager
 from api.processors.base import Processor
 
 
@@ -81,12 +80,14 @@ class GroupProcessor(Processor):
 
     @staticmethod
     def _set_teachers_status_start(group: Group, timestamp: datetime.datetime) -> None:
-        group.teachers.filter(groups__count__lt=F("simultaneous_groups")).update(
+        teachers: TeacherManager = group.teachers  # type: ignore[assignment]
+
+        teachers.can_take_more_groups().update(
             status=TeacherStatus.TEACHING_ACCEPTING_MORE,
             status_since=timestamp,
         )
 
-        group.teachers.filter(groups__count__gte=F("simultaneous_groups")).update(
+        teachers.cannot_take_more_groups().update(
             status=TeacherStatus.TEACHING_NOT_ACCEPTING_MORE,
             status_since=timestamp,
         )

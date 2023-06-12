@@ -3,6 +3,7 @@ from collections.abc import Iterable
 from datetime import timedelta
 
 from django.db import models
+from django.db.models import Count, F
 from phonenumber_field import modelfields
 
 from api.models.age_ranges import AgeRange
@@ -138,20 +139,23 @@ class Person(models.Model):
 
 
 class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
+    def annotate_with_count(self) -> "CoordinatorQuerySet":
+        return self.annotate(group_count=Count("groups"))
+
     def below_threshold(self) -> "CoordinatorQuerySet":
         """QuerySet with coordinators with not enough groups."""
-        return self.filter(groups__count_lt=CoordinatorGroupLimit.MIN)
+        return self.annotate_with_count().filter(group_count__lt=CoordinatorGroupLimit.MIN)
 
     def ok(self) -> "CoordinatorQuerySet":
         """QuerySet with coordinators that are above threshold and within limit."""
-        return self.filter(
-            groups__count__gte=CoordinatorGroupLimit.MIN,
-            groups__count__lt=CoordinatorGroupLimit.MAX,
+        return self.annotate_with_count().filter(
+            group_count__gte=CoordinatorGroupLimit.MIN,
+            group_count__lt=CoordinatorGroupLimit.MAX,
         )
 
     def limit_reached(self) -> "CoordinatorQuerySet":
         """QuerySet with coordinators that have exceeded the limit of groups."""
-        return self.filter(groups__count__gte=CoordinatorGroupLimit.MAX)
+        return self.annotate_with_count().filter(group_count__gte=CoordinatorGroupLimit.MAX)
 
 
 class CoordinatorManager(models.Manager["Coordinator"]):
@@ -159,7 +163,6 @@ class CoordinatorManager(models.Manager["Coordinator"]):
         return CoordinatorQuerySet(self.model, using=self._db)
 
     def below_threshold(self) -> CoordinatorQuerySet:
-        """Below"""
         return self.get_queryset().below_threshold()
 
     def ok(self) -> CoordinatorQuerySet:
@@ -296,6 +299,30 @@ class TeacherCommon(Person):
         abstract = True
 
 
+class TeacherQuerySet(models.QuerySet["Teacher"]):
+    def annotate_with_count(self) -> "TeacherQuerySet":
+        return self.annotate(group_count=Count("groups"))
+
+    def can_take_more_groups(self) -> "TeacherQuerySet":
+        """QuerySet with Teachers that can take more groups."""
+        return self.annotate_with_count().filter(group_count__lt=F("simultaneous_groups"))
+
+    def cannot_take_more_groups(self) -> "TeacherQuerySet":
+        """QuerySet with Teachers that cannot take any more groups."""
+        return self.annotate_with_count().filter(group_count__gte=F("simultaneous_groups"))
+
+
+class TeacherManager(models.Manager["Teacher"]):
+    def get_queryset(self) -> TeacherQuerySet:
+        return TeacherQuerySet(self.model, using=self._db)
+
+    def can_take_more_groups(self) -> TeacherQuerySet:
+        return self.get_queryset().can_take_more_groups()
+
+    def cannot_take_more_groups(self) -> TeacherQuerySet:
+        return self.get_queryset().cannot_take_more_groups()
+
+
 class Teacher(TeacherCommon):
     """Model for an adult teacher that can teach groups."""
 
@@ -367,6 +394,8 @@ class Teacher(TeacherCommon):
             "start (or return to) group studies and the frequency column will become relevant."
         )
     )
+
+    objects = TeacherManager()
 
     class Meta:
         indexes = [
