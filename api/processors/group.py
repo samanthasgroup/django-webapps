@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import transaction
 from django.db.models import F
 from django.utils import timezone
@@ -55,6 +57,11 @@ class GroupProcessor(Processor):
 
         cls._set_status(obj=group, status=GroupStatus.WORKING, status_since=timestamp)
 
+        for category in ("coordinators", "students", "teachers"):
+            getattr(cls, f"_set_{category}_status_start")(group=group, timestamp=timestamp)
+
+    @staticmethod
+    def _set_coordinators_status_start(group: Group, timestamp: datetime.datetime) -> None:
         # Resulting status of coordinator depends on how many groups they now have.
         # We can't use "has_enough_groups" or "has_reached_group_limit" because they are properties
         group.coordinators.filter(groups__count_lt=CoordinatorGroupLimit.MIN).update(
@@ -70,11 +77,15 @@ class GroupProcessor(Processor):
             status=CoordinatorStatus.WORKING_LIMIT_REACHED, status_since=timestamp
         )
 
+    @staticmethod
+    def _set_students_status_start(group: Group, timestamp: datetime.datetime) -> None:
         group.students.update(
             status=StudentStatus.STUDYING,
             status_since=timestamp,
         )
 
+    @staticmethod
+    def _set_teachers_status_start(group: Group, timestamp: datetime.datetime) -> None:
         group.teachers.filter(groups__count__lt=F("simultaneous_groups")).update(
             status=TeacherStatus.TEACHING_ACCEPTING_MORE,
             status_since=timestamp,
