@@ -138,6 +138,9 @@ class Person(models.Model):
         return f"{self.personal_info.full_name}. Status: {getattr(self, 'status')}"
 
 
+# TODO the module is getting big. We can move Coordinator... etc into separate modules,
+#  which will also allow to rename all model modules into singular (because "people.py"
+#  will only contain `Person`).
 class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
     def annotate_with_count(self) -> "CoordinatorQuerySet":
         return self.annotate(group_count=Count("groups"))

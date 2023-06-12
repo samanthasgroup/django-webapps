@@ -2,10 +2,11 @@ from model_bakery import baker
 from rest_framework import status
 
 from api.models import Group
+from api.models.choices.statuses import StudentStatus
 
 
 def test_public_group_list(api_client):
-    group = baker.make(Group, _fill_optional=True)
+    group = baker.make(Group, _fill_optional=True, make_m2m=True)
     response = api_client.get("/api/public/groups/")
 
     response_json = response.json()
@@ -32,14 +33,14 @@ def test_public_group_list(api_client):
             "telegram_chat_url": group.telegram_chat_url,
             "coordinators": [
                 {
-                    "id": coordinator.id,
+                    "id": coordinator.pk,
                     "full_name": coordinator.personal_info.full_name,
                 }
                 for coordinator in group.coordinators.all()
             ],
             "teachers": [
                 {
-                    "id": teacher.id,
+                    "id": teacher.pk,
                     "full_name": teacher.personal_info.full_name,
                 }
                 for teacher in group.teachers.all()
@@ -51,7 +52,7 @@ def test_public_group_list(api_client):
 
 
 def test_public_group_retrieve(api_client):
-    group = baker.make(Group, _fill_optional=True)
+    group = baker.make(Group, _fill_optional=True, make_m2m=True)
     response = api_client.get(f"/api/public/groups/{group.pk}/")
 
     response_json = response.json()
@@ -77,21 +78,21 @@ def test_public_group_retrieve(api_client):
         "telegram_chat_url": group.telegram_chat_url,
         "coordinators": [
             {
-                "id": coordinator.id,
+                "id": coordinator.pk,
                 "full_name": coordinator.personal_info.full_name,
             }
             for coordinator in group.coordinators.all()
         ],
         "teachers": [
             {
-                "id": teacher.id,
+                "id": teacher.pk,
                 "full_name": teacher.personal_info.full_name,
             }
             for teacher in group.teachers.all()
         ],
         "students": [
             {
-                "id": student.id,
+                "id": student.pk,
                 "full_name": student.personal_info.full_name,
             }
             for student in group.students.all()
@@ -101,6 +102,12 @@ def test_public_group_retrieve(api_client):
 
 
 def test_public_group_start(api_client):
-    group = baker.make(Group, _fill_optional=True)
+    group = baker.make(Group, _fill_optional=True, make_m2m=True)
+
+    group.students.update(status=StudentStatus.AWAITING_START)
+
     response = api_client.post(f"/api/public/groups/{group.id}/start/")
     assert response.status_code == status.HTTP_201_CREATED
+
+    for student in group.students.iterator():
+        assert student.status == StudentStatus.STUDYING
