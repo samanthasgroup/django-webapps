@@ -110,7 +110,7 @@ def test_public_group_retrieve(api_client):
     }
 
 
-class TestStartGroup:
+class TestPublicGroupStart:
     def test_public_group_start_general_check(self, api_client):
         group = baker.make(Group, _fill_optional=True, make_m2m=True)
 
