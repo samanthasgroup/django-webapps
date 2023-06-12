@@ -1,7 +1,7 @@
 import datetime
 from abc import ABC
 
-import pytz
+from django.utils import timezone
 
 from api.models.choices.statuses import Status
 from api.models.groups import Group
@@ -19,5 +19,5 @@ class Processor(ABC):
         for multiple log events.
         """
         obj.status = status
-        obj.status_since = status_since or datetime.datetime.now(tz=pytz.UTC)
+        obj.status_since = status_since or timezone.now()
         obj.save()

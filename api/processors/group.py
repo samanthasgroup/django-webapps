@@ -1,7 +1,5 @@
-import datetime
-
-import pytz
 from django.db.models import F
+from django.utils import timezone
 
 from api.models import CoordinatorLogEvent, Group, GroupLogEvent, StudentLogEvent, TeacherLogEvent
 from api.models.choices.log_event_types import (
@@ -51,7 +49,7 @@ class GroupProcessor(Processor):
 
     @classmethod
     def _set_statuses_start(cls, group: Group) -> None:
-        timestamp = datetime.datetime.now(tz=pytz.UTC)
+        timestamp = timezone.now()
 
         cls._set_status(obj=group, status=GroupStatus.WORKING, status_since=timestamp)
 
