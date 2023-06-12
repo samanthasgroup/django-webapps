@@ -1,8 +1,17 @@
+import datetime
+
+from django.db import transaction
+from django.utils import timezone
 from model_bakery import baker
 from rest_framework import status
 
 from api.models import Group
-from api.models.choices.statuses import StudentStatus
+from api.models.choices.statuses import (
+    CoordinatorStatus,
+    GroupStatus,
+    StudentStatus,
+    TeacherStatus,
+)
 
 
 def test_public_group_list(api_client):
@@ -101,13 +110,52 @@ def test_public_group_retrieve(api_client):
     }
 
 
-def test_public_group_start(api_client):
-    group = baker.make(Group, _fill_optional=True, make_m2m=True)
+class TestStartGroup:
+    def test_public_group_start_general_check(self, api_client):
+        group = baker.make(Group, _fill_optional=True, make_m2m=True)
 
-    group.students.update(status=StudentStatus.AWAITING_START)
+        with transaction.atomic():
+            group.status = GroupStatus.AWAITING_START
+            # to make sure the status_since really gets updated:
+            group.status_since = timezone.now() - datetime.timedelta(days=1, hours=1, minutes=10)
+            group.save()
+            group.coordinators.update(status=CoordinatorStatus.WORKING_BELOW_THRESHOLD)
+            group.students.update(status=StudentStatus.AWAITING_START)
+            group.teachers.update(status=TeacherStatus.AWAITING_START)
 
-    response = api_client.post(f"/api/public/groups/{group.id}/start/")
-    assert response.status_code == status.HTTP_201_CREATED
+        response = api_client.post(self._make_url(group))
 
-    for student in group.students.iterator():
-        assert student.status == StudentStatus.STUDYING
+        assert response.status_code == status.HTTP_201_CREATED
+
+        group = Group.objects.get(pk=group.id)  # reload, or else status will be the old one
+        assert group.status == GroupStatus.WORKING
+
+        common_status_since = group.status_since
+        assert common_status_since.day == timezone.now().day
+        assert common_status_since.hour == timezone.now().hour
+        assert common_status_since.minute == timezone.now().minute
+
+        for coordinator in group.coordinators.iterator():
+            assert coordinator.status in (
+                CoordinatorStatus.WORKING_BELOW_THRESHOLD,
+                CoordinatorStatus.WORKING_OK,
+                CoordinatorStatus.WORKING_LIMIT_REACHED,
+            )
+            assert coordinator.status_since == common_status_since
+
+        for student in group.students.iterator():
+            assert student.status == StudentStatus.STUDYING
+            assert student.status_since == common_status_since
+
+        for teacher in group.teachers.iterator():
+            assert teacher.status in (
+                TeacherStatus.TEACHING_ACCEPTING_MORE,
+                TeacherStatus.TEACHING_NOT_ACCEPTING_MORE,
+            )
+            assert teacher.status_since == common_status_since
+
+        # TODO test creation of log events
+
+    @staticmethod
+    def _make_url(group: Group) -> str:
+        return f"/api/public/groups/{group.id}/start/"
