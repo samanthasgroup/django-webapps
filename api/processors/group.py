@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 import pytz
 from django.db.models import F
@@ -51,7 +51,7 @@ class GroupProcessor(Processor):
 
     @classmethod
     def _set_statuses_start(cls, group: Group) -> None:
-        timestamp = datetime.now(tz=pytz.UTC)
+        timestamp = datetime.datetime.now(tz=pytz.UTC)
 
         cls._set_status(obj=group, status=GroupStatus.WORKING, status_since=timestamp)
 
