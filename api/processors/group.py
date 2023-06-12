@@ -17,7 +17,7 @@ from api.models.choices.statuses import (
     StudentStatus,
     TeacherStatus,
 )
-from api.models.constants import CoordinatorGroupLimit
+from api.models.people import CoordinatorManager
 from api.processors.base import Processor
 
 
@@ -62,18 +62,13 @@ class GroupProcessor(Processor):
 
     @staticmethod
     def _set_coordinators_status_start(group: Group, timestamp: datetime.datetime) -> None:
-        # Resulting status of coordinator depends on how many groups they now have.
-        # We can't use "has_enough_groups" or "has_reached_group_limit" because they are properties
-        group.coordinators.filter(groups__count_lt=CoordinatorGroupLimit.MIN).update(
+        coordinators: CoordinatorManager = group.coordinators  # type: ignore[assignment]
+
+        coordinators.below_threshold().update(
             status=CoordinatorStatus.WORKING_BELOW_THRESHOLD, status_since=timestamp
         )
-
-        group.coordinators.filter(
-            groups__count__gte=CoordinatorGroupLimit.MIN,
-            groups__count__lt=CoordinatorGroupLimit.MAX,
-        ).update(status=CoordinatorStatus.WORKING_OK, status_since=timestamp)
-
-        group.coordinators.filter(groups__count__gte=CoordinatorGroupLimit.MAX).update(
+        coordinators.ok().update(status=CoordinatorStatus.WORKING_OK, status_since=timestamp)
+        coordinators.limit_reached().update(
             status=CoordinatorStatus.WORKING_LIMIT_REACHED, status_since=timestamp
         )
 

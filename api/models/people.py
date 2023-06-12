@@ -137,6 +137,38 @@ class Person(models.Model):
         return f"{self.personal_info.full_name}. Status: {getattr(self, 'status')}"
 
 
+class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
+    def below_threshold(self) -> "CoordinatorQuerySet":
+        """QuerySet with coordinators with not enough groups."""
+        return self.filter(groups__count_lt=CoordinatorGroupLimit.MIN)
+
+    def ok(self) -> "CoordinatorQuerySet":
+        """QuerySet with coordinators that are above threshold and within limit."""
+        return self.filter(
+            groups__count__gte=CoordinatorGroupLimit.MIN,
+            groups__count__lt=CoordinatorGroupLimit.MAX,
+        )
+
+    def limit_reached(self) -> "CoordinatorQuerySet":
+        """QuerySet with coordinators that have exceeded the limit of groups."""
+        return self.filter(groups__count__gte=CoordinatorGroupLimit.MAX)
+
+
+class CoordinatorManager(models.Manager["Coordinator"]):
+    def get_queryset(self) -> CoordinatorQuerySet:
+        return CoordinatorQuerySet(self.model, using=self._db)
+
+    def below_threshold(self) -> CoordinatorQuerySet:
+        """Below"""
+        return self.get_queryset().below_threshold()
+
+    def ok(self) -> CoordinatorQuerySet:
+        return self.get_queryset().ok()
+
+    def limit_reached(self) -> CoordinatorQuerySet:
+        return self.get_queryset().limit_reached()
+
+
 class Coordinator(Person):
     """Model for a coordinator."""
 
@@ -162,6 +194,8 @@ class Coordinator(Person):
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=CoordinatorStatus.choices,
     )
+
+    objects = CoordinatorManager()
 
     class Meta:
         indexes = [models.Index(fields=("status",), name="coordinator_status_idx")]
