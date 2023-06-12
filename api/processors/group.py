@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import F
 from django.utils import timezone
 
@@ -20,6 +21,7 @@ from api.processors.base import Processor
 
 class GroupProcessor(Processor):
     @classmethod
+    @transaction.atomic
     def start(cls, group: Group) -> None:
         cls._create_log_events_start(group)
         cls._set_statuses_start(group)
