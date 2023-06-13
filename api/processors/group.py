@@ -16,7 +16,7 @@ from api.models.choices.statuses import (
     StudentStatus,
     TeacherStatus,
 )
-from api.models.people import CoordinatorManager, TeacherManager
+from api.models.people import CoordinatorQuerySet, TeacherQuerySet
 from api.processors.base import Processor
 
 
@@ -61,7 +61,9 @@ class GroupProcessor(Processor):
 
     @staticmethod
     def _set_coordinators_status_start(group: Group, timestamp: datetime.datetime) -> None:
-        coordinators: CoordinatorManager = group.coordinators  # type: ignore[assignment]
+        # the type is actually Manager, but we put QuerySet here to stop IDE and mypy
+        # complaining about missing attributes (since we're using `as_manager()` in the model)
+        coordinators: CoordinatorQuerySet = group.coordinators  # type: ignore[assignment]
 
         coordinators.below_threshold().update(
             status=CoordinatorStatus.WORKING_BELOW_THRESHOLD, status_since=timestamp
@@ -82,7 +84,9 @@ class GroupProcessor(Processor):
 
     @staticmethod
     def _set_teachers_status_start(group: Group, timestamp: datetime.datetime) -> None:
-        teachers: TeacherManager = group.teachers  # type: ignore[assignment]
+        # the type is actually Manager, but we put QuerySet here to stop IDE and mypy
+        # complaining about missing attributes (since we're using `as_manager()` in the model)
+        teachers: TeacherQuerySet = group.teachers  # type: ignore[assignment]
 
         teachers.can_take_more_groups().update(
             status=TeacherStatus.TEACHING_ACCEPTING_MORE,

@@ -161,20 +161,6 @@ class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
         return self.annotate_with_group_count().filter(group_count__gte=CoordinatorGroupLimit.MAX)
 
 
-class CoordinatorManager(models.Manager["Coordinator"]):
-    def get_queryset(self) -> CoordinatorQuerySet:
-        return CoordinatorQuerySet(self.model, using=self._db)
-
-    def below_threshold(self) -> CoordinatorQuerySet:
-        return self.get_queryset().below_threshold()
-
-    def above_threshold_and_within_limit(self) -> CoordinatorQuerySet:
-        return self.get_queryset().above_threshold_and_within_limit()
-
-    def limit_reached(self) -> CoordinatorQuerySet:
-        return self.get_queryset().limit_reached()
-
-
 class Coordinator(Person):
     """Model for a coordinator."""
 
@@ -201,7 +187,7 @@ class Coordinator(Person):
         choices=CoordinatorStatus.choices,
     )
 
-    objects = CoordinatorManager()
+    objects = CoordinatorQuerySet.as_manager()
 
     class Meta:
         indexes = [models.Index(fields=("status",), name="coordinator_status_idx")]
@@ -315,17 +301,6 @@ class TeacherQuerySet(models.QuerySet["Teacher"]):
         return self.annotate_with_group_count().filter(group_count__gte=F("simultaneous_groups"))
 
 
-class TeacherManager(models.Manager["Teacher"]):
-    def get_queryset(self) -> TeacherQuerySet:
-        return TeacherQuerySet(self.model, using=self._db)
-
-    def can_take_more_groups(self) -> TeacherQuerySet:
-        return self.get_queryset().can_take_more_groups()
-
-    def cannot_take_more_groups(self) -> TeacherQuerySet:
-        return self.get_queryset().cannot_take_more_groups()
-
-
 class Teacher(TeacherCommon):
     """Model for an adult teacher that can teach groups."""
 
@@ -398,7 +373,7 @@ class Teacher(TeacherCommon):
         )
     )
 
-    objects = TeacherManager()
+    objects = TeacherQuerySet.as_manager()
 
     class Meta:
         indexes = [
