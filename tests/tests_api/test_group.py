@@ -127,7 +127,7 @@ class TestPublicGroupStart:
 
         assert response.status_code == status.HTTP_201_CREATED
 
-        group = Group.objects.get(pk=group.id)  # reload, or else status will be the old one
+        group.refresh_from_db()
         assert group.status == GroupStatus.WORKING
 
         common_status_since = group.status_since
