@@ -142,23 +142,23 @@ class Person(models.Model):
 #  which will also allow to rename all model modules into singular (because "people.py"
 #  will only contain `Person`).
 class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
-    def annotate_with_count(self) -> "CoordinatorQuerySet":
+    def annotate_with_group_count(self) -> "CoordinatorQuerySet":
         return self.annotate(group_count=Count("groups"))
 
     def below_threshold(self) -> "CoordinatorQuerySet":
         """QuerySet with coordinators with not enough groups."""
-        return self.annotate_with_count().filter(group_count__lt=CoordinatorGroupLimit.MIN)
+        return self.annotate_with_group_count().filter(group_count__lt=CoordinatorGroupLimit.MIN)
 
     def ok(self) -> "CoordinatorQuerySet":
         """QuerySet with coordinators that are above threshold and within limit."""
-        return self.annotate_with_count().filter(
+        return self.annotate_with_group_count().filter(
             group_count__gte=CoordinatorGroupLimit.MIN,
             group_count__lt=CoordinatorGroupLimit.MAX,
         )
 
     def limit_reached(self) -> "CoordinatorQuerySet":
         """QuerySet with coordinators that have exceeded the limit of groups."""
-        return self.annotate_with_count().filter(group_count__gte=CoordinatorGroupLimit.MAX)
+        return self.annotate_with_group_count().filter(group_count__gte=CoordinatorGroupLimit.MAX)
 
 
 class CoordinatorManager(models.Manager["Coordinator"]):
@@ -303,16 +303,16 @@ class TeacherCommon(Person):
 
 
 class TeacherQuerySet(models.QuerySet["Teacher"]):
-    def annotate_with_count(self) -> "TeacherQuerySet":
+    def annotate_with_group_count(self) -> "TeacherQuerySet":
         return self.annotate(group_count=Count("groups"))
 
     def can_take_more_groups(self) -> "TeacherQuerySet":
         """QuerySet with Teachers that can take more groups."""
-        return self.annotate_with_count().filter(group_count__lt=F("simultaneous_groups"))
+        return self.annotate_with_group_count().filter(group_count__lt=F("simultaneous_groups"))
 
     def cannot_take_more_groups(self) -> "TeacherQuerySet":
         """QuerySet with Teachers that cannot take any more groups."""
-        return self.annotate_with_count().filter(group_count__gte=F("simultaneous_groups"))
+        return self.annotate_with_group_count().filter(group_count__gte=F("simultaneous_groups"))
 
 
 class TeacherManager(models.Manager["Teacher"]):
