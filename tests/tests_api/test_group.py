@@ -1,5 +1,6 @@
 import datetime
 
+from django.urls import reverse
 from django.utils import timezone
 from model_bakery import baker
 from rest_framework import status
@@ -157,4 +158,4 @@ class TestPublicGroupStart:
 
     @staticmethod
     def _make_url(group: Group) -> str:
-        return f"/api/public/groups/{group.id}/start/"
+        return reverse("groups-start", kwargs={"pk": group.id})
