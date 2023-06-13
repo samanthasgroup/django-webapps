@@ -56,8 +56,9 @@ class GroupProcessor(Processor):
 
         cls._set_status(obj=group, status=GroupStatus.WORKING, status_since=timestamp)
 
-        for category in ("coordinators", "students", "teachers"):
-            getattr(cls, f"_set_{category}_status_start")(group=group, timestamp=timestamp)
+        cls._set_coordinators_status_start(group=group, timestamp=timestamp)
+        cls._set_students_status_start(group=group, timestamp=timestamp)
+        cls._set_teachers_status_start(group=group, timestamp=timestamp)
 
     @staticmethod
     def _set_coordinators_status_start(group: Group, timestamp: datetime.datetime) -> None:
