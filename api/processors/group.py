@@ -65,13 +65,13 @@ class GroupProcessor(Processor):
         # complaining about missing attributes (since we're using `as_manager()` in the model)
         coordinators: CoordinatorQuerySet = group.coordinators  # type: ignore[assignment]
 
-        coordinators.below_threshold().update(
+        coordinators.filter_below_threshold().update(
             status=CoordinatorStatus.WORKING_BELOW_THRESHOLD, status_since=timestamp
         )
-        coordinators.above_threshold_and_within_limit().update(
+        coordinators.filter_above_threshold_and_within_limit().update(
             status=CoordinatorStatus.WORKING_OK, status_since=timestamp
         )
-        coordinators.limit_reached().update(
+        coordinators.filter_limit_reached().update(
             status=CoordinatorStatus.WORKING_LIMIT_REACHED, status_since=timestamp
         )
 
@@ -88,12 +88,12 @@ class GroupProcessor(Processor):
         # complaining about missing attributes (since we're using `as_manager()` in the model)
         teachers: TeacherQuerySet = group.teachers  # type: ignore[assignment]
 
-        teachers.can_take_more_groups().update(
+        teachers.filter_can_take_more_groups().update(
             status=TeacherStatus.TEACHING_ACCEPTING_MORE,
             status_since=timestamp,
         )
 
-        teachers.cannot_take_more_groups().update(
+        teachers.filter_cannot_take_more_groups().update(
             status=TeacherStatus.TEACHING_NOT_ACCEPTING_MORE,
             status_since=timestamp,
         )

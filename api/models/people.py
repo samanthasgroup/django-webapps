@@ -145,18 +145,18 @@ class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
     def annotate_with_group_count(self) -> "CoordinatorQuerySet":
         return self.annotate(group_count=Count("groups"))
 
-    def below_threshold(self) -> "CoordinatorQuerySet":
+    def filter_below_threshold(self) -> "CoordinatorQuerySet":
         """QuerySet with coordinators with not enough groups."""
         return self.annotate_with_group_count().filter(group_count__lt=CoordinatorGroupLimit.MIN)
 
-    def above_threshold_and_within_limit(self) -> "CoordinatorQuerySet":
+    def filter_above_threshold_and_within_limit(self) -> "CoordinatorQuerySet":
         """QuerySet with coordinators that are above threshold and within limit."""
         return self.annotate_with_group_count().filter(
             group_count__gte=CoordinatorGroupLimit.MIN,
             group_count__lt=CoordinatorGroupLimit.MAX,
         )
 
-    def limit_reached(self) -> "CoordinatorQuerySet":
+    def filter_limit_reached(self) -> "CoordinatorQuerySet":
         """QuerySet with coordinators that have exceeded the limit of groups."""
         return self.annotate_with_group_count().filter(group_count__gte=CoordinatorGroupLimit.MAX)
 
@@ -292,11 +292,11 @@ class TeacherQuerySet(models.QuerySet["Teacher"]):
     def annotate_with_group_count(self) -> "TeacherQuerySet":
         return self.annotate(group_count=Count("groups"))
 
-    def can_take_more_groups(self) -> "TeacherQuerySet":
+    def filter_can_take_more_groups(self) -> "TeacherQuerySet":
         """QuerySet with Teachers that can take more groups."""
         return self.annotate_with_group_count().filter(group_count__lt=F("simultaneous_groups"))
 
-    def cannot_take_more_groups(self) -> "TeacherQuerySet":
+    def filter_cannot_take_more_groups(self) -> "TeacherQuerySet":
         """QuerySet with Teachers that cannot take any more groups."""
         return self.annotate_with_group_count().filter(group_count__gte=F("simultaneous_groups"))
 
