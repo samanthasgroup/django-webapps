@@ -66,7 +66,9 @@ class GroupProcessor(Processor):
         coordinators.below_threshold().update(
             status=CoordinatorStatus.WORKING_BELOW_THRESHOLD, status_since=timestamp
         )
-        coordinators.ok().update(status=CoordinatorStatus.WORKING_OK, status_since=timestamp)
+        coordinators.above_threshold_and_within_limit().update(
+            status=CoordinatorStatus.WORKING_OK, status_since=timestamp
+        )
         coordinators.limit_reached().update(
             status=CoordinatorStatus.WORKING_LIMIT_REACHED, status_since=timestamp
         )

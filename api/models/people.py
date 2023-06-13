@@ -149,7 +149,7 @@ class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
         """QuerySet with coordinators with not enough groups."""
         return self.annotate_with_group_count().filter(group_count__lt=CoordinatorGroupLimit.MIN)
 
-    def ok(self) -> "CoordinatorQuerySet":
+    def above_threshold_and_within_limit(self) -> "CoordinatorQuerySet":
         """QuerySet with coordinators that are above threshold and within limit."""
         return self.annotate_with_group_count().filter(
             group_count__gte=CoordinatorGroupLimit.MIN,
@@ -168,8 +168,8 @@ class CoordinatorManager(models.Manager["Coordinator"]):
     def below_threshold(self) -> CoordinatorQuerySet:
         return self.get_queryset().below_threshold()
 
-    def ok(self) -> CoordinatorQuerySet:
-        return self.get_queryset().ok()
+    def above_threshold_and_within_limit(self) -> CoordinatorQuerySet:
+        return self.get_queryset().above_threshold_and_within_limit()
 
     def limit_reached(self) -> CoordinatorQuerySet:
         return self.get_queryset().limit_reached()
