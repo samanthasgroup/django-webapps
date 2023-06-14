@@ -10,6 +10,9 @@ assignees: Roxe322
 
 When ____:
 
+## Create/change objects
+- 
+
 ## Create log events
 
 Types of `LogEvent`s to be created:
@@ -29,4 +32,4 @@ Types of `LogEvent`s to be created:
   - if... :  `STATUS`
   - else: `STATUS`
 
-Remember to update `status_since` to current time in UTC for all entities.
+Remember to update `status_since` to current time in UTC in objects (where applicable).
