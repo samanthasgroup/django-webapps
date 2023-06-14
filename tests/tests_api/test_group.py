@@ -5,7 +5,7 @@ from django.urls import reverse
 from model_bakery import baker
 from rest_framework import status
 
-from api.models import CoordinatorLogEvent, Group, StudentLogEvent, TeacherLogEvent
+from api.models import Coordinator, CoordinatorLogEvent, Group, StudentLogEvent, TeacherLogEvent
 from api.models.choices.log_event_types import (
     CoordinatorLogEventType,
     StudentLogEventType,
@@ -17,6 +17,7 @@ from api.models.choices.statuses import (
     StudentStatus,
     TeacherStatus,
 )
+from api.models.constants import CoordinatorGroupLimit
 
 
 def test_public_group_list(api_client):
@@ -173,6 +174,38 @@ class TestPublicGroupStart:
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
             assert log_event.type == TeacherLogEventType.STUDY_START
             self._compare_date_time_with_timestamp(log_event.date_time, timestamp)
+
+    @pytest.mark.parametrize(
+        "number_of_groups_to_start, expected_status",
+        [
+            (CoordinatorGroupLimit.MIN - 1, CoordinatorStatus.WORKING_BELOW_THRESHOLD),
+            (CoordinatorGroupLimit.MIN, CoordinatorStatus.WORKING_OK),
+            (CoordinatorGroupLimit.MIN + 1, CoordinatorStatus.WORKING_OK),
+            (CoordinatorGroupLimit.MAX - 1, CoordinatorStatus.WORKING_OK),
+            (CoordinatorGroupLimit.MAX, CoordinatorStatus.WORKING_LIMIT_REACHED),
+            (CoordinatorGroupLimit.MAX + 1, CoordinatorStatus.WORKING_LIMIT_REACHED),
+        ],
+    )
+    def test_public_group_start_coordinator_status(
+        self, api_client, timestamp, number_of_groups_to_start, expected_status
+    ):
+        coordinator = baker.make(Coordinator, _fill_optional=True)
+        coordinator.status = CoordinatorStatus.WORKING_BELOW_THRESHOLD
+        coordinator.save()
+
+        for i in range(number_of_groups_to_start):
+            group = baker.make(Group, _fill_optional=True)
+            group.status = GroupStatus.AWAITING_START
+            group.coordinators.add(coordinator)
+            group.save()
+
+            response = api_client.post(self._make_url(group))
+            assert response.status_code == status.HTTP_201_CREATED
+
+        coordinator.refresh_from_db()
+        assert coordinator.groups.count() == number_of_groups_to_start
+        assert coordinator.status == expected_status
+        self._compare_date_time_with_timestamp(coordinator.status_since, timestamp)
 
     @staticmethod
     def _compare_date_time_with_timestamp(
