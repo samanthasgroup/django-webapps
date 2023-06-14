@@ -5,7 +5,12 @@ from django.utils import timezone
 from model_bakery import baker
 from rest_framework import status
 
-from api.models import Group
+from api.models import CoordinatorLogEvent, Group, LogEvent, StudentLogEvent, TeacherLogEvent
+from api.models.choices.log_event_types import (
+    CoordinatorLogEventType,
+    StudentLogEventType,
+    TeacherLogEventType,
+)
 from api.models.choices.statuses import (
     CoordinatorStatus,
     GroupStatus,
@@ -143,9 +148,19 @@ class TestPublicGroupStart:
             )
             assert coordinator.status_since == common_status_since
 
+            log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(
+                coordinator_id=coordinator.pk
+            )
+            assert log_event.type == CoordinatorLogEventType.TOOK_NEW_GROUP
+            self._compare_log_event_date_time_with_timestamp(log_event, timestamp)
+
         for student in group.students.iterator():
             assert student.status == StudentStatus.STUDYING
             assert student.status_since == common_status_since
+
+            log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
+            assert log_event.type == StudentLogEventType.STUDY_START
+            self._compare_log_event_date_time_with_timestamp(log_event, timestamp)
 
         for teacher in group.teachers.iterator():
             assert teacher.status in (
@@ -154,7 +169,22 @@ class TestPublicGroupStart:
             )
             assert teacher.status_since == common_status_since
 
-        # TODO test creation of log events
+            log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
+            assert log_event.type == TeacherLogEventType.STUDY_START
+            self._compare_log_event_date_time_with_timestamp(log_event, timestamp)
+
+    @staticmethod
+    def _compare_log_event_date_time_with_timestamp(
+        log_event: LogEvent, timestamp: datetime.datetime
+    ):
+        """Unlike statuses, log events get their own automatic timestamps,
+        so exact equality cannot be checked.
+        """
+        assert log_event.date_time.year == timestamp.year
+        assert log_event.date_time.month == timestamp.month
+        assert log_event.date_time.day == timestamp.day
+        assert log_event.date_time.hour == timestamp.hour
+        assert log_event.date_time.minute == timestamp.minute
 
     @staticmethod
     def _make_url(group: Group) -> str:
