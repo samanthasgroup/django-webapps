@@ -5,7 +5,7 @@ from django.urls import reverse
 from model_bakery import baker
 from rest_framework import status
 
-from api.models import CoordinatorLogEvent, Group, LogEvent, StudentLogEvent, TeacherLogEvent
+from api.models import CoordinatorLogEvent, Group, StudentLogEvent, TeacherLogEvent
 from api.models.choices.log_event_types import (
     CoordinatorLogEventType,
     StudentLogEventType,
@@ -139,9 +139,7 @@ class TestPublicGroupStart:
         assert group.status == GroupStatus.WORKING
 
         common_status_since = group.status_since
-        assert common_status_since.day == timestamp.day
-        assert common_status_since.hour == timestamp.hour
-        assert common_status_since.minute == timestamp.minute
+        self._compare_date_time_with_timestamp(common_status_since, timestamp)
 
         for coordinator in group.coordinators.iterator():
             assert coordinator.status in (
@@ -155,7 +153,7 @@ class TestPublicGroupStart:
                 coordinator_id=coordinator.pk
             )
             assert log_event.type == CoordinatorLogEventType.TOOK_NEW_GROUP
-            self._compare_log_event_date_time_with_timestamp(log_event, timestamp)
+            self._compare_date_time_with_timestamp(log_event.date_time, timestamp)
 
         for student in group.students.iterator():
             assert student.status == StudentStatus.STUDYING
@@ -163,7 +161,7 @@ class TestPublicGroupStart:
 
             log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
             assert log_event.type == StudentLogEventType.STUDY_START
-            self._compare_log_event_date_time_with_timestamp(log_event, timestamp)
+            self._compare_date_time_with_timestamp(log_event.date_time, timestamp)
 
         for teacher in group.teachers.iterator():
             assert teacher.status in (
@@ -174,20 +172,17 @@ class TestPublicGroupStart:
 
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
             assert log_event.type == TeacherLogEventType.STUDY_START
-            self._compare_log_event_date_time_with_timestamp(log_event, timestamp)
+            self._compare_date_time_with_timestamp(log_event.date_time, timestamp)
 
     @staticmethod
-    def _compare_log_event_date_time_with_timestamp(
-        log_event: LogEvent, timestamp: datetime.datetime
+    def _compare_date_time_with_timestamp(
+        date_time: datetime.datetime, timestamp: datetime.datetime
     ):
-        """Unlike statuses, log events get their own automatic timestamps,
-        so exact equality cannot be checked.
-        """
-        assert log_event.date_time.year == timestamp.year
-        assert log_event.date_time.month == timestamp.month
-        assert log_event.date_time.day == timestamp.day
-        assert log_event.date_time.hour == timestamp.hour
-        assert log_event.date_time.minute == timestamp.minute
+        assert date_time.year == timestamp.year
+        assert date_time.month == timestamp.month
+        assert date_time.day == timestamp.day
+        assert date_time.hour == timestamp.hour
+        assert date_time.minute == timestamp.minute
 
     @staticmethod
     def _make_url(group: Group) -> str:
