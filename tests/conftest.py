@@ -1,4 +1,5 @@
 import pytest
+from django.utils import timezone
 from rest_framework.test import APIClient
 
 from api.models.choices.communication_language_mode import CommunicationLanguageMode
@@ -48,3 +49,8 @@ def fake_personal_info_data(faker):
         ),
         "chatwoot_conversation_id": faker.pyint(),
     }
+
+
+@pytest.fixture(scope="module")
+def timestamp():
+    yield timezone.now()

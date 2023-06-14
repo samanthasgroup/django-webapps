@@ -1,7 +1,7 @@
 import datetime
 
+import pytest
 from django.urls import reverse
-from django.utils import timezone
 from model_bakery import baker
 from rest_framework import status
 
@@ -115,19 +115,22 @@ def test_public_group_retrieve(api_client):
     }
 
 
+@pytest.fixture
+def group(timestamp):
+    group = baker.make(Group, _fill_optional=True, make_m2m=True)
+
+    group.status = GroupStatus.PENDING
+    # to make sure `status_since` really gets updated:
+    group.status_since = timestamp - datetime.timedelta(days=1, hours=1, minutes=10)
+    group.coordinators.update(status=CoordinatorStatus.WORKING_BELOW_THRESHOLD)
+    group.students.update(status=StudentStatus.AWAITING_OFFER)
+    group.teachers.update(status=TeacherStatus.AWAITING_OFFER)
+    group.save()
+    yield group
+
+
 class TestPublicGroupStart:
-    def test_public_group_start_general_check(self, api_client):
-        group = baker.make(Group, _fill_optional=True, make_m2m=True)
-        timestamp = timezone.now()
-
-        group.status = GroupStatus.AWAITING_START
-        # to make sure `status_since` really gets updated:
-        group.status_since = timestamp - datetime.timedelta(days=1, hours=1, minutes=10)
-        group.coordinators.update(status=CoordinatorStatus.WORKING_BELOW_THRESHOLD)
-        group.students.update(status=StudentStatus.AWAITING_START)
-        group.teachers.update(status=TeacherStatus.AWAITING_START)
-        group.save()
-
+    def test_public_group_start_general_check(self, api_client, group, timestamp):
         response = api_client.post(self._make_url(group))
 
         assert response.status_code == status.HTTP_201_CREATED
