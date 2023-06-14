@@ -5,7 +5,15 @@ from django.urls import reverse
 from model_bakery import baker
 from rest_framework import status
 
-from api.models import Coordinator, CoordinatorLogEvent, Group, StudentLogEvent, TeacherLogEvent
+from api.models import (
+    Coordinator,
+    CoordinatorLogEvent,
+    Group,
+    Student,
+    StudentLogEvent,
+    Teacher,
+    TeacherLogEvent,
+)
 from api.models.choices.log_event_types import (
     CoordinatorLogEventType,
     StudentLogEventType,
@@ -207,6 +215,26 @@ class TestPublicGroupStart:
         assert coordinator.status == expected_status
         self._compare_date_time_with_timestamp(coordinator.status_since, timestamp)
 
+    def test_public_group_start_student_status(self, api_client, timestamp):
+        student = baker.make(Student, _fill_optional=True)
+        student.status = StudentStatus.AWAITING_START
+        student.save()
+
+        group = baker.make(Group, _fill_optional=True)
+        group.status = GroupStatus.AWAITING_START
+
+        group.students.add(student)
+
+        group.save()
+
+        response = api_client.post(self._make_url(group))
+        assert response.status_code == status.HTTP_201_CREATED
+
+        student.refresh_from_db()
+        assert student.groups.count() == 1
+        assert student.status == StudentStatus.STUDYING
+        self._compare_date_time_with_timestamp(student.status_since, timestamp)
+
     @staticmethod
     def _compare_date_time_with_timestamp(
         date_time: datetime.datetime, timestamp: datetime.datetime
@@ -220,3 +248,33 @@ class TestPublicGroupStart:
     @staticmethod
     def _make_url(group: Group) -> str:
         return reverse("groups-start", kwargs={"pk": group.id})
+
+    @pytest.mark.parametrize(
+        "delta, expected_status",
+        [
+            (-1, TeacherStatus.TEACHING_ACCEPTING_MORE),
+            (0, TeacherStatus.TEACHING_NOT_ACCEPTING_MORE),
+            (1, TeacherStatus.TEACHING_NOT_ACCEPTING_MORE),
+        ],
+    )
+    def test_public_group_start_teacher_status(
+        self, api_client, timestamp, delta, expected_status
+    ):
+        teacher = baker.make(Teacher, _fill_optional=True)
+        teacher.simultaneous_groups = 3  # no significance, just more than 1
+        teacher.status = TeacherStatus.AWAITING_START
+        teacher.save()
+
+        for i in range(teacher.simultaneous_groups + delta):
+            group = baker.make(Group, _fill_optional=True)
+            group.status = GroupStatus.AWAITING_START
+            group.teachers.add(teacher)
+            group.save()
+
+            response = api_client.post(self._make_url(group))
+            assert response.status_code == status.HTTP_201_CREATED
+
+        teacher.refresh_from_db()
+        assert teacher.groups.count() == teacher.simultaneous_groups + delta
+        assert teacher.status == expected_status
+        self._compare_date_time_with_timestamp(teacher.status_since, timestamp)
