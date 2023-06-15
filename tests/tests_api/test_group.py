@@ -201,7 +201,7 @@ class TestPublicGroupStart:
         coordinator.status = CoordinatorStatus.WORKING_BELOW_THRESHOLD
         coordinator.save()
 
-        for i in range(number_of_groups_to_start):
+        for _ in range(number_of_groups_to_start):
             group = baker.make(Group, _fill_optional=True)
             group.status = GroupStatus.AWAITING_START
             group.coordinators.add(coordinator)
@@ -265,7 +265,7 @@ class TestPublicGroupStart:
         teacher.status = TeacherStatus.AWAITING_START
         teacher.save()
 
-        for i in range(teacher.simultaneous_groups + delta):
+        for _ in range(teacher.simultaneous_groups + delta):
             group = baker.make(Group, _fill_optional=True)
             group.status = GroupStatus.AWAITING_START
             group.teachers.add(teacher)
