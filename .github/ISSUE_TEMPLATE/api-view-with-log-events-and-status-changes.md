@@ -8,10 +8,7 @@ assignees: Roxe322
 
 ---
 
-When ____:
-
-## Create/change objects
-- 
+When a coordinator (from dashboard) or bot send a request stating that ____:
 
 ## Create log events
 
@@ -21,6 +18,10 @@ Types of `LogEvent`s to be created:
 - group: `TYPE`
 - students: `TYPE`
 - teacher(s): `TYPE`
+
+## Create/change other objects
+- 
+
 
 ## Set statuses
 - group: `WORKING`
