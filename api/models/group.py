@@ -19,6 +19,35 @@ class GroupCommon(GroupOrPerson):
     coordinators = models.ManyToManyField(Coordinator, related_name="%(class)ss")
     students = models.ManyToManyField(Student, related_name="%(class)ss")
     teachers = models.ManyToManyField(Teacher, related_name="%(class)ss")
+
+    coordinators_former = models.ManyToManyField(
+        Coordinator,
+        related_name="%(class)ss_former",
+        verbose_name="Former coordinators",
+        help_text=(
+            "Lists coordinators that once worked with this group and/or the coordinator(s) of "
+            "this group when it finished classes or was aborted."
+        ),
+    )
+    students_former = models.ManyToManyField(
+        Student,
+        related_name="%(class)ss_former",
+        verbose_name="Former students",
+        help_text=(
+            "Lists students that once worked with this group and/or all students of this group "
+            "when it finished classes or was aborted."
+        ),
+    )
+    teachers_former = models.ManyToManyField(
+        Teacher,
+        related_name="%(class)ss_former",
+        verbose_name="Former teachers",
+        help_text=(
+            "Lists teachers that once worked with this group, and/or the teacher(s) of this group "
+            "when it finished classes or was aborted."
+        ),
+    )
+
     # group chat created manually by the coordinator/teacher
     telegram_chat_url = models.URLField(blank=True)
 
