@@ -10,7 +10,7 @@ from api.models import (
     PersonalInfo,
     Teacher,
 )
-from api.models.choices.statuses import TeacherStatus
+from api.models.choices.status import TeacherStatus
 
 
 def test_teacher_create(api_client, faker):

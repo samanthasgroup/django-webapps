@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from api.models import Teacher
-from api.models.constants import (
+from api.models.auxil.constants import (
     TEACHER_PEER_SUPPORT_FIELD_NAME_PREFIX,
     TEACHER_PEER_SUPPORT_OPTIONS,
 )

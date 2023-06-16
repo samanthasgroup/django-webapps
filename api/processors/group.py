@@ -3,20 +3,22 @@ import datetime
 from django.db import transaction
 from django.utils import timezone
 
-from api.models import CoordinatorLogEvent, Group, GroupLogEvent, StudentLogEvent, TeacherLogEvent
-from api.models.choices.log_event_types import (
+from api.models import (
+    Coordinator,
+    CoordinatorLogEvent,
+    Group,
+    GroupLogEvent,
+    StudentLogEvent,
+    Teacher,
+    TeacherLogEvent,
+)
+from api.models.choices.log_event_type import (
     CoordinatorLogEventType,
     GroupLogEventType,
     StudentLogEventType,
     TeacherLogEventType,
 )
-from api.models.choices.statuses import (
-    CoordinatorStatus,
-    GroupStatus,
-    StudentStatus,
-    TeacherStatus,
-)
-from api.models.people import Coordinator, Teacher
+from api.models.choices.status import CoordinatorStatus, GroupStatus, StudentStatus, TeacherStatus
 from api.processors.base import Processor
 
 

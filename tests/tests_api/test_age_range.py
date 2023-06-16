@@ -1,7 +1,7 @@
 import pytest
 from rest_framework import status
 
-from api.models.age_ranges import AgeRange, AgeRangeType
+from api.models.age_range import AgeRange, AgeRangeType
 
 
 @pytest.mark.parametrize(

@@ -3,9 +3,9 @@ from abc import ABC
 
 from django.utils import timezone
 
-from api.models.choices.statuses import Status
-from api.models.groups import Group
-from api.models.people import Person
+from api.models.choices.status import Status
+from api.models.group import Group
+from api.models.shared_abstract.person import Person
 
 
 class Processor(ABC):

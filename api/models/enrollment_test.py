@@ -1,9 +1,9 @@
 from django.db import models
 
-from api.models.age_ranges import AgeRange
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
-from api.models.languages_levels import Language
-from api.models.people import Student
+from api.models.age_range import AgeRange
+from api.models.auxil.constants import DEFAULT_CHAR_FIELD_MAX_LEN
+from api.models.language_and_level import Language
+from api.models.student import Student
 
 
 class EnrollmentTest(models.Model):
