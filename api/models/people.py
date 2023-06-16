@@ -3,6 +3,7 @@ from collections.abc import Iterable
 from datetime import timedelta
 
 from django.db import models
+from django.db.models import Count, F
 from phonenumber_field import modelfields
 
 from api.models.age_ranges import AgeRange
@@ -121,6 +122,8 @@ class Person(models.Model):
         primary_key=True,
         related_name="as_%(class)s",  # produces `.as_coordinator` etc.
     )
+    # this will be overridden in each model: putting this here for mypy
+    status = models.CharField(max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH)
 
     # This field is not just as a shortcut for log event timestamps: not all statuses have
     # corresponding LogEvent... objects.
@@ -133,6 +136,29 @@ class Person(models.Model):
 
     def __str__(self) -> str:
         return f"{self.personal_info.full_name}. Status: {getattr(self, 'status')}"
+
+
+# TODO the module is getting big. We can move Coordinator... etc into separate modules,
+#  which will also allow to rename all model modules into singular (because "people.py"
+#  will only contain `Person`).
+class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
+    def annotate_with_group_count(self) -> "CoordinatorQuerySet":
+        return self.annotate(group_count=Count("groups"))
+
+    def filter_below_threshold(self) -> "CoordinatorQuerySet":
+        """QuerySet with coordinators with not enough groups."""
+        return self.annotate_with_group_count().filter(group_count__lt=CoordinatorGroupLimit.MIN)
+
+    def filter_above_threshold_and_within_limit(self) -> "CoordinatorQuerySet":
+        """QuerySet with coordinators that are above threshold and within limit."""
+        return self.annotate_with_group_count().filter(
+            group_count__gte=CoordinatorGroupLimit.MIN,
+            group_count__lt=CoordinatorGroupLimit.MAX,
+        )
+
+    def filter_limit_reached(self) -> "CoordinatorQuerySet":
+        """QuerySet with coordinators that have exceeded the limit of groups."""
+        return self.annotate_with_group_count().filter(group_count__gte=CoordinatorGroupLimit.MAX)
 
 
 class Coordinator(Person):
@@ -160,6 +186,8 @@ class Coordinator(Person):
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=CoordinatorStatus.choices,
     )
+
+    objects = CoordinatorQuerySet.as_manager()
 
     class Meta:
         indexes = [models.Index(fields=("status",), name="coordinator_status_idx")]
@@ -260,6 +288,19 @@ class TeacherCommon(Person):
         abstract = True
 
 
+class TeacherQuerySet(models.QuerySet["Teacher"]):
+    def annotate_with_group_count(self) -> "TeacherQuerySet":
+        return self.annotate(group_count=Count("groups"))
+
+    def filter_can_take_more_groups(self) -> "TeacherQuerySet":
+        """QuerySet with Teachers that can take more groups."""
+        return self.annotate_with_group_count().filter(group_count__lt=F("simultaneous_groups"))
+
+    def filter_cannot_take_more_groups(self) -> "TeacherQuerySet":
+        """QuerySet with Teachers that cannot take any more groups."""
+        return self.annotate_with_group_count().filter(group_count__gte=F("simultaneous_groups"))
+
+
 class Teacher(TeacherCommon):
     """Model for an adult teacher that can teach groups."""
 
@@ -331,6 +372,8 @@ class Teacher(TeacherCommon):
             "start (or return to) group studies and the frequency column will become relevant."
         )
     )
+
+    objects = TeacherQuerySet.as_manager()
 
     class Meta:
         indexes = [

@@ -12,12 +12,11 @@ from api.serializers.personal_info import (
     PersonalInfoSerializer,
     PublicPersonalInfoSerializer,
 )
-from api.serializers.student import (
-    MinifiedStudentSerializer,
+from api.serializers.student.internal import StudentReadSerializer, StudentWriteSerializer
+from api.serializers.student.minified import MinifiedStudentSerializer
+from api.serializers.student.public import (
     PublicStudentSerializer,
     PublicStudentWithPersonalInfoSerializer,
-    StudentReadSerializer,
-    StudentWriteSerializer,
 )
 from api.serializers.teacher.public import (
     PublicTeacherSerializer,
