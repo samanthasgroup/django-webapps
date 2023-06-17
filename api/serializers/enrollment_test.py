@@ -9,7 +9,7 @@ from api.models import (
     EnrollmentTestQuestionOption,
     EnrollmentTestResult,
 )
-from api.models.constants import (
+from api.models.auxil.constants import (
     ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS,
     LanguageLevelId,
 )

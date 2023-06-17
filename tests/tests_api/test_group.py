@@ -14,18 +14,13 @@ from api.models import (
     Teacher,
     TeacherLogEvent,
 )
-from api.models.choices.log_event_types import (
+from api.models.auxil.constants import CoordinatorGroupLimit
+from api.models.choices.log_event_type import (
     CoordinatorLogEventType,
     StudentLogEventType,
     TeacherLogEventType,
 )
-from api.models.choices.statuses import (
-    CoordinatorStatus,
-    GroupStatus,
-    StudentStatus,
-    TeacherStatus,
-)
-from api.models.constants import CoordinatorGroupLimit
+from api.models.choices.status import CoordinatorStatus, GroupStatus, StudentStatus, TeacherStatus
 
 
 def test_public_group_list(api_client):

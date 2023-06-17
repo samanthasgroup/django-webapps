@@ -20,14 +20,14 @@ from api.models.choices.communication_language_mode import CommunicationLanguage
 from api.models.choices.registration_telegram_bot_language import (
     RegistrationTelegramBotLanguage,
 )
-from api.models.choices.statuses import (
+from api.models.choices.status import (
     CoordinatorStatus,
     StudentStatus,
     TeacherStatus,
     TeacherUnder18Status,
     GroupStatus,
 )
-from api.models.data_populator import DataPopulator
+from api.models.auxil.data_populator import DataPopulator
 
 APP_NAME = "api"
 

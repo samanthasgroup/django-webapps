@@ -3,7 +3,7 @@ from model_bakery import baker
 from rest_framework import status
 
 from api.models import LanguageAndLevel, PersonalInfo, TeacherUnder18
-from api.models.choices.statuses import TeacherUnder18Status
+from api.models.choices.status import TeacherUnder18Status
 
 
 def test_teacher_under_18_create(api_client, faker):

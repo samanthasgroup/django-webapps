@@ -1,15 +1,18 @@
 from django.db import models
 
-from api.models.choices.log_event_types import (
+from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
+from api.models.choices.log_event_type import (
     CoordinatorLogEventType,
     GroupLogEventType,
     StudentLogEventType,
     TeacherLogEventType,
     TeacherUnder18LogEventType,
 )
-from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
-from api.models.groups import Group
-from api.models.people import Coordinator, Student, Teacher, TeacherUnder18
+from api.models.coordinator import Coordinator
+from api.models.group import Group
+from api.models.student import Student
+from api.models.teacher import Teacher
+from api.models.teacher_under_18 import TeacherUnder18
 
 # We could have created one table listing all possible names of log events, but that might look
 # confusing for admin users later on.  It seems more convenient for them to have separate tables.

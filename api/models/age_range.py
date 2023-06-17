@@ -1,7 +1,7 @@
 from django.db import models
 
+from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.choices.age_range_type import AgeRangeType
-from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 
 
 class AgeRange(models.Model):

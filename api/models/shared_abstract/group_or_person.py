@@ -1,7 +1,8 @@
+"""Abstract models that are shared between several modules."""
 from django.db import models
 
+from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.choices.communication_language_mode import CommunicationLanguageMode
-from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 
 
 class GroupOrPerson(models.Model):
