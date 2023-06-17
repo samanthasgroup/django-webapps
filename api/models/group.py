@@ -1,12 +1,15 @@
 from django.db import models
 from django.db.models import Q
 
-from api.models.base import GroupOrPerson
-from api.models.choices.statuses import GroupStatus
-from api.models.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
-from api.models.days_time_slots import DayAndTimeSlot
-from api.models.languages_levels import Language, LanguageAndLevel
-from api.models.people import Coordinator, Student, Teacher, TeacherUnder18
+from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
+from api.models.choices.status import GroupStatus
+from api.models.coordinator import Coordinator
+from api.models.day_and_time_slot import DayAndTimeSlot
+from api.models.language_and_level import Language, LanguageAndLevel
+from api.models.shared_abstract.group_or_person import GroupOrPerson
+from api.models.student import Student
+from api.models.teacher import Teacher
+from api.models.teacher_under_18 import TeacherUnder18
 
 
 class GroupCommon(GroupOrPerson):
@@ -16,6 +19,35 @@ class GroupCommon(GroupOrPerson):
     coordinators = models.ManyToManyField(Coordinator, related_name="%(class)ss")
     students = models.ManyToManyField(Student, related_name="%(class)ss")
     teachers = models.ManyToManyField(Teacher, related_name="%(class)ss")
+
+    coordinators_former = models.ManyToManyField(
+        Coordinator,
+        related_name="%(class)ss_former",
+        verbose_name="Former coordinators",
+        help_text=(
+            "Lists coordinators that once worked with this group and/or the coordinator(s) of "
+            "this group when it finished classes or was aborted."
+        ),
+    )
+    students_former = models.ManyToManyField(
+        Student,
+        related_name="%(class)ss_former",
+        verbose_name="Former students",
+        help_text=(
+            "Lists students that once worked with this group and/or all students of this group "
+            "when it finished classes or was aborted."
+        ),
+    )
+    teachers_former = models.ManyToManyField(
+        Teacher,
+        related_name="%(class)ss_former",
+        verbose_name="Former teachers",
+        help_text=(
+            "Lists teachers that once worked with this group, and/or the teacher(s) of this group "
+            "when it finished classes or was aborted."
+        ),
+    )
+
     # group chat created manually by the coordinator/teacher
     telegram_chat_url = models.URLField(blank=True)
 

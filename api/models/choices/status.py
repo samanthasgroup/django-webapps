@@ -1,6 +1,6 @@
 from django.db import models
 
-from api.models.constants import STUDENT_CLASS_MISS_LIMIT, CoordinatorGroupLimit
+from api.models.auxil.constants import STUDENT_CLASS_MISS_LIMIT, CoordinatorGroupLimit
 
 
 class CoordinatorStatus(models.TextChoices):

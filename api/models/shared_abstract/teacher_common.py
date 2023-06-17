@@ -1,0 +1,32 @@
+from django.db import models
+
+from api.models.auxil.constants import DEFAULT_CHAR_FIELD_MAX_LEN
+from api.models.language_and_level import LanguageAndLevel
+from api.models.shared_abstract.person import Person
+
+
+class TeacherCommon(Person):
+    """Abstract model for common properties that adult teachers and teachers under 18 share.
+
+    Teachers under 18 cannot teach groups but can some selected activities.
+    """
+
+    can_host_speaking_club = models.BooleanField(default=False)
+    has_hosted_speaking_club = models.BooleanField(default=False)
+    is_validated = models.BooleanField(
+        help_text="Has an initial validation interview been conducted with this teacher?"
+    )
+    non_teaching_help_provided_comment = models.CharField(
+        max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
+        blank=True,
+        verbose_name="comment on additional non-teaching skills",
+        help_text=(
+            "For adult teacher: other ways in which the applicant could help the students beside "
+            "listed ones. For teacher under 18: applicant's free-text comment on how they can "
+            "help our students apart from hosting speaking clubs."
+        ),
+    )
+    teaching_languages_and_levels = models.ManyToManyField(LanguageAndLevel)
+
+    class Meta:
+        abstract = True

@@ -1,7 +1,7 @@
 from django.db import models
 
+from api.models.auxil.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 from api.models.choices.non_teaching_help_type import NonTeachingHelpType
-from api.models.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 
 
 class NonTeachingHelp(models.Model):

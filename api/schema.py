@@ -6,8 +6,8 @@ from drf_spectacular.plumbing import build_basic_type, build_object_type
 from drf_spectacular.types import OpenApiTypes
 from rest_framework.permissions import SAFE_METHODS
 
+from api.models.auxil.constants import TEACHER_PEER_SUPPORT_OPTIONS
 from api.models.choices.non_teaching_help_type import NonTeachingHelpType
-from api.models.constants import TEACHER_PEER_SUPPORT_OPTIONS
 from api.serializers.errors import ValidationErrorSerializer
 
 DirectionLiteral = Literal["request", "response"]

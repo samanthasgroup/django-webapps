@@ -4,14 +4,14 @@ import yaml
 from django.conf import settings
 from django.db import migrations
 
-from api.models.age_ranges import AgeRangeType
+from api.models.age_range import AgeRangeType
 from api.models.choices.non_teaching_help_type import NonTeachingHelpType
-from api.models.constants import (
+from api.models.auxil.constants import (
     STUDENT_AGE_RANGES,
     STUDENT_AGE_RANGES_FOR_MATCHING,
     STUDENT_AGE_RANGES_FOR_TEACHER, LanguageLevelId,
 )
-from api.models.data_populator import DataPopulator
+from api.models.auxil.data_populator import DataPopulator
 
 APP_NAME = "api"
 

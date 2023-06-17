@@ -1,15 +1,17 @@
-from .age_ranges import AgeRange
-from .base import GroupOrPerson
-from .days_time_slots import DayAndTimeSlot, TimeSlot
-from .enrollment_tests import (
+from api.models.shared_abstract.group_or_person import GroupOrPerson
+
+from .age_range import AgeRange
+from .coordinator import Coordinator
+from .day_and_time_slot import DayAndTimeSlot, TimeSlot
+from .enrollment_test import (
     EnrollmentTest,
     EnrollmentTestQuestion,
     EnrollmentTestQuestionOption,
     EnrollmentTestResult,
 )
-from .groups import Group, SpeakingClub
-from .languages_levels import Language, LanguageAndLevel, LanguageLevel
-from .log_events import (
+from .group import Group, SpeakingClub
+from .language_and_level import Language, LanguageAndLevel, LanguageLevel
+from .log_event import (
     CoordinatorLogEvent,
     GroupLogEvent,
     LogEvent,
@@ -18,7 +20,10 @@ from .log_events import (
     TeacherUnder18LogEvent,
 )
 from .non_teaching_help import NonTeachingHelp
-from .people import Coordinator, PersonalInfo, Student, Teacher, TeacherUnder18
+from .personal_info import PersonalInfo
+from .student import Student
+from .teacher import Teacher
+from .teacher_under_18 import TeacherUnder18
 
 # for mypy: listing only models that appear in admin.py
 __all__ = [

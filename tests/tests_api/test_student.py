@@ -12,7 +12,7 @@ from api.models import (
     PersonalInfo,
     Student,
 )
-from api.models.choices.statuses import StudentStatus
+from api.models.choices.status import StudentStatus
 
 
 def test_student_create(api_client, faker):
