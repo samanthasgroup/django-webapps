@@ -13,6 +13,14 @@ migrate:
 
 recreate-first-migration:
 	poetry run python manage.py migrate api zero && \
+	$(MAKE) _recreate-first-migration-common
+
+pull-and-recreate-first-migration:
+	poetry run python manage.py migrate api zero && \
+	git pull origin && \
+	$(MAKE) _recreate-first-migration-common
+
+_recreate-first-migration-common:
 	poetry run python manage.py dumpdata auth -o auth_dump.json.gz && \
 	poetry run python manage.py flush --no-input && \
 	poetry run python manage.py loaddata auth_dump.json.gz && \
