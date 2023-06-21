@@ -69,7 +69,7 @@ class InitialDataPopulator(DataPopulator):
         DayAndTimeSlot.objects.bulk_create(day_time_slots)
 
     def _write_languages_and_levels(self):
-        """Writes `Language', `LanguageLevel`, and `LanguageAndLevel` objects to database."""
+        """Writes `Language`, `LanguageLevel`, and `LanguageAndLevel` objects to database."""
         Language = self.apps.get_model(APP_NAME, "Language")
         Level = self.apps.get_model(APP_NAME, "LanguageLevel")
         LanguageAndLevel = self.apps.get_model(APP_NAME, "LanguageAndLevel")
@@ -85,6 +85,9 @@ class InitialDataPopulator(DataPopulator):
                 ("pl", "Polish"),
                 ("cz", "Czech"),
                 ("se", "Swedish"),
+                ("fi", "Finnish"),
+                ("gr", "Greek"),
+                ("jp", "Japanese"),
             )
         )
         Language.objects.bulk_create(languages)
@@ -92,10 +95,10 @@ class InitialDataPopulator(DataPopulator):
         levels = (Level(id=id_) for id_ in LanguageLevelId)
         Level.objects.bulk_create(levels)
 
-        # English is taught at all levels, all other languages at levels A0 through A2
+        # English is taught at all levels except B2 and C1, all other languages at levels A0 through A2
         language_and_level_objects = tuple(
             LanguageAndLevel(language=Language.objects.get(id="en"), level=level)
-            for level in Level.objects.iterator()
+            for level in Level.objects.exclude(id__in=[LanguageLevelId.B2_UPPER_INTERMEDIATE, LanguageLevelId.C1_PRE_ADVANCED]).iterator()
         ) + tuple(
             LanguageAndLevel(language=language, level=level)
             for language in Language.objects.exclude(id="en").iterator()
