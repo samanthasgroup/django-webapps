@@ -57,8 +57,8 @@ def test_personal_info_check_existence_returns_400_with_existing_info(api_client
             "last_name": existing_personal_info.last_name,
         },
     )
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"non_field_errors": ["User with this information already exists."]}
+    assert response.status_code == status.HTTP_409_CONFLICT
+    assert response.json() == {"detail": "Object with this data already exists."}
 
 
 def test_personal_info_check_existence_of_chat_id_returns_200_with_existing_id(
