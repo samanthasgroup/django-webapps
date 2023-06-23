@@ -21,7 +21,9 @@ DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH = 50
 ENROLLMENT_TEST_LEVEL_ABOVE_SCHOOL_LIMIT = "B2"
 """This level actually means 'anything above B1'. Whether it is B2, C1 or C2 is irrelevant."""
 
-ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS = {
+ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS: dict[
+    int, dict[int, LanguageLevelId | str]
+] = {
     25: {
         5: LanguageLevelId.A1_ELEMENTARY,
         11: LanguageLevelId.A2_PRE_INTERMEDIATE,

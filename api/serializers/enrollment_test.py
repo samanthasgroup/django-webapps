@@ -87,7 +87,7 @@ class EnrollmentTestResultLevelSerializer(serializers.ModelSerializer[Enrollment
 
         number_of_correct_answers = len([answer for answer in obj["answers"] if answer.is_correct])
 
-        level = LanguageLevelId.A0_BEGINNER
+        level: LanguageLevelId | str = LanguageLevelId.A0_BEGINNER
         for threshold in level_for_threshold:
             if number_of_correct_answers >= threshold:
                 level = level_for_threshold[threshold]
