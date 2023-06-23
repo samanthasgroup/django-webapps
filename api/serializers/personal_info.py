@@ -2,6 +2,7 @@ from typing import Any
 
 from rest_framework import serializers
 
+from api.exceptions import ConflictError
 from api.models import PersonalInfo
 from api.utils import capitalize_each_word
 
@@ -16,7 +17,7 @@ class CheckNameAndEmailExistenceSerializer(serializers.ModelSerializer[PersonalI
     """A serializer used to check if user with given name and email exists in database.
 
     This serializer assumes that a client is trying to create an instance of PersonalInfo
-    and hence raises 400 error if an entry with the given data already exists.
+    and hence raises 409 error if an entry with the given data already exists.
     """
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
@@ -26,8 +27,7 @@ class CheckNameAndEmailExistenceSerializer(serializers.ModelSerializer[PersonalI
         prepared_attrs["email"] = attrs["email"].lower()
 
         if PersonalInfo.objects.filter(**prepared_attrs).exists():
-            # TODO: Discuss errors format.
-            raise serializers.ValidationError("User with this information already exists.")
+            raise ConflictError
         return attrs
 
     class Meta:

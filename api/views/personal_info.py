@@ -11,18 +11,19 @@ from api.serializers import (
     CheckNameAndEmailExistenceSerializer,
     PersonalInfoSerializer,
 )
+from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
 
 
 class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
     queryset = PersonalInfo.objects.all()
 
-    def get_serializer_class(self) -> type[BaseSerializer[PersonalInfo]]:
-        if self.action == "check_existence":
-            return CheckNameAndEmailExistenceSerializer
-        if self.action == "check_existence_of_chat_id":
-            return CheckChatIdExistenceSerializer
-        return PersonalInfoSerializer
-
+    @extend_schema(
+        responses={
+            status.HTTP_200_OK: PersonalInfoSerializer,
+            status.HTTP_409_CONFLICT: BaseAPIExceptionSerializer,
+            status.HTTP_400_BAD_REQUEST: ValidationErrorSerializer,
+        }
+    )
     @action(detail=False, methods=["post"])
     def check_existence(self, request: Request) -> Response:
         """
@@ -31,6 +32,13 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(status.HTTP_200_OK)
+
+    def get_serializer_class(self) -> type[BaseSerializer[PersonalInfo]]:
+        if self.action == "check_existence":
+            return CheckNameAndEmailExistenceSerializer
+        if self.action == "check_existence_of_chat_id":
+            return CheckChatIdExistenceSerializer
+        return PersonalInfoSerializer
 
     @extend_schema(parameters=[CheckChatIdExistenceSerializer])
     @action(detail=False, methods=["get"])
