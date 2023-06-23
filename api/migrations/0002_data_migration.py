@@ -95,10 +95,10 @@ class InitialDataPopulator(DataPopulator):
         levels = (Level(id=id_) for id_ in LanguageLevelId)
         Level.objects.bulk_create(levels)
 
-        # English is taught at all levels except B2 and C1, all other languages at levels A0 through A2
+        # English is taught at levels A0 through B1, other languages at levels A0 through A2
         language_and_level_objects = tuple(
             LanguageAndLevel(language=Language.objects.get(id="en"), level=level)
-            for level in Level.objects.exclude(id__in=[LanguageLevelId.B2_UPPER_INTERMEDIATE, LanguageLevelId.C1_PRE_ADVANCED]).iterator()
+            for level in Level.objects.iterator()
         ) + tuple(
             LanguageAndLevel(language=language, level=level)
             for language in Language.objects.exclude(id="en").iterator()
