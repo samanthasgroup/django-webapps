@@ -6,7 +6,7 @@ TODO:
  Maybe we should remove some actions from ViewSet?
  Needs to be discussed for all viewsets.
 """
-
+import pytest
 from django.utils.dateparse import parse_duration
 from model_bakery import baker
 from rest_framework import status
@@ -47,7 +47,7 @@ def test_personal_info_update(api_client, fake_personal_info_data):
     assert PersonalInfo.objects.filter(**fake_personal_info_data).exists()
 
 
-def test_personal_info_check_existence_returns_400_with_existing_info(api_client):
+def test_personal_info_check_existence_returns_409_with_existing_info(api_client):
     existing_personal_info = baker.make(PersonalInfo)
     response = api_client.post(
         "/api/personal_info/check_existence/",
@@ -59,6 +59,22 @@ def test_personal_info_check_existence_returns_400_with_existing_info(api_client
     )
     assert response.status_code == status.HTTP_409_CONFLICT
     assert response.json() == {"detail": "Object with this data already exists."}
+
+
+@pytest.mark.parametrize(
+    "email", ["test", "test@", "test@test", "test@test.", "test@test.c", "емейл", "емейл@ру.ру"]
+)
+def test_personal_info_check_existence_returns_400_with_invalid_email(api_client, email, faker):
+    response = api_client.post(
+        "/api/personal_info/check_existence/",
+        data={
+            "email": email,
+            "first_name": faker.first_name(),
+            "last_name": faker.last_name(),
+        },
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {"email": ["Enter a valid email address."]}
 
 
 def test_personal_info_check_existence_of_chat_id_returns_200_with_existing_id(

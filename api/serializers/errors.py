@@ -13,7 +13,7 @@ class ValidationErrorSerializer(serializers.Serializer[Model]):
     non_field_errors = serializers.ListField(child=serializers.CharField())
 
 
-class APIExceptionSerializer(serializers.Serializer[Model]):
+class BaseAPIExceptionSerializer(serializers.Serializer[Model]):
     """
     Used only in OpenAPI schema, represents the response body for default Django API exception.
     """

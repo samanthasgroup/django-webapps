@@ -11,7 +11,7 @@ from api.serializers import (
     CheckNameAndEmailExistenceSerializer,
     PersonalInfoSerializer,
 )
-from api.serializers.errors import APIExceptionSerializer, ValidationErrorSerializer
+from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
 
 
 class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
@@ -20,7 +20,7 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
     @extend_schema(
         responses={
             status.HTTP_200_OK: PersonalInfoSerializer,
-            status.HTTP_409_CONFLICT: APIExceptionSerializer,
+            status.HTTP_409_CONFLICT: BaseAPIExceptionSerializer,
             status.HTTP_400_BAD_REQUEST: ValidationErrorSerializer,
         }
     )
