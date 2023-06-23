@@ -36,8 +36,8 @@ def test_get_enrollment_test(api_client):
 @pytest.mark.parametrize(
     "number_of_questions, total_answers, correct_answers, expected_level",
     [
-        (35, 35, 35, "C1"),
-        (35, 35, 32, "C1"),
+        (35, 35, 35, "B2"),  # "B2" means "anything above B1" because higher levels are not taught
+        (35, 35, 32, "B2"),
         (35, 35, 31, "B2"),
         (35, 35, 27, "B2"),
         (35, 35, 26, "B1"),
@@ -57,7 +57,7 @@ def test_get_enrollment_test(api_client):
         (25, 25, 4, "A0"),
         (25, 25, 0, "A0"),
         # Imitating the user cancelling the test prematurely - fewer answers than questions:
-        (35, 33, 32, "C1"),
+        (35, 33, 32, "B2"),
         (35, 32, 31, "B2"),
         (35, 28, 27, "B2"),
         (35, 27, 26, "B1"),
