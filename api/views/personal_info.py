@@ -28,6 +28,12 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
     def check_existence(self, request: Request) -> Response:
         """
         Checks if a personal info exists.
+
+        Response status codes:
+
+        * `200 OK` if personal info does **not** exist.
+        * `409 CONFLICT` if personal info exists.
+        * `400 BAD REQUEST` if something is wrong with the data (e.g. invalid email format).
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
