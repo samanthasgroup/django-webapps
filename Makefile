@@ -18,7 +18,7 @@ recreate-first-migration:
 
 pull-and-recreate-first-migration:
 	poetry run python manage.py migrate api zero && \
-    git restore api/migrations/0001_initial.py && \
+	git restore api/migrations/0001_initial.py && \
 	git pull origin && \
 	$(MAKE) _recreate-first-migration-common
 
