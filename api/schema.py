@@ -4,6 +4,7 @@ from drf_spectacular.extensions import OpenApiSerializerFieldExtension
 from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.plumbing import build_basic_type, build_object_type
 from drf_spectacular.types import OpenApiTypes
+from rest_framework import status
 from rest_framework.permissions import SAFE_METHODS
 
 from api.models.auxil.constants import TEACHER_PEER_SUPPORT_OPTIONS
@@ -11,6 +12,10 @@ from api.models.choices.non_teaching_help_type import NonTeachingHelpType
 from api.serializers.errors import ValidationErrorSerializer
 
 DirectionLiteral = Literal["request", "response"]
+
+BAD_REQUEST_STATUS = str(
+    status.HTTP_400_BAD_REQUEST
+)  # In OpenAPI schema, status codes are strings.
 
 
 class CustomSchema(AutoSchema):
@@ -34,10 +39,14 @@ class CustomSchema(AutoSchema):
 
     def _get_response_bodies(self, direction: DirectionLiteral = "response") -> dict[str, Any]:
         bodies = super()._get_response_bodies(direction)
-        if self.method not in SAFE_METHODS and direction == "response" and "400" not in bodies:
-            bodies["400"] = self._get_response_for_code(
+        if (
+            self.method not in SAFE_METHODS
+            and direction == "response"
+            and BAD_REQUEST_STATUS not in bodies
+        ):
+            bodies[BAD_REQUEST_STATUS] = self._get_response_for_code(
                 serializer=ValidationErrorSerializer,
-                status_code="400",
+                status_code=BAD_REQUEST_STATUS,
             )
         return bodies
 
