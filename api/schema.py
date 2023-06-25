@@ -34,7 +34,7 @@ class CustomSchema(AutoSchema):
 
     def _get_response_bodies(self, direction: DirectionLiteral = "response") -> dict[str, Any]:
         bodies = super()._get_response_bodies(direction)
-        if self.method not in SAFE_METHODS and direction == "response":
+        if self.method not in SAFE_METHODS and direction == "response" and "400" not in bodies:
             bodies["400"] = self._get_response_for_code(
                 serializer=ValidationErrorSerializer,
                 status_code="400",
