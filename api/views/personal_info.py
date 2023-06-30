@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.request import Request
@@ -19,9 +19,16 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
 
     @extend_schema(
         responses={
-            status.HTTP_200_OK: PersonalInfoSerializer,
-            status.HTTP_409_CONFLICT: BaseAPIExceptionSerializer,
-            status.HTTP_400_BAD_REQUEST: ValidationErrorSerializer,
+            status.HTTP_200_OK: OpenApiResponse(
+                response=PersonalInfoSerializer, description="Personal info does not exist."
+            ),
+            status.HTTP_409_CONFLICT: OpenApiResponse(
+                response=BaseAPIExceptionSerializer, description="Personal info exists."
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=ValidationErrorSerializer,
+                description="Something is wrong with the data (e.g. invalid email format)",
+            ),
         }
     )
     @action(detail=False, methods=["post"])
