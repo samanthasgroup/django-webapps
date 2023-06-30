@@ -69,7 +69,7 @@ class InitialDataPopulator(DataPopulator):
         DayAndTimeSlot.objects.bulk_create(day_time_slots)
 
     def _write_languages_and_levels(self):
-        """Writes `Language', `LanguageLevel`, and `LanguageAndLevel` objects to database."""
+        """Writes `Language`, `LanguageLevel`, and `LanguageAndLevel` objects to database."""
         Language = self.apps.get_model(APP_NAME, "Language")
         Level = self.apps.get_model(APP_NAME, "LanguageLevel")
         LanguageAndLevel = self.apps.get_model(APP_NAME, "LanguageAndLevel")
@@ -85,6 +85,9 @@ class InitialDataPopulator(DataPopulator):
                 ("pl", "Polish"),
                 ("cz", "Czech"),
                 ("se", "Swedish"),
+                ("fi", "Finnish"),
+                ("gr", "Greek"),
+                ("jp", "Japanese"),
             )
         )
         Language.objects.bulk_create(languages)
