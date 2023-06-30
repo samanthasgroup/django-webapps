@@ -95,7 +95,7 @@ class InitialDataPopulator(DataPopulator):
         levels = (Level(id=id_) for id_ in LanguageLevelId)
         Level.objects.bulk_create(levels)
 
-        # English is taught at levels A0 through B1, other languages at levels A0 through A2
+        # English is taught at all levels, all other languages at levels A0 through A2
         language_and_level_objects = tuple(
             LanguageAndLevel(language=Language.objects.get(id="en"), level=level)
             for level in Level.objects.iterator()

@@ -11,19 +11,15 @@ class LanguageLevelId(str, Enum):
     A1_ELEMENTARY = "A1"
     A2_PRE_INTERMEDIATE = "A2"
     B1_INTERMEDIATE = "B1"
-    # No levels above B1 are taught at this school. Everything above B1 is declared as
-    # a separate constant below so as not to create a redundant row when populating the database.
+    B2_UPPER_INTERMEDIATE = "B2"
+    C1_PRE_ADVANCED = "C1"
+    # No C2 at this school
 
 
 DEFAULT_CHAR_FIELD_MAX_LEN = 255
 DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH = 50
 
-ENROLLMENT_TEST_LEVEL_ABOVE_SCHOOL_LIMIT = "B2"
-"""This level actually means 'anything above B1'. Whether it is B2, C1 or C2 is irrelevant."""
-
-ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS: dict[
-    int, dict[int, LanguageLevelId | str]
-] = {
+ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS = {
     25: {
         5: LanguageLevelId.A1_ELEMENTARY,
         11: LanguageLevelId.A2_PRE_INTERMEDIATE,
@@ -33,7 +29,8 @@ ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS: dict[
         6: LanguageLevelId.A1_ELEMENTARY,
         13: LanguageLevelId.A2_PRE_INTERMEDIATE,
         20: LanguageLevelId.B1_INTERMEDIATE,
-        27: ENROLLMENT_TEST_LEVEL_ABOVE_SCHOOL_LIMIT,
+        27: LanguageLevelId.B2_UPPER_INTERMEDIATE,
+        32: LanguageLevelId.C1_PRE_ADVANCED,
     },
 }
 
