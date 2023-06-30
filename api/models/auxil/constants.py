@@ -13,7 +13,7 @@ class LanguageLevelId(str, Enum):
     B1_INTERMEDIATE = "B1"
     B2_UPPER_INTERMEDIATE = "B2"
     C1_PRE_ADVANCED = "C1"
-    # No C2 at this school
+    # no C2 at this school
 
 
 DEFAULT_CHAR_FIELD_MAX_LEN = 255
