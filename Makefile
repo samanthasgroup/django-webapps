@@ -14,9 +14,11 @@ migrate:
 recreate-first-migration:
 	poetry run python manage.py migrate api zero && \
 	$(MAKE) _recreate-first-migration-common
+	$(MAKE) generate-erd
 
 pull-and-recreate-first-migration:
 	poetry run python manage.py migrate api zero && \
+	git restore api/migrations/0001_initial.py && \
 	git pull origin && \
 	$(MAKE) _recreate-first-migration-common
 
@@ -32,7 +34,6 @@ _recreate-first-migration-common:
 	mv ./api/migrations/0003_fake_data.py.bak ./api/migrations/0003_fake_data.py && \
 	poetry run python manage.py migrate && \
 	rm auth_dump.json.gz
-	$(MAKE) generate-erd
 
 repopulate-data:
 # This script will need to be changed if model migrations are added after data migrations.
