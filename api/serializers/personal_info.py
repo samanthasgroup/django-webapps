@@ -2,7 +2,7 @@ from typing import Any
 
 from rest_framework import serializers
 
-from api.exceptions import ConflictError
+from api.exceptions import ConflictError, NotAcceptableError
 from api.models import PersonalInfo
 from api.utils import capitalize_each_word
 
@@ -45,7 +45,7 @@ class CheckChatIdExistenceSerializer(serializers.ModelSerializer[PersonalInfo]):
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         if PersonalInfo.objects.filter(**attrs).exists():
             return attrs
-        raise serializers.ValidationError(f"No user with {attrs=} was found.")
+        raise NotAcceptableError
 
     class Meta:
         model = PersonalInfo

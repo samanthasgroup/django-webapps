@@ -47,7 +47,21 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
             return CheckChatIdExistenceSerializer
         return PersonalInfoSerializer
 
-    @extend_schema(parameters=[CheckChatIdExistenceSerializer])
+    @extend_schema(
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=CheckChatIdExistenceSerializer,
+                description="User with this chat ID exists",
+            ),
+            status.HTTP_406_NOT_ACCEPTABLE: OpenApiResponse(
+                response=BaseAPIExceptionSerializer, description="No user with this chat ID exists"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=ValidationErrorSerializer,
+                description="Something is wrong with the data (e.g. no chat ID was passed)",
+            ),
+        }
+    )
     @action(detail=False, methods=["get"])
     def check_existence_of_chat_id(self, request: Request) -> Response:
         """
