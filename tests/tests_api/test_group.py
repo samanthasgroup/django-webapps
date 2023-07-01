@@ -343,3 +343,22 @@ class TestPublicGroupAbort:
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
             assert log_event.type == TeacherLogEventType.GROUP_ABORTED
             compare_date_time_with_timestamp(log_event.date_time, timestamp)
+
+    def test_abort_appends_former_entity_lists(self, api_client, active_group):
+        # test that lists are not overwritten
+        student = baker.make(Student, _fill_optional=True)
+        teacher = baker.make(Teacher, _fill_optional=True)
+        coordinator = baker.make(Coordinator, _fill_optional=True)
+        active_group.students_former.add(student)
+        active_group.teachers_former.add(teacher)
+        active_group.coordinators_former.add(coordinator)
+
+        response = api_client.post(self._make_url(active_group))
+
+        assert response.status_code == status.HTTP_200_OK
+
+        active_group.refresh_from_db()
+        assert active_group.status == GroupStatus.ABORTED
+        assert active_group.students_former.filter(pk=student.pk).exists()
+        assert active_group.teachers_former.filter(pk=teacher.pk).exists()
+        assert active_group.coordinators_former.filter(pk=coordinator.pk).exists()
