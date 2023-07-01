@@ -34,3 +34,9 @@ class PublicGroupViewSet(viewsets.ReadOnlyModelViewSet[Group]):
         group = self.get_object()
         GroupProcessor.start(group)
         return Response(status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"])
+    def abort(self, request: Request, pk: int) -> Response:  # noqa: ARG002
+        group = self.get_object()
+        GroupProcessor.abort(group)
+        return Response(status=status.HTTP_200_OK)

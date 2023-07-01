@@ -119,6 +119,14 @@ def test_public_group_retrieve(api_client):
     }
 
 
+def compare_date_time_with_timestamp(date_time: datetime.datetime, timestamp: datetime.datetime):
+    assert date_time.year == timestamp.year
+    assert date_time.month == timestamp.month
+    assert date_time.day == timestamp.day
+    assert date_time.hour == timestamp.hour
+    assert date_time.minute == timestamp.minute
+
+
 @pytest.fixture
 def group(timestamp):
     group = baker.make(Group, _fill_optional=True, make_m2m=True)
@@ -129,6 +137,23 @@ def group(timestamp):
     group.coordinators.update(status=CoordinatorStatus.WORKING_BELOW_THRESHOLD)
     group.students.update(status=StudentStatus.AWAITING_OFFER)
     group.teachers.update(status=TeacherStatus.AWAITING_OFFER)
+    group.save()
+    yield group
+
+
+@pytest.fixture
+def active_group(timestamp):
+    group = baker.make(Group, _fill_optional=True, make_m2m=True)
+
+    group.status = GroupStatus.WORKING
+    # to make sure `status_since` really gets updated:
+    group.status_since = timestamp - datetime.timedelta(days=1, hours=1, minutes=10)
+    group.coordinators.update(status=CoordinatorStatus.WORKING_BELOW_THRESHOLD)
+    group.students.update(status=StudentStatus.STUDYING)
+    group.teachers.update(status=TeacherStatus.TEACHING_ACCEPTING_MORE)
+    group.teachers_former.set([])
+    group.students_former.set([])
+    group.coordinators_former.set([])
     group.save()
     yield group
 
@@ -208,7 +233,7 @@ class TestPublicGroupStart:
         coordinator.refresh_from_db()
         assert coordinator.groups.count() == number_of_groups_to_start
         assert coordinator.status == expected_status
-        self._compare_date_time_with_timestamp(coordinator.status_since, timestamp)
+        compare_date_time_with_timestamp(coordinator.status_since, timestamp)
 
     def test_public_group_start_student_status(self, api_client, timestamp):
         student = baker.make(Student, _fill_optional=True)
@@ -228,17 +253,7 @@ class TestPublicGroupStart:
         student.refresh_from_db()
         assert student.groups.count() == 1
         assert student.status == StudentStatus.STUDYING
-        self._compare_date_time_with_timestamp(student.status_since, timestamp)
-
-    @staticmethod
-    def _compare_date_time_with_timestamp(
-        date_time: datetime.datetime, timestamp: datetime.datetime
-    ):
-        assert date_time.year == timestamp.year
-        assert date_time.month == timestamp.month
-        assert date_time.day == timestamp.day
-        assert date_time.hour == timestamp.hour
-        assert date_time.minute == timestamp.minute
+        compare_date_time_with_timestamp(student.status_since, timestamp)
 
     @staticmethod
     def _make_url(group: Group) -> str:
@@ -272,4 +287,59 @@ class TestPublicGroupStart:
         teacher.refresh_from_db()
         assert teacher.groups.count() == teacher.simultaneous_groups + delta
         assert teacher.status == expected_status
-        self._compare_date_time_with_timestamp(teacher.status_since, timestamp)
+        compare_date_time_with_timestamp(teacher.status_since, timestamp)
+
+
+class TestPublicGroupAbort:
+    @staticmethod
+    def _make_url(group: Group) -> str:
+        return reverse("groups-abort", kwargs={"pk": group.id})
+
+    def test_public_group_abort_general_check(self, api_client, active_group, timestamp):
+        response = api_client.post(self._make_url(active_group))
+
+        assert response.status_code == status.HTTP_200_OK
+
+        active_group.refresh_from_db()
+        assert active_group.status == GroupStatus.ABORTED
+
+        common_status_since = active_group.status_since
+        compare_date_time_with_timestamp(common_status_since, timestamp)
+
+        assert active_group.students.count() == 0
+        assert active_group.teachers.count() == 0
+        assert active_group.coordinators.count() == 0
+
+        for coordinator in active_group.coordinators_former.iterator():
+            assert coordinator.status in (
+                CoordinatorStatus.WORKING_BELOW_THRESHOLD,
+                CoordinatorStatus.WORKING_OK,
+                CoordinatorStatus.WORKING_LIMIT_REACHED,
+            )
+            assert coordinator.status_since == common_status_since
+
+            log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(
+                coordinator_id=coordinator.pk
+            )
+            assert log_event.type == CoordinatorLogEventType.GROUP_ABORTED
+            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+
+        for student in active_group.students_former.iterator():
+            assert student.status == StudentStatus.AWAITING_OFFER
+            assert student.status_since == common_status_since
+
+            log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
+            assert log_event.type == StudentLogEventType.GROUP_ABORTED
+            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+
+        for teacher in active_group.teachers_former.iterator():
+            assert teacher.status in (
+                TeacherStatus.TEACHING_ACCEPTING_MORE,
+                TeacherStatus.TEACHING_NOT_ACCEPTING_MORE,
+                TeacherStatus.AWAITING_OFFER,
+            )
+            assert teacher.status_since == common_status_since
+
+            log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
+            assert log_event.type == TeacherLogEventType.GROUP_ABORTED
+            compare_date_time_with_timestamp(log_event.date_time, timestamp)

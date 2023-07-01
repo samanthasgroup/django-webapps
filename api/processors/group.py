@@ -30,6 +30,13 @@ class GroupProcessor(Processor):
         cls._set_statuses_start(group)
 
     @classmethod
+    @transaction.atomic
+    def abort(cls, group: Group) -> None:
+        cls._create_log_events_abort(group)
+        cls._mark_group_linked_objects_as_former(group)
+        cls._set_statuses_abort(group)
+
+    @classmethod
     def _create_log_events_start(cls, group: Group) -> None:
         GroupLogEvent.objects.create(group=group, type=GroupLogEventType.STARTED)
 
@@ -53,6 +60,33 @@ class GroupProcessor(Processor):
         )
 
     @classmethod
+    def _create_log_events_abort(cls, group: Group) -> None:
+        GroupLogEvent.objects.create(group=group, type=GroupLogEventType.ABORTED)
+
+        CoordinatorLogEvent.objects.bulk_create(
+            CoordinatorLogEvent(
+                coordinator=coordinator,
+                group=group,
+                type=CoordinatorLogEventType.TOOK_NEW_GROUP,
+            )
+            for coordinator in group.coordinators.iterator()
+        )
+
+        StudentLogEvent.objects.bulk_create(
+            StudentLogEvent(
+                student=student, to_group=group, type=StudentLogEventType.GROUP_ABORTED
+            )
+            for student in group.students.iterator()
+        )
+
+        TeacherLogEvent.objects.bulk_create(
+            TeacherLogEvent(
+                teacher=teacher, to_group=group, type=TeacherLogEventType.GROUP_ABORTED
+            )
+            for teacher in group.teachers.iterator()
+        )
+
+    @classmethod
     def _set_statuses_start(cls, group: Group) -> None:
         timestamp = timezone.now()
 
@@ -61,6 +95,16 @@ class GroupProcessor(Processor):
         cls._set_coordinators_status_start(timestamp)
         cls._set_students_status_start(group=group, timestamp=timestamp)
         cls._set_teachers_status_start(timestamp)
+
+    @classmethod
+    def _set_statuses_abort(cls, group: Group) -> None:
+        timestamp = timezone.now()
+
+        cls._set_status(obj=group, status=GroupStatus.ABORTED, status_since=timestamp)
+
+        cls._set_students_status_abort(group=group, timestamp=timestamp)
+        cls._set_teachers_status_abort(timestamp)
+        cls._set_coordinators_status_start(timestamp)
 
     @staticmethod
     def _set_coordinators_status_start(timestamp: datetime.datetime) -> None:
@@ -84,10 +128,48 @@ class GroupProcessor(Processor):
         )
 
     @staticmethod
+    def _set_students_status_abort(group: Group, timestamp: datetime.datetime) -> None:
+        group.students.update(
+            status=StudentStatus.AWAITING_OFFER,
+            status_since=timestamp,
+        )
+
+    @staticmethod
+    def _mark_group_linked_objects_as_former(group: Group) -> None:
+        ts, ss, cs = group.teachers, group.students, group.coordinators
+
+        group.teachers.set([])
+        group.students.set([])
+        group.coordinators.set([])
+        group.teachers_former.add(*ts.all())
+        group.students_former.add(*ss.all())
+        group.coordinators_former.add(*cs.all())
+        group.save()
+
+    @staticmethod
     def _set_teachers_status_start(timestamp: datetime.datetime) -> None:
         teachers = Teacher.objects
 
         teachers.filter_can_take_more_groups().update(
+            status=TeacherStatus.TEACHING_ACCEPTING_MORE,
+            status_since=timestamp,
+        )
+
+        teachers.filter_cannot_take_more_groups().update(
+            status=TeacherStatus.TEACHING_NOT_ACCEPTING_MORE,
+            status_since=timestamp,
+        )
+
+    @staticmethod
+    def _set_teachers_status_abort(timestamp: datetime.datetime) -> None:
+        teachers = Teacher.objects
+
+        teachers.filter_has_no_groups().update(
+            status=TeacherStatus.AWAITING_OFFER,
+            status_since=timestamp,
+        )
+
+        teachers.filter_has_groups().filter_can_take_more_groups().update(
             status=TeacherStatus.TEACHING_ACCEPTING_MORE,
             status_since=timestamp,
         )
