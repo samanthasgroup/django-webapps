@@ -33,7 +33,7 @@ class GroupProcessor(Processor):
     @transaction.atomic
     def abort(cls, group: Group) -> None:
         cls._create_log_events_abort(group)
-        cls._mark_group_linked_objects_as_former(group)
+        cls._move_related_people_to_former(group)
         cls._set_statuses_abort(group)
 
     @classmethod
@@ -135,7 +135,7 @@ class GroupProcessor(Processor):
         )
 
     @staticmethod
-    def _mark_group_linked_objects_as_former(group: Group) -> None:
+    def _move_related_people_to_former(group: Group) -> None:
         teachers_current, students_current, coordinators_current = (
             group.teachers,
             group.students,
