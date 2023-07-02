@@ -74,14 +74,14 @@ class GroupProcessor(Processor):
 
         StudentLogEvent.objects.bulk_create(
             StudentLogEvent(
-                student=student, to_group=group, type=StudentLogEventType.GROUP_ABORTED
+                student=student, from_group=group, type=StudentLogEventType.GROUP_ABORTED
             )
             for student in group.students.iterator()
         )
 
         TeacherLogEvent.objects.bulk_create(
             TeacherLogEvent(
-                teacher=teacher, to_group=group, type=TeacherLogEventType.GROUP_ABORTED
+                teacher=teacher, from_group=group, type=TeacherLogEventType.GROUP_ABORTED
             )
             for teacher in group.teachers.iterator()
         )
@@ -136,14 +136,18 @@ class GroupProcessor(Processor):
 
     @staticmethod
     def _mark_group_linked_objects_as_former(group: Group) -> None:
-        ts, ss, cs = group.teachers, group.students, group.coordinators
+        teachers_current, students_current, coordinators_current = (
+            group.teachers,
+            group.students,
+            group.coordinators,
+        )
 
         group.teachers.set([])
         group.students.set([])
         group.coordinators.set([])
-        group.teachers_former.add(*ts.all())
-        group.students_former.add(*ss.all())
-        group.coordinators_former.add(*cs.all())
+        group.teachers_former.add(*teachers_current.all())
+        group.students_former.add(*students_current.all())
+        group.coordinators_former.add(*coordinators_current.all())
         group.save()
 
     @staticmethod

@@ -352,6 +352,7 @@ class TestPublicGroupAbort:
         active_group.students_former.add(student)
         active_group.teachers_former.add(teacher)
         active_group.coordinators_former.add(coordinator)
+        active_group.save()
 
         response = api_client.post(self._make_url(active_group))
 
