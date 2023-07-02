@@ -151,9 +151,9 @@ def active_group(timestamp):
     group.coordinators.update(status=CoordinatorStatus.WORKING_BELOW_THRESHOLD)
     group.students.update(status=StudentStatus.STUDYING)
     group.teachers.update(status=TeacherStatus.TEACHING_ACCEPTING_MORE)
-    group.teachers_former.set([])
-    group.students_former.set([])
-    group.coordinators_former.set([])
+    group.teachers_former.clear()
+    group.students_former.clear()
+    group.coordinators_former.clear()
     group.save()
     yield group
 
@@ -306,9 +306,9 @@ class TestPublicGroupAbort:
         common_status_since = active_group.status_since
         compare_date_time_with_timestamp(common_status_since, timestamp)
 
-        assert active_group.students.count() == 0
-        assert active_group.teachers.count() == 0
-        assert active_group.coordinators.count() == 0
+        assert not active_group.students.count()
+        assert not active_group.teachers.count()
+        assert not active_group.coordinators.count()
 
         for coordinator in active_group.coordinators_former.iterator():
             assert coordinator.status in (

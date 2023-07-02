@@ -142,9 +142,9 @@ class GroupProcessor(Processor):
             group.coordinators,
         )
 
-        group.teachers.set([])
-        group.students.set([])
-        group.coordinators.set([])
+        group.teachers.clear()
+        group.students.clear()
+        group.coordinators.clear()
         group.teachers_former.add(*teachers_current.all())
         group.students_former.add(*students_current.all())
         group.coordinators_former.add(*coordinators_current.all())
