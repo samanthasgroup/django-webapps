@@ -92,7 +92,7 @@ class GroupProcessor(Processor):
 
         cls._set_status(obj=group, status=GroupStatus.WORKING, status_since=timestamp)
 
-        cls._set_coordinators_status_start(timestamp)
+        cls._set_coordinators_status_start_or_abort(timestamp)
         cls._set_students_status_start(group=group, timestamp=timestamp)
         cls._set_teachers_status_start(timestamp)
 
@@ -104,10 +104,10 @@ class GroupProcessor(Processor):
 
         cls._set_students_status_abort(group=group, timestamp=timestamp)
         cls._set_teachers_status_abort(timestamp)
-        cls._set_coordinators_status_start(timestamp)
+        cls._set_coordinators_status_start_or_abort(timestamp)
 
     @staticmethod
-    def _set_coordinators_status_start(timestamp: datetime.datetime) -> None:
+    def _set_coordinators_status_start_or_abort(timestamp: datetime.datetime) -> None:
         coordinators = Coordinator.objects
 
         coordinators.filter_below_threshold().update(
