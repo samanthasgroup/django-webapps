@@ -8,7 +8,7 @@ from rest_framework.serializers import BaseSerializer
 
 from api.filters import GroupFilter
 from api.models import Group
-from api.processors.group import GroupProcessor
+from api.processors import GroupProcessor
 from api.serializers import PublicGroupSerializer, PublicGroupWithStudentsSerializer
 
 
@@ -32,11 +32,11 @@ class PublicGroupViewSet(viewsets.ReadOnlyModelViewSet[Group]):
     @action(detail=True, methods=["post"])
     def start(self, request: Request, pk: int) -> Response:  # noqa: ARG002
         group = self.get_object()
-        GroupProcessor.start(group)
+        GroupProcessor().start(group)
         return Response(status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"])
     def abort(self, request: Request, pk: int) -> Response:  # noqa: ARG002
         group = self.get_object()
-        GroupProcessor.abort(group)
+        GroupProcessor().abort(group)
         return Response(status=status.HTTP_200_OK)
