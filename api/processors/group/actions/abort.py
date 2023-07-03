@@ -21,7 +21,7 @@ class AbortProcessor(BaseActionProcessor):
     @transaction.atomic
     def process(self, group: Group) -> None:
         self._create_log_events(group)
-        self._mark_group_linked_objects_as_former(group)
+        self._move_related_people_to_former(group)
         self._set_statuses(group, group_status=GroupStatus.ABORTED)
 
     def _set_coordinators_status(self, timestamp: datetime.datetime) -> None:
@@ -60,7 +60,7 @@ class AbortProcessor(BaseActionProcessor):
             group_log_event_type=GroupLogEventType.ABORTED,
         )
 
-    def _mark_group_linked_objects_as_former(self, group: Group) -> None:
+    def _move_related_people_to_former(self, group: Group) -> None:
         teachers_current, students_current, coordinators_current = (
             group.teachers,
             group.students,
