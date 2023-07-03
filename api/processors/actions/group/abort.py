@@ -16,9 +16,9 @@ from api.processors.auxil.log_event_creator import GroupLogEventCreator
 class GroupAbortProcessor(GroupActionProcessor):
     @transaction.atomic
     def process(self) -> None:
+        self._set_statuses()
         self._create_log_events()
         self._move_related_people_to_former()
-        self._set_statuses()
 
     def _create_log_events(self) -> None:
         GroupLogEventCreator.create(
@@ -35,17 +35,17 @@ class GroupAbortProcessor(GroupActionProcessor):
             self.group.students,
             self.group.coordinators,
         )
-
-        self.group.teachers.clear()
-        self.group.students.clear()
-        self.group.coordinators.clear()
         self.group.teachers_former.add(*teachers_current.all())
         self.group.students_former.add(*students_current.all())
         self.group.coordinators_former.add(*coordinators_current.all())
+        self.group.teachers.clear()
+        self.group.students.clear()
+        self.group.coordinators.clear()
         self.group.save()
 
     def _set_coordinators_status(self) -> None:
         StatusSetter.update_statuses_of_active_coordinators(self.timestamp)
+        self.group.save()
 
     def _set_group_status(self) -> None:
         StatusSetter.set_status(
@@ -72,6 +72,6 @@ class GroupAbortProcessor(GroupActionProcessor):
 
     def _set_students_status(self) -> None:
         self.group.students.update(
-            status=StudentStatus.STUDYING,
+            status=StudentStatus.AWAITING_OFFER,
             status_since=self.timestamp,
         )

@@ -296,12 +296,19 @@ class TestPublicGroupAbort:
         return reverse("groups-abort", kwargs={"pk": group.id})
 
     def test_public_group_abort_general_check(self, api_client, active_group, timestamp):
+        prev_student_count, prev_teacher_count, prev_coordinator_count = (
+            active_group.students.count(),
+            active_group.teachers.count(),
+            active_group.coordinators.count(),
+        )
         response = api_client.post(self._make_url(active_group))
-
         assert response.status_code == status.HTTP_200_OK
 
         active_group.refresh_from_db()
         assert active_group.status == GroupStatus.ABORTED
+        assert prev_student_count == active_group.students_former.count()
+        assert prev_teacher_count == active_group.teachers_former.count()
+        assert prev_coordinator_count == active_group.coordinators_former.count()
 
         common_status_since = active_group.status_since
         compare_date_time_with_timestamp(common_status_since, timestamp)
