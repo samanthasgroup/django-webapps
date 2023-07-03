@@ -1,4 +1,4 @@
-from .group.processor import GroupProcessor
+from api.processors.group import GroupProcessor
 
 __all__ = [
     "GroupProcessor",
