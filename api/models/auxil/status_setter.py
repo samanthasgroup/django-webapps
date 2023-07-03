@@ -22,7 +22,7 @@ class StatusSetter:
         obj.save()
 
     @staticmethod
-    def set_coordinator_statuses(timestamp: datetime.datetime) -> None:
+    def update_statuses_of_active_coordinators(timestamp: datetime.datetime) -> None:
         coordinators = Coordinator.objects
 
         coordinators.filter_below_threshold().update(

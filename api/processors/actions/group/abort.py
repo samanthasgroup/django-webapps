@@ -45,7 +45,7 @@ class GroupAbortProcessor(GroupActionProcessor):
         self.group.save()
 
     def _set_coordinators_status(self) -> None:
-        StatusSetter.set_coordinator_statuses(self.timestamp)
+        StatusSetter.update_statuses_of_active_coordinators(self.timestamp)
 
     def _set_group_status(self) -> None:
         StatusSetter.set_status(
