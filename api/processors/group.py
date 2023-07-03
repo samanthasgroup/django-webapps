@@ -67,7 +67,7 @@ class GroupProcessor(Processor):
             CoordinatorLogEvent(
                 coordinator=coordinator,
                 group=group,
-                type=CoordinatorLogEventType.TOOK_NEW_GROUP,
+                type=CoordinatorLogEventType.GROUP_ABORTED,
             )
             for coordinator in group.coordinators.iterator()
         )
