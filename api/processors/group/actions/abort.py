@@ -18,16 +18,19 @@ from api.processors.group.actions.base import (
 
 
 class AbortProcessor(BaseActionProcessor):
+    @classmethod
     @transaction.atomic
-    def process(self, group: Group) -> None:
-        self._create_log_events(group)
-        self._move_related_people_to_former(group)
-        self._set_statuses(group, group_status=GroupStatus.ABORTED)
+    def process(cls, group: Group) -> None:
+        cls._create_log_events(group)
+        cls._move_related_people_to_former(group)
+        cls._set_statuses(group, group_status=GroupStatus.ABORTED)
 
-    def _set_coordinators_status(self, timestamp: datetime.datetime) -> None:
+    @classmethod
+    def _set_coordinators_status(cls, timestamp: datetime.datetime) -> None:
         CommonCoordinatorsStatusSetter.set(timestamp)
 
-    def _set_teachers_status(self, timestamp: datetime.datetime) -> None:
+    @classmethod
+    def _set_teachers_status(cls, timestamp: datetime.datetime) -> None:
         teachers = Teacher.objects
 
         teachers.filter_has_no_groups().update(
@@ -45,13 +48,15 @@ class AbortProcessor(BaseActionProcessor):
             status_since=timestamp,
         )
 
-    def _set_students_status(self, group: Group, timestamp: datetime.datetime) -> None:
+    @classmethod
+    def _set_students_status(cls, group: Group, timestamp: datetime.datetime) -> None:
         group.students.update(
             status=StudentStatus.STUDYING,
             status_since=timestamp,
         )
 
-    def _create_log_events(self, group: Group) -> None:
+    @classmethod
+    def _create_log_events(cls, group: Group) -> None:
         CommonLogEventsCreator.create(
             group=group,
             student_log_event_type=StudentLogEventType.GROUP_ABORTED,
@@ -60,7 +65,8 @@ class AbortProcessor(BaseActionProcessor):
             group_log_event_type=GroupLogEventType.ABORTED,
         )
 
-    def _move_related_people_to_former(self, group: Group) -> None:
+    @classmethod
+    def _move_related_people_to_former(cls, group: Group) -> None:
         teachers_current, students_current, coordinators_current = (
             group.teachers,
             group.students,

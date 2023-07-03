@@ -32,11 +32,12 @@ class PublicGroupViewSet(viewsets.ReadOnlyModelViewSet[Group]):
     @action(detail=True, methods=["post"])
     def start(self, request: Request, pk: int) -> Response:  # noqa: ARG002
         group = self.get_object()
-        GroupProcessor().start(group)
+        GroupProcessor.start(group)
+        # TODO actually group gets created earlier, so maybe status 200 OK is better here
         return Response(status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"])
     def abort(self, request: Request, pk: int) -> Response:  # noqa: ARG002
         group = self.get_object()
-        GroupProcessor().abort(group)
+        GroupProcessor.abort(group)
         return Response(status=status.HTTP_200_OK)

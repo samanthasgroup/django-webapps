@@ -22,33 +22,39 @@ from api.processors.base import Processor
 
 
 class BaseActionProcessor(Processor):
-    def _set_statuses(self, group: Group, group_status: GroupStatus) -> None:
+    @classmethod
+    def _set_statuses(cls, group: Group, group_status: GroupStatus) -> None:
         timestamp = timezone.now()
 
-        self._set_status(obj=group, status=group_status, status_since=timestamp)
+        cls._set_status(obj=group, status=group_status, status_since=timestamp)
 
-        self._set_coordinators_status(timestamp)
-        self._set_students_status(group=group, timestamp=timestamp)
-        self._set_teachers_status(timestamp)
+        cls._set_coordinators_status(timestamp)
+        cls._set_students_status(group=group, timestamp=timestamp)
+        cls._set_teachers_status(timestamp)
 
+    @classmethod
     @abc.abstractmethod
-    def _create_log_events(self, group: Group) -> None:
+    def _create_log_events(cls, group: Group) -> None:
         pass
 
+    @classmethod
     @abc.abstractmethod
-    def _set_students_status(self, group: Group, timestamp: datetime.datetime) -> None:
+    def _set_students_status(cls, group: Group, timestamp: datetime.datetime) -> None:
         pass
 
+    @classmethod
     @abc.abstractmethod
-    def _set_teachers_status(self, timestamp: datetime.datetime) -> None:
+    def _set_teachers_status(cls, timestamp: datetime.datetime) -> None:
         pass
 
+    @classmethod
     @abc.abstractmethod
-    def _set_coordinators_status(self, timestamp: datetime.datetime) -> None:
+    def _set_coordinators_status(cls, timestamp: datetime.datetime) -> None:
         pass
 
+    @classmethod
     @abc.abstractmethod
-    def process(self, group: Group) -> None:
+    def process(cls, group: Group) -> None:
         pass
 
 

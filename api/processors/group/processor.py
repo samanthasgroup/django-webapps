@@ -5,12 +5,12 @@ from api.processors.group.actions.start import StartProcessor
 
 
 class GroupProcessor(Processor):
-    def __init__(self) -> None:
-        self.abort_processor = AbortProcessor()
-        self.start_processor = StartProcessor()
+    """A Facade class providing access to actions with groups."""
 
-    def start(self, group: Group) -> None:
-        self.start_processor.process(group)
+    @staticmethod
+    def start(group: Group) -> None:
+        StartProcessor.process(group)
 
-    def abort(self, group: Group) -> None:
-        self.abort_processor.process(group)
+    @staticmethod
+    def abort(group: Group) -> None:
+        AbortProcessor.process(group)
