@@ -306,9 +306,9 @@ class TestPublicGroupAbort:
 
         active_group.refresh_from_db()
         assert active_group.status == GroupStatus.ABORTED
-        assert prev_student_count == active_group.students_former.count()
-        assert prev_teacher_count == active_group.teachers_former.count()
-        assert prev_coordinator_count == active_group.coordinators_former.count()
+        assert active_group.students_former.count() == prev_student_count
+        assert active_group.teachers_former.count() == prev_teacher_count
+        assert active_group.coordinators_former.count() == prev_coordinator_count
 
         common_status_since = active_group.status_since
         compare_date_time_with_timestamp(common_status_since, timestamp)
