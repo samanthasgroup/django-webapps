@@ -21,6 +21,14 @@ class TeacherQuerySet(models.QuerySet["Teacher"]):
         """QuerySet with Teachers that cannot take any more groups."""
         return self.annotate_with_group_count().filter(group_count__gte=F("simultaneous_groups"))
 
+    def filter_has_groups(self) -> "TeacherQuerySet":
+        """QuerySet with Teachers that have at least one group."""
+        return self.annotate_with_group_count().filter(group_count__gt=0)
+
+    def filter_has_no_groups(self) -> "TeacherQuerySet":
+        """QuerySet with Teachers that have no groups."""
+        return self.annotate_with_group_count().filter(group_count=0)
+
 
 class Teacher(TeacherCommon):
     """Model for an adult teacher that can teach groups."""
