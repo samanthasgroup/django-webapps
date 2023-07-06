@@ -8,7 +8,7 @@ TODO:
 """
 import pytest
 from django.utils.dateparse import parse_duration
-from model_bakery import baker
+from model_bakery import baker, seq
 from rest_framework import status
 
 from api.models import PersonalInfo
@@ -29,7 +29,7 @@ def test_personal_info_create(api_client, fake_personal_info_data):
 
 
 def test_personal_info_update(api_client, fake_personal_info_data):
-    personal_info = baker.make(PersonalInfo)
+    personal_info = baker.make(PersonalInfo, first_name=seq("Ivan"))
     initial_count = PersonalInfo.objects.count()
 
     response = api_client.put(
@@ -48,7 +48,7 @@ def test_personal_info_update(api_client, fake_personal_info_data):
 
 
 def test_personal_info_check_existence_returns_409_with_existing_info(api_client):
-    existing_personal_info = baker.make(PersonalInfo)
+    existing_personal_info = baker.make(PersonalInfo, first_name=seq("Ivan"))
     response = api_client.post(
         "/api/personal_info/check_existence/",
         data={

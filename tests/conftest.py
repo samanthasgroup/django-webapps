@@ -2,6 +2,7 @@ import pytest
 from django.utils import timezone
 from rest_framework.test import APIClient
 
+from api.models import DayAndTimeSlot
 from api.models.choices.communication_language_mode import CommunicationLanguageMode
 from api.models.choices.registration_telegram_bot_language import RegistrationTelegramBotLanguage
 
@@ -54,3 +55,8 @@ def fake_personal_info_data(faker):
 @pytest.fixture(scope="module")
 def timestamp():
     yield timezone.now()
+
+
+@pytest.fixture(scope="session")
+def availability_slots():
+    return DayAndTimeSlot.objects.all()
