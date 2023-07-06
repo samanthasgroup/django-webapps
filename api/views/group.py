@@ -12,6 +12,7 @@ from api.processors import GroupProcessor
 from api.serializers import PublicGroupSerializer, PublicGroupWithStudentsSerializer
 
 
+# TODO add endpoints
 class PublicGroupViewSet(viewsets.ReadOnlyModelViewSet[Group]):
     """
     Public viewset for groups. Used for public API (Tooljet).
