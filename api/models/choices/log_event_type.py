@@ -33,6 +33,7 @@ class CoordinatorLogEventType(models.TextChoices):
     )
     EXPELLED = "expelled", "Expelled from the project"
     ACCESS_REVOKED = "access_revoked", "Access to corporate resources revoked"
+    GROUP_ABORTED = "group_aborted", "Group finished prematurely"
 
 
 class GroupLogEventType(models.TextChoices):
@@ -89,6 +90,8 @@ class StudentLogEventType(models.TextChoices):
         "finished_stays",
         "Completed the course and wants to join another group",
     )
+    GROUP_ABORTED = "group_aborted", "Group finished prematurely"
+    GROUP_FINISHED = "group_finished", "Group finished successfully"
 
 
 class TeacherLogEventType(models.TextChoices):
@@ -115,6 +118,8 @@ class TeacherLogEventType(models.TextChoices):
     )
     EXPELLED = "expelled", "Expelled from the project"
     ACCESS_REVOKED = "access_revoked", "Access to corporate resources revoked"
+    GROUP_ABORTED = "group_aborted", "Group finished prematurely"
+    GROUP_FINISHED = "group_finished", "Group finished successfully"
 
 
 class TeacherUnder18LogEventType(models.TextChoices):
