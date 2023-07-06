@@ -120,11 +120,16 @@ def test_public_group_retrieve(api_client):
 
 
 def compare_date_time_with_timestamp(date_time: datetime.datetime, timestamp: datetime.datetime):
-    assert date_time.year == timestamp.year
-    assert date_time.month == timestamp.month
-    assert date_time.day == timestamp.day
-    assert date_time.hour == timestamp.hour
-    assert date_time.minute == timestamp.minute
+    """Compares the given datetime object with timestamp from conftest.py.
+
+    Allows for a one-minute margin between timestamp and the datetime being checked.
+
+    Used e.g. to compare `status_since` attribute after status change.
+
+    For this test to be informative, make sure you manually set status_since to
+    some date in the past so that the match with timestamp after status change is not accidental.
+    """
+    assert date_time - timestamp < datetime.timedelta(minutes=1)
 
 
 @pytest.fixture
