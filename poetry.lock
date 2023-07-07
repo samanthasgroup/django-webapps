@@ -328,18 +328,18 @@ phonenumberslite = ["phonenumberslite (>=7.0.2)"]
 
 [[package]]
 name = "django-stubs"
-version = "4.2.1"
+version = "4.2.3"
 description = "Mypy stubs for Django"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django-stubs-4.2.1.tar.gz", hash = "sha256:8c15d5f7b05926805cfb25f2bfbf3509c37792fbd8aec5aedea358b85d8bccd5"},
-    {file = "django_stubs-4.2.1-py3-none-any.whl", hash = "sha256:66477bdba25407623f4079205e58f3c7265a4f0d8f7c9f540a6edc16f8883a5b"},
+    {file = "django-stubs-4.2.3.tar.gz", hash = "sha256:dadab39b46d9ae8f37a8e879c590f39a9e042b565c03fa0c5a8f754b441b1f23"},
+    {file = "django_stubs-4.2.3-py3-none-any.whl", hash = "sha256:e30e2e4927ba14bec587ed2c686404b6b8e473cabe9baca445e7d2e1e0d7b14f"},
 ]
 
 [package.dependencies]
 django = "*"
-django-stubs-ext = ">=4.2.1"
+django-stubs-ext = ">=4.2.2"
 mypy = ">=1.0.0"
 tomli = {version = "*", markers = "python_version < \"3.11\""}
 types-pytz = "*"
@@ -347,7 +347,7 @@ types-PyYAML = "*"
 typing-extensions = "*"
 
 [package.extras]
-compatible-mypy = ["mypy (>=1.3.0,<1.4)"]
+compatible-mypy = ["mypy (==1.4.*)"]
 
 [[package]]
 name = "django-stubs-ext"
@@ -1259,4 +1259,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "70e253f6d350a0f00989a2eee18e80fa8d2df19326189e53ed9f21d25cc66583"
+content-hash = "bbd79e2188eca115351cbdaba68ab114f110c214bd3f5dcf8d47a2ebe09825fa"
