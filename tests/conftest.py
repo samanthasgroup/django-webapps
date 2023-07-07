@@ -2,6 +2,7 @@ import pytest
 from django.utils import timezone
 from rest_framework.test import APIClient
 
+from api.models import DayAndTimeSlot
 from api.models.choices.communication_language_mode import CommunicationLanguageMode
 from api.models.choices.registration_telegram_bot_language import RegistrationTelegramBotLanguage
 
@@ -54,3 +55,14 @@ def fake_personal_info_data(faker):
 @pytest.fixture(scope="module")
 def timestamp():
     yield timezone.now()
+
+
+@pytest.fixture(scope="session")
+def availability_slots():
+    """
+    Use where `DayAndTimeSlot`s with unique constraints are involved, so as to avoid random errors.
+
+    Note:
+        For some cases you might need random set of slots, in that case use different fixture.
+    """
+    return DayAndTimeSlot.objects.all()

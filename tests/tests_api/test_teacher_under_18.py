@@ -1,5 +1,5 @@
 import pytz
-from model_bakery import baker
+from model_bakery import baker, seq
 from rest_framework import status
 
 from api.models import LanguageAndLevel, PersonalInfo, TeacherUnder18
@@ -8,7 +8,7 @@ from api.models.choices.status import TeacherUnder18Status
 
 def test_teacher_under_18_create(api_client, faker):
     initial_count = TeacherUnder18.objects.count()
-    personal_info = baker.make(PersonalInfo)
+    personal_info = baker.make(PersonalInfo, first_name=seq("Ivan"))
 
     teaching_languages_and_levels_ids = [
         LanguageAndLevel.objects.first().id,
