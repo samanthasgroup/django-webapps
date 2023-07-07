@@ -29,6 +29,7 @@ def test_personal_info_create(api_client, fake_personal_info_data):
 
 
 def test_personal_info_update(api_client, fake_personal_info_data):
+    # seq is used here to resolve compound unique constraint
     personal_info = baker.make(PersonalInfo, first_name=seq("Ivan"))
     initial_count = PersonalInfo.objects.count()
 
