@@ -60,10 +60,9 @@ def timestamp():
 @pytest.fixture(scope="session")
 def availability_slots():
     """
-    Recommended for use where DayAndTime slots with unique constraints involved,
-    otherwise might be random errors.
+    Use where `DayAndTimeSlot`s with unique constraints are involved, so as to avoid random errors.
 
-    NOTICE: for some cases you might need random set of slots,
-    in that case use different fixture.
+    Note:
+        For some cases you might need random set of slots, in that case use different fixture.
     """
     return DayAndTimeSlot.objects.all()
