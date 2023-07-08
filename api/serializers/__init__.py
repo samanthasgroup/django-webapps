@@ -34,6 +34,7 @@ from api.serializers.group.public import (  # isort:skip
     PublicGroupSerializer,
     PublicGroupWithStudentsSerializer,
 )
+from api.serializers.group.internal import GroupReadSerializer, GroupWriteSerializer  # isort:skip
 
 __all__ = [
     "AgeRangeSerializer",
@@ -45,6 +46,8 @@ __all__ = [
     "PersonalInfoSerializer",
     "PublicPersonalInfoSerializer",
     "PublicGroupSerializer",
+    "GroupReadSerializer",
+    "GroupWriteSerializer",
     "PublicGroupWithStudentsSerializer",
     "PublicStudentSerializer",
     "PublicStudentWithPersonalInfoSerializer",

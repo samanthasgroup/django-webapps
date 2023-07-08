@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.db import models
 from django_filters import rest_framework as filters
 from rest_framework import status, viewsets
@@ -9,10 +11,27 @@ from rest_framework.serializers import BaseSerializer
 from api.filters import GroupFilter
 from api.models import Group
 from api.processors import GroupProcessor
-from api.serializers import PublicGroupSerializer, PublicGroupWithStudentsSerializer
+from api.serializers import (
+    GroupReadSerializer,
+    GroupWriteSerializer,
+    PublicGroupSerializer,
+    PublicGroupWithStudentsSerializer,
+)
+from api.views.mixins import ReadWriteSerializersMixin
 
 
-# TODO add endpoints
+class GroupViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Group]):  # type: ignore
+    queryset = Group.objects.all()
+    serializer_read_class = GroupReadSerializer
+    serializer_write_class = GroupWriteSerializer
+
+    def create(self, request: Request, *args: tuple[Any], **kwargs: dict[str, Any]) -> Response:
+        response = super().create(request, *args, **kwargs)
+        group = Group.objects.get(id=response.data["id"])
+        GroupProcessor.create(group)
+        return response
+
+
 class PublicGroupViewSet(viewsets.ReadOnlyModelViewSet[Group]):
     """
     Public viewset for groups. Used for public API (Tooljet).
