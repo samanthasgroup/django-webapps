@@ -381,17 +381,17 @@ pytz = "*"
 
 [[package]]
 name = "djangorestframework-stubs"
-version = "3.14.1"
+version = "3.14.2"
 description = "PEP-484 stubs for django-rest-framework"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "djangorestframework-stubs-3.14.1.tar.gz", hash = "sha256:a1c6619148f08c4070fdf8b92ce2b2b47e10c9610fb25ae27baf2baefb1bf613"},
-    {file = "djangorestframework_stubs-3.14.1-py3-none-any.whl", hash = "sha256:67816705adffc8407fd5469b102abc2db9987afca68dd6f7d21b66369008a940"},
+    {file = "djangorestframework-stubs-3.14.2.tar.gz", hash = "sha256:4a9169253d2d46885a007c085d64e96efc8a78bd938c747e9ad0654725c4e7d0"},
+    {file = "djangorestframework_stubs-3.14.2-py3-none-any.whl", hash = "sha256:38f078cdf80228bd73e3ff5dcf00263f847da37c30d113e0fc8fda09f9dbc89a"},
 ]
 
 [package.dependencies]
-django-stubs = ">=4.2.1"
+django-stubs = ">=4.2.2"
 mypy = ">=0.991"
 requests = ">=2.0.0"
 types-PyYAML = ">=5.4.3"
@@ -399,7 +399,7 @@ types-requests = ">=0.1.12"
 typing-extensions = ">=3.10.0"
 
 [package.extras]
-compatible-mypy = ["mypy (>=1.3.0,<1.4)"]
+compatible-mypy = ["mypy (==1.4.*)"]
 coreapi = ["coreapi (>=2.0.0)"]
 markdown = ["types-Markdown (>=0.1.5)"]
 
@@ -1259,4 +1259,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "fa48cff5864bfc672afa4f1350935f8792e4d0ea600b54b7f04e95a0ef8a77e1"
+content-hash = "fe1e8cb384f8bb7933c8a60a411f2d5b89d89e47ed373f241a40c21f4bb4feb8"
