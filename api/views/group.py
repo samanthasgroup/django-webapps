@@ -21,6 +21,8 @@ from api.views.mixins import ReadWriteSerializersMixin
 
 
 class GroupViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Group]):  # type: ignore
+    """Viewset for groups. To be used by both coordinators in dashboard (public API) and by bot."""
+
     queryset = Group.objects.all()
     serializer_read_class = GroupReadSerializer
     serializer_write_class = GroupWriteSerializer
