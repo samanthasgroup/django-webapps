@@ -5,8 +5,8 @@ from api.models import Group
 from api.models.choices.status import GroupStatus
 from api.serializers import (
     DayAndTimeSlotSerializer,
-    PublicStudentSerializer,
-    PublicTeacherSerializer,
+    MinifiedStudentSerializer,
+    MinifiedTeacherSerializer,
     coordinator,
 )
 
@@ -23,16 +23,16 @@ class GroupWriteSerializer(serializers.ModelSerializer[Group]):
 class GroupReadSerializer(serializers.ModelSerializer[Group]):
     availability_slots_for_auto_matching = DayAndTimeSlotSerializer(many=True, read_only=True)
     coordinators = coordinator.MinifiedCoordinatorSerializer(many=True, read_only=True)
-    students = PublicStudentSerializer(many=True, read_only=True)
-    teachers = PublicTeacherSerializer(
+    students = MinifiedStudentSerializer(many=True, read_only=True)
+    teachers = MinifiedTeacherSerializer(
         many=True,
         read_only=True,
     )
     coordinators_former = coordinator.MinifiedCoordinatorSerializer(
         many=True, read_only=True, required=False
     )
-    students_former = PublicStudentSerializer(many=True, read_only=True, required=False)
-    teachers_former = PublicTeacherSerializer(many=True, read_only=True, required=False)
+    students_former = MinifiedStudentSerializer(many=True, read_only=True, required=False)
+    teachers_former = MinifiedTeacherSerializer(many=True, read_only=True, required=False)
 
     class Meta:
         model = Group
