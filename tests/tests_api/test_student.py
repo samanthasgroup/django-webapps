@@ -1,7 +1,7 @@
 import datetime
 
 import pytz
-from model_bakery import baker
+from model_bakery import baker, seq
 from rest_framework import status
 
 from api.models import (
@@ -17,7 +17,7 @@ from api.models.choices.status import StudentStatus
 
 def test_student_create(api_client, faker):
     initial_count = Student.objects.count()
-    personal_info = baker.make(PersonalInfo)
+    personal_info = baker.make(PersonalInfo, first_name=seq("Ivan"))
     age_range_id = AgeRange.objects.first().id
     teaching_languages_and_levels_ids = [
         LanguageAndLevel.objects.first().id,
@@ -60,8 +60,8 @@ def test_student_create(api_client, faker):
     assert Student.objects.filter(**data).exists()
 
 
-def test_student_retrieve(api_client):
-    student = baker.make(Student, make_m2m=True)
+def test_student_retrieve(api_client, availability_slots):
+    student = baker.make(Student, make_m2m=True, availability_slots=availability_slots)
     response = api_client.get(f"/api/students/{student.personal_info.id}/")
 
     response_json = response.json()
@@ -110,12 +110,17 @@ def test_student_retrieve(api_client):
     }
 
 
-def test_public_student_retrieve(api_client, faker):
+def test_public_student_retrieve(api_client, faker, availability_slots):
     utc_offset_hours = faker.pyint(min_value=-12, max_value=12)
     sign = "+" if utc_offset_hours >= 0 else "-"
     utc_offset_minutes = faker.random_element([0, 30])
     utc_timedelta = datetime.timedelta(hours=utc_offset_hours, minutes=utc_offset_minutes)
-    student = baker.make(Student, make_m2m=True, personal_info__utc_timedelta=utc_timedelta)
+    student = baker.make(
+        Student,
+        make_m2m=True,
+        personal_info__utc_timedelta=utc_timedelta,
+        availability_slots=availability_slots,
+    )
     response = api_client.get(f"/api/public/students/{student.personal_info.id}/")
 
     response_json = response.json()

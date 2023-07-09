@@ -120,7 +120,7 @@ def test_get_level_raises_400_with_wrong_number_of_questions(api_client):
     }
 
 
-def test_create_student_enrollment_test_result(api_client):
+def test_create_student_enrollment_test_result(api_client, availability_slots):
     """Test passing enrollment test."""
     test = baker.make_recipe("tests.enrollment_test")
     correct_answers_ids = list(
@@ -128,7 +128,7 @@ def test_create_student_enrollment_test_result(api_client):
             question__enrollment_test=test, is_correct=True
         ).values_list("id", flat=True)
     )
-    student = baker.make(Student, make_m2m=True)
+    student = baker.make(Student, make_m2m=True, availability_slots=availability_slots)
     response = api_client.post(
         "/api/enrollment_test_result/",
         data={
