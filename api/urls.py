@@ -6,7 +6,6 @@ from api.views import (
     DayAndTimeSlotViewSet,
     EnrollmentTestResultViewSet,
     EnrollmentTestViewSet,
-    GroupViewSet,
     LanguageAndLevelViewSet,
     NonTeachingHelpViewSet,
     PersonalInfoViewSet,
@@ -21,7 +20,6 @@ from api.views import (
 )
 
 internal_router = DefaultRouter()
-internal_router.register(r"groups", GroupViewSet, basename="groups")
 internal_router.register(r"personal_info", PersonalInfoViewSet, basename="personal_info")
 internal_router.register(r"students", StudentViewSet, basename="students")
 internal_router.register(r"teachers", TeacherViewSet, basename="teachers")
