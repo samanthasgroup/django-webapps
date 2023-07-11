@@ -14,18 +14,18 @@ class GroupLogEventCreator:
         group_log_event_type: GroupLogEventType,
         student_log_event_type: StudentLogEventType,
         teacher_log_event_type: TeacherLogEventType,
-        coordinator_log_event_type: CoordinatorLogEventType,
+        coordinator_log_event_type: CoordinatorLogEventType | None = None,
     ) -> None:
         GroupLogEvent.objects.create(group=group, type=group_log_event_type)
-
-        CoordinatorLogEvent.objects.bulk_create(
-            CoordinatorLogEvent(
-                coordinator=coordinator,
-                group=group,
-                type=coordinator_log_event_type,
+        if coordinator_log_event_type is not None:
+            CoordinatorLogEvent.objects.bulk_create(
+                CoordinatorLogEvent(
+                    coordinator=coordinator,
+                    group=group,
+                    type=coordinator_log_event_type,
+                )
+                for coordinator in group.coordinators.iterator()
             )
-            for coordinator in group.coordinators.iterator()
-        )
 
         StudentLogEvent.objects.bulk_create(
             StudentLogEvent(student=student, from_group=group, type=student_log_event_type)

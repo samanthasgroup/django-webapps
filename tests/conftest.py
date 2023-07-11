@@ -66,3 +66,8 @@ def availability_slots():
         For some cases you might need random set of slots, in that case use different fixture.
     """
     return DayAndTimeSlot.objects.all()
+
+
+pytest_plugins = [
+    "tests.fixtures.group",
+]
