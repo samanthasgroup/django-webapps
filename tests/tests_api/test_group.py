@@ -21,10 +21,16 @@ from api.models.choices.log_event_type import (
     TeacherLogEventType,
 )
 from api.models.choices.status import CoordinatorStatus, GroupStatus, StudentStatus, TeacherStatus
+from api.serializers import GroupWriteSerializer
 
 
-def test_public_group_list(api_client):
-    group = baker.make(Group, _fill_optional=True, make_m2m=True)
+def test_public_group_list(api_client, availability_slots):
+    group = baker.make(
+        Group,
+        _fill_optional=True,
+        make_m2m=True,
+        availability_slots_for_auto_matching=availability_slots,
+    )
     response = api_client.get("/api/public/groups/")
 
     response_json = response.json()
@@ -69,8 +75,13 @@ def test_public_group_list(api_client):
     ]
 
 
-def test_public_group_retrieve(api_client):
-    group = baker.make(Group, _fill_optional=True, make_m2m=True)
+def test_public_group_retrieve(api_client, availability_slots):
+    group = baker.make(
+        Group,
+        _fill_optional=True,
+        make_m2m=True,
+        availability_slots_for_auto_matching=availability_slots,
+    )
     response = api_client.get(f"/api/public/groups/{group.pk}/")
 
     response_json = response.json()
@@ -120,42 +131,16 @@ def test_public_group_retrieve(api_client):
 
 
 def compare_date_time_with_timestamp(date_time: datetime.datetime, timestamp: datetime.datetime):
-    assert date_time.year == timestamp.year
-    assert date_time.month == timestamp.month
-    assert date_time.day == timestamp.day
-    assert date_time.hour == timestamp.hour
-    assert date_time.minute == timestamp.minute
+    """Compares the given datetime object with timestamp from conftest.py.
 
+    Allows for a one-minute margin between timestamp and the datetime being checked.
 
-@pytest.fixture
-def group(timestamp):
-    group = baker.make(Group, _fill_optional=True, make_m2m=True)
+    Used e.g. to compare `status_since` attribute after status change.
 
-    group.status = GroupStatus.PENDING
-    # to make sure `status_since` really gets updated:
-    group.status_since = timestamp - datetime.timedelta(days=1, hours=1, minutes=10)
-    group.coordinators.update(status=CoordinatorStatus.WORKING_BELOW_THRESHOLD)
-    group.students.update(status=StudentStatus.AWAITING_OFFER)
-    group.teachers.update(status=TeacherStatus.AWAITING_OFFER)
-    group.save()
-    yield group
-
-
-@pytest.fixture
-def active_group(timestamp):
-    group = baker.make(Group, _fill_optional=True, make_m2m=True)
-
-    group.status = GroupStatus.WORKING
-    # to make sure `status_since` really gets updated:
-    group.status_since = timestamp - datetime.timedelta(days=1, hours=1, minutes=10)
-    group.coordinators.update(status=CoordinatorStatus.WORKING_BELOW_THRESHOLD)
-    group.students.update(status=StudentStatus.STUDYING)
-    group.teachers.update(status=TeacherStatus.TEACHING_ACCEPTING_MORE)
-    group.teachers_former.clear()
-    group.students_former.clear()
-    group.coordinators_former.clear()
-    group.save()
-    yield group
+    For this test to be informative, make sure you manually set status_since to
+    some date in the past so that the match with timestamp after status change is not accidental.
+    """
+    assert date_time - timestamp < datetime.timedelta(minutes=1)
 
 
 class TestPublicGroupStart:
@@ -214,15 +199,22 @@ class TestPublicGroupStart:
             (CoordinatorGroupLimit.MAX + 1, CoordinatorStatus.WORKING_LIMIT_REACHED),
         ],
     )
-    def test_public_group_start_coordinator_status(
-        self, api_client, timestamp, number_of_groups_to_start, expected_status
+    def test_public_group_start_coordinator_status(  # noqa: PLR0913
+        self,
+        api_client,
+        timestamp,
+        number_of_groups_to_start,
+        expected_status,
+        availability_slots,
     ):
         coordinator = baker.make(Coordinator, _fill_optional=True)
         coordinator.status = CoordinatorStatus.WORKING_BELOW_THRESHOLD
         coordinator.save()
 
         for _ in range(number_of_groups_to_start):
-            group = baker.make(Group, _fill_optional=True)
+            group = baker.make(
+                Group, _fill_optional=True, availability_slots_for_auto_matching=availability_slots
+            )
             group.status = GroupStatus.AWAITING_START
             group.coordinators.add(coordinator)
             group.save()
@@ -235,12 +227,14 @@ class TestPublicGroupStart:
         assert coordinator.status == expected_status
         compare_date_time_with_timestamp(coordinator.status_since, timestamp)
 
-    def test_public_group_start_student_status(self, api_client, timestamp):
-        student = baker.make(Student, _fill_optional=True)
+    def test_public_group_start_student_status(self, api_client, timestamp, availability_slots):
+        student = baker.make(Student, _fill_optional=True, availability_slots=availability_slots)
         student.status = StudentStatus.AWAITING_START
         student.save()
 
-        group = baker.make(Group, _fill_optional=True)
+        group = baker.make(
+            Group, _fill_optional=True, availability_slots_for_auto_matching=availability_slots
+        )
         group.status = GroupStatus.AWAITING_START
 
         group.students.add(student)
@@ -267,16 +261,18 @@ class TestPublicGroupStart:
             (1, TeacherStatus.TEACHING_NOT_ACCEPTING_MORE),
         ],
     )
-    def test_public_group_start_teacher_status(
-        self, api_client, timestamp, delta, expected_status
+    def test_public_group_start_teacher_status(  # noqa: PLR0913
+        self, api_client, timestamp, delta, expected_status, availability_slots
     ):
-        teacher = baker.make(Teacher, _fill_optional=True)
+        teacher = baker.make(Teacher, _fill_optional=True, availability_slots=availability_slots)
         teacher.simultaneous_groups = 3  # no significance, just more than 1
         teacher.status = TeacherStatus.AWAITING_START
         teacher.save()
 
         for _ in range(teacher.simultaneous_groups + delta):
-            group = baker.make(Group, _fill_optional=True)
+            group = baker.make(
+                Group, _fill_optional=True, availability_slots_for_auto_matching=availability_slots
+            )
             group.status = GroupStatus.AWAITING_START
             group.teachers.add(teacher)
             group.save()
@@ -351,10 +347,10 @@ class TestPublicGroupAbort:
             assert log_event.type == TeacherLogEventType.GROUP_ABORTED
             compare_date_time_with_timestamp(log_event.date_time, timestamp)
 
-    def test_abort_appends_former_entity_lists(self, api_client, active_group):
+    def test_abort_appends_former_entity_lists(self, api_client, active_group, availability_slots):
         # test that lists are not overwritten
-        student = baker.make(Student, _fill_optional=True)
-        teacher = baker.make(Teacher, _fill_optional=True)
+        student = baker.make(Student, _fill_optional=True, availability_slots=availability_slots)
+        teacher = baker.make(Teacher, _fill_optional=True, availability_slots=availability_slots)
         coordinator = baker.make(Coordinator, _fill_optional=True)
         active_group.students_former.add(student)
         active_group.teachers_former.add(teacher)
@@ -370,3 +366,48 @@ class TestPublicGroupAbort:
         assert active_group.students_former.filter(pk=student.pk).exists()
         assert active_group.teachers_former.filter(pk=teacher.pk).exists()
         assert active_group.coordinators_former.filter(pk=coordinator.pk).exists()
+
+
+class TestGroupCreation:
+    def get_data(self, group: Group):
+        return {
+            "lesson_duration_in_minutes": 30,
+            "communication_language_mode": group.communication_language_mode,
+            "availability_slots_for_auto_matching": [
+                a.id for a in group.availability_slots_for_auto_matching.iterator()
+            ],
+            "language_and_level": group.language_and_level.id,
+            "monday": "10:00:00",
+            "coordinators": [c.pk for c in group.coordinators.iterator()],
+            "students": [s.pk for s in group.students.iterator()],
+            "teachers": [t.pk for t in group.teachers.iterator()],
+        }
+
+    def test_group_create_general(self, api_client, group: Group, timestamp):
+        data_to_create = self.get_data(group)
+        response = api_client.post("/api/public/groups/", data_to_create)
+        assert response.status_code == status.HTTP_201_CREATED
+        created_group = Group.objects.get(id=response.data["id"])
+        created_group_serializer = GroupWriteSerializer(created_group)
+        for field, val in data_to_create.items():
+            assert val == response.data[field]
+            assert val == created_group_serializer.data[field]
+
+        assert group.status == GroupStatus.PENDING
+
+        common_status_since = created_group.status_since
+        compare_date_time_with_timestamp(common_status_since, timestamp)
+
+        for student in group.students.iterator():
+            assert student.status == StudentStatus.GROUP_OFFERED
+            assert student.status_since == common_status_since
+            log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
+            assert log_event.type == StudentLogEventType.GROUP_OFFERED
+            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+
+        for teacher in group.teachers.iterator():
+            assert teacher.status == TeacherStatus.GROUP_OFFERED
+            assert teacher.status_since == common_status_since
+            log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
+            assert log_event.type == TeacherLogEventType.GROUP_OFFERED
+            compare_date_time_with_timestamp(log_event.date_time, timestamp)

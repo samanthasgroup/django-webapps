@@ -1,5 +1,5 @@
 import pytz
-from model_bakery import baker
+from model_bakery import baker, seq
 from rest_framework import status
 
 from api.models import (
@@ -15,7 +15,7 @@ from api.models.choices.status import TeacherStatus
 
 def test_teacher_create(api_client, faker):
     initial_count = Teacher.objects.count()
-    personal_info = baker.make(PersonalInfo)
+    personal_info = baker.make(PersonalInfo, first_name=seq("Ivan"))
     teaching_languages_and_levels_ids = [
         LanguageAndLevel.objects.first().id,
         LanguageAndLevel.objects.last().id,
@@ -74,8 +74,10 @@ def test_teacher_create(api_client, faker):
     assert Teacher.objects.filter(**data).exists()
 
 
-def test_teacher_retrieve(api_client):
-    teacher = baker.make(Teacher, make_m2m=True, _fill_optional=True)
+def test_teacher_retrieve(api_client, availability_slots):
+    teacher = baker.make(
+        Teacher, make_m2m=True, _fill_optional=True, availability_slots=availability_slots
+    )
     response = api_client.get(f"/api/teachers/{teacher.personal_info.id}/")
 
     response_json = response.json()

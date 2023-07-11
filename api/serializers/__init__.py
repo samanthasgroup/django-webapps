@@ -18,6 +18,7 @@ from api.serializers.student.public import (
     PublicStudentSerializer,
     PublicStudentWithPersonalInfoSerializer,
 )
+from api.serializers.teacher.minified import MinifiedTeacherSerializer
 from api.serializers.teacher.public import (
     PublicTeacherSerializer,
     PublicTeacherWithPersonalInfoSerializer,
@@ -34,6 +35,7 @@ from api.serializers.group.public import (  # isort:skip
     PublicGroupSerializer,
     PublicGroupWithStudentsSerializer,
 )
+from api.serializers.group.internal import GroupReadSerializer, GroupWriteSerializer  # isort:skip
 
 __all__ = [
     "AgeRangeSerializer",
@@ -45,6 +47,8 @@ __all__ = [
     "PersonalInfoSerializer",
     "PublicPersonalInfoSerializer",
     "PublicGroupSerializer",
+    "GroupReadSerializer",
+    "GroupWriteSerializer",
     "PublicGroupWithStudentsSerializer",
     "PublicStudentSerializer",
     "PublicStudentWithPersonalInfoSerializer",
@@ -55,6 +59,7 @@ __all__ = [
     "MinifiedStudentSerializer",
     "TeacherReadSerializer",
     "TeacherWriteSerializer",
+    "MinifiedTeacherSerializer",
     "TeacherUnder18ReadSerializer",
     "TeacherUnder18WriteSerializer",
     "EnrollmentTestSerializer",

@@ -1,5 +1,5 @@
 from api.models import Group
-from api.processors.actions import GroupAbortProcessor, GroupStartProcessor
+from api.processors.actions import GroupAbortProcessor, GroupCreateProcessor, GroupStartProcessor
 
 
 class GroupProcessor:
@@ -12,3 +12,7 @@ class GroupProcessor:
     @staticmethod
     def abort(group: Group) -> None:
         GroupAbortProcessor(group=group).process()
+
+    @staticmethod
+    def create(group: Group) -> None:
+        GroupCreateProcessor(group=group).process()

@@ -22,6 +22,7 @@ class GroupCommon(GroupOrPerson):
 
     coordinators_former = models.ManyToManyField(
         Coordinator,
+        blank=True,
         related_name="%(class)ss_former",
         verbose_name="Former coordinators",
         help_text=(
@@ -31,6 +32,7 @@ class GroupCommon(GroupOrPerson):
     )
     students_former = models.ManyToManyField(
         Student,
+        blank=True,
         related_name="%(class)ss_former",
         verbose_name="Former students",
         help_text=(
@@ -40,6 +42,7 @@ class GroupCommon(GroupOrPerson):
     )
     teachers_former = models.ManyToManyField(
         Teacher,
+        blank=True,
         related_name="%(class)ss_former",
         verbose_name="Former teachers",
         help_text=(
@@ -49,7 +52,8 @@ class GroupCommon(GroupOrPerson):
     )
 
     # group chat created manually by the coordinator/teacher
-    telegram_chat_url = models.URLField(blank=True)
+    # null=True due to unqiue constraint and we can not use empty string in this case
+    telegram_chat_url = models.URLField(blank=True, null=True)  # noqa: DJ001
 
     class Meta:
         abstract = True
