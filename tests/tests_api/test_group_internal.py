@@ -23,14 +23,14 @@ class TestGroupCreation:
         }
 
     def test_group_create_general(self, api_client, group: Group, timestamp):
-        data = self.get_data(group)
-        response = api_client.post("/api/groups/", data)
+        data_to_create = self.get_data(group)
+        response = api_client.post("/api/groups/", data_to_create)
         assert response.status_code == status.HTTP_201_CREATED
         created_group = Group.objects.get(id=response.data["id"])
-        serializer = GroupWriteSerializer(created_group)
-        for k, v in data.items():
-            assert v == response.data[k]
-            assert v == serializer.data[k]
+        created_group_serializer = GroupWriteSerializer(created_group)
+        for field, val in data_to_create.items():
+            assert val == response.data[field]
+            assert val == created_group_serializer.data[field]
 
         assert group.status == GroupStatus.PENDING
 
