@@ -49,7 +49,7 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
 
     @extend_schema(
         parameters=[
-            OpenApiParameter(name="registration_telegram_bot_chat_id", type=int),
+            OpenApiParameter(name="registration_telegram_bot_chat_id", type=int, required=True),
         ],
         responses={
             status.HTTP_200_OK: OpenApiResponse(
