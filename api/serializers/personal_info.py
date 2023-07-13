@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from typing import Any
 
 from rest_framework import serializers
@@ -51,6 +52,27 @@ class CheckChatIdExistenceSerializer(serializers.ModelSerializer[PersonalInfo]):
         model = PersonalInfo
         fields = ("registration_telegram_bot_chat_id",)
         extra_kwargs = {"registration_telegram_bot_chat_id": {"required": True}}
+
+
+class GetChatwootConversationIdSerializer(serializers.ModelSerializer[PersonalInfo]):
+    """A serializer used to look up Chatwoot conversation ID by Telegram bot chat ID."""
+
+    chatwoot_conversation_id = serializers.SerializerMethodField(read_only=True)
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        if PersonalInfo.objects.filter(**attrs).exists():
+            return attrs
+        raise NotAcceptableError
+
+    class Meta:
+        model = PersonalInfo
+        fields = ("registration_telegram_bot_chat_id", "chatwoot_conversation_id")
+        extra_kwargs = {
+            "registration_telegram_bot_chat_id": {"required": True, "write_only": True}
+        }
+
+    def get_chatwoot_conversation_id(self, obj: OrderedDict[str, Any]) -> int | None:
+        return PersonalInfo.objects.get(**obj).chatwoot_conversation_id
 
 
 class PublicPersonalInfoSerializer(serializers.ModelSerializer[PersonalInfo]):

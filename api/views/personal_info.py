@@ -1,4 +1,4 @@
-from drf_spectacular.utils import OpenApiResponse, extend_schema
+from drf_spectacular.utils import OpenApiExample, OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.request import Request
@@ -9,6 +9,7 @@ from api.models import PersonalInfo
 from api.serializers import (
     CheckChatIdExistenceSerializer,
     CheckNameAndEmailExistenceSerializer,
+    GetChatwootConversationIdSerializer,
     PersonalInfoSerializer,
 )
 from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
@@ -41,11 +42,15 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
         return Response(status.HTTP_200_OK)
 
     def get_serializer_class(self) -> type[BaseSerializer[PersonalInfo]]:
-        if self.action == "check_existence":
-            return CheckNameAndEmailExistenceSerializer
-        if self.action == "check_existence_of_chat_id":
-            return CheckChatIdExistenceSerializer
-        return PersonalInfoSerializer
+        match self.action:
+            case "check_existence":
+                return CheckNameAndEmailExistenceSerializer
+            case "check_existence_of_chat_id":
+                return CheckChatIdExistenceSerializer
+            case "get_chatwoot_conversation_id":
+                return GetChatwootConversationIdSerializer
+            case _:
+                return PersonalInfoSerializer
 
     @extend_schema(
         responses={
@@ -73,3 +78,38 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         return Response(request.query_params)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(name="registration_telegram_bot_chat_id", type=int, required=True),
+        ],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=CheckChatIdExistenceSerializer,
+                description="User with this chat ID exists: returning Chatwoot conversation ID",
+                # the auto example will show "telegram_registration_bot_chat_id" instead of
+                # "chatwoot_conversation_id", despite the actual request returning correct field
+                examples=[
+                    OpenApiExample(name="id_found", value={"chatwoot_conversation_id": 123})
+                ],
+            ),
+            status.HTTP_406_NOT_ACCEPTABLE: OpenApiResponse(
+                response=BaseAPIExceptionSerializer, description="No user with this chat ID exists"
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=ValidationErrorSerializer,
+                description="Something is wrong with the data",
+            ),
+        },
+    )
+    @action(detail=False, methods=["get"])
+    def get_chatwoot_conversation_id(self, request: Request) -> Response:
+        """Gets Chatwoot conversation ID that matches chat ID in Telegram registration bot."""
+
+        # One Telegram account can only have one conversation with an operator
+        # in Chatwoot. The registration bot can send the chat ID that it knows by definition
+        # and receive the Chatwoot conversation ID if it exists. This allows to connect
+        # the user with the operator via the registration bot.
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data)
