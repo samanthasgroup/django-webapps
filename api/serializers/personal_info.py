@@ -1,6 +1,7 @@
 from collections import OrderedDict
-from typing import Any
+from typing import Any, cast
 
+from django.db.models import QuerySet
 from rest_framework import serializers
 
 from api.exceptions import ConflictError, NotAcceptableError
@@ -59,8 +60,14 @@ class GetChatwootConversationIdSerializer(serializers.ModelSerializer[PersonalIn
 
     chatwoot_conversation_id = serializers.SerializerMethodField(read_only=True)
 
+    def __init__(self, *args, **kwargs) -> None:  # type:ignore[no-untyped-def]
+        super().__init__(*args, **kwargs)
+        self.personal_info_with_this_telegram_chat_id: QuerySet[PersonalInfo] | None = None
+
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        if PersonalInfo.objects.filter(**attrs).exists():
+        personal_info = PersonalInfo.objects.filter(**attrs)
+        if personal_info.exists():
+            self.personal_info_with_this_telegram_chat_id = personal_info
             return attrs
         raise NotAcceptableError
 
@@ -71,8 +78,11 @@ class GetChatwootConversationIdSerializer(serializers.ModelSerializer[PersonalIn
             "registration_telegram_bot_chat_id": {"required": True, "write_only": True}
         }
 
-    def get_chatwoot_conversation_id(self, obj: OrderedDict[str, Any]) -> int | None:
-        return PersonalInfo.objects.get(**obj).chatwoot_conversation_id
+    def get_chatwoot_conversation_id(self, _: OrderedDict[str, Any]) -> int | None:
+        return cast(
+            int,
+            self.personal_info_with_this_telegram_chat_id.first().chatwoot_conversation_id,  # type:ignore[union-attr]  # noqa:E501
+        )
 
 
 class PublicPersonalInfoSerializer(serializers.ModelSerializer[PersonalInfo]):
