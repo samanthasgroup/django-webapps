@@ -110,21 +110,54 @@ def test_personal_info_check_existence_of_chat_id_returns_406_with_unknown_id(
     assert response.json() == {"detail": "No object with this data exists."}
 
 
-def test_personal_info_check_existence_of_chat_id_returns_400_with_no_id_passed(
-    api_client, fake_personal_info_data
-):
-    api_client.post("/api/personal_info/", data=fake_personal_info_data)
-    response = api_client.get(path="/api/personal_info/check_existence_of_chat_id/", data={})
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"registration_telegram_bot_chat_id": ["This field is required."]}
-
-
 def test_personal_info_check_existence_of_chat_id_returns_400_with_no_id(
     api_client, fake_personal_info_data
 ):
     api_client.post("/api/personal_info/", data=fake_personal_info_data)
+    response = api_client.get(path="/api/personal_info/check_existence_of_chat_id/")
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {"registration_telegram_bot_chat_id": ["This field is required."]}
+
+
+def test_personal_info_get_chatwoot_conversation_id_returns_200_with_existing_id(
+    api_client, fake_personal_info_data
+):
+    setup_response = api_client.post("/api/personal_info/", data=fake_personal_info_data)
+    chatwoot_conversation_id = setup_response.json()["chatwoot_conversation_id"]
+
     response = api_client.get(
-        path="/api/personal_info/check_existence_of_chat_id/",
+        path="/api/personal_info/get_chatwoot_conversation_id/",
+        data={
+            "registration_telegram_bot_chat_id": fake_personal_info_data[
+                "registration_telegram_bot_chat_id"
+            ]
+        },
     )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {"chatwoot_conversation_id": chatwoot_conversation_id}
+
+
+def test_personal_info_get_chatwoot_conversation_id_returns_406_with_unknown_id(
+    api_client, fake_personal_info_data
+):
+    api_client.post("/api/personal_info/", data=fake_personal_info_data)
+    response = api_client.get(
+        path="/api/personal_info/get_chatwoot_conversation_id/",
+        data={
+            "registration_telegram_bot_chat_id": fake_personal_info_data[
+                "registration_telegram_bot_chat_id"
+            ]
+            + 1
+        },
+    )
+    assert response.status_code == status.HTTP_406_NOT_ACCEPTABLE
+    assert response.json() == {"detail": "No object with this data exists."}
+
+
+def test_personal_info_get_chatwoot_conversation_id_returns_400_with_no_id(
+    api_client, fake_personal_info_data
+):
+    api_client.post("/api/personal_info/", data=fake_personal_info_data)
+    response = api_client.get(path="/api/personal_info/get_chatwoot_conversation_id/")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == {"registration_telegram_bot_chat_id": ["This field is required."]}
