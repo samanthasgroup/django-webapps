@@ -1,4 +1,4 @@
-from drf_spectacular.utils import OpenApiResponse, extend_schema
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.request import Request
@@ -48,6 +48,9 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
         return PersonalInfoSerializer
 
     @extend_schema(
+        parameters=[
+            OpenApiParameter(name="registration_telegram_bot_chat_id", type=int, required=True),
+        ],
         responses={
             status.HTTP_200_OK: OpenApiResponse(
                 response=CheckChatIdExistenceSerializer,
@@ -60,7 +63,7 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
                 response=ValidationErrorSerializer,
                 description="Something is wrong with the data (e.g. no chat ID was passed)",
             ),
-        }
+        },
     )
     @action(detail=False, methods=["get"])
     def check_existence_of_chat_id(self, request: Request) -> Response:
