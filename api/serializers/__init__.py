@@ -21,9 +21,8 @@ from api.serializers.student.minified import MinifiedStudentSerializer
 from api.serializers.teacher.dashboard import (
     DashboardTeacherSerializer,
     DashboardTeacherWithPersonalInfoSerializer,
-    TeacherReadSerializer,
-    TeacherWriteSerializer,
 )
+from api.serializers.teacher.internal import TeacherReadSerializer, TeacherWriteSerializer
 from api.serializers.teacher.minified import MinifiedTeacherSerializer
 from api.serializers.teacher_under_18 import (
     TeacherUnder18ReadSerializer,
