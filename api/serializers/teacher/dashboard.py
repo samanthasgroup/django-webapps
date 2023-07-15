@@ -7,10 +7,10 @@ from api.models.auxil.constants import (
 )
 from api.serializers import (
     AgeRangeSerializer,
+    DashboardPersonalInfoSerializer,
     DayAndTimeSlotSerializer,
     LanguageAndLevelSerializer,
     NonTeachingHelpSerializer,
-    PublicPersonalInfoSerializer,
 )
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
@@ -50,7 +50,7 @@ class PeerSupportField(serializers.SerializerMethodField):
         }
 
 
-class CommonPublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
+class CommonDashboardTeacherSerializer(serializers.ModelSerializer[Teacher]):
     id = serializers.IntegerField(source="personal_info_id")
     first_name = serializers.CharField(source="personal_info.first_name")
     last_name = serializers.CharField(source="personal_info.last_name")
@@ -88,23 +88,23 @@ class CommonPublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
         read_only_fields = fields
 
 
-class PublicTeacherSerializer(CommonPublicTeacherSerializer):
+class DashboardTeacherSerializer(CommonDashboardTeacherSerializer):
     """Representation of a Teacher that is used in 'All teachers' Tooljet view."""
 
-    class Meta(CommonPublicTeacherSerializer.Meta):
+    class Meta(CommonDashboardTeacherSerializer.Meta):
         pass
 
 
-class PublicTeacherWithPersonalInfoSerializer(CommonPublicTeacherSerializer):
+class DashboardTeacherWithPersonalInfoSerializer(CommonDashboardTeacherSerializer):
     """Representation of a Teacher that is used in 'Teacher by coordinator' Tooljet view."""
 
-    personal_info = PublicPersonalInfoSerializer()
+    personal_info = DashboardPersonalInfoSerializer()
     groups = MinifiedGroupSerializer(many=True, read_only=True)
 
     # TODO LogEvent ?
 
-    class Meta(CommonPublicTeacherSerializer.Meta):
-        fields = CommonPublicTeacherSerializer.Meta.fields + (
+    class Meta(CommonDashboardTeacherSerializer.Meta):
+        fields = CommonDashboardTeacherSerializer.Meta.fields + (
             "personal_info",
             "groups",
         )

@@ -7,7 +7,7 @@ from api.serializers.language_and_level import MinifiedLanguageAndLevelSerialize
 from api.serializers.teacher.minified import MinifiedTeacherSerializer
 
 
-class CommonPublicGroupSerializer(serializers.ModelSerializer[Group]):
+class CommonDashboardGroupSerializer(serializers.ModelSerializer[Group]):
     coordinators = MinifiedCoordinatorSerializer(many=True, read_only=True)
     teachers = MinifiedTeacherSerializer(many=True, read_only=True)
     language_and_level = MinifiedLanguageAndLevelSerializer(read_only=True)
@@ -36,19 +36,19 @@ class CommonPublicGroupSerializer(serializers.ModelSerializer[Group]):
         )
 
 
-class PublicGroupSerializer(CommonPublicGroupSerializer):
+class DashboardGroupSerializer(CommonDashboardGroupSerializer):
     """Representation of a Group that is used in 'All groups' Tooljet view."""
 
     students_count = serializers.IntegerField(read_only=True)
 
-    class Meta(CommonPublicGroupSerializer.Meta):
-        fields = CommonPublicGroupSerializer.Meta.fields + (
+    class Meta(CommonDashboardGroupSerializer.Meta):
+        fields = CommonDashboardGroupSerializer.Meta.fields + (
             "students_count",  # This field will be added in ViewSet by annotating a QuerySet.
         )
 
 
-class PublicGroupWithStudentsSerializer(CommonPublicGroupSerializer):
+class DashboardGroupWithStudentsSerializer(CommonDashboardGroupSerializer):
     students = MinifiedStudentSerializer(many=True, read_only=True)
 
-    class Meta(CommonPublicGroupSerializer.Meta):
-        fields = CommonPublicGroupSerializer.Meta.fields + ("students",)
+    class Meta(CommonDashboardGroupSerializer.Meta):
+        fields = CommonDashboardGroupSerializer.Meta.fields + ("students",)

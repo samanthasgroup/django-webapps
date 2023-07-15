@@ -110,7 +110,7 @@ def test_student_retrieve(api_client, availability_slots):
     }
 
 
-def test_public_student_retrieve(api_client, faker, availability_slots):
+def test_dashboard_student_retrieve(api_client, faker, availability_slots):
     utc_offset_hours = faker.pyint(min_value=-12, max_value=12)
     sign = "+" if utc_offset_hours >= 0 else "-"
     utc_offset_minutes = faker.random_element([0, 30])
@@ -121,7 +121,7 @@ def test_public_student_retrieve(api_client, faker, availability_slots):
         personal_info__utc_timedelta=utc_timedelta,
         availability_slots=availability_slots,
     )
-    response = api_client.get(f"/api/public/students/{student.personal_info.id}/")
+    response = api_client.get(f"/api/dashboard/students/{student.personal_info.id}/")
 
     response_json = response.json()
     assert response.status_code == status.HTTP_200_OK

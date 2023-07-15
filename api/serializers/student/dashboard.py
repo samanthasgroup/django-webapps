@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from api.models import Student
-from api.serializers import PublicPersonalInfoSerializer
+from api.serializers import DashboardPersonalInfoSerializer
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
 from api.serializers.group.minified import MinifiedGroupSerializer
@@ -10,7 +10,7 @@ from api.serializers.non_teaching_help import NonTeachingHelpSerializerField
 from api.serializers.utc_timedelta import UTCTimedeltaField
 
 
-class CommonPublicStudentSerializer(serializers.ModelSerializer[Student]):
+class CommonDashboardStudentSerializer(serializers.ModelSerializer[Student]):
     age_range = AgeRangeStringField()
     teaching_languages_and_levels = MinifiedLanguageAndLevelSerializer(many=True, read_only=True)
     availability_slots = MinifiedDayAndTimeSlotSerializer(many=True, read_only=True)
@@ -41,26 +41,26 @@ class CommonPublicStudentSerializer(serializers.ModelSerializer[Student]):
         )
 
 
-class PublicStudentSerializer(CommonPublicStudentSerializer):
+class DashboardStudentSerializer(CommonDashboardStudentSerializer):
     """Representation of a Student that is used in 'All students' Tooljet view."""
 
-    class Meta(CommonPublicStudentSerializer.Meta):
+    class Meta(CommonDashboardStudentSerializer.Meta):
         pass
 
 
-class PublicStudentWithPersonalInfoSerializer(CommonPublicStudentSerializer):
+class DashboardStudentWithPersonalInfoSerializer(CommonDashboardStudentSerializer):
     """
     Representation of a Student with personal info that is used
     in 'Students by coordinator' Tooljet view.
     """
 
-    personal_info = PublicPersonalInfoSerializer(read_only=True)
+    personal_info = DashboardPersonalInfoSerializer(read_only=True)
     groups = MinifiedGroupSerializer(many=True, read_only=True)
 
     # TODO LogEvent?
 
-    class Meta(CommonPublicStudentSerializer.Meta):
-        fields = CommonPublicStudentSerializer.Meta.fields + (
+    class Meta(CommonDashboardStudentSerializer.Meta):
+        fields = CommonDashboardStudentSerializer.Meta.fields + (
             "personal_info",
             "groups",
         )

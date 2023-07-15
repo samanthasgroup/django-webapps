@@ -5,8 +5,8 @@ from rest_framework import viewsets
 from api.filters import TeacherFilter
 from api.models import Group, Teacher
 from api.serializers import (
-    PublicTeacherSerializer,
-    PublicTeacherWithPersonalInfoSerializer,
+    DashboardTeacherSerializer,
+    DashboardTeacherWithPersonalInfoSerializer,
     TeacherReadSerializer,
     TeacherWriteSerializer,
 )
@@ -22,19 +22,19 @@ class TeacherViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Teacher]):
     serializer_write_class = TeacherWriteSerializer
 
 
-class PublicTeacherViewSet(viewsets.ReadOnlyModelViewSet[Teacher]):
+class DashboardTeacherViewSet(viewsets.ReadOnlyModelViewSet[Teacher]):
     """
-    Teacher public viewset. Used for public API (Tooljet).
+    Teacher dashboard viewset. Used for dashboard API (Tooljet).
     """
 
     lookup_field = "personal_info_id"
     queryset = Teacher.objects.all()
-    serializer_class = PublicTeacherSerializer
+    serializer_class = DashboardTeacherSerializer
 
 
-class PublicTeacherWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Teacher]):
+class DashboardTeacherWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Teacher]):
     """
-    Teacher public viewset with personal info. Used for public API (Tooljet).
+    Teacher dashboard viewset with personal info. Used for dashboard API (Tooljet).
     """
 
     # TODO permissions?
@@ -43,6 +43,6 @@ class PublicTeacherWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Teacher
     queryset = Teacher.objects.prefetch_related(
         Prefetch("groups", queryset=Group.objects.annotate(students_count=Count("students"))),
     ).all()
-    serializer_class = PublicTeacherWithPersonalInfoSerializer
+    serializer_class = DashboardTeacherWithPersonalInfoSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = TeacherFilter

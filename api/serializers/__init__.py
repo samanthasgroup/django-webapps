@@ -9,31 +9,31 @@ from api.serializers.non_teaching_help import NonTeachingHelpSerializer
 from api.serializers.personal_info import (
     CheckChatIdExistenceSerializer,
     CheckNameAndEmailExistenceSerializer,
+    DashboardPersonalInfoSerializer,
     PersonalInfoSerializer,
-    PublicPersonalInfoSerializer,
+)
+from api.serializers.student.dashboard import (
+    DashboardStudentSerializer,
+    DashboardStudentWithPersonalInfoSerializer,
 )
 from api.serializers.student.internal import StudentReadSerializer, StudentWriteSerializer
 from api.serializers.student.minified import MinifiedStudentSerializer
-from api.serializers.student.public import (
-    PublicStudentSerializer,
-    PublicStudentWithPersonalInfoSerializer,
-)
-from api.serializers.teacher.minified import MinifiedTeacherSerializer
-from api.serializers.teacher.public import (
-    PublicTeacherSerializer,
-    PublicTeacherWithPersonalInfoSerializer,
+from api.serializers.teacher.dashboard import (
+    DashboardTeacherSerializer,
+    DashboardTeacherWithPersonalInfoSerializer,
     TeacherReadSerializer,
     TeacherWriteSerializer,
 )
+from api.serializers.teacher.minified import MinifiedTeacherSerializer
 from api.serializers.teacher_under_18 import (
     TeacherUnder18ReadSerializer,
     TeacherUnder18WriteSerializer,
 )
 
 # Must be imported at the end because of circular dependency
-from api.serializers.group.public import (  # isort:skip
-    PublicGroupSerializer,
-    PublicGroupWithStudentsSerializer,
+from api.serializers.group.dashboard import (  # isort:skip
+    DashboardGroupSerializer,
+    DashboardGroupWithStudentsSerializer,
 )
 from api.serializers.group.internal import GroupReadSerializer, GroupWriteSerializer  # isort:skip
 
@@ -45,15 +45,15 @@ __all__ = [
     "CheckChatIdExistenceSerializer",
     "CheckNameAndEmailExistenceSerializer",
     "PersonalInfoSerializer",
-    "PublicPersonalInfoSerializer",
-    "PublicGroupSerializer",
+    "DashboardPersonalInfoSerializer",
+    "DashboardGroupSerializer",
     "GroupReadSerializer",
     "GroupWriteSerializer",
-    "PublicGroupWithStudentsSerializer",
-    "PublicStudentSerializer",
-    "PublicStudentWithPersonalInfoSerializer",
-    "PublicTeacherSerializer",
-    "PublicTeacherWithPersonalInfoSerializer",
+    "DashboardGroupWithStudentsSerializer",
+    "DashboardStudentSerializer",
+    "DashboardStudentWithPersonalInfoSerializer",
+    "DashboardTeacherSerializer",
+    "DashboardTeacherWithPersonalInfoSerializer",
     "StudentReadSerializer",
     "StudentWriteSerializer",
     "MinifiedStudentSerializer",
