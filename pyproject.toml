@@ -55,7 +55,7 @@ django-filter = "^23.2"
 django-stubs-ext = "^4.2.2"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.3.0"
+black = "^23.7.0"
 ruff = "^0.0.278"
 pre-commit = "^3.3.3"
 icecream = "^2.1.3"
