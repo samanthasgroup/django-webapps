@@ -21,12 +21,8 @@ from api.serializers import (
 from api.views.mixins import ReadWriteSerializersMixin
 
 
-class GroupViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Group]):  # type: ignore
-    queryset = Group.objects.all()
-    serializer_read_class = GroupReadSerializer
-    serializer_write_class = GroupWriteSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
-    filterset_class = GroupFilter
+class CreateGroupMixin(CreateModelMixin):
+    """Mixin for group creation. Shared between dashboard and internal router"""
 
     def create(self, request: Request, *args: tuple[Any], **kwargs: dict[str, Any]) -> Response:
         response = super().create(request, *args, **kwargs)
@@ -35,7 +31,19 @@ class GroupViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Group]):  # 
         return response
 
 
-class DashboardGroupViewSet(viewsets.ReadOnlyModelViewSet[Group], CreateModelMixin):
+class GroupViewSet(  # type: ignore
+    ReadWriteSerializersMixin, CreateGroupMixin, viewsets.ModelViewSet[Group]
+):
+    """Internal group viewset. Used mainly by bot"""
+
+    queryset = Group.objects.all()
+    serializer_read_class = GroupReadSerializer
+    serializer_write_class = GroupWriteSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = GroupFilter
+
+
+class DashboardGroupViewSet(viewsets.ReadOnlyModelViewSet[Group], CreateGroupMixin):
     """
     Dashboard viewset for groups. Used for dashboard API (Tooljet).
     """
@@ -66,9 +74,3 @@ class DashboardGroupViewSet(viewsets.ReadOnlyModelViewSet[Group], CreateModelMix
         group = self.get_object()
         GroupProcessor.abort(group)
         return Response(status=status.HTTP_200_OK)
-
-    def create(self, request: Request, *args: tuple[Any], **kwargs: dict[str, Any]) -> Response:
-        response = super().create(request, *args, **kwargs)
-        group = Group.objects.get(id=response.data["id"])
-        GroupProcessor.create(group)
-        return response
