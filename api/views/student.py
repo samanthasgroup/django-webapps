@@ -12,7 +12,7 @@ from api.views.mixins import ReadWriteSerializersMixin
 
 
 class StudentViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Student]):  # type: ignore
-    """Student viewset."""
+    """Student viewset. Used by bot."""
 
     lookup_field = "personal_info_id"
     queryset = Student.objects.all()

@@ -54,7 +54,7 @@ class CheckChatIdExistenceSerializer(serializers.ModelSerializer[PersonalInfo]):
 
 
 class DashboardPersonalInfoSerializer(serializers.ModelSerializer[PersonalInfo]):
-    """A serializer used to return dashboard information about a person in Tooljet views."""
+    """A serializer used to return information about a person in dashboard (Tooljet) views."""
 
     class Meta:
         model = PersonalInfo

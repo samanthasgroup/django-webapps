@@ -14,7 +14,7 @@ from api.views.mixins import ReadWriteSerializersMixin
 
 
 class TeacherViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Teacher]):  # type: ignore
-    """Teacher viewset."""
+    """Teacher viewset. Used by bot."""
 
     lookup_field = "personal_info_id"
     queryset = Teacher.objects.all()
