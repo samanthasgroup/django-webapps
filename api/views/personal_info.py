@@ -1,4 +1,4 @@
-from django.db.models import QuerySet
+from django_filters import rest_framework as filters
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -6,7 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
-from api.exceptions import NotAcceptableError
+from api.filters import PersonalInfoFilter
 from api.models import PersonalInfo
 from api.serializers import (
     CheckChatIdExistenceSerializer,
@@ -16,41 +16,10 @@ from api.serializers import (
 from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
 
 
-@extend_schema(
-    parameters=[
-        OpenApiParameter(
-            name="registration_telegram_bot_chat_id",
-            location=OpenApiParameter.QUERY,
-            type=int,
-            description="Filter by chat ID in Telegram registration bot",
-        )
-    ],
-    responses={
-        status.HTTP_200_OK: OpenApiResponse(
-            response=PersonalInfoSerializer, description="Returns personal info records."
-        ),
-        status.HTTP_406_NOT_ACCEPTABLE: OpenApiResponse(
-            response=BaseAPIExceptionSerializer,
-            description="No personal info records were found that match given params.",
-        ),
-    },
-)
 class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
-    def get_queryset(self) -> QuerySet[PersonalInfo]:
-        """Optionally restricts the returned personal info items
-        to items with given chat ID in Telegram registration bot.
-        """
-        queryset: QuerySet[PersonalInfo] = PersonalInfo.objects.all()
-        chat_id = self.request.query_params.get("registration_telegram_bot_chat_id")
-        if chat_id is not None:
-            queryset = queryset.filter(registration_telegram_bot_chat_id=chat_id)
-
-        if not queryset.exists():
-            # To be consistent with similar views, it's better to raise 406 rather than
-            # return 200 with empty list
-            raise NotAcceptableError
-
-        return queryset
+    queryset = PersonalInfo.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = PersonalInfoFilter
 
     @extend_schema(
         responses={
