@@ -9,7 +9,6 @@ from api.serializers.non_teaching_help import NonTeachingHelpSerializer
 from api.serializers.personal_info import (
     CheckChatIdExistenceSerializer,
     CheckNameAndEmailExistenceSerializer,
-    GetChatwootConversationIdSerializer,
     PersonalInfoSerializer,
     PublicPersonalInfoSerializer,
 )
@@ -45,7 +44,6 @@ __all__ = [
     "NonTeachingHelpSerializer",
     "CheckChatIdExistenceSerializer",
     "CheckNameAndEmailExistenceSerializer",
-    "GetChatwootConversationIdSerializer",
     "PersonalInfoSerializer",
     "PublicPersonalInfoSerializer",
     "PublicGroupSerializer",

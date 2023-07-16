@@ -1,22 +1,56 @@
-from drf_spectacular.utils import OpenApiExample, OpenApiParameter, OpenApiResponse, extend_schema
+from django.db.models import QuerySet
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
+from api.exceptions import NotAcceptableError
 from api.models import PersonalInfo
 from api.serializers import (
     CheckChatIdExistenceSerializer,
     CheckNameAndEmailExistenceSerializer,
-    GetChatwootConversationIdSerializer,
     PersonalInfoSerializer,
 )
 from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
 
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name="registration_telegram_bot_chat_id",
+            location=OpenApiParameter.QUERY,
+            type=int,
+            description="Filter by chat ID in Telegram registration bot",
+        )
+    ],
+    responses={
+        status.HTTP_200_OK: OpenApiResponse(
+            response=PersonalInfoSerializer, description="Returns personal info records."
+        ),
+        status.HTTP_406_NOT_ACCEPTABLE: OpenApiResponse(
+            response=BaseAPIExceptionSerializer,
+            description="No personal info records were found that match given params.",
+        ),
+    },
+)
 class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
-    queryset = PersonalInfo.objects.all()
+    def get_queryset(self) -> QuerySet[PersonalInfo]:
+        """Optionally restricts the returned personal info items to records
+        with given chat ID in Telegram registration bot.
+        """
+        queryset: QuerySet[PersonalInfo] = PersonalInfo.objects.all()
+        chat_id = self.request.query_params.get("registration_telegram_bot_chat_id")
+        if chat_id is not None:
+            queryset = queryset.filter(registration_telegram_bot_chat_id=chat_id)
+
+        if not queryset.exists():
+            # To be consistent with similar views, it's better to raise 406 rather than
+            # return 200 with empty list
+            raise NotAcceptableError
+
+        return queryset
 
     @extend_schema(
         responses={
@@ -47,8 +81,6 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
                 return CheckNameAndEmailExistenceSerializer
             case "check_existence_of_chat_id":
                 return CheckChatIdExistenceSerializer
-            case "get_chatwoot_conversation_id":
-                return GetChatwootConversationIdSerializer
             case _:
                 return PersonalInfoSerializer
 
@@ -81,38 +113,3 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         return Response(request.query_params)
-
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(name="registration_telegram_bot_chat_id", type=int, required=True),
-        ],
-        responses={
-            status.HTTP_200_OK: OpenApiResponse(
-                response=CheckChatIdExistenceSerializer,
-                description="User with this chat ID exists: returning Chatwoot conversation ID",
-                # the auto example will show "telegram_registration_bot_chat_id" instead of
-                # "chatwoot_conversation_id", despite the actual request returning correct field
-                examples=[
-                    OpenApiExample(name="id_found", value={"chatwoot_conversation_id": 123})
-                ],
-            ),
-            status.HTTP_406_NOT_ACCEPTABLE: OpenApiResponse(
-                response=BaseAPIExceptionSerializer, description="No user with this chat ID exists"
-            ),
-            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
-                response=ValidationErrorSerializer,
-                description="Something is wrong with the data",
-            ),
-        },
-    )
-    @action(detail=False, methods=["get"])
-    def get_chatwoot_conversation_id(self, request: Request) -> Response:
-        """Gets Chatwoot conversation ID that matches chat ID in Telegram registration bot."""
-
-        # One Telegram account can only have one conversation with an operator
-        # in Chatwoot. The registration bot can send the chat ID that it knows by definition
-        # and receive the Chatwoot conversation ID if it exists. This allows to connect
-        # the user with the operator via the registration bot.
-        serializer = self.get_serializer(data=request.query_params)
-        serializer.is_valid(raise_exception=True)
-        return Response(serializer.data)
