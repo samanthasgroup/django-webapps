@@ -1,10 +1,7 @@
-from typing import Any
-
 from django.db import models
 from django_filters import rest_framework as filters
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.mixins import CreateModelMixin
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
@@ -18,17 +15,7 @@ from api.serializers import (
     GroupReadSerializer,
     GroupWriteSerializer,
 )
-from api.views.mixins import ReadWriteSerializersMixin
-
-
-class CreateGroupMixin(CreateModelMixin):
-    """Mixin for group creation. Shared between dashboard and internal router"""
-
-    def create(self, request: Request, *args: tuple[Any], **kwargs: dict[str, Any]) -> Response:
-        response = super().create(request, *args, **kwargs)
-        group = Group.objects.get(id=response.data["id"])
-        GroupProcessor.create(group)
-        return response
+from api.views.mixins import CreateGroupMixin, ReadWriteSerializersMixin
 
 
 class GroupViewSet(  # type: ignore
