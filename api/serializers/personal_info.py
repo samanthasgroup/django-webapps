@@ -53,8 +53,8 @@ class CheckChatIdExistenceSerializer(serializers.ModelSerializer[PersonalInfo]):
         extra_kwargs = {"registration_telegram_bot_chat_id": {"required": True}}
 
 
-class PublicPersonalInfoSerializer(serializers.ModelSerializer[PersonalInfo]):
-    """A serializer used to return public information about a person in Tooljet views."""
+class DashboardPersonalInfoSerializer(serializers.ModelSerializer[PersonalInfo]):
+    """A serializer used to return information about a person in dashboard (Tooljet) views."""
 
     class Meta:
         model = PersonalInfo

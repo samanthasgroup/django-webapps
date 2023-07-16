@@ -24,14 +24,14 @@ from api.models.choices.status import CoordinatorStatus, GroupStatus, StudentSta
 from api.serializers import GroupWriteSerializer
 
 
-def test_public_group_list(api_client, availability_slots):
+def test_dashboard_group_list(api_client, availability_slots):
     group = baker.make(
         Group,
         _fill_optional=True,
         make_m2m=True,
         availability_slots_for_auto_matching=availability_slots,
     )
-    response = api_client.get("/api/public/groups/")
+    response = api_client.get("/api/dashboard/groups/")
 
     response_json = response.json()
     assert response.status_code == status.HTTP_200_OK
@@ -75,14 +75,14 @@ def test_public_group_list(api_client, availability_slots):
     ]
 
 
-def test_public_group_retrieve(api_client, availability_slots):
+def test_dashboard_group_retrieve(api_client, availability_slots):
     group = baker.make(
         Group,
         _fill_optional=True,
         make_m2m=True,
         availability_slots_for_auto_matching=availability_slots,
     )
-    response = api_client.get(f"/api/public/groups/{group.pk}/")
+    response = api_client.get(f"/api/dashboard/groups/{group.pk}/")
 
     response_json = response.json()
     assert response.status_code == status.HTTP_200_OK
@@ -143,8 +143,8 @@ def compare_date_time_with_timestamp(date_time: datetime.datetime, timestamp: da
     assert date_time - timestamp < datetime.timedelta(minutes=1)
 
 
-class TestPublicGroupStart:
-    def test_public_group_start_general_check(self, api_client, group, timestamp):
+class TestDashboardGroupStart:
+    def test_dashboard_group_start_general_check(self, api_client, group, timestamp):
         response = api_client.post(self._make_url(group))
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -199,7 +199,7 @@ class TestPublicGroupStart:
             (CoordinatorGroupLimit.MAX + 1, CoordinatorStatus.WORKING_LIMIT_REACHED),
         ],
     )
-    def test_public_group_start_coordinator_status(  # noqa: PLR0913
+    def test_dashboard_group_start_coordinator_status(  # noqa: PLR0913
         self,
         api_client,
         timestamp,
@@ -227,7 +227,7 @@ class TestPublicGroupStart:
         assert coordinator.status == expected_status
         compare_date_time_with_timestamp(coordinator.status_since, timestamp)
 
-    def test_public_group_start_student_status(self, api_client, timestamp, availability_slots):
+    def test_dashboard_group_start_student_status(self, api_client, timestamp, availability_slots):
         student = baker.make(Student, _fill_optional=True, availability_slots=availability_slots)
         student.status = StudentStatus.AWAITING_START
         student.save()
@@ -261,7 +261,7 @@ class TestPublicGroupStart:
             (1, TeacherStatus.TEACHING_NOT_ACCEPTING_MORE),
         ],
     )
-    def test_public_group_start_teacher_status(  # noqa: PLR0913
+    def test_dashboard_group_start_teacher_status(  # noqa: PLR0913
         self, api_client, timestamp, delta, expected_status, availability_slots
     ):
         teacher = baker.make(Teacher, _fill_optional=True, availability_slots=availability_slots)
@@ -286,12 +286,12 @@ class TestPublicGroupStart:
         compare_date_time_with_timestamp(teacher.status_since, timestamp)
 
 
-class TestPublicGroupAbort:
+class TestDashboardGroupAbort:
     @staticmethod
     def _make_url(group: Group) -> str:
         return reverse("groups-abort", kwargs={"pk": group.id})
 
-    def test_public_group_abort_general_check(self, api_client, active_group, timestamp):
+    def test_dashboard_group_abort_general_check(self, api_client, active_group, timestamp):
         prev_student_count, prev_teacher_count, prev_coordinator_count = (
             active_group.students.count(),
             active_group.teachers.count(),
@@ -383,9 +383,16 @@ class TestGroupCreation:
             "teachers": [t.pk for t in group.teachers.iterator()],
         }
 
-    def test_group_create_general(self, api_client, group: Group, timestamp):
+    @pytest.mark.parametrize(
+        "endpoint",
+        [
+            "/api/dashboard/groups/",
+            "/api/groups/",
+        ],
+    )
+    def test_group_create_general(self, api_client, group: Group, timestamp, endpoint: str):
         data_to_create = self.get_data(group)
-        response = api_client.post("/api/public/groups/", data_to_create)
+        response = api_client.post(endpoint, data_to_create)
         assert response.status_code == status.HTTP_201_CREATED
         created_group = Group.objects.get(id=response.data["id"])
         created_group_serializer = GroupWriteSerializer(created_group)
@@ -411,3 +418,6 @@ class TestGroupCreation:
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
             assert log_event.type == TeacherLogEventType.GROUP_OFFERED
             compare_date_time_with_timestamp(log_event.date_time, timestamp)
+
+
+# TODO add tests for internal router

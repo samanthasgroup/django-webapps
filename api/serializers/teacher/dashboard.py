@@ -5,36 +5,13 @@ from api.models.auxil.constants import (
     TEACHER_PEER_SUPPORT_FIELD_NAME_PREFIX,
     TEACHER_PEER_SUPPORT_OPTIONS,
 )
-from api.serializers import (
-    AgeRangeSerializer,
-    DayAndTimeSlotSerializer,
-    LanguageAndLevelSerializer,
-    NonTeachingHelpSerializer,
-    PublicPersonalInfoSerializer,
-)
+from api.serializers import DashboardPersonalInfoSerializer
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
 from api.serializers.group.minified import MinifiedGroupSerializer
 from api.serializers.language_and_level import MinifiedLanguageAndLevelSerializer
 from api.serializers.non_teaching_help import NonTeachingHelpSerializerField
 from api.serializers.utc_timedelta import UTCTimedeltaField
-
-
-class TeacherWriteSerializer(serializers.ModelSerializer[Teacher]):
-    class Meta:
-        model = Teacher
-        fields = "__all__"
-
-
-class TeacherReadSerializer(serializers.ModelSerializer[Teacher]):
-    student_age_ranges = AgeRangeSerializer(many=True, read_only=True)
-    teaching_languages_and_levels = LanguageAndLevelSerializer(many=True, read_only=True)
-    availability_slots = DayAndTimeSlotSerializer(many=True, read_only=True)
-    non_teaching_help_provided = NonTeachingHelpSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Teacher
-        fields = "__all__"
 
 
 class PeerSupportField(serializers.SerializerMethodField):
@@ -50,7 +27,7 @@ class PeerSupportField(serializers.SerializerMethodField):
         }
 
 
-class CommonPublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
+class CommonDashboardTeacherSerializer(serializers.ModelSerializer[Teacher]):
     id = serializers.IntegerField(source="personal_info_id")
     first_name = serializers.CharField(source="personal_info.first_name")
     last_name = serializers.CharField(source="personal_info.last_name")
@@ -88,23 +65,23 @@ class CommonPublicTeacherSerializer(serializers.ModelSerializer[Teacher]):
         read_only_fields = fields
 
 
-class PublicTeacherSerializer(CommonPublicTeacherSerializer):
+class DashboardTeacherSerializer(CommonDashboardTeacherSerializer):
     """Representation of a Teacher that is used in 'All teachers' Tooljet view."""
 
-    class Meta(CommonPublicTeacherSerializer.Meta):
+    class Meta(CommonDashboardTeacherSerializer.Meta):
         pass
 
 
-class PublicTeacherWithPersonalInfoSerializer(CommonPublicTeacherSerializer):
+class DashboardTeacherWithPersonalInfoSerializer(CommonDashboardTeacherSerializer):
     """Representation of a Teacher that is used in 'Teacher by coordinator' Tooljet view."""
 
-    personal_info = PublicPersonalInfoSerializer()
+    personal_info = DashboardPersonalInfoSerializer()
     groups = MinifiedGroupSerializer(many=True, read_only=True)
 
     # TODO LogEvent ?
 
-    class Meta(CommonPublicTeacherSerializer.Meta):
-        fields = CommonPublicTeacherSerializer.Meta.fields + (
+    class Meta(CommonDashboardTeacherSerializer.Meta):
+        fields = CommonDashboardTeacherSerializer.Meta.fields + (
             "personal_info",
             "groups",
         )

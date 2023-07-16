@@ -15,6 +15,8 @@ from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSe
 
 
 class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
+    """Personal info viewset. Used by bot."""
+
     queryset = PersonalInfo.objects.all()
 
     @extend_schema(
