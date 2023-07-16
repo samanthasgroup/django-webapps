@@ -37,8 +37,8 @@ from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSe
 )
 class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
     def get_queryset(self) -> QuerySet[PersonalInfo]:
-        """Optionally restricts the returned personal info items to records
-        with given chat ID in Telegram registration bot.
+        """Optionally restricts the returned personal info items
+        to items with given chat ID in Telegram registration bot.
         """
         queryset: QuerySet[PersonalInfo] = PersonalInfo.objects.all()
         chat_id = self.request.query_params.get("registration_telegram_bot_chat_id")
@@ -76,13 +76,11 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
         return Response(status.HTTP_200_OK)
 
     def get_serializer_class(self) -> type[BaseSerializer[PersonalInfo]]:
-        match self.action:
-            case "check_existence":
-                return CheckNameAndEmailExistenceSerializer
-            case "check_existence_of_chat_id":
-                return CheckChatIdExistenceSerializer
-            case _:
-                return PersonalInfoSerializer
+        if self.action == "check_existence":
+            return CheckNameAndEmailExistenceSerializer
+        if self.action == "check_existence_of_chat_id":
+            return CheckChatIdExistenceSerializer
+        return PersonalInfoSerializer
 
     @extend_schema(
         parameters=[
