@@ -98,14 +98,4 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
     def list(
         self, request: Request, *args: tuple[Any], **kwargs: dict[str, Any]  # noqa ARG002
     ) -> Response:
-        """Overrides default behaviour to return status code 406 if no records are found
-        instead of status code 200 and empty list.
-        """
-        queryset = self.filter_queryset(self.get_queryset())
-        if not queryset.exists():
-            return Response(
-                data={"detail": "No object with this data exists."},
-                status=status.HTTP_406_NOT_ACCEPTABLE,
-            )
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        return super().list(request, *args, **kwargs)
