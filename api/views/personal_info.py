@@ -1,5 +1,3 @@
-from typing import Any
-
 from django_filters import rest_framework as filters
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import status, viewsets
@@ -82,30 +80,3 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         return Response(request.query_params)
-
-    @extend_schema(
-        responses={
-            status.HTTP_200_OK: OpenApiResponse(
-                response=PersonalInfoSerializer,
-                description="Users with these parameters exist",
-            ),
-            status.HTTP_406_NOT_ACCEPTABLE: OpenApiResponse(
-                response=BaseAPIExceptionSerializer,
-                description="No user with these parameters exists",
-            ),
-        }
-    )
-    def list(
-        self, request: Request, *args: tuple[Any], **kwargs: dict[str, Any]  # noqa ARG002
-    ) -> Response:
-        """Overrides default behaviour to return status code 406 if no records are found
-        instead of status code 200 and empty list.
-        """
-        queryset = self.filter_queryset(self.get_queryset())
-        if not queryset.exists():
-            return Response(
-                data={"detail": "No object with this data exists."},
-                status=status.HTTP_406_NOT_ACCEPTABLE,
-            )
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
