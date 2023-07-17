@@ -3,23 +3,25 @@ from rest_framework.routers import DefaultRouter
 
 from api.views import (
     AgeRangeViewSet,
+    DashboardGroupViewSet,
+    DashboardStudentViewSet,
+    DashboardStudentWithPersonalInfoViewSet,
+    DashboardTeacherViewSet,
+    DashboardTeacherWithPersonalInfoViewSet,
     DayAndTimeSlotViewSet,
     EnrollmentTestResultViewSet,
     EnrollmentTestViewSet,
+    GroupViewSet,
     LanguageAndLevelViewSet,
     NonTeachingHelpViewSet,
     PersonalInfoViewSet,
-    PublicGroupViewSet,
-    PublicStudentViewSet,
-    PublicStudentWithPersonalInfoViewSet,
-    PublicTeacherViewSet,
-    PublicTeacherWithPersonalInfoViewSet,
     StudentViewSet,
     TeacherUnder18ViewSet,
     TeacherViewSet,
 )
 
 internal_router = DefaultRouter()
+internal_router.register(r"groups", GroupViewSet, basename="groups")
 internal_router.register(r"personal_info", PersonalInfoViewSet, basename="personal_info")
 internal_router.register(r"students", StudentViewSet, basename="students")
 internal_router.register(r"teachers", TeacherViewSet, basename="teachers")
@@ -39,23 +41,23 @@ internal_router.register(
     r"non_teaching_help", NonTeachingHelpViewSet, basename="non_teaching_help"
 )
 
-public_router = DefaultRouter()
-public_router.register(r"students", PublicStudentViewSet, basename="students")
-public_router.register(
+dashboard_router = DefaultRouter()
+dashboard_router.register(r"students", DashboardStudentViewSet, basename="students")
+dashboard_router.register(
     r"students_with_personal_info",
-    PublicStudentWithPersonalInfoViewSet,
+    DashboardStudentWithPersonalInfoViewSet,
     basename="students_with_personal_info",
 )
-public_router.register(r"groups", PublicGroupViewSet, basename="groups")
-public_router.register(r"teachers", PublicTeacherViewSet, basename="teachers")
-public_router.register(
+dashboard_router.register(r"groups", DashboardGroupViewSet, basename="groups")
+dashboard_router.register(r"teachers", DashboardTeacherViewSet, basename="teachers")
+dashboard_router.register(
     r"teachers_with_personal_info",
-    PublicTeacherWithPersonalInfoViewSet,
+    DashboardTeacherWithPersonalInfoViewSet,
     basename="teachers_with_personal_info",
 )
 
-# "Internal" API is used by bot and "public" API is used by the Tooljet
+# "Internal" API is used by bot and "dashboard" API is used by the Tooljet
 urlpatterns = [
     path("", include(internal_router.urls)),
-    path("public/", include(public_router.urls)),
+    path("dashboard/", include(dashboard_router.urls)),
 ]
