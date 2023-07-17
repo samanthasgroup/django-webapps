@@ -28,7 +28,7 @@ def test_personal_info_create(api_client, fake_personal_info_data):
     assert PersonalInfo.objects.filter(**fake_personal_info_data).exists()
 
 
-def test_personal_info_get_with_params_returns_200_with_existing_chat_id(
+def test_personal_info_get_with_params_returns_200_and_data_with_existing_chat_id(
     api_client, fake_personal_info_data
 ):
     api_client.post("/api/personal_info/", data=fake_personal_info_data)
@@ -49,7 +49,7 @@ def test_personal_info_get_with_params_returns_200_with_existing_chat_id(
         assert response.json()[0][param] == fake_personal_info_data[param]
 
 
-def test_personal_info_get_with_params_returns_406_with_unknown_chat_id(
+def test_personal_info_get_with_params_returns_200_and_empty_list_with_unknown_chat_id(
     api_client, fake_personal_info_data
 ):
     api_client.post("/api/personal_info/", data=fake_personal_info_data)
@@ -57,8 +57,8 @@ def test_personal_info_get_with_params_returns_406_with_unknown_chat_id(
     response = api_client.get(
         path=f"/api/personal_info/?registration_telegram_bot_chat_id={non_existent_chat_id}",
     )
-    assert response.status_code == status.HTTP_406_NOT_ACCEPTABLE
-    assert response.json() == {"detail": "No object with this data exists."}
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == []
 
 
 def test_personal_info_update(api_client, fake_personal_info_data):
