@@ -1,3 +1,5 @@
+import enum
+
 from api.models import CoordinatorLogEvent, Group, GroupLogEvent, StudentLogEvent, TeacherLogEvent
 from api.models.choices.log_event_type import (
     CoordinatorLogEventType,
@@ -7,14 +9,20 @@ from api.models.choices.log_event_type import (
 )
 
 
+class FromOrToGroup(enum.Enum):
+    FROM = "from_group"
+    TO = "to_group"
+
+
 class GroupLogEventCreator:
     @staticmethod
-    def create(
+    def create(  # noqa: PLR0913
         group: Group,
         group_log_event_type: GroupLogEventType,
         student_log_event_type: StudentLogEventType,
         teacher_log_event_type: TeacherLogEventType,
         coordinator_log_event_type: CoordinatorLogEventType | None = None,
+        from_or_to_group: FromOrToGroup = FromOrToGroup.FROM,
     ) -> None:
         GroupLogEvent.objects.create(group=group, type=group_log_event_type)
         if coordinator_log_event_type is not None:
@@ -26,13 +34,14 @@ class GroupLogEventCreator:
                 )
                 for coordinator in group.coordinators.iterator()
             )
+        from_or_to_group_arg = {from_or_to_group.value: group}
 
         StudentLogEvent.objects.bulk_create(
-            StudentLogEvent(student=student, from_group=group, type=student_log_event_type)
+            StudentLogEvent(student=student, type=student_log_event_type, **from_or_to_group_arg)
             for student in group.students.iterator()
         )
 
         TeacherLogEvent.objects.bulk_create(
-            TeacherLogEvent(teacher=teacher, from_group=group, type=teacher_log_event_type)
+            TeacherLogEvent(teacher=teacher, type=teacher_log_event_type, **from_or_to_group_arg)
             for teacher in group.teachers.iterator()
         )
