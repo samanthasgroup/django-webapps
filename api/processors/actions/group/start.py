@@ -19,7 +19,6 @@ class GroupStartProcessor(GroupActionProcessor):
             teacher_log_event_type=TeacherLogEventType.STUDY_START,
             coordinator_log_event_type=CoordinatorLogEventType.TOOK_NEW_GROUP,
             group_log_event_type=GroupLogEventType.STARTED,
-            from_group=self.group,
         )
 
     def _set_coordinators_status(self) -> None:

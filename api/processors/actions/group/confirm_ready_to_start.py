@@ -18,7 +18,6 @@ class GroupConfirmReadyToStartProcessor(GroupActionProcessor):
             teacher_log_event_type=TeacherLogEventType.GROUP_CONFIRMED,
             coordinator_log_event_type=CoordinatorLogEventType.TOOK_NEW_GROUP,
             group_log_event_type=GroupLogEventType.CONFIRMED,
-            to_group=self.group,
         )
 
     def _set_coordinators_status(self) -> None:
