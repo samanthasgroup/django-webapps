@@ -23,6 +23,7 @@ class GroupCreateProcessor(GroupActionProcessor):
             student_log_event_type=StudentLogEventType.GROUP_OFFERED,
             teacher_log_event_type=TeacherLogEventType.GROUP_OFFERED,
             group_log_event_type=GroupLogEventType.FORMED,
+            to_group=self.group,
         )
 
     def _set_group_status(self) -> None:

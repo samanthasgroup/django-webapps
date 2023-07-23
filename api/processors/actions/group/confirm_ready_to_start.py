@@ -7,7 +7,7 @@ from api.models.choices.log_event_type import (
 )
 from api.models.choices.status import GroupStatus, StudentStatus, TeacherStatus
 from api.processors.actions.group import GroupActionProcessor
-from api.processors.auxil.log_event_creator import FromOrToGroup, GroupLogEventCreator
+from api.processors.auxil.log_event_creator import GroupLogEventCreator
 
 
 class GroupConfirmReadyToStartProcessor(GroupActionProcessor):
@@ -18,7 +18,7 @@ class GroupConfirmReadyToStartProcessor(GroupActionProcessor):
             teacher_log_event_type=TeacherLogEventType.GROUP_CONFIRMED,
             coordinator_log_event_type=CoordinatorLogEventType.TOOK_NEW_GROUP,
             group_log_event_type=GroupLogEventType.CONFIRMED,
-            from_or_to_group=FromOrToGroup.TO,
+            to_group=self.group,
         )
 
     def _set_coordinators_status(self) -> None:
