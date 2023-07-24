@@ -4,6 +4,8 @@ from rest_framework import status
 
 from api.models import LanguageAndLevel, PersonalInfo, TeacherUnder18
 from api.models.choices.status import TeacherUnder18Status
+from api.serializers import TeacherUnder18ReadSerializer
+from tests.tests_api.asserts import assert_response_data
 
 
 def test_teacher_under_18_create(api_client, faker):
@@ -42,28 +44,6 @@ def test_teacher_under_18_create(api_client, faker):
 def test_teacher_under_18_retrieve(api_client):
     teacher_under_18 = baker.make(TeacherUnder18)
 
-    languages_and_levels = [
-        {
-            "id": language_and_level.id,
-            "language": {
-                "id": language_and_level.language.id,
-                "name": language_and_level.language.name,
-            },
-            "level": language_and_level.level.id,
-        }
-        for language_and_level in teacher_under_18.teaching_languages_and_levels.all()
-    ]
-
     response = api_client.get(f"/api/teachers_under_18/{teacher_under_18.personal_info.id}/")
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {
-        "personal_info": teacher_under_18.personal_info.id,
-        "comment": teacher_under_18.comment,
-        "can_host_speaking_club": teacher_under_18.can_host_speaking_club,
-        "teaching_languages_and_levels": languages_and_levels,
-        "status": teacher_under_18.status,
-        "status_since": teacher_under_18.status_since.isoformat().replace("+00:00", "Z"),
-        "has_hosted_speaking_club": teacher_under_18.has_hosted_speaking_club,
-        "is_validated": teacher_under_18.is_validated,
-        "non_teaching_help_provided_comment": teacher_under_18.non_teaching_help_provided_comment,
-    }
+    assert_response_data(response.data, TeacherUnder18ReadSerializer(teacher_under_18).data)

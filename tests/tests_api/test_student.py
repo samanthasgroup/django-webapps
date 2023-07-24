@@ -13,6 +13,8 @@ from api.models import (
     Student,
 )
 from api.models.choices.status import StudentStatus
+from api.serializers import DashboardStudentSerializer, StudentReadSerializer
+from tests.tests_api.asserts import assert_response_data
 
 
 def test_student_create(api_client, faker):
@@ -64,50 +66,8 @@ def test_student_retrieve(api_client, availability_slots):
     student = baker.make(Student, make_m2m=True, availability_slots=availability_slots)
     response = api_client.get(f"/api/students/{student.personal_info.id}/")
 
-    response_json = response.json()
     assert response.status_code == status.HTTP_200_OK
-    languages_and_levels = [
-        {
-            "id": language_and_level.id,
-            "language": {
-                "id": language_and_level.language.id,
-                "name": language_and_level.language.name,
-            },
-            "level": language_and_level.level.id,
-        }
-        for language_and_level in student.teaching_languages_and_levels.all()
-    ]
-    availability_slots = [
-        {
-            "id": slot.id,
-            "time_slot": {
-                "id": slot.time_slot.id,
-                "from_utc_hour": str(slot.time_slot.from_utc_hour),
-                "to_utc_hour": str(slot.time_slot.to_utc_hour),
-            },
-            "day_of_week_index": slot.day_of_week_index,
-        }
-        for slot in student.availability_slots.all()
-    ]
-    assert response_json == {
-        "personal_info": student.personal_info.id,
-        "age_range": {
-            "id": student.age_range.id,
-            "age_from": student.age_range.age_from,
-            "age_to": student.age_range.age_to,
-            "type": student.age_range.type,
-        },
-        "teaching_languages_and_levels": languages_and_levels,
-        "availability_slots": availability_slots,
-        "comment": student.comment,
-        "status": student.status,
-        "status_since": student.status_since.isoformat().replace("+00:00", "Z"),
-        "is_member_of_speaking_club": student.is_member_of_speaking_club,
-        "can_read_in_english": student.can_read_in_english,
-        # These are optional, so baker won't generate them (unless _fill_optional is True)
-        "non_teaching_help_required": [],
-        "smalltalk_test_result": None,
-    }
+    assert_response_data(response.data, StudentReadSerializer(student).data)
 
 
 def test_dashboard_student_retrieve(api_client, faker, availability_slots):
@@ -123,48 +83,22 @@ def test_dashboard_student_retrieve(api_client, faker, availability_slots):
     )
     response = api_client.get(f"/api/dashboard/students/{student.personal_info.id}/")
 
-    response_json = response.json()
     assert response.status_code == status.HTTP_200_OK
-    languages_and_levels = [
-        {
-            "language": language_and_level.language.name,
-            "level": language_and_level.level.id,
-        }
-        for language_and_level in student.teaching_languages_and_levels.all()
-    ]
-    availability_slots = [
-        {
-            "day_of_week_index": slot.day_of_week_index,
-            "from_utc_hour": slot.time_slot.from_utc_hour.isoformat(),
-            "to_utc_hour": slot.time_slot.to_utc_hour.isoformat(),
-        }
-        for slot in student.availability_slots.all()
-    ]
-    assert response_json == {
-        "id": student.personal_info.id,
-        "first_name": student.personal_info.first_name,
-        "last_name": student.personal_info.last_name,
-        "age_range": f"{student.age_range.age_from}-{student.age_range.age_to}",
-        "teaching_languages_and_levels": languages_and_levels,
-        "availability_slots": availability_slots,
-        "comment": student.comment,
-        "status": student.status,
-        "communication_language_mode": student.personal_info.communication_language_mode,
-        "is_member_of_speaking_club": student.is_member_of_speaking_club,
-        "utc_timedelta": f"UTC{sign}{utc_offset_hours:02}:{utc_offset_minutes:02}",
-        "non_teaching_help_required": {
-            "career_strategy": False,
-            "career_switch": False,
-            "cv_proofread": False,
-            "cv_write_edit": False,
-            "job_search": False,
-            "linkedin": False,
-            "mock_interview": False,
-            "portfolio": False,
-            "translate_docs": False,
-            "uni_abroad": False,
-        },
+    student_data = DashboardStudentSerializer(student).data
+    student_data["utc_timedelta"] = f"UTC{sign}{utc_offset_hours:02}:{utc_offset_minutes:02}"
+    student_data["non_teaching_help_required"] = {
+        "career_strategy": False,
+        "career_switch": False,
+        "cv_proofread": False,
+        "cv_write_edit": False,
+        "job_search": False,
+        "linkedin": False,
+        "mock_interview": False,
+        "portfolio": False,
+        "translate_docs": False,
+        "uni_abroad": False,
     }
+    assert_response_data(response.data, student_data)
 
 
 # TODO: Add tests for update (+ decide PUT or PATCH?)

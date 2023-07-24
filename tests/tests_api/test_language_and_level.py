@@ -2,6 +2,8 @@ import pytest
 from rest_framework import status
 
 from api.models import LanguageAndLevel
+from api.serializers import LanguageAndLevelSerializer
+from tests.tests_api.asserts import assert_response_data, assert_response_data_list
 
 
 @pytest.mark.parametrize("language", [None, "en", "fr"])
@@ -16,17 +18,10 @@ def test_languages_and_levels_list(api_client, language):
 
     response = api_client.get(f"/api/languages_and_levels/{query_string}")
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == [
-        {
-            "id": language_and_level.id,
-            "language": {
-                "id": language_and_level.language.id,
-                "name": language_and_level.language.name,
-            },
-            "level": language_and_level.level.id,
-        }
-        for language_and_level in queryset
-    ]
+    assert_response_data_list(
+        response.data,
+        [LanguageAndLevelSerializer(language_and_level).data for language_and_level in queryset],
+    )
 
 
 def test_languages_and_levels_retrieve(api_client):
@@ -34,11 +29,4 @@ def test_languages_and_levels_retrieve(api_client):
     response = api_client.get(f"/api/languages_and_levels/{language_and_level.id}/")
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {
-        "id": language_and_level.id,
-        "language": {
-            "id": language_and_level.language.id,
-            "name": language_and_level.language.name,
-        },
-        "level": language_and_level.level.id,
-    }
+    assert_response_data(response.data, LanguageAndLevelSerializer(language_and_level).data)
