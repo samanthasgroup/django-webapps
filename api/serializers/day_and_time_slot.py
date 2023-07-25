@@ -25,4 +25,4 @@ class MinifiedDayAndTimeSlotSerializer(serializers.ModelSerializer[DayAndTimeSlo
 
     class Meta:
         model = DayAndTimeSlot
-        fields = ("day_of_week_index", "from_utc_hour", "to_utc_hour")
+        fields = ("id", "day_of_week_index", "from_utc_hour", "to_utc_hour")
