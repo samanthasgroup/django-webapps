@@ -47,6 +47,7 @@ def test_dashboard_group_list(api_client, availability_slots):
             "saturday": str(group.saturday),
             "sunday": str(group.sunday),
             "language_and_level": {
+                "id": group.language_and_level.pk,
                 "language": group.language_and_level.language.name,
                 "level": group.language_and_level.level.id,
             },
@@ -97,6 +98,7 @@ def test_dashboard_group_retrieve(api_client, availability_slots):
         "saturday": str(group.saturday),
         "sunday": str(group.sunday),
         "language_and_level": {
+            "id": group.language_and_level.pk,
             "language": group.language_and_level.language.name,
             "level": group.language_and_level.level.id,
         },
