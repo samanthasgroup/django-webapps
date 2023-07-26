@@ -135,6 +135,7 @@ def test_dashboard_student_retrieve(api_client, faker, availability_slots):
     ]
     availability_slots = [
         {
+            "id": slot.pk,
             "day_of_week_index": slot.day_of_week_index,
             "from_utc_hour": slot.time_slot.from_utc_hour.isoformat(),
             "to_utc_hour": slot.time_slot.to_utc_hour.isoformat(),
