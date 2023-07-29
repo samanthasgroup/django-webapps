@@ -6,7 +6,7 @@ def assert_response_data(response_data: dict, fields_to_assert: dict) -> None:
     Does assertion of response data fields specified in fields_to_assert
     """
     for field, val in fields_to_assert.items():
-        assert val == response_data[field]
+        assert val == response_data[field], f"{val} is not equal to {response_data[field]}"
 
 
 def assert_response_data_list(
@@ -19,7 +19,8 @@ def assert_response_data_list(
     Note:
         both parameters have to have equal lengths
     """
-    assert len(response_data_items) == len(data_items_to_assert)
+    assert_message = "Response data length have to be equal to assert data length"
+    assert len(response_data_items) == len(data_items_to_assert), assert_message
     for response_data, data_to_assert in zip(response_data_items, data_items_to_assert):
         assert_response_data(response_data, data_to_assert)
 

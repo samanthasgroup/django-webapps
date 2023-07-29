@@ -1,3 +1,5 @@
+import datetime
+
 import pytz
 from model_bakery import baker, seq
 from rest_framework import status
@@ -11,8 +13,12 @@ from api.models import (
     Teacher,
 )
 from api.models.choices.status import TeacherStatus
-from api.serializers import TeacherReadSerializer
-from tests.tests_api.asserts import assert_response_data
+from api.serializers import (
+    DashboardTeacherSerializer,
+    TeacherReadSerializer,
+    TeacherWriteSerializer,
+)
+from tests.tests_api.asserts import assert_response_data, assert_response_data_list
 
 
 def test_teacher_create(api_client, faker):
@@ -76,6 +82,34 @@ def test_teacher_create(api_client, faker):
     assert Teacher.objects.filter(**data).exists()
 
 
+def test_teacher_update(api_client, faker, availability_slots):
+    teacher = baker.make(
+        Teacher,
+        make_m2m=True,
+        _fill_optional=True,
+        availability_slots=availability_slots,
+    )
+    fields_to_update = {
+        "weekly_frequency_per_group": faker.pyint(min_value=1, max_value=12),
+        "status": TeacherStatus.BANNED,
+        "has_prior_teaching_experience": True,
+        "availability_slots": [i.id for i in availability_slots[1:3]],
+    }
+
+    response = api_client.patch(
+        f"/api/teachers/{teacher.personal_info.id}/", data=fields_to_update
+    )
+    teacher_data = TeacherWriteSerializer(teacher).data
+    for field, val in fields_to_update.items():
+        teacher_data[field] = val
+    assert response.status_code == status.HTTP_200_OK
+    assert_response_data(response.data, teacher_data)
+
+    db_teacher = Teacher.objects.get(pk=teacher.pk)
+    db_teacher_data = TeacherWriteSerializer(db_teacher).data
+    assert_response_data(db_teacher_data, teacher_data)
+
+
 def test_teacher_retrieve(api_client, availability_slots):
     teacher = baker.make(
         Teacher, make_m2m=True, _fill_optional=True, availability_slots=availability_slots
@@ -85,4 +119,40 @@ def test_teacher_retrieve(api_client, availability_slots):
     assert_response_data(response.data, TeacherReadSerializer(teacher).data)
 
 
-# TODO: Add tests for update (+ decide PUT or PATCH?)
+def test_dashboard_teacher_retrieve(api_client, faker, availability_slots):
+    utc_offset_hours = faker.pyint(min_value=-12, max_value=12)
+    sign = "+" if utc_offset_hours >= 0 else "-"
+    utc_offset_minutes = faker.random_element([0, 30])
+    utc_timedelta = datetime.timedelta(hours=utc_offset_hours, minutes=utc_offset_minutes)
+    teacher = baker.make(
+        Teacher,
+        make_m2m=True,
+        personal_info__utc_timedelta=utc_timedelta,
+        availability_slots=availability_slots,
+    )
+    response = api_client.get(f"/api/dashboard/teachers/{teacher.personal_info.id}/")
+
+    assert response.status_code == status.HTTP_200_OK
+    teacher_data = DashboardTeacherSerializer(teacher).data
+
+    teacher_data["utc_timedelta"] = f"UTC{sign}{utc_offset_hours:02}:{utc_offset_minutes:02}"
+    assert_response_data(response.data, teacher_data)
+
+
+def test_dashboard_teache_list(api_client, faker, availability_slots):
+    utc_offset_hours = faker.pyint(min_value=-12, max_value=12)
+    sign = "+" if utc_offset_hours >= 0 else "-"
+    utc_offset_minutes = faker.random_element([0, 30])
+    utc_timedelta = datetime.timedelta(hours=utc_offset_hours, minutes=utc_offset_minutes)
+    teacher = baker.make(
+        Teacher,
+        make_m2m=True,
+        personal_info__utc_timedelta=utc_timedelta,
+        availability_slots=availability_slots,
+    )
+    response = api_client.get("/api/dashboard/teachers/")
+
+    assert response.status_code == status.HTTP_200_OK
+    teacher_data = DashboardTeacherSerializer(teacher).data
+    teacher_data["utc_timedelta"] = f"UTC{sign}{utc_offset_hours:02}:{utc_offset_minutes:02}"
+    assert_response_data_list(response.data, [teacher_data])

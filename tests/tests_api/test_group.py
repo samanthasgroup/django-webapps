@@ -19,7 +19,7 @@ from api.models.choices.log_event_type import (
     TeacherLogEventType,
 )
 from api.models.choices.status import CoordinatorStatus, GroupStatus, StudentStatus, TeacherStatus
-from api.serializers import DashboardGroupSerializer, GroupWriteSerializer
+from api.serializers import DashboardGroupSerializer, GroupReadSerializer, GroupWriteSerializer
 from tests.tests_api.asserts import (
     assert_date_time_with_timestamp,
     assert_response_data,
@@ -27,29 +27,37 @@ from tests.tests_api.asserts import (
 )
 
 
-def test_dashboard_group_list(api_client, availability_slots):
+@pytest.mark.parametrize(
+    "endpoint, serializer",
+    [("/api/dashboard/groups/", DashboardGroupSerializer), ("/api/groups/", GroupReadSerializer)],
+)
+def test_dashboard_group_list(api_client, availability_slots, endpoint, serializer):
     group = baker.make(
         Group,
         _fill_optional=True,
         make_m2m=True,
         availability_slots_for_auto_matching=availability_slots,
     )
-    response = api_client.get("/api/dashboard/groups/")
+    response = api_client.get(endpoint)
 
     assert response.status_code == status.HTTP_200_OK
-    assert_response_data_list(response.data, [DashboardGroupSerializer(group).data])
+    assert_response_data_list(response.data, [serializer(group).data])
 
 
-def test_dashboard_group_retrieve(api_client, availability_slots):
+@pytest.mark.parametrize(
+    "router, serializer",
+    [("/api/dashboard/groups", DashboardGroupSerializer), ("/api/groups", GroupReadSerializer)],
+)
+def test_dashboard_group_retrieve(api_client, availability_slots, router, serializer):
     group = baker.make(
         Group,
         _fill_optional=True,
         make_m2m=True,
         availability_slots_for_auto_matching=availability_slots,
     )
-    response = api_client.get(f"/api/dashboard/groups/{group.pk}/")
+    response = api_client.get(f"{router}/{group.pk}/")
     assert response.status_code == status.HTTP_200_OK
-    assert_response_data(response.data, DashboardGroupSerializer(group).data)
+    assert_response_data(response.data, serializer(group).data)
 
 
 class TestDashboardGroupStart:
@@ -369,6 +377,3 @@ class TestDashboardGroupConfirmReadyToStart:
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
             assert log_event.type == TeacherLogEventType.GROUP_CONFIRMED
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
-
-
-# TODO add tests for internal router
