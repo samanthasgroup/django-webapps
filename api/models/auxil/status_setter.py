@@ -23,7 +23,7 @@ class StatusSetter:
 
     @staticmethod
     def update_statuses_of_active_coordinators(timestamp: datetime.datetime) -> None:
-        coordinators = Coordinator.objects
+        coordinators = Coordinator.objects.filter_active()
 
         coordinators.filter_below_threshold().update(
             status=CoordinatorStatus.WORKING_BELOW_THRESHOLD, status_since=timestamp

@@ -33,6 +33,18 @@ class CoordinatorStatus(models.TextChoices):
     REMOVED = "removed", "All access revoked, accounts closed"
     BANNED = "banned", "Banned from the project"
 
+    @classmethod
+    def active_statuses(cls) -> list["CoordinatorStatus"]:
+        return [
+            cls.PENDING,
+            cls.ONBOARDING,
+            cls.ONBOARDING_STALE,
+            cls.WORKING_BELOW_THRESHOLD,
+            cls.WORKING_OK,
+            cls.WORKING_LIMIT_REACHED,
+            cls.FINISHED_LEFT,
+        ]
+
 
 class GroupStatus(models.TextChoices):
     """Enumeration of possible statuses of a group."""
@@ -97,6 +109,21 @@ class TeacherStatus(models.TextChoices):
     BANNED = "banned", "Banned from the project"
     REMOVED = "removed", "All access revoked, accounts closed"
 
+    @classmethod
+    def active_statuses(cls) -> list["TeacherStatus"]:
+        return [
+            cls.AWAITING_OFFER,
+            cls.GROUP_OFFERED,
+            cls.AWAITING_START,
+            cls.TEACHING_ACCEPTING_MORE,
+            cls.TEACHING_NOT_ACCEPTING_MORE,
+            cls.TEACHING_ANOTHER_GROUP_OFFERED,
+            cls.TEACHING_AWAITING_START_OF_ANOTHER,
+            cls.NEEDS_SUBSTITUTION,
+            # TODO: need to confirm this is correct
+            cls.FINISHED_STAYS,
+        ]
+
 
 class TeacherUnder18Status(models.TextChoices):
     """Enumeration of possible statuses of a teacher under 18 years old."""
@@ -112,6 +139,13 @@ class TeacherUnder18Status(models.TextChoices):
     FINISHED_STAYS = "finished_stays", "Finished teaching but remains in the project"
     BANNED = "banned", "Banned from the project"
     REMOVED = "removed", "All access revoked, accounts closed"
+
+    @classmethod
+    def active_statuses(cls) -> list["TeacherUnder18Status"]:
+        return [
+            cls.ACTIVE,
+            cls.FINISHED_STAYS,
+        ]
 
 
 Status = CoordinatorStatus | GroupStatus | StudentStatus | TeacherStatus | TeacherUnder18Status

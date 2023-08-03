@@ -25,6 +25,10 @@ class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
         """QuerySet with coordinators that have exceeded the limit of groups."""
         return self.annotate_with_group_count().filter(group_count__gte=CoordinatorGroupLimit.MAX)
 
+    def filter_active(self) -> "CoordinatorQuerySet":
+        """QuerySet with Coordinators that are active."""
+        return self.filter(status__in=CoordinatorStatus.active_statuses())
+
 
 class Coordinator(Person):
     """Model for a coordinator."""

@@ -53,7 +53,7 @@ class GroupAbortProcessor(GroupActionProcessor):
         )
 
     def _set_teachers_status(self) -> None:
-        teachers = Teacher.objects
+        teachers = Teacher.objects.filter_active()
 
         teachers.filter_has_no_groups().update(
             status=TeacherStatus.AWAITING_OFFER,

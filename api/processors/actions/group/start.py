@@ -36,7 +36,7 @@ class GroupStartProcessor(GroupActionProcessor):
         )
 
     def _set_teachers_status(self) -> None:
-        teachers = Teacher.objects
+        teachers = Teacher.objects.filter_active()
 
         teachers.filter_can_take_more_groups().update(
             status=TeacherStatus.TEACHING_ACCEPTING_MORE,

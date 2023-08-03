@@ -29,6 +29,10 @@ class TeacherQuerySet(models.QuerySet["Teacher"]):
         """QuerySet with Teachers that have no groups."""
         return self.annotate_with_group_count().filter(group_count=0)
 
+    def filter_active(self) -> "TeacherQuerySet":
+        """QuerySet with Teachers that are active."""
+        return self.filter(status__in=TeacherStatus.active_statuses())
+
 
 class Teacher(TeacherCommon):
     """Model for an adult teacher that can teach groups."""
