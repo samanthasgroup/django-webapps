@@ -3,24 +3,28 @@ import datetime
 from django.utils import timezone
 
 from api.models import Coordinator, Group
-from api.models.choices.status import CoordinatorProjectStatus, ProjectStatus
+from api.models.choices.status import CoordinatorProjectStatus, ProjectStatus, SituationalStatus
 from api.models.shared_abstract.person import Person
 
 
 class StatusSetter:
-    # FIXME situational status
     @staticmethod
     def set_status(
         obj: Group | Person,
-        project_status: ProjectStatus,
+        project_status: ProjectStatus | None = None,
+        situational_status: SituationalStatus | None = None,
         status_since: datetime.datetime | None = None,
     ) -> None:
-        """Sets status, sets `status_since` to current time in UTC, saves object.
+        """Set statuses, `status_since` to given time or current time in UTC, save object.
 
-        Optionally, pass a datetime object as `status_since` to have identical timestamps
-        for multiple log events.
+        Note:
+            Pass a datetime object as `status_since` to have identical timestamps
+            for multiple log events.
         """
-        obj.project_status = project_status
+        if project_status:
+            obj.project_status = project_status
+        if situational_status:
+            obj.situational_status = situational_status
         obj.status_since = status_since or timezone.now()
         obj.save()
 
