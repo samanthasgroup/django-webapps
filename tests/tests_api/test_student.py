@@ -127,6 +127,7 @@ def test_dashboard_student_retrieve(api_client, faker, availability_slots):
     assert response.status_code == status.HTTP_200_OK
     languages_and_levels = [
         {
+            "id": language_and_level.pk,
             "language": language_and_level.language.name,
             "level": language_and_level.level.id,
         }
@@ -134,6 +135,7 @@ def test_dashboard_student_retrieve(api_client, faker, availability_slots):
     ]
     availability_slots = [
         {
+            "id": slot.pk,
             "day_of_week_index": slot.day_of_week_index,
             "from_utc_hour": slot.time_slot.from_utc_hour.isoformat(),
             "to_utc_hour": slot.time_slot.to_utc_hour.isoformat(),

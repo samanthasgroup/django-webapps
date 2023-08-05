@@ -1,3 +1,4 @@
+from django_filters import rest_framework as filters
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -5,6 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
+from api.filters import PersonalInfoFilter
 from api.models import PersonalInfo
 from api.serializers import (
     CheckChatIdExistenceSerializer,
@@ -18,6 +20,8 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
     """Personal info viewset. Used by bot."""
 
     queryset = PersonalInfo.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = PersonalInfoFilter
 
     @extend_schema(
         responses={

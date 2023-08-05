@@ -25,4 +25,4 @@ class MinifiedLanguageAndLevelSerializer(serializers.ModelSerializer[LanguageAnd
 
     class Meta:
         model = LanguageAndLevel
-        fields = ("language", "level")
+        fields = ("id", "language", "level")

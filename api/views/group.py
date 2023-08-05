@@ -61,3 +61,9 @@ class DashboardGroupViewSet(viewsets.ReadOnlyModelViewSet[Group], CreateGroupMix
         group = self.get_object()
         GroupProcessor.abort(group)
         return Response(status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["post"])
+    def confirm_ready_to_start(self, request: Request, pk: int) -> Response:  # noqa: ARG002
+        group = self.get_object()
+        GroupProcessor.confirm_ready_to_start(group)
+        return Response(status=status.HTTP_200_OK)
