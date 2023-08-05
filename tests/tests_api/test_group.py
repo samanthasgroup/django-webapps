@@ -19,7 +19,7 @@ from api.models.choices.log_event_type import (
     TeacherLogEventType,
 )
 from api.models.choices.status import CoordinatorStatus, GroupStatus, StudentStatus, TeacherStatus
-from api.serializers import DashboardGroupSerializer, GroupReadSerializer, GroupWriteSerializer
+from api.serializers import GroupReadSerializer, GroupWriteSerializer
 from tests.tests_api.asserts import (
     assert_date_time_with_timestamp,
     assert_response_data,
@@ -27,37 +27,133 @@ from tests.tests_api.asserts import (
 )
 
 
-@pytest.mark.parametrize(
-    "endpoint, serializer",
-    [("/api/dashboard/groups/", DashboardGroupSerializer), ("/api/groups/", GroupReadSerializer)],
-)
-def test_dashboard_group_list(api_client, availability_slots, endpoint, serializer):
+def test_dashboard_group_list(api_client, availability_slots):
     group = baker.make(
         Group,
         _fill_optional=True,
         make_m2m=True,
         availability_slots_for_auto_matching=availability_slots,
     )
-    response = api_client.get(endpoint)
+    response = api_client.get("/api/dashboard/groups/")
 
     assert response.status_code == status.HTTP_200_OK
-    assert_response_data_list(response.data, [serializer(group).data])
+    assert response.json() == [
+        {
+            "id": group.pk,
+            "communication_language_mode": group.communication_language_mode,
+            "monday": str(group.monday),
+            "tuesday": str(group.tuesday),
+            "wednesday": str(group.wednesday),
+            "thursday": str(group.thursday),
+            "friday": str(group.friday),
+            "saturday": str(group.saturday),
+            "sunday": str(group.sunday),
+            "language_and_level": {
+                "id": group.language_and_level.pk,
+                "language": group.language_and_level.language.name,
+                "level": group.language_and_level.level.id,
+            },
+            "lesson_duration_in_minutes": group.lesson_duration_in_minutes,
+            "status": group.status,
+            "start_date": group.start_date.isoformat(),
+            "end_date": group.end_date.isoformat(),
+            "telegram_chat_url": group.telegram_chat_url,
+            "coordinators": [
+                {
+                    "id": coordinator.pk,
+                    "full_name": coordinator.personal_info.full_name,
+                }
+                for coordinator in group.coordinators.all()
+            ],
+            "teachers": [
+                {
+                    "id": teacher.pk,
+                    "full_name": teacher.personal_info.full_name,
+                }
+                for teacher in group.teachers.all()
+            ],
+            "students_count": group.students.count(),
+            "is_for_staff_only": group.is_for_staff_only,
+        }
+    ]
 
 
-@pytest.mark.parametrize(
-    "router, serializer",
-    [("/api/dashboard/groups", DashboardGroupSerializer), ("/api/groups", GroupReadSerializer)],
-)
-def test_dashboard_group_retrieve(api_client, availability_slots, router, serializer):
+def test_dashboard_group_retrieve(api_client, availability_slots):
     group = baker.make(
         Group,
         _fill_optional=True,
         make_m2m=True,
         availability_slots_for_auto_matching=availability_slots,
     )
-    response = api_client.get(f"{router}/{group.pk}/")
+    response = api_client.get(f"/api/dashboard/groups/{group.pk}/")
     assert response.status_code == status.HTTP_200_OK
-    assert_response_data(response.data, serializer(group).data)
+    assert response.json() == {
+        "id": group.pk,
+        "communication_language_mode": group.communication_language_mode,
+        "monday": str(group.monday),
+        "tuesday": str(group.tuesday),
+        "wednesday": str(group.wednesday),
+        "thursday": str(group.thursday),
+        "friday": str(group.friday),
+        "saturday": str(group.saturday),
+        "sunday": str(group.sunday),
+        "language_and_level": {
+            "id": group.language_and_level.pk,
+            "language": group.language_and_level.language.name,
+            "level": group.language_and_level.level.id,
+        },
+        "lesson_duration_in_minutes": group.lesson_duration_in_minutes,
+        "status": group.status,
+        "start_date": group.start_date.isoformat(),
+        "end_date": group.end_date.isoformat(),
+        "telegram_chat_url": group.telegram_chat_url,
+        "coordinators": [
+            {
+                "id": coordinator.pk,
+                "full_name": coordinator.personal_info.full_name,
+            }
+            for coordinator in group.coordinators.all()
+        ],
+        "teachers": [
+            {
+                "id": teacher.pk,
+                "full_name": teacher.personal_info.full_name,
+            }
+            for teacher in group.teachers.all()
+        ],
+        "students": [
+            {
+                "id": student.pk,
+                "full_name": student.personal_info.full_name,
+            }
+            for student in group.students.all()
+        ],
+        "is_for_staff_only": group.is_for_staff_only,
+    }
+
+
+def test_group_list(api_client, availability_slots):
+    group = baker.make(
+        Group,
+        _fill_optional=True,
+        make_m2m=True,
+        availability_slots_for_auto_matching=availability_slots,
+    )
+    response = api_client.get("/api/groups/")
+    assert response.status_code == status.HTTP_200_OK
+    assert_response_data_list(response.data, [GroupReadSerializer(group).data])
+
+
+def test_group_retrieve(api_client, availability_slots):
+    group = baker.make(
+        Group,
+        _fill_optional=True,
+        make_m2m=True,
+        availability_slots_for_auto_matching=availability_slots,
+    )
+    response = api_client.get(f"/api/groups/{group.pk}/")
+    assert response.status_code == status.HTTP_200_OK
+    assert_response_data(response.data, GroupReadSerializer(group).data)
 
 
 class TestDashboardGroupStart:

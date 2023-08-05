@@ -3,8 +3,6 @@ from model_bakery import baker
 from rest_framework import status
 
 from api.models import EnrollmentTest, EnrollmentTestQuestionOption, Student
-from api.serializers import EnrollmentTestSerializer
-from tests.tests_api.asserts import assert_response_data_list
 
 
 def test_get_enrollment_test(api_client):
@@ -12,7 +10,27 @@ def test_get_enrollment_test(api_client):
     test = baker.make(EnrollmentTest, make_m2m=True)
     response = api_client.get(f"/api/enrollment_test/?language={test.language.id}")
     assert response.status_code == status.HTTP_200_OK
-    assert_response_data_list(response.data, [EnrollmentTestSerializer(test).data])
+    assert response.json() == [
+        {
+            "id": test.id,
+            "language": test.language.id,
+            "age_ranges": [age_range.id for age_range in test.age_ranges.all()],
+            "questions": [
+                {
+                    "id": question.id,
+                    "text": question.text,
+                    "options": [
+                        {
+                            "id": option.id,
+                            "text": option.text,
+                        }
+                        for option in question.options.all()
+                    ],
+                }
+                for question in test.questions.all()
+            ],
+        }
+    ]
 
 
 @pytest.mark.parametrize(
