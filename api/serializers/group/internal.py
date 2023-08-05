@@ -2,7 +2,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from api.models import Group
-from api.models.choices.status import GroupStatus
+from api.models.choices.status import GroupProjectStatus
 from api.serializers import (
     DayAndTimeSlotSerializer,
     MinifiedStudentSerializer,
@@ -13,7 +13,7 @@ from api.serializers import (
 
 class GroupWriteSerializer(serializers.ModelSerializer[Group]):
     status_since = serializers.DateTimeField(default=timezone.now())
-    status = serializers.ChoiceField(GroupStatus, default=GroupStatus.PENDING)
+    status = serializers.ChoiceField(GroupProjectStatus, default=GroupProjectStatus.PENDING)
 
     class Meta:
         model = Group

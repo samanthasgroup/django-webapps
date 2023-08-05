@@ -21,11 +21,10 @@ from api.models.choices.registration_telegram_bot_language import (
     RegistrationTelegramBotLanguage,
 )
 from api.models.choices.status import (
-    CoordinatorStatus,
-    StudentStatus,
-    TeacherStatus,
-    TeacherUnder18Status,
-    GroupStatus,
+    CoordinatorProjectStatus,
+    StudentProjectStatus,
+    TeacherProjectStatus,
+    GroupProjectStatus,
 )
 from api.models.auxil.data_populator import DataPopulator
 
@@ -156,7 +155,7 @@ class RecipeStorage:
             comment=self.faker.text,
             is_admin=self.faker.pybool,
             is_validated=self.faker.pybool,
-            status=lambda: self.faker.random_element(CoordinatorStatus.values),
+            status=lambda: self.faker.random_element(CoordinatorProjectStatus.values),
         )
 
     def _make_student_recipe(self) -> Recipe:
@@ -164,7 +163,7 @@ class RecipeStorage:
             APP_NAME + ".Student",
             personal_info=foreign_key(self.personal_info, one_to_one=True),
             comment=self.faker.text,
-            status=lambda: self.faker.random_element(StudentStatus.values),
+            status=lambda: self.faker.random_element(StudentProjectStatus.values),
             age_range=lambda: self.faker.random_element(
                 AgeRange.objects.filter(type=AgeRangeType.STUDENT)
             ),
@@ -188,7 +187,7 @@ class RecipeStorage:
             APP_NAME + ".Teacher",
             personal_info=foreign_key(self.personal_info, one_to_one=True),
             comment=self.faker.text,
-            status=lambda: self.faker.random_element(TeacherStatus.values),
+            status=lambda: self.faker.random_element(TeacherProjectStatus.values),
             can_host_speaking_club=self.faker.pybool,
             has_hosted_speaking_club=self.faker.pybool,
             is_validated=self.faker.pybool,
@@ -222,7 +221,7 @@ class RecipeStorage:
             APP_NAME + ".TeacherUnder18",
             personal_info=foreign_key(self.personal_info, one_to_one=True),
             comment=self.faker.text,
-            status=lambda: self.faker.random_element(TeacherUnder18Status.values),
+            status=lambda: self.faker.random_element(TeacherProjectStatus.values),
             can_host_speaking_club=self.faker.pybool,
             has_hosted_speaking_club=self.faker.pybool,
             is_validated=self.faker.pybool,
@@ -241,7 +240,7 @@ class RecipeStorage:
             lesson_duration_in_minutes=lambda: self.faker.pyint(
                 min_value=30, max_value=120, step=30
             ),
-            status=lambda: self.faker.random_element(GroupStatus.values),
+            status=lambda: self.faker.random_element(GroupProjectStatus.values),
             start_date=self.faker.past_date,
             end_date=self.faker.future_date,
             **self._get_group_days_of_week(),

@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import Count
 
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, CoordinatorGroupLimit
-from api.models.choices.status import CoordinatorStatus
+from api.models.choices.status import CoordinatorProjectStatus, CoordinatorSituationalStatus
 from api.models.shared_abstract.person import Person
 
 
@@ -47,9 +47,16 @@ class Coordinator(Person):
         related_name="interns",
         help_text="mentor of this coordinator. One coordinator can have many interns",
     )
-    status = models.CharField(
+    project_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
-        choices=CoordinatorStatus.choices,
+        choices=CoordinatorProjectStatus.choices,
+        verbose_name="status in project",
+        help_text="status of this student with regard to project as a whole",
+    )
+    situational_status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=CoordinatorSituationalStatus.choices,
+        blank=True,
     )
 
     objects = CoordinatorQuerySet.as_manager()

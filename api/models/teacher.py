@@ -3,7 +3,7 @@ from django.db.models import Count, F
 
 from api.models.age_range import AgeRange
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
-from api.models.choices.status import TeacherStatus
+from api.models.choices.status import TeacherProjectStatus, TeacherSituationalStatus
 from api.models.day_and_time_slot import DayAndTimeSlot
 from api.models.non_teaching_help import NonTeachingHelp
 from api.models.shared_abstract.teacher_common import TeacherCommon
@@ -80,11 +80,16 @@ class Teacher(TeacherCommon):
     simultaneous_groups = models.PositiveSmallIntegerField(
         default=1, help_text="number of groups the teacher can teach simultaneously"
     )
-    status = models.CharField(
+    project_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
-        choices=TeacherStatus.choices,
-        verbose_name="group studies status",
-        help_text="status of this teacher with regard to group studies",
+        choices=TeacherProjectStatus.choices,
+        verbose_name="status in project",
+        help_text="status of this student with regard to project as a whole",
+    )
+    situational_status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=TeacherSituationalStatus.choices,
+        blank=True,
     )
     student_age_ranges = models.ManyToManyField(
         AgeRange,

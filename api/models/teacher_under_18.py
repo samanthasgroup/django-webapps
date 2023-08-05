@@ -1,16 +1,23 @@
 from django.db import models
 
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
-from api.models.choices.status import TeacherUnder18Status
+from api.models.choices.status import TeacherProjectStatus, TeacherSituationalStatus
 from api.models.shared_abstract.teacher_common import TeacherCommon
 
 
 class TeacherUnder18(TeacherCommon):
     """Model for a teacher under 18 years old that cannot teach groups."""
 
-    status = models.CharField(
+    project_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
-        choices=TeacherUnder18Status.choices,
+        choices=TeacherProjectStatus.choices,
+        verbose_name="status in project",
+        help_text="status of this student with regard to project as a whole",
+    )
+    situational_status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=TeacherSituationalStatus.choices,
+        blank=True,
     )
 
     class Meta:

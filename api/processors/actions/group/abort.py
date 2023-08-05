@@ -8,7 +8,11 @@ from api.models.choices.log_event_type import (
     StudentLogEventType,
     TeacherLogEventType,
 )
-from api.models.choices.status import GroupStatus, StudentStatus, TeacherStatus
+from api.models.choices.status import (
+    GroupProjectStatus,
+    StudentProjectStatus,
+    TeacherProjectStatus,
+)
 from api.processors.actions.group import GroupActionProcessor
 from api.processors.auxil.log_event_creator import GroupLogEventCreator
 
@@ -49,29 +53,35 @@ class GroupAbortProcessor(GroupActionProcessor):
 
     def _set_group_status(self) -> None:
         StatusSetter.set_status(
-            obj=self.group, status=GroupStatus.ABORTED, status_since=self.timestamp
+            obj=self.group, project_status=GroupProjectStatus.ABORTED, status_since=self.timestamp
         )
 
     def _set_teachers_status(self) -> None:
         teachers = Teacher.objects
 
         teachers.filter_has_no_groups().update(
-            status=TeacherStatus.AWAITING_OFFER,
+            project_status=TeacherProjectStatus.NOT_WORKING,
+            situational_status="",
             status_since=self.timestamp,
         )
 
+        # FIXME
         teachers.filter_has_groups().filter_can_take_more_groups().update(
-            status=TeacherStatus.TEACHING_ACCEPTING_MORE,
+            project_status=TeacherProjectStatus.WORKING,
+            situational_status="",
             status_since=self.timestamp,
         )
 
         teachers.filter_cannot_take_more_groups().update(
-            status=TeacherStatus.TEACHING_NOT_ACCEPTING_MORE,
+            project_status=TeacherProjectStatus.WORKING,
+            situational_status="",
             status_since=self.timestamp,
         )
 
     def _set_students_status(self) -> None:
         self.group.students.update(
-            status=StudentStatus.AWAITING_OFFER,
+            # FIXME actually student can theoretically be studying already
+            project_status=StudentProjectStatus.NOT_STUDYING,
+            situational_status="",
             status_since=self.timestamp,
         )
