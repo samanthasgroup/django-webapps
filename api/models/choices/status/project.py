@@ -1,14 +1,16 @@
-"""Module for 'global' project-level statuses that don't tend to change back and forth."""
+"""Module for project-level statuses that describe the 'main state' of a person or a group."""
 from django.db import models
 
 from api.models.auxil.constants import CoordinatorGroupLimit
 
 
 class CoordinatorProjectStatus(models.TextChoices):
-    """Enumeration of possible global statuses of a coordinator."""
+    """Enumeration of possible project-level statuses of a coordinator."""
 
-    PENDING = "pending", "Completed registration, waiting for onboarding"
-    # TODO move to a separate method in model
+    PENDING = "pending", "Completed registration, but not in working status yet"
+    # TODO these can potentially be moved to a method in model, but unlike Teacher, where
+    #  statuses TEACHING_ACCEPTING_MORE and TEACHING_NOT_ACCEPTING_MORE created confusion,
+    #  for coordinators it might make sense to leave the statuses here as they are.
     WORKING_BELOW_THRESHOLD = (
         "working_threshold_not_reached",
         "Working, but not yet reached the required minimum amount of groups "
@@ -31,7 +33,7 @@ class CoordinatorProjectStatus(models.TextChoices):
 
 
 class GroupProjectStatus(models.TextChoices):
-    """Enumeration of possible statuses of a group."""
+    """Enumeration of possible project-level statuses of a group."""
 
     PENDING = "pending", "Pending"
     AWAITING_START = "awaiting_start", "Group confirmed, awaiting start of classes"
@@ -41,7 +43,7 @@ class GroupProjectStatus(models.TextChoices):
 
 
 class StudentProjectStatus(models.TextChoices):
-    """Enumeration of possible statuses of a student."""
+    """Enumeration of possible project-level statuses of a student."""
 
     NOT_STUDYING = "not_studying", "Not studying, waiting for a group"
     STUDYING = "study", "Studying in a group"
@@ -52,7 +54,7 @@ class StudentProjectStatus(models.TextChoices):
 
 
 class TeacherProjectStatus(models.TextChoices):
-    """Enumeration of possible global statuses of a teacher (young or adult)."""
+    """Enumeration of possible project-level statuses of a teacher (young or adult)."""
 
     NOT_WORKING = "not_working", "Not working, waiting for a group"
     WORKING = "working", "Working"
