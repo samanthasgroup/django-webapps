@@ -115,3 +115,8 @@ TEACHER_PEER_SUPPORT_OPTIONS = [
     "can_invite_to_class",
     "can_work_in_tandem",
 ]
+
+DEFAULT_LESSON_DURATION_MIN = 60
+
+MAX_AGE_TEEN_GROUP = 17
+MAX_AGE_KIDS_GROUP = 12
