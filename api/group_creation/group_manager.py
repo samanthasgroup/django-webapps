@@ -129,7 +129,7 @@ class GroupManager:
 
         yield GroupManager.GroupCandidate(
             age_range=AgeRange(age_from=18, age_to=90),
-            language_and_level=teacher.teaching_languages_and_levels.get(),
+            language_and_level=teacher.teaching_languages_and_levels.first(),  # type: ignore
             communication_language_mode=CommunicationLanguageMode(
                 teacher.personal_info.communication_language_mode
             ),
