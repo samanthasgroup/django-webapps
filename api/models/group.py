@@ -109,8 +109,8 @@ class Group(GroupCommon):
         ]
         indexes = [
             models.Index(fields=("language_and_level",), name="group_language_level_idx"),
-            models.Index(fields=("project_status",), name="group_project_status_idx"),
-            models.Index(fields=("situational_status",), name="group_situational_status_idx"),
+            models.Index(fields=("project_status",), name="group_pr_status_idx"),
+            models.Index(fields=("situational_status",), name="group_si_status_idx"),
             models.Index(fields=("start_date",), name="group_start_date_idx"),
         ]
 

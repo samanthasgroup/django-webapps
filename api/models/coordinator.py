@@ -63,10 +63,8 @@ class Coordinator(Person):
 
     class Meta:
         indexes = [
-            models.Index(fields=("project_status",), name="coordinator_project_status_idx"),
-            models.Index(
-                fields=("situational_status",), name="coordinator_situational_status_idx"
-            ),
+            models.Index(fields=("project_status",), name="coordinator_pr_status_idx"),
+            models.Index(fields=("situational_status",), name="coordinator_si_status_idx"),
         ]
 
     def __str__(self) -> str:
