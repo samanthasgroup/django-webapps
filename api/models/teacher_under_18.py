@@ -21,5 +21,10 @@ class TeacherUnder18(TeacherCommon):
     )
 
     class Meta:
-        indexes = [models.Index(fields=("status",), name="teacher_under_18_status_idx")]
-        verbose_name_plural = "Teaching volunteers under 18 years of age"
+        indexes = [
+            models.Index(fields=("project_status",), name="teacher_under_18_project_status_idx"),
+            models.Index(
+                fields=("situational_status",), name="teacher_under_18_situational_status_idx"
+            ),
+        ]
+        verbose_name_plural = "Teachers under 18 years of age"

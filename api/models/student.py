@@ -64,5 +64,6 @@ class Student(Person):
 
     class Meta:
         indexes = [
-            models.Index(fields=("status",), name="student_status_idx"),
+            models.Index(fields=("project_status",), name="student_project_status_idx"),
+            models.Index(fields=("situational_status",), name="student_situational_status_idx"),
         ]

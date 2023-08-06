@@ -62,7 +62,12 @@ class Coordinator(Person):
     objects = CoordinatorQuerySet.as_manager()
 
     class Meta:
-        indexes = [models.Index(fields=("status",), name="coordinator_status_idx")]
+        indexes = [
+            models.Index(fields=("project_status",), name="coordinator_project_status_idx"),
+            models.Index(
+                fields=("situational_status",), name="coordinator_situational_status_idx"
+            ),
+        ]
 
     def __str__(self) -> str:
         role = " (admin)" if self.is_admin else ""

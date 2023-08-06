@@ -103,7 +103,8 @@ class Teacher(TeacherCommon):
 
     class Meta:
         indexes = [
-            models.Index(fields=("status",), name="teacher_status_idx"),
+            models.Index(fields=("project_status",), name="teacher_project_status_idx"),
+            models.Index(fields=("situational_status",), name="teacher_situational_status_idx"),
         ]
 
     @property
