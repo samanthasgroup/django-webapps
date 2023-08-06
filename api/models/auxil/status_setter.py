@@ -33,11 +33,11 @@ class StatusSetter:
         coordinators = Coordinator.objects
 
         coordinators.filter_below_threshold().update(
-            status=CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD, status_since=timestamp
+            project_status=CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD, status_since=timestamp
         )
         coordinators.filter_above_threshold_and_within_limit().update(
-            status=CoordinatorProjectStatus.WORKING_OK, status_since=timestamp
+            project_status=CoordinatorProjectStatus.WORKING_OK, status_since=timestamp
         )
         coordinators.filter_limit_reached().update(
-            status=CoordinatorProjectStatus.WORKING_LIMIT_REACHED, status_since=timestamp
+            project_status=CoordinatorProjectStatus.WORKING_LIMIT_REACHED, status_since=timestamp
         )
