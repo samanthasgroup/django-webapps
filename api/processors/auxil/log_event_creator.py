@@ -9,12 +9,14 @@ from api.models.choices.log_event_type import (
 
 class GroupLogEventCreator:
     @staticmethod
-    def create(
+    def create(  # noqa: PLR0913
         group: Group,
         group_log_event_type: GroupLogEventType,
         student_log_event_type: StudentLogEventType,
         teacher_log_event_type: TeacherLogEventType,
         coordinator_log_event_type: CoordinatorLogEventType | None = None,
+        from_group: Group | None = None,
+        to_group: Group | None = None,
     ) -> None:
         GroupLogEvent.objects.create(group=group, type=group_log_event_type)
         if coordinator_log_event_type is not None:
@@ -28,11 +30,21 @@ class GroupLogEventCreator:
             )
 
         StudentLogEvent.objects.bulk_create(
-            StudentLogEvent(student=student, from_group=group, type=student_log_event_type)
+            StudentLogEvent(
+                student=student,
+                type=student_log_event_type,
+                from_group=from_group,
+                to_group=to_group,
+            )
             for student in group.students.iterator()
         )
 
         TeacherLogEvent.objects.bulk_create(
-            TeacherLogEvent(teacher=teacher, from_group=group, type=teacher_log_event_type)
+            TeacherLogEvent(
+                teacher=teacher,
+                type=teacher_log_event_type,
+                from_group=from_group,
+                to_group=to_group,
+            )
             for teacher in group.teachers.iterator()
         )

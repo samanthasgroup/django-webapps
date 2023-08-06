@@ -27,6 +27,7 @@ class GroupAbortProcessor(GroupActionProcessor):
             teacher_log_event_type=TeacherLogEventType.GROUP_ABORTED,
             coordinator_log_event_type=CoordinatorLogEventType.GROUP_ABORTED,
             group_log_event_type=GroupLogEventType.ABORTED,
+            from_group=self.group,
         )
 
     def _move_related_people_to_former(self) -> None:

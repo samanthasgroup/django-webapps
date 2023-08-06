@@ -47,6 +47,7 @@ def test_dashboard_group_list(api_client, availability_slots):
             "saturday": str(group.saturday),
             "sunday": str(group.sunday),
             "language_and_level": {
+                "id": group.language_and_level.pk,
                 "language": group.language_and_level.language.name,
                 "level": group.language_and_level.level.id,
             },
@@ -97,6 +98,7 @@ def test_dashboard_group_retrieve(api_client, availability_slots):
         "saturday": str(group.saturday),
         "sunday": str(group.sunday),
         "language_and_level": {
+            "id": group.language_and_level.pk,
             "language": group.language_and_level.language.name,
             "level": group.language_and_level.level.id,
         },
@@ -417,6 +419,46 @@ class TestGroupCreation:
             assert teacher.status_since == common_status_since
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
             assert log_event.type == TeacherLogEventType.GROUP_OFFERED
+            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+
+
+class TestDashboardGroupConfirmReadyToStart:
+    @staticmethod
+    def _make_url(group: Group) -> str:
+        return reverse("groups-confirm-ready-to-start", kwargs={"pk": group.id})
+
+    def test_dashboard_group_confirm_ready_to_start_general_check(
+        self, api_client, group, timestamp
+    ):
+        response = api_client.post(self._make_url(group))
+
+        assert response.status_code == status.HTTP_200_OK
+
+        group.refresh_from_db()
+        assert group.status == GroupStatus.AWAITING_START
+        common_status_since = group.status_since
+        compare_date_time_with_timestamp(common_status_since, timestamp)
+
+        for coordinator in group.coordinators.iterator():
+            log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(
+                coordinator_id=coordinator.pk
+            )
+            assert log_event.type == CoordinatorLogEventType.TOOK_NEW_GROUP
+
+        for student in group.students.iterator():
+            assert student.status == StudentStatus.AWAITING_START
+            assert student.status_since == common_status_since
+
+            log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
+            assert log_event.type == StudentLogEventType.GROUP_CONFIRMED
+            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+
+        for teacher in group.teachers.iterator():
+            assert teacher.status == TeacherStatus.AWAITING_START
+            assert teacher.status_since == common_status_since
+
+            log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
+            assert log_event.type == TeacherLogEventType.GROUP_CONFIRMED
             compare_date_time_with_timestamp(log_event.date_time, timestamp)
 
 
