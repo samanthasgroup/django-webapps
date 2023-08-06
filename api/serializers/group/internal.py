@@ -13,7 +13,9 @@ from api.serializers import (
 
 class GroupWriteSerializer(serializers.ModelSerializer[Group]):
     status_since = serializers.DateTimeField(default=timezone.now())
-    status = serializers.ChoiceField(GroupProjectStatus, default=GroupProjectStatus.PENDING)
+    project_status = serializers.ChoiceField(
+        GroupProjectStatus, default=GroupProjectStatus.PENDING
+    )
 
     class Meta:
         model = Group
