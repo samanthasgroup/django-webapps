@@ -1,6 +1,6 @@
 # DO NOT USE IN PROD, WORK IN PROGRESS
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -70,42 +70,41 @@ class GroupManager:
     @staticmethod
     def create_group(teacher_id: int) -> Group | None:
         for group_candidate in GroupManager._iterate_group_candidates(teacher_id):
-            if group_candidate.is_acceptable():
-                group = Group(
-                    language_and_level=group_candidate.language_and_level,
-                    communication_language_mode=group_candidate.communication_language_mode,
-                    lesson_duration_in_minutes=DEFAULT_LESSON_DURATION_MIN,
-                    monday=group_candidate.monday,
-                    tuesday=group_candidate.tuesday,
-                    wednesday=group_candidate.wednesday,
-                    thursday=group_candidate.thursday,
-                    friday=group_candidate.friday,
-                    saturday=group_candidate.saturday,
-                    sunday=group_candidate.sunday,
-                )
+            if not group_candidate.is_acceptable():
+                continue
+            group = Group(
+                language_and_level=group_candidate.language_and_level,
+                communication_language_mode=group_candidate.communication_language_mode,
+                lesson_duration_in_minutes=DEFAULT_LESSON_DURATION_MIN,
+                monday=group_candidate.monday,
+                tuesday=group_candidate.tuesday,
+                wednesday=group_candidate.wednesday,
+                thursday=group_candidate.thursday,
+                friday=group_candidate.friday,
+                saturday=group_candidate.saturday,
+                sunday=group_candidate.sunday,
+            )
 
-                group_creation_timestamp = timezone.now()
-                StatusSetter.set_status(
-                    obj=group, status=GroupStatus.PENDING, status_since=group_creation_timestamp
-                )
-                group.save()
-                group.teachers.add(group_candidate.teacher)
-                group.students.set(group_candidate.students)
+            group_creation_timestamp = timezone.now()
+            StatusSetter.set_status(
+                obj=group, status=GroupStatus.PENDING, status_since=group_creation_timestamp
+            )
+            group.save()
+            group.teachers.add(group_candidate.teacher)
+            group.students.set(group_candidate.students)
 
-                # QQ: do we update teacher/student status automatically,
-                # or wait for coordinator action?
-                next_teacher_status = (
-                    TeacherStatus.TEACHING_ANOTHER_GROUP_OFFERED
-                    if group_candidate.teacher.status == TeacherStatus.TEACHING_ACCEPTING_MORE
-                    else TeacherStatus.GROUP_OFFERED
-                )
-                StatusSetter.set_status(
-                    obj=group_candidate.teacher,
-                    status=next_teacher_status,
-                    status_since=group_creation_timestamp,
-                )
-                GroupManager._create_log_events(group)
-                return group
+            next_teacher_status = (
+                TeacherStatus.TEACHING_ANOTHER_GROUP_OFFERED
+                if group_candidate.teacher.status == TeacherStatus.TEACHING_ACCEPTING_MORE
+                else TeacherStatus.GROUP_OFFERED
+            )
+            StatusSetter.set_status(
+                obj=group_candidate.teacher,
+                status=next_teacher_status,
+                status_since=group_creation_timestamp,
+            )
+            GroupManager._create_log_events(group)
+            return group
         # No suitable groups found
         return None
 
@@ -139,7 +138,6 @@ class GroupManager:
             wednesday=timezone.now(),
         )
 
-    # QQ: do we need this?
     @staticmethod
     def _create_log_events(group: Group) -> None:
         GroupLogEventCreator.create(
