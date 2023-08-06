@@ -1,4 +1,3 @@
-from api.models import Teacher
 from api.models.auxil.status_setter import StatusSetter
 from api.models.choices.log_event_type import (
     CoordinatorLogEventType,
@@ -41,15 +40,8 @@ class GroupStartProcessor(GroupActionProcessor):
         )
 
     def _set_teachers_status(self) -> None:
-        teachers = Teacher.objects
-
-        # FIXME
-        teachers.filter_can_take_more_groups().update(
-            project_status=TeacherProjectStatus.TEACHING_ACCEPTING_MORE,
-            status_since=self.timestamp,
-        )
-
-        teachers.filter_cannot_take_more_groups().update(
-            project_status=TeacherProjectStatus.TEACHING_NOT_ACCEPTING_MORE,
+        self.group.teachers.update(
+            project_status=TeacherProjectStatus.WORKING,
+            situational_status="",
             status_since=self.timestamp,
         )

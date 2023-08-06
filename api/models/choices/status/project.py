@@ -56,9 +56,6 @@ class TeacherProjectStatus(models.TextChoices):
 
     NOT_WORKING = "not_working", "Not working, waiting for a group"
     WORKING = "working", "Working"
-    # FIXME move to model method:
-    TEACHING_ACCEPTING_MORE = "teaching_open", "Teaching, ready to take on another group"
-    TEACHING_NOT_ACCEPTING_MORE = "teaching_full", "Teaching, not accepting any more groups"
     ON_LEAVE = "on_leave", "On leave"
     LEFT_PREMATURELY = (
         "left_prematurely",

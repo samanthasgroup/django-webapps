@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Count, F
+from django.db.models import Count
 
 from api.models.age_range import AgeRange
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
@@ -12,14 +12,6 @@ from api.models.shared_abstract.teacher_common import TeacherCommon
 class TeacherQuerySet(models.QuerySet["Teacher"]):
     def annotate_with_group_count(self) -> "TeacherQuerySet":
         return self.annotate(group_count=Count("groups"))
-
-    def filter_can_take_more_groups(self) -> "TeacherQuerySet":
-        """QuerySet with Teachers that can take more groups."""
-        return self.annotate_with_group_count().filter(group_count__lt=F("simultaneous_groups"))
-
-    def filter_cannot_take_more_groups(self) -> "TeacherQuerySet":
-        """QuerySet with Teachers that cannot take any more groups."""
-        return self.annotate_with_group_count().filter(group_count__gte=F("simultaneous_groups"))
 
     def filter_has_groups(self) -> "TeacherQuerySet":
         """QuerySet with Teachers that have at least one group."""
@@ -113,3 +105,8 @@ class Teacher(TeacherCommon):
         indexes = [
             models.Index(fields=("status",), name="teacher_status_idx"),
         ]
+
+    @property
+    def can_take_more_groups(self) -> bool:
+        """`True` if a teacher can take more groups than they already have."""
+        return self.groups.count() < self.simultaneous_groups

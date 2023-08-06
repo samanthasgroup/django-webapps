@@ -59,28 +59,23 @@ class GroupAbortProcessor(GroupActionProcessor):
     def _set_teachers_status(self) -> None:
         teachers = Teacher.objects
 
+        teachers.filter_has_groups().update(
+            project_status=TeacherProjectStatus.WORKING,
+            situational_status="",
+            status_since=self.timestamp,
+        )
+
         teachers.filter_has_no_groups().update(
             project_status=TeacherProjectStatus.NOT_WORKING,
             situational_status="",
             status_since=self.timestamp,
         )
 
-        # FIXME
-        teachers.filter_has_groups().filter_can_take_more_groups().update(
-            project_status=TeacherProjectStatus.WORKING,
-            situational_status="",
-            status_since=self.timestamp,
-        )
-
-        teachers.filter_cannot_take_more_groups().update(
-            project_status=TeacherProjectStatus.WORKING,
-            situational_status="",
-            status_since=self.timestamp,
-        )
-
     def _set_students_status(self) -> None:
         self.group.students.update(
-            # FIXME actually student can theoretically be studying already
+            # TODO actually student can theoretically be studying in a different group already,
+            #  so additional check will be needed instead of blindly setting NOT_STUDYING.
+            #  However, this definitely won't be the case in the MVP.
             project_status=StudentProjectStatus.NOT_STUDYING,
             situational_status="",
             status_since=self.timestamp,
