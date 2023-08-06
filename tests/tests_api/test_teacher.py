@@ -49,7 +49,7 @@ def test_teacher_create(api_client, faker):
         "simultaneous_groups": faker.pyint(),
         "weekly_frequency_per_group": faker.pyint(),
         "can_host_speaking_club": faker.pybool(),
-        "status": TeacherProjectStatus.AWAITING_OFFER.value,
+        "project_status": TeacherProjectStatus.NOT_WORKING.value,
         "status_since": faker.date_time(tzinfo=pytz.utc),
         "has_hosted_speaking_club": faker.pybool(),
         "is_validated": faker.pybool(),
@@ -127,7 +127,7 @@ def test_teacher_retrieve(api_client, availability_slots):
         "teaching_languages_and_levels": languages_and_levels,
         "availability_slots": availability_slots,
         "comment": teacher.comment,
-        "status": teacher.status,
+        "project_status": teacher.project_status,
         "status_since": teacher.status_since.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
         "peer_support_can_check_syllabus": teacher.peer_support_can_check_syllabus,
         "peer_support_can_host_mentoring_sessions": teacher.peer_support_can_host_mentoring_sessions,  # noqa E501
