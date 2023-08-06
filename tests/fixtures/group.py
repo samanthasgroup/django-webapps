@@ -26,7 +26,7 @@ def group(timestamp, availability_slots):
     group.status_since = timestamp - datetime.timedelta(days=1, hours=1, minutes=10)
     group.coordinators.update(status=CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD)
     group.students.update(status=StudentProjectStatus.NOT_STUDYING)
-    group.teachers.update(status=TeacherProjectStatus.AWAITING_OFFER)
+    group.teachers.update(status=TeacherProjectStatus.NOT_WORKING)
     group.save()
     yield group
 
@@ -45,7 +45,7 @@ def active_group(timestamp, availability_slots):
     group.status_since = timestamp - datetime.timedelta(days=1, hours=1, minutes=10)
     group.coordinators.update(status=CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD)
     group.students.update(status=StudentProjectStatus.STUDYING)
-    group.teachers.update(status=TeacherProjectStatus.TEACHING_ACCEPTING_MORE)
+    group.teachers.update(status=TeacherProjectStatus.WORKING)
     group.teachers_former.clear()
     group.students_former.clear()
     group.coordinators_former.clear()

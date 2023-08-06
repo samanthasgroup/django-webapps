@@ -3,7 +3,7 @@ from model_bakery import baker, seq
 from rest_framework import status
 
 from api.models import LanguageAndLevel, PersonalInfo, TeacherUnder18
-from api.models.choices.status import TeacherUnder18GlobalStatus
+from api.models.choices.status import TeacherProjectStatus
 
 
 def test_teacher_under_18_create(api_client, faker):
@@ -19,7 +19,7 @@ def test_teacher_under_18_create(api_client, faker):
         "personal_info": personal_info.id,
         "can_host_speaking_club": faker.pybool(),
         "comment": faker.text(),
-        "status": TeacherUnder18GlobalStatus.ACTIVE.value,
+        "status": TeacherProjectStatus.WORKING.value,
         "status_since": faker.date_time(tzinfo=pytz.utc),
         "teaching_languages_and_levels": teaching_languages_and_levels_ids,
         "has_hosted_speaking_club": faker.pybool(),
@@ -61,7 +61,7 @@ def test_teacher_under_18_retrieve(api_client):
         "comment": teacher_under_18.comment,
         "can_host_speaking_club": teacher_under_18.can_host_speaking_club,
         "teaching_languages_and_levels": languages_and_levels,
-        "status": teacher_under_18.status,
+        "status": teacher_under_18.project_status,
         "status_since": teacher_under_18.status_since.isoformat().replace("+00:00", "Z"),
         "has_hosted_speaking_club": teacher_under_18.has_hosted_speaking_club,
         "is_validated": teacher_under_18.is_validated,

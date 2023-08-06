@@ -185,10 +185,7 @@ class TestDashboardGroupStart:
             compare_date_time_with_timestamp(log_event.date_time, timestamp)
 
         for teacher in group.teachers.iterator():
-            assert teacher.project_status in (
-                TeacherProjectStatus.TEACHING_ACCEPTING_MORE,
-                TeacherProjectStatus.TEACHING_NOT_ACCEPTING_MORE,
-            )
+            assert teacher.project_status == TeacherProjectStatus.WORKING
             assert teacher.status_since == common_status_since
 
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
@@ -215,7 +212,7 @@ class TestDashboardGroupStart:
         availability_slots,
     ):
         coordinator = baker.make(Coordinator, _fill_optional=True)
-        coordinator.status = CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD
+        coordinator.project_status = CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD
         coordinator.save()
 
         for _ in range(number_of_groups_to_start):
@@ -231,12 +228,12 @@ class TestDashboardGroupStart:
 
         coordinator.refresh_from_db()
         assert coordinator.groups.count() == number_of_groups_to_start
-        assert coordinator.status == expected_status
+        assert coordinator.project_status == expected_status
         compare_date_time_with_timestamp(coordinator.status_since, timestamp)
 
     def test_dashboard_group_start_student_status(self, api_client, timestamp, availability_slots):
         student = baker.make(Student, _fill_optional=True, availability_slots=availability_slots)
-        student.status = StudentProjectStatus.AWAITING_START
+        student.project_status = StudentProjectStatus.NOT_STUDYING
         student.save()
 
         group = baker.make(
@@ -253,7 +250,7 @@ class TestDashboardGroupStart:
 
         student.refresh_from_db()
         assert student.groups.count() == 1
-        assert student.status == StudentProjectStatus.STUDYING
+        assert student.project_status == StudentProjectStatus.STUDYING
         compare_date_time_with_timestamp(student.status_since, timestamp)
 
     @staticmethod
@@ -261,19 +258,19 @@ class TestDashboardGroupStart:
         return reverse("groups-start", kwargs={"pk": group.id})
 
     @pytest.mark.parametrize(
-        "delta, expected_status",
+        "delta, expected_status, can_take_more",
         [
-            (-1, TeacherProjectStatus.TEACHING_ACCEPTING_MORE),
-            (0, TeacherProjectStatus.TEACHING_NOT_ACCEPTING_MORE),
-            (1, TeacherProjectStatus.TEACHING_NOT_ACCEPTING_MORE),
+            (-1, TeacherProjectStatus.WORKING, True),
+            (0, TeacherProjectStatus.WORKING, False),
+            (1, TeacherProjectStatus.WORKING, False),
         ],
     )
     def test_dashboard_group_start_teacher_status(  # noqa: PLR0913
-        self, api_client, timestamp, delta, expected_status, availability_slots
+        self, api_client, timestamp, delta, expected_status, can_take_more, availability_slots
     ):
         teacher = baker.make(Teacher, _fill_optional=True, availability_slots=availability_slots)
         teacher.simultaneous_groups = 3  # no significance, just more than 1
-        teacher.status = TeacherProjectStatus.AWAITING_START
+        teacher.project_status = TeacherProjectStatus.NOT_WORKING
         teacher.save()
 
         for _ in range(teacher.simultaneous_groups + delta):
@@ -289,7 +286,8 @@ class TestDashboardGroupStart:
 
         teacher.refresh_from_db()
         assert teacher.groups.count() == teacher.simultaneous_groups + delta
-        assert teacher.status == expected_status
+        assert teacher.project_status == expected_status
+        assert teacher.can_take_more_groups == can_take_more
         compare_date_time_with_timestamp(teacher.status_since, timestamp)
 
 
@@ -344,9 +342,8 @@ class TestDashboardGroupAbort:
 
         for teacher in active_group.teachers_former.iterator():
             assert teacher.project_status in (
-                TeacherProjectStatus.TEACHING_ACCEPTING_MORE,
-                TeacherProjectStatus.TEACHING_NOT_ACCEPTING_MORE,
-                TeacherProjectStatus.AWAITING_OFFER,
+                TeacherProjectStatus.WORKING,
+                TeacherProjectStatus.NOT_WORKING,
             )
             assert teacher.status_since == common_status_since
 
@@ -413,14 +410,14 @@ class TestGroupCreation:
         compare_date_time_with_timestamp(common_status_since, timestamp)
 
         for student in group.students.iterator():
-            assert student.status == StudentProjectStatus.GROUP_OFFERED
+            assert student.project_status == StudentProjectStatus.NOT_STUDYING
             assert student.status_since == common_status_since
             log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
             assert log_event.type == StudentLogEventType.GROUP_OFFERED
             compare_date_time_with_timestamp(log_event.date_time, timestamp)
 
         for teacher in group.teachers.iterator():
-            assert teacher.status == TeacherProjectStatus.GROUP_OFFERED
+            assert teacher.project_status == TeacherProjectStatus.NOT_WORKING
             assert teacher.status_since == common_status_since
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
             assert log_event.type == TeacherLogEventType.GROUP_OFFERED
@@ -451,7 +448,7 @@ class TestDashboardGroupConfirmReadyToStart:
             assert log_event.type == CoordinatorLogEventType.TOOK_NEW_GROUP
 
         for student in group.students.iterator():
-            assert student.project_status == StudentProjectStatus.AWAITING_START
+            assert student.project_status == StudentProjectStatus.NOT_STUDYING
             assert student.status_since == common_status_since
 
             log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
@@ -459,7 +456,7 @@ class TestDashboardGroupConfirmReadyToStart:
             compare_date_time_with_timestamp(log_event.date_time, timestamp)
 
         for teacher in group.teachers.iterator():
-            assert teacher.project_status == TeacherProjectStatus.AWAITING_START
+            assert teacher.project_status == TeacherProjectStatus.NOT_WORKING
             assert teacher.status_since == common_status_since
 
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
