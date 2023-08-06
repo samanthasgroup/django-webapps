@@ -121,7 +121,7 @@ class GroupManager:
         raise ValueError(f"Group age range is inconsistent with boundaries: {age_range}")
 
     @staticmethod
-    def _iterate_group_candidates(teacher_id: int) -> Iterable[GroupCandidate]:
+    def _iterate_group_candidates(teacher_id: int) -> Iterator[GroupCandidate]:
         # THIS IS A STUB METHOD RETURNING DUMMY VALUES
         # TODO filter for language+level, communication language, age groups, time slots (all UTC?)
         # TODO iterate in correct priority order, yield results
