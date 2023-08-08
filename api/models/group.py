@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import Q
 
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
-from api.models.choices.status import GroupStatus
+from api.models.choices.status import GroupProjectStatus, GroupSituationalStatus
 from api.models.coordinator import Coordinator
 from api.models.day_and_time_slot import DayAndTimeSlot
 from api.models.language_and_level import Language, LanguageAndLevel
@@ -67,10 +67,17 @@ class Group(GroupCommon):
     is_for_staff_only = models.BooleanField(default=False)
     language_and_level = models.ForeignKey(LanguageAndLevel, on_delete=models.PROTECT)
     lesson_duration_in_minutes = models.PositiveSmallIntegerField()
-    status = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=GroupStatus.choices
+    project_status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=GroupProjectStatus.choices
     )
-    status_since = models.DateTimeField(verbose_name="status in place since")
+    situational_status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=GroupSituationalStatus.choices,
+        blank=True,
+    )
+    status_since = models.DateTimeField(
+        help_text="date and time of last change of project-level or situational status"
+    )
     start_date = models.DateField(null=True, blank=True)
     # this field could be useful for overview, but can be filled automatically when
     # a corresponding log event is created:
@@ -102,7 +109,8 @@ class Group(GroupCommon):
         ]
         indexes = [
             models.Index(fields=("language_and_level",), name="group_language_level_idx"),
-            models.Index(fields=("status",), name="group_status_idx"),
+            models.Index(fields=("project_status",), name="group_pr_status_idx"),
+            models.Index(fields=("situational_status",), name="group_si_status_idx"),
             models.Index(fields=("start_date",), name="group_start_date_idx"),
         ]
 

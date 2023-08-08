@@ -12,7 +12,7 @@ from api.models import (
     PersonalInfo,
     Student,
 )
-from api.models.choices.status import StudentStatus
+from api.models.choices.status import StudentProjectStatus
 
 
 def test_student_create(api_client, faker):
@@ -34,7 +34,8 @@ def test_student_create(api_client, faker):
     data = {
         "personal_info": personal_info.id,
         "comment": faker.text(),
-        "status": StudentStatus.AWAITING_OFFER.value,
+        "project_status": StudentProjectStatus.NO_GROUP_YET.value,
+        "situational_status": "",
         "status_since": faker.date_time(tzinfo=pytz.utc),
         "age_range": age_range_id,
         "teaching_languages_and_levels": teaching_languages_and_levels_ids,
@@ -100,7 +101,8 @@ def test_student_retrieve(api_client, availability_slots):
         "teaching_languages_and_levels": languages_and_levels,
         "availability_slots": availability_slots,
         "comment": student.comment,
-        "status": student.status,
+        "project_status": student.project_status,
+        "situational_status": student.situational_status,
         "status_since": student.status_since.isoformat().replace("+00:00", "Z"),
         "is_member_of_speaking_club": student.is_member_of_speaking_club,
         "can_read_in_english": student.can_read_in_english,
@@ -150,7 +152,8 @@ def test_dashboard_student_retrieve(api_client, faker, availability_slots):
         "teaching_languages_and_levels": languages_and_levels,
         "availability_slots": availability_slots,
         "comment": student.comment,
-        "status": student.status,
+        "project_status": student.project_status,
+        "situational_status": student.situational_status,
         "communication_language_mode": student.personal_info.communication_language_mode,
         "is_member_of_speaking_club": student.is_member_of_speaking_club,
         "utc_timedelta": f"UTC{sign}{utc_offset_hours:02}:{utc_offset_minutes:02}",
