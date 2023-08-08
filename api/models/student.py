@@ -2,7 +2,7 @@ from django.db import models
 
 from api.models.age_range import AgeRange
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
-from api.models.choices.status import StudentStatus
+from api.models.choices.status import StudentProjectStatus, StudentSituationalStatus
 from api.models.day_and_time_slot import DayAndTimeSlot
 from api.models.language_and_level import LanguageAndLevel
 from api.models.non_teaching_help import NonTeachingHelp
@@ -46,11 +46,16 @@ class Student(Person):
         null=True, blank=True, help_text="JSON received from SmallTalk API"
     )
 
-    status = models.CharField(
+    project_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
-        choices=StudentStatus.choices,
-        verbose_name="group studies status",
-        help_text="status of this student with regard to group studies",
+        choices=StudentProjectStatus.choices,
+        verbose_name="status in project",
+        help_text="status of this student with regard to project as a whole",
+    )
+    situational_status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=StudentSituationalStatus.choices,
+        blank=True,
     )
 
     # The general rule is that one student can only learn one language,
@@ -59,5 +64,6 @@ class Student(Person):
 
     class Meta:
         indexes = [
-            models.Index(fields=("status",), name="student_status_idx"),
+            models.Index(fields=("project_status",), name="student_pr_status_idx"),
+            models.Index(fields=("situational_status",), name="student_si_status_idx"),
         ]

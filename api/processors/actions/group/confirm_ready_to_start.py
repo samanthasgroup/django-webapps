@@ -5,7 +5,11 @@ from api.models.choices.log_event_type import (
     StudentLogEventType,
     TeacherLogEventType,
 )
-from api.models.choices.status import GroupStatus, StudentStatus, TeacherStatus
+from api.models.choices.status import (
+    GroupProjectStatus,
+    StudentSituationalStatus,
+    TeacherSituationalStatus,
+)
 from api.processors.actions.group import GroupActionProcessor
 from api.processors.auxil.log_event_creator import GroupLogEventCreator
 
@@ -26,16 +30,18 @@ class GroupConfirmReadyToStartProcessor(GroupActionProcessor):
 
     def _set_group_status(self) -> None:
         StatusSetter.set_status(
-            obj=self.group, status=GroupStatus.AWAITING_START, status_since=self.timestamp
+            obj=self.group,
+            project_status=GroupProjectStatus.AWAITING_START,
+            status_since=self.timestamp,
         )
 
     def _set_teachers_status(self) -> None:
         self.group.teachers.update(
-            status=TeacherStatus.AWAITING_START, status_since=self.timestamp
+            situational_status=TeacherSituationalStatus.AWAITING_START, status_since=self.timestamp
         )
 
     def _set_students_status(self) -> None:
         self.group.students.update(
-            status=StudentStatus.AWAITING_START,
+            situational_status=StudentSituationalStatus.AWAITING_START,
             status_since=self.timestamp,
         )
