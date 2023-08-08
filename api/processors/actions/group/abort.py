@@ -66,7 +66,7 @@ class GroupAbortProcessor(GroupActionProcessor):
         )
 
         teachers.filter_has_no_groups().update(
-            project_status=TeacherProjectStatus.NOT_WORKING,
+            project_status=TeacherProjectStatus.NO_GROUP_YET,
             situational_status="",
             status_since=self.timestamp,
         )
@@ -74,9 +74,9 @@ class GroupAbortProcessor(GroupActionProcessor):
     def _set_students_status(self) -> None:
         self.group.students.update(
             # TODO actually student can theoretically be studying in a different group already,
-            #  so additional check will be needed instead of blindly setting NOT_STUDYING.
+            #  so additional check will be needed instead of blindly setting NO_GROUP_YET.
             #  However, this definitely won't be the case in the MVP.
-            project_status=StudentProjectStatus.NOT_STUDYING,
+            project_status=StudentProjectStatus.NO_GROUP_YET,
             situational_status="",
             status_since=self.timestamp,
         )

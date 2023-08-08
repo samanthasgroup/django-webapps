@@ -45,7 +45,7 @@ class GroupProjectStatus(models.TextChoices):
 class StudentProjectStatus(models.TextChoices):
     """Enumeration of possible project-level statuses of a student."""
 
-    NOT_STUDYING = "not_studying", "Not studying, waiting for a group"
+    NO_GROUP_YET = "not_studying", "Not studying, waiting for a group"
     STUDYING = "study", "Studying in a group"
     ON_LEAVE = "on_leave", "On leave"
     LEFT_PREMATURELY = "left_prematurely", "Left the project prematurely"
@@ -56,7 +56,7 @@ class StudentProjectStatus(models.TextChoices):
 class TeacherProjectStatus(models.TextChoices):
     """Enumeration of possible project-level statuses of a teacher (young or adult)."""
 
-    NOT_WORKING = "not_working", "Not working, waiting for a group"
+    NO_GROUP_YET = "not_working", "Not working, waiting for a group"
     WORKING = "working", "Working"
     ON_LEAVE = "on_leave", "On leave"
     LEFT_PREMATURELY = (

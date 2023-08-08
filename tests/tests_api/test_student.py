@@ -34,7 +34,7 @@ def test_student_create(api_client, faker):
     data = {
         "personal_info": personal_info.id,
         "comment": faker.text(),
-        "project_status": StudentProjectStatus.NOT_STUDYING.value,
+        "project_status": StudentProjectStatus.NO_GROUP_YET.value,
         "situational_status": "",
         "status_since": faker.date_time(tzinfo=pytz.utc),
         "age_range": age_range_id,

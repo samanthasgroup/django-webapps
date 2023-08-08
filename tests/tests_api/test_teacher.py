@@ -49,7 +49,7 @@ def test_teacher_create(api_client, faker):
         "simultaneous_groups": faker.pyint(),
         "weekly_frequency_per_group": faker.pyint(),
         "can_host_speaking_club": faker.pybool(),
-        "project_status": TeacherProjectStatus.NOT_WORKING.value,
+        "project_status": TeacherProjectStatus.NO_GROUP_YET.value,
         "situational_status": "",
         "status_since": faker.date_time(tzinfo=pytz.utc),
         "has_hosted_speaking_club": faker.pybool(),

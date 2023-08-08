@@ -25,8 +25,8 @@ def group(timestamp, availability_slots):
     # to make sure `status_since` really gets updated:
     group.status_since = timestamp - datetime.timedelta(days=1, hours=1, minutes=10)
     group.coordinators.update(project_status=CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD)
-    group.students.update(project_status=StudentProjectStatus.NOT_STUDYING)
-    group.teachers.update(project_status=TeacherProjectStatus.NOT_WORKING)
+    group.students.update(project_status=StudentProjectStatus.NO_GROUP_YET)
+    group.teachers.update(project_status=TeacherProjectStatus.NO_GROUP_YET)
     group.save()
     yield group
 
