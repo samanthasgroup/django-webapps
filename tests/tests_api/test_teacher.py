@@ -12,7 +12,7 @@ from api.models import (
     PersonalInfo,
     Teacher,
 )
-from api.models.choices.status import TeacherStatus
+from api.models.choices.status import TeacherProjectStatus
 from api.serializers import DashboardTeacherSerializer, TeacherWriteSerializer
 from tests.tests_api.asserts import assert_response_data, assert_response_data_list
 
@@ -53,7 +53,8 @@ def test_teacher_create(api_client, faker):
         "simultaneous_groups": faker.pyint(),
         "weekly_frequency_per_group": faker.pyint(),
         "can_host_speaking_club": faker.pybool(),
-        "status": TeacherStatus.AWAITING_OFFER.value,
+        "project_status": TeacherProjectStatus.NO_GROUP_YET.value,
+        "situational_status": "",
         "status_since": faker.date_time(tzinfo=pytz.utc),
         "has_hosted_speaking_club": faker.pybool(),
         "is_validated": faker.pybool(),
@@ -87,7 +88,7 @@ def test_teacher_update(api_client, faker, availability_slots):
     )
     fields_to_update = {
         "weekly_frequency_per_group": faker.pyint(min_value=1, max_value=12),
-        "status": TeacherStatus.BANNED,
+        "project_status": TeacherProjectStatus.BANNED,
         "has_prior_teaching_experience": True,
         "availability_slots": [i.id for i in availability_slots[1:3]],
     }
@@ -159,7 +160,8 @@ def test_teacher_retrieve(api_client, availability_slots):
         "teaching_languages_and_levels": languages_and_levels,
         "availability_slots": availability_slots,
         "comment": teacher.comment,
-        "status": teacher.status,
+        "project_status": teacher.project_status,
+        "situational_status": teacher.situational_status,
         "status_since": teacher.status_since.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
         "peer_support_can_check_syllabus": teacher.peer_support_can_check_syllabus,
         "peer_support_can_host_mentoring_sessions": teacher.peer_support_can_host_mentoring_sessions,  # noqa E501
