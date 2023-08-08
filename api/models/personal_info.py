@@ -49,14 +49,14 @@ class PersonalInfo(GroupOrPerson):
 
     # These are none for coordinator, but can be present for student/teacher, so keeping them here.
     # Also, there is a possibility that coordinators will register with registration bot someday.
-    registration_telegram_bot_chat_id = models.IntegerField(null=True, blank=True)
+    registration_telegram_bot_chat_id = models.BigIntegerField(null=True, blank=True)
     registration_telegram_bot_language = models.CharField(
         max_length=2,
         choices=RegistrationTelegramBotLanguage.choices,
         help_text="Language in which the person wishes to communicate with the bot "
         "(is chosen by the person at first contact)",
     )
-    chatwoot_conversation_id = models.IntegerField(null=True, blank=True)
+    chatwoot_conversation_id = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         # there may be no phone or tg username, but matching name and email is good enough reason
