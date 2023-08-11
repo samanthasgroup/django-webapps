@@ -39,7 +39,7 @@ class GroupCreateProcessor(GroupActionProcessor):
         return super()._set_coordinators_status()
 
     def _set_teachers_status(self) -> None:
-        self.group.teachers.update(
+        self.group.teachers.all().filter_active().update(  # type: ignore[attr-defined]
             situational_status=TeacherSituationalStatus.GROUP_OFFERED, status_since=self.timestamp
         )
 

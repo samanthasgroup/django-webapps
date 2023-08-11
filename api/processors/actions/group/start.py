@@ -40,7 +40,7 @@ class GroupStartProcessor(GroupActionProcessor):
         )
 
     def _set_teachers_status(self) -> None:
-        self.group.teachers.update(
+        self.group.teachers.all().filter_active().update(  # type: ignore[attr-defined]
             project_status=TeacherProjectStatus.WORKING,
             situational_status="",
             status_since=self.timestamp,
