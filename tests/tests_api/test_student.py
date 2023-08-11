@@ -13,6 +13,8 @@ from api.models import (
     Student,
 )
 from api.models.choices.status import StudentProjectStatus
+from api.serializers import DashboardStudentSerializer, StudentWriteSerializer
+from tests.tests_api.asserts import assert_response_data, assert_response_data_list
 
 
 def test_student_create(api_client, faker):
@@ -112,6 +114,33 @@ def test_student_retrieve(api_client, availability_slots):
     }
 
 
+def test_student_update(api_client, availability_slots):
+    student = baker.make(
+        Student,
+        make_m2m=True,
+        _fill_optional=True,
+        availability_slots=availability_slots,
+    )
+    fields_to_update = {
+        "project_status": StudentProjectStatus.BANNED,
+        "is_member_of_speaking_club": True,
+        "availability_slots": [i.id for i in availability_slots[2:5]],
+    }
+
+    response = api_client.patch(
+        f"/api/students/{student.personal_info.id}/", data=fields_to_update
+    )
+    new_student_data = StudentWriteSerializer(student).data
+    for field, val in fields_to_update.items():
+        new_student_data[field] = val
+    assert response.status_code == status.HTTP_200_OK
+    assert_response_data(response.data, new_student_data)
+
+    db_student = Student.objects.get(pk=student.pk)
+    db_studnet_data = StudentWriteSerializer(db_student).data
+    assert_response_data(db_studnet_data, new_student_data)
+
+
 def test_dashboard_student_retrieve(api_client, faker, availability_slots):
     utc_offset_hours = faker.pyint(min_value=-12, max_value=12)
     sign = "+" if utc_offset_hours >= 0 else "-"
@@ -172,4 +201,32 @@ def test_dashboard_student_retrieve(api_client, faker, availability_slots):
     }
 
 
-# TODO: Add tests for update (+ decide PUT or PATCH?)
+def test_dashboard_student_list(api_client, faker, availability_slots):
+    utc_offset_hours = faker.pyint(min_value=-12, max_value=12)
+    sign = "+" if utc_offset_hours >= 0 else "-"
+    utc_offset_minutes = faker.random_element([0, 30])
+    utc_timedelta = datetime.timedelta(hours=utc_offset_hours, minutes=utc_offset_minutes)
+    student = baker.make(
+        Student,
+        make_m2m=True,
+        personal_info__utc_timedelta=utc_timedelta,
+        availability_slots=availability_slots,
+    )
+    response = api_client.get("/api/dashboard/students/")
+
+    assert response.status_code == status.HTTP_200_OK
+    student_data = DashboardStudentSerializer(student).data
+    student_data["utc_timedelta"] = f"UTC{sign}{utc_offset_hours:02}:{utc_offset_minutes:02}"
+    student_data["non_teaching_help_required"] = {
+        "career_strategy": False,
+        "career_switch": False,
+        "cv_proofread": False,
+        "cv_write_edit": False,
+        "job_search": False,
+        "linkedin": False,
+        "mock_interview": False,
+        "portfolio": False,
+        "translate_docs": False,
+        "uni_abroad": False,
+    }
+    assert_response_data_list(response.data, [student_data])
