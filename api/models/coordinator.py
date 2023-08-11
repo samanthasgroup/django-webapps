@@ -27,7 +27,7 @@ class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
 
     def filter_active(self) -> "CoordinatorQuerySet":
         """QuerySet with Coordinators that are active."""
-        return self.filter(status__in=CoordinatorProjectStatus.active_statuses())
+        return self.filter(project_status__in=CoordinatorProjectStatus.active_statuses())
 
 
 class Coordinator(Person):

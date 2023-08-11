@@ -23,7 +23,7 @@ class TeacherQuerySet(models.QuerySet["Teacher"]):
 
     def filter_active(self) -> "TeacherQuerySet":
         """QuerySet with Teachers that are active."""
-        return self.filter(status__in=TeacherProjectStatus.active_statuses())
+        return self.filter(project_status__in=TeacherProjectStatus.active_statuses())
 
 
 class Teacher(TeacherCommon):
