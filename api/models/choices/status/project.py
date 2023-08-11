@@ -21,6 +21,7 @@ class CoordinatorProjectStatus(models.TextChoices):
         "working_limit_reached",
         f"Working, reached maximum number of groups ({CoordinatorGroupLimit.MAX})",
     )
+    # TODO could potentially be moved to situational (same for students and teachers)
     ON_LEAVE = "on_leave", "On leave"
     LEFT_PREMATURELY = (
         "left_prematurely",
@@ -34,11 +35,9 @@ class CoordinatorProjectStatus(models.TextChoices):
     @classmethod
     def active_statuses(cls) -> list["CoordinatorProjectStatus"]:
         return [
-            cls.PENDING,
             cls.WORKING_BELOW_THRESHOLD,
             cls.WORKING_OK,
             cls.WORKING_LIMIT_REACHED,
-            cls.ON_LEAVE,
         ]
 
 
@@ -83,7 +82,6 @@ class TeacherProjectStatus(models.TextChoices):
         return [
             cls.NO_GROUP_YET,
             cls.WORKING,
-            cls.ON_LEAVE,
         ]
 
 
