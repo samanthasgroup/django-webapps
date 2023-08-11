@@ -36,7 +36,7 @@ class GroupConfirmReadyToStartProcessor(GroupActionProcessor):
         )
 
     def _set_teachers_status(self) -> None:
-        self.group.teachers.all().filter_active().update(  # type: ignore
+        self.group.teachers.all().filter_active().update(  # type: ignore[attr-defined]
             situational_status=TeacherSituationalStatus.AWAITING_START, status_since=self.timestamp
         )
 
