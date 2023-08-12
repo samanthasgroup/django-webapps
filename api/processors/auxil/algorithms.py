@@ -67,11 +67,14 @@ class GroupBuilderAlgorithm:
     @staticmethod
     def get_available_teachers() -> Iterable[Teacher]:
         return Teacher.objects.filter(
-            status__in=(
-                TeacherStatus.AWAITING_OFFER,
-                TeacherStatus.TEACHING_ACCEPTING_MORE,
-            )
+            status__in=(GroupBuilderAlgorithm._get_available_teacher_statuses())
         )
+
+    @staticmethod
+    def is_teacher_available(teacher: Teacher | None) -> bool:
+        if teacher is None:
+            return False
+        return teacher.status in GroupBuilderAlgorithm._get_available_teacher_statuses()
 
     @staticmethod
     def create_and_save_group(teacher_id: int) -> Group | None:
@@ -153,3 +156,7 @@ class GroupBuilderAlgorithm:
             teacher_log_event_type=TeacherLogEventType.GROUP_OFFERED,
             group_log_event_type=GroupLogEventType.FORMED,
         )
+
+    @staticmethod
+    def _get_available_teacher_statuses() -> list[TeacherStatus]:
+        return [TeacherStatus.AWAITING_OFFER, TeacherStatus.TEACHING_ACCEPTING_MORE]
