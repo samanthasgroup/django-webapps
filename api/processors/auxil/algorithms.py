@@ -21,6 +21,7 @@ from api.models.choices.log_event_type import (
 )
 from api.models.choices.status import (
     GroupProjectStatus,
+    StudentSituationalStatus,
     TeacherProjectStatus,
     TeacherSituationalStatus,
 )
@@ -115,12 +116,18 @@ class GroupBuilderAlgorithm:
         group.teachers.add(group_candidate.teacher)
         group.students.set(group_candidate.students)
 
-        next_teacher_status = TeacherSituationalStatus.GROUP_OFFERED
         StatusSetter.set_status(
             obj=group_candidate.teacher,
-            situational_status=next_teacher_status,
+            situational_status=TeacherSituationalStatus.GROUP_OFFERED,
             status_since=group_creation_timestamp,
         )
+
+        for student in group_candidate.students:
+            StatusSetter.set_status(
+                obj=student,
+                situational_status=StudentSituationalStatus.GROUP_OFFERED,
+                status_since=group_creation_timestamp,
+            )
         GroupBuilderAlgorithm._create_log_events(group)
         return group
 
