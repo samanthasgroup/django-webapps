@@ -32,7 +32,6 @@ def test_age_range_list(api_client, age_range_type):
 def test_age_range_retrieve(api_client):
     age_range = AgeRange.objects.first()
     response = api_client.get(f"/api/age_ranges/{age_range.id}/")
-
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {
         "id": age_range.id,

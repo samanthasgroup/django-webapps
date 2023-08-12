@@ -1,9 +1,9 @@
 from django.db import models
-from django.db.models import Count, F
+from django.db.models import Count
 
 from api.models.age_range import AgeRange
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
-from api.models.choices.status import TeacherStatus
+from api.models.choices.status import TeacherProjectStatus, TeacherSituationalStatus
 from api.models.day_and_time_slot import DayAndTimeSlot
 from api.models.non_teaching_help import NonTeachingHelp
 from api.models.shared_abstract.teacher_common import TeacherCommon
@@ -13,14 +13,6 @@ class TeacherQuerySet(models.QuerySet["Teacher"]):
     def annotate_with_group_count(self) -> "TeacherQuerySet":
         return self.annotate(group_count=Count("groups"))
 
-    def filter_can_take_more_groups(self) -> "TeacherQuerySet":
-        """QuerySet with Teachers that can take more groups."""
-        return self.annotate_with_group_count().filter(group_count__lt=F("simultaneous_groups"))
-
-    def filter_cannot_take_more_groups(self) -> "TeacherQuerySet":
-        """QuerySet with Teachers that cannot take any more groups."""
-        return self.annotate_with_group_count().filter(group_count__gte=F("simultaneous_groups"))
-
     def filter_has_groups(self) -> "TeacherQuerySet":
         """QuerySet with Teachers that have at least one group."""
         return self.annotate_with_group_count().filter(group_count__gt=0)
@@ -28,6 +20,10 @@ class TeacherQuerySet(models.QuerySet["Teacher"]):
     def filter_has_no_groups(self) -> "TeacherQuerySet":
         """QuerySet with Teachers that have no groups."""
         return self.annotate_with_group_count().filter(group_count=0)
+
+    def filter_active(self) -> "TeacherQuerySet":
+        """QuerySet with Teachers that are active."""
+        return self.filter(project_status__in=TeacherProjectStatus.active_statuses())
 
 
 class Teacher(TeacherCommon):
@@ -80,11 +76,16 @@ class Teacher(TeacherCommon):
     simultaneous_groups = models.PositiveSmallIntegerField(
         default=1, help_text="number of groups the teacher can teach simultaneously"
     )
-    status = models.CharField(
+    project_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
-        choices=TeacherStatus.choices,
-        verbose_name="group studies status",
-        help_text="status of this teacher with regard to group studies",
+        choices=TeacherProjectStatus.choices,
+        verbose_name="status in project",
+        help_text="status of this student with regard to project as a whole",
+    )
+    situational_status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=TeacherSituationalStatus.choices,
+        blank=True,
     )
     student_age_ranges = models.ManyToManyField(
         AgeRange,
@@ -106,5 +107,11 @@ class Teacher(TeacherCommon):
 
     class Meta:
         indexes = [
-            models.Index(fields=("status",), name="teacher_status_idx"),
+            models.Index(fields=("project_status",), name="teacher_pr_status_idx"),
+            models.Index(fields=("situational_status",), name="teacher_si_status_idx"),
         ]
+
+    @property
+    def can_take_more_groups(self) -> bool:
+        """`True` if a teacher can take more groups than they already have."""
+        return self.groups.count() < self.simultaneous_groups

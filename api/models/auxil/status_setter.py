@@ -3,34 +3,41 @@ import datetime
 from django.utils import timezone
 
 from api.models import Coordinator, Group
-from api.models.choices.status import CoordinatorStatus, Status
+from api.models.choices.status import CoordinatorProjectStatus, ProjectStatus, SituationalStatus
 from api.models.shared_abstract.person import Person
 
 
 class StatusSetter:
     @staticmethod
     def set_status(
-        obj: Group | Person, status: Status, status_since: datetime.datetime | None = None
+        obj: Group | Person,
+        project_status: ProjectStatus | None = None,
+        situational_status: SituationalStatus | None = None,
+        status_since: datetime.datetime | None = None,
     ) -> None:
-        """Sets status, sets `status_since` to current time in UTC, saves object.
+        """Set statuses, `status_since` to given time or current time in UTC, save object.
 
-        Optionally, pass a datetime object as `status_since` to have identical timestamps
-        for multiple log events.
+        Note:
+            Pass a datetime object as `status_since` to have identical timestamps
+            for multiple log events.
         """
-        obj.status = status
+        if project_status:
+            obj.project_status = project_status
+        if situational_status:
+            obj.situational_status = situational_status
         obj.status_since = status_since or timezone.now()
         obj.save()
 
     @staticmethod
     def update_statuses_of_active_coordinators(timestamp: datetime.datetime) -> None:
-        coordinators = Coordinator.objects
+        coordinators = Coordinator.objects.filter_active()
 
         coordinators.filter_below_threshold().update(
-            status=CoordinatorStatus.WORKING_BELOW_THRESHOLD, status_since=timestamp
+            project_status=CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD, status_since=timestamp
         )
         coordinators.filter_above_threshold_and_within_limit().update(
-            status=CoordinatorStatus.WORKING_OK, status_since=timestamp
+            project_status=CoordinatorProjectStatus.WORKING_OK, status_since=timestamp
         )
         coordinators.filter_limit_reached().update(
-            status=CoordinatorStatus.WORKING_LIMIT_REACHED, status_since=timestamp
+            project_status=CoordinatorProjectStatus.WORKING_LIMIT_REACHED, status_since=timestamp
         )

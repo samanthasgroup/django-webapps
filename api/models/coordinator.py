@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import Count
 
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, CoordinatorGroupLimit
-from api.models.choices.status import CoordinatorStatus
+from api.models.choices.status import CoordinatorProjectStatus, CoordinatorSituationalStatus
 from api.models.shared_abstract.person import Person
 
 
@@ -24,6 +24,10 @@ class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
     def filter_limit_reached(self) -> "CoordinatorQuerySet":
         """QuerySet with coordinators that have exceeded the limit of groups."""
         return self.annotate_with_group_count().filter(group_count__gte=CoordinatorGroupLimit.MAX)
+
+    def filter_active(self) -> "CoordinatorQuerySet":
+        """QuerySet with Coordinators that are active."""
+        return self.filter(project_status__in=CoordinatorProjectStatus.active_statuses())
 
 
 class Coordinator(Person):
@@ -47,15 +51,25 @@ class Coordinator(Person):
         related_name="interns",
         help_text="mentor of this coordinator. One coordinator can have many interns",
     )
-    status = models.CharField(
+    project_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
-        choices=CoordinatorStatus.choices,
+        choices=CoordinatorProjectStatus.choices,
+        verbose_name="status in project",
+        help_text="status of this student with regard to project as a whole",
+    )
+    situational_status = models.CharField(
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=CoordinatorSituationalStatus.choices,
+        blank=True,
     )
 
     objects = CoordinatorQuerySet.as_manager()
 
     class Meta:
-        indexes = [models.Index(fields=("status",), name="coordinator_status_idx")]
+        indexes = [
+            models.Index(fields=("project_status",), name="coordinator_pr_status_idx"),
+            models.Index(fields=("situational_status",), name="coordinator_si_status_idx"),
+        ]
 
     def __str__(self) -> str:
         role = " (admin)" if self.is_admin else ""

@@ -1,5 +1,3 @@
-import datetime
-
 import pytest
 from django.urls import reverse
 from model_bakery import baker
@@ -20,8 +18,18 @@ from api.models.choices.log_event_type import (
     StudentLogEventType,
     TeacherLogEventType,
 )
-from api.models.choices.status import CoordinatorStatus, GroupStatus, StudentStatus, TeacherStatus
-from api.serializers import GroupWriteSerializer
+from api.models.choices.status import (
+    CoordinatorProjectStatus,
+    GroupProjectStatus,
+    StudentProjectStatus,
+    TeacherProjectStatus,
+)
+from api.serializers import GroupReadSerializer, GroupWriteSerializer
+from tests.tests_api.asserts import (
+    assert_date_time_with_timestamp,
+    assert_response_data,
+    assert_response_data_list,
+)
 
 
 def test_dashboard_group_list(api_client, availability_slots):
@@ -33,9 +41,8 @@ def test_dashboard_group_list(api_client, availability_slots):
     )
     response = api_client.get("/api/dashboard/groups/")
 
-    response_json = response.json()
     assert response.status_code == status.HTTP_200_OK
-    assert response_json == [
+    assert response.json() == [
         {
             "id": group.pk,
             "communication_language_mode": group.communication_language_mode,
@@ -52,7 +59,8 @@ def test_dashboard_group_list(api_client, availability_slots):
                 "level": group.language_and_level.level.id,
             },
             "lesson_duration_in_minutes": group.lesson_duration_in_minutes,
-            "status": group.status,
+            "project_status": group.project_status,
+            "situational_status": group.situational_status,
             "start_date": group.start_date.isoformat(),
             "end_date": group.end_date.isoformat(),
             "telegram_chat_url": group.telegram_chat_url,
@@ -84,10 +92,8 @@ def test_dashboard_group_retrieve(api_client, availability_slots):
         availability_slots_for_auto_matching=availability_slots,
     )
     response = api_client.get(f"/api/dashboard/groups/{group.pk}/")
-
-    response_json = response.json()
     assert response.status_code == status.HTTP_200_OK
-    assert response_json == {
+    assert response.json() == {
         "id": group.pk,
         "communication_language_mode": group.communication_language_mode,
         "monday": str(group.monday),
@@ -103,7 +109,8 @@ def test_dashboard_group_retrieve(api_client, availability_slots):
             "level": group.language_and_level.level.id,
         },
         "lesson_duration_in_minutes": group.lesson_duration_in_minutes,
-        "status": group.status,
+        "project_status": group.project_status,
+        "situational_status": group.situational_status,
         "start_date": group.start_date.isoformat(),
         "end_date": group.end_date.isoformat(),
         "telegram_chat_url": group.telegram_chat_url,
@@ -132,17 +139,28 @@ def test_dashboard_group_retrieve(api_client, availability_slots):
     }
 
 
-def compare_date_time_with_timestamp(date_time: datetime.datetime, timestamp: datetime.datetime):
-    """Compares the given datetime object with timestamp from conftest.py.
+def test_group_list(api_client, availability_slots):
+    group = baker.make(
+        Group,
+        _fill_optional=True,
+        make_m2m=True,
+        availability_slots_for_auto_matching=availability_slots,
+    )
+    response = api_client.get("/api/groups/")
+    assert response.status_code == status.HTTP_200_OK
+    assert_response_data_list(response.data, [GroupReadSerializer(group).data])
 
-    Allows for a one-minute margin between timestamp and the datetime being checked.
 
-    Used e.g. to compare `status_since` attribute after status change.
-
-    For this test to be informative, make sure you manually set status_since to
-    some date in the past so that the match with timestamp after status change is not accidental.
-    """
-    assert date_time - timestamp < datetime.timedelta(minutes=1)
+def test_group_retrieve(api_client, availability_slots):
+    group = baker.make(
+        Group,
+        _fill_optional=True,
+        make_m2m=True,
+        availability_slots_for_auto_matching=availability_slots,
+    )
+    response = api_client.get(f"/api/groups/{group.pk}/")
+    assert response.status_code == status.HTTP_200_OK
+    assert_response_data(response.data, GroupReadSerializer(group).data)
 
 
 class TestDashboardGroupStart:
@@ -152,16 +170,16 @@ class TestDashboardGroupStart:
         assert response.status_code == status.HTTP_201_CREATED
 
         group.refresh_from_db()
-        assert group.status == GroupStatus.WORKING
+        assert group.project_status == GroupProjectStatus.WORKING
 
         common_status_since = group.status_since
-        compare_date_time_with_timestamp(common_status_since, timestamp)
+        assert_date_time_with_timestamp(common_status_since, timestamp)
 
         for coordinator in group.coordinators.iterator():
-            assert coordinator.status in (
-                CoordinatorStatus.WORKING_BELOW_THRESHOLD,
-                CoordinatorStatus.WORKING_OK,
-                CoordinatorStatus.WORKING_LIMIT_REACHED,
+            assert coordinator.project_status in (
+                CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD,
+                CoordinatorProjectStatus.WORKING_OK,
+                CoordinatorProjectStatus.WORKING_LIMIT_REACHED,
             )
             assert coordinator.status_since == common_status_since
 
@@ -169,36 +187,33 @@ class TestDashboardGroupStart:
                 coordinator_id=coordinator.pk
             )
             assert log_event.type == CoordinatorLogEventType.TOOK_NEW_GROUP
-            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
         for student in group.students.iterator():
-            assert student.status == StudentStatus.STUDYING
+            assert student.project_status == StudentProjectStatus.STUDYING
             assert student.status_since == common_status_since
 
             log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
             assert log_event.type == StudentLogEventType.STUDY_START
-            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
         for teacher in group.teachers.iterator():
-            assert teacher.status in (
-                TeacherStatus.TEACHING_ACCEPTING_MORE,
-                TeacherStatus.TEACHING_NOT_ACCEPTING_MORE,
-            )
+            assert teacher.project_status == TeacherProjectStatus.WORKING
             assert teacher.status_since == common_status_since
 
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
             assert log_event.type == TeacherLogEventType.STUDY_START
-            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
     @pytest.mark.parametrize(
         "number_of_groups_to_start, expected_status",
         [
-            (CoordinatorGroupLimit.MIN - 1, CoordinatorStatus.WORKING_BELOW_THRESHOLD),
-            (CoordinatorGroupLimit.MIN, CoordinatorStatus.WORKING_OK),
-            (CoordinatorGroupLimit.MIN + 1, CoordinatorStatus.WORKING_OK),
-            (CoordinatorGroupLimit.MAX - 1, CoordinatorStatus.WORKING_OK),
-            (CoordinatorGroupLimit.MAX, CoordinatorStatus.WORKING_LIMIT_REACHED),
-            (CoordinatorGroupLimit.MAX + 1, CoordinatorStatus.WORKING_LIMIT_REACHED),
+            (CoordinatorGroupLimit.MIN - 1, CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD),
+            (CoordinatorGroupLimit.MIN, CoordinatorProjectStatus.WORKING_OK),
+            (CoordinatorGroupLimit.MIN + 1, CoordinatorProjectStatus.WORKING_OK),
+            (CoordinatorGroupLimit.MAX - 1, CoordinatorProjectStatus.WORKING_OK),
+            (CoordinatorGroupLimit.MAX, CoordinatorProjectStatus.WORKING_LIMIT_REACHED),
+            (CoordinatorGroupLimit.MAX + 1, CoordinatorProjectStatus.WORKING_LIMIT_REACHED),
         ],
     )
     def test_dashboard_group_start_coordinator_status(  # noqa: PLR0913
@@ -210,14 +225,14 @@ class TestDashboardGroupStart:
         availability_slots,
     ):
         coordinator = baker.make(Coordinator, _fill_optional=True)
-        coordinator.status = CoordinatorStatus.WORKING_BELOW_THRESHOLD
+        coordinator.project_status = CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD
         coordinator.save()
 
         for _ in range(number_of_groups_to_start):
             group = baker.make(
                 Group, _fill_optional=True, availability_slots_for_auto_matching=availability_slots
             )
-            group.status = GroupStatus.AWAITING_START
+            group.project_status = GroupProjectStatus.AWAITING_START
             group.coordinators.add(coordinator)
             group.save()
 
@@ -226,18 +241,18 @@ class TestDashboardGroupStart:
 
         coordinator.refresh_from_db()
         assert coordinator.groups.count() == number_of_groups_to_start
-        assert coordinator.status == expected_status
-        compare_date_time_with_timestamp(coordinator.status_since, timestamp)
+        assert_date_time_with_timestamp(coordinator.status_since, timestamp)
+        assert coordinator.project_status == expected_status
 
     def test_dashboard_group_start_student_status(self, api_client, timestamp, availability_slots):
         student = baker.make(Student, _fill_optional=True, availability_slots=availability_slots)
-        student.status = StudentStatus.AWAITING_START
+        student.project_status = StudentProjectStatus.NO_GROUP_YET
         student.save()
 
         group = baker.make(
             Group, _fill_optional=True, availability_slots_for_auto_matching=availability_slots
         )
-        group.status = GroupStatus.AWAITING_START
+        group.project_status = GroupProjectStatus.AWAITING_START
 
         group.students.add(student)
 
@@ -248,34 +263,34 @@ class TestDashboardGroupStart:
 
         student.refresh_from_db()
         assert student.groups.count() == 1
-        assert student.status == StudentStatus.STUDYING
-        compare_date_time_with_timestamp(student.status_since, timestamp)
+        assert_date_time_with_timestamp(student.status_since, timestamp)
+        assert student.project_status == StudentProjectStatus.STUDYING
 
     @staticmethod
     def _make_url(group: Group) -> str:
         return reverse("groups-start", kwargs={"pk": group.id})
 
     @pytest.mark.parametrize(
-        "delta, expected_status",
+        "delta, expected_status, can_take_more",
         [
-            (-1, TeacherStatus.TEACHING_ACCEPTING_MORE),
-            (0, TeacherStatus.TEACHING_NOT_ACCEPTING_MORE),
-            (1, TeacherStatus.TEACHING_NOT_ACCEPTING_MORE),
+            (-1, TeacherProjectStatus.WORKING, True),
+            (0, TeacherProjectStatus.WORKING, False),
+            (1, TeacherProjectStatus.WORKING, False),
         ],
     )
     def test_dashboard_group_start_teacher_status(  # noqa: PLR0913
-        self, api_client, timestamp, delta, expected_status, availability_slots
+        self, api_client, timestamp, delta, expected_status, can_take_more, availability_slots
     ):
         teacher = baker.make(Teacher, _fill_optional=True, availability_slots=availability_slots)
         teacher.simultaneous_groups = 3  # no significance, just more than 1
-        teacher.status = TeacherStatus.AWAITING_START
+        teacher.project_status = TeacherProjectStatus.NO_GROUP_YET
         teacher.save()
 
         for _ in range(teacher.simultaneous_groups + delta):
             group = baker.make(
                 Group, _fill_optional=True, availability_slots_for_auto_matching=availability_slots
             )
-            group.status = GroupStatus.AWAITING_START
+            group.project_status = GroupProjectStatus.AWAITING_START
             group.teachers.add(teacher)
             group.save()
 
@@ -284,8 +299,9 @@ class TestDashboardGroupStart:
 
         teacher.refresh_from_db()
         assert teacher.groups.count() == teacher.simultaneous_groups + delta
-        assert teacher.status == expected_status
-        compare_date_time_with_timestamp(teacher.status_since, timestamp)
+        assert_date_time_with_timestamp(teacher.status_since, timestamp)
+        assert teacher.project_status == expected_status
+        assert teacher.can_take_more_groups == can_take_more
 
 
 class TestDashboardGroupAbort:
@@ -303,23 +319,23 @@ class TestDashboardGroupAbort:
         assert response.status_code == status.HTTP_200_OK
 
         active_group.refresh_from_db()
-        assert active_group.status == GroupStatus.ABORTED
+        assert active_group.project_status == GroupProjectStatus.ABORTED
         assert active_group.students_former.count() == prev_student_count
         assert active_group.teachers_former.count() == prev_teacher_count
         assert active_group.coordinators_former.count() == prev_coordinator_count
 
         common_status_since = active_group.status_since
-        compare_date_time_with_timestamp(common_status_since, timestamp)
+        assert_date_time_with_timestamp(common_status_since, timestamp)
 
         assert not active_group.students.count()
         assert not active_group.teachers.count()
         assert not active_group.coordinators.count()
 
         for coordinator in active_group.coordinators_former.iterator():
-            assert coordinator.status in (
-                CoordinatorStatus.WORKING_BELOW_THRESHOLD,
-                CoordinatorStatus.WORKING_OK,
-                CoordinatorStatus.WORKING_LIMIT_REACHED,
+            assert coordinator.project_status in (
+                CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD,
+                CoordinatorProjectStatus.WORKING_OK,
+                CoordinatorProjectStatus.WORKING_LIMIT_REACHED,
             )
             assert coordinator.status_since == common_status_since
 
@@ -327,27 +343,26 @@ class TestDashboardGroupAbort:
                 coordinator_id=coordinator.pk
             )
             assert log_event.type == CoordinatorLogEventType.GROUP_ABORTED
-            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
         for student in active_group.students_former.iterator():
-            assert student.status == StudentStatus.AWAITING_OFFER
+            assert student.project_status == StudentProjectStatus.NO_GROUP_YET
             assert student.status_since == common_status_since
 
             log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
             assert log_event.type == StudentLogEventType.GROUP_ABORTED
-            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
         for teacher in active_group.teachers_former.iterator():
-            assert teacher.status in (
-                TeacherStatus.TEACHING_ACCEPTING_MORE,
-                TeacherStatus.TEACHING_NOT_ACCEPTING_MORE,
-                TeacherStatus.AWAITING_OFFER,
+            assert teacher.project_status in (
+                TeacherProjectStatus.WORKING,
+                TeacherProjectStatus.NO_GROUP_YET,
             )
             assert teacher.status_since == common_status_since
 
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
             assert log_event.type == TeacherLogEventType.GROUP_ABORTED
-            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
     def test_abort_appends_former_entity_lists(self, api_client, active_group, availability_slots):
         # test that lists are not overwritten
@@ -364,7 +379,7 @@ class TestDashboardGroupAbort:
         assert response.status_code == status.HTTP_200_OK
 
         active_group.refresh_from_db()
-        assert active_group.status == GroupStatus.ABORTED
+        assert active_group.project_status == GroupProjectStatus.ABORTED
         assert active_group.students_former.filter(pk=student.pk).exists()
         assert active_group.teachers_former.filter(pk=teacher.pk).exists()
         assert active_group.coordinators_former.filter(pk=coordinator.pk).exists()
@@ -402,24 +417,26 @@ class TestGroupCreation:
             assert val == response.data[field]
             assert val == created_group_serializer.data[field]
 
-        assert group.status == GroupStatus.PENDING
+        assert created_group.project_status == GroupProjectStatus.PENDING
 
         common_status_since = created_group.status_since
-        compare_date_time_with_timestamp(common_status_since, timestamp)
+        assert_date_time_with_timestamp(common_status_since, timestamp)
 
         for student in group.students.iterator():
-            assert student.status == StudentStatus.GROUP_OFFERED
+            assert student.project_status == StudentProjectStatus.NO_GROUP_YET
             assert student.status_since == common_status_since
             log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
+            assert log_event.to_group.id == created_group.id
             assert log_event.type == StudentLogEventType.GROUP_OFFERED
-            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
         for teacher in group.teachers.iterator():
-            assert teacher.status == TeacherStatus.GROUP_OFFERED
+            assert teacher.project_status == TeacherProjectStatus.NO_GROUP_YET
             assert teacher.status_since == common_status_since
+            assert log_event.to_group.id == created_group.id
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
             assert log_event.type == TeacherLogEventType.GROUP_OFFERED
-            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
 
 class TestDashboardGroupConfirmReadyToStart:
@@ -435,9 +452,9 @@ class TestDashboardGroupConfirmReadyToStart:
         assert response.status_code == status.HTTP_200_OK
 
         group.refresh_from_db()
-        assert group.status == GroupStatus.AWAITING_START
+        assert group.project_status == GroupProjectStatus.AWAITING_START
         common_status_since = group.status_since
-        compare_date_time_with_timestamp(common_status_since, timestamp)
+        assert_date_time_with_timestamp(common_status_since, timestamp)
 
         for coordinator in group.coordinators.iterator():
             log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(
@@ -446,20 +463,17 @@ class TestDashboardGroupConfirmReadyToStart:
             assert log_event.type == CoordinatorLogEventType.TOOK_NEW_GROUP
 
         for student in group.students.iterator():
-            assert student.status == StudentStatus.AWAITING_START
+            assert student.project_status == StudentProjectStatus.NO_GROUP_YET
             assert student.status_since == common_status_since
 
             log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
             assert log_event.type == StudentLogEventType.GROUP_CONFIRMED
-            compare_date_time_with_timestamp(log_event.date_time, timestamp)
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
         for teacher in group.teachers.iterator():
-            assert teacher.status == TeacherStatus.AWAITING_START
+            assert teacher.project_status == TeacherProjectStatus.NO_GROUP_YET
             assert teacher.status_since == common_status_since
 
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
             assert log_event.type == TeacherLogEventType.GROUP_CONFIRMED
-            compare_date_time_with_timestamp(log_event.date_time, timestamp)
-
-
-# TODO add tests for internal router
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
