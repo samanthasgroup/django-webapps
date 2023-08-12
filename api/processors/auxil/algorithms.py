@@ -24,7 +24,7 @@ from api.models.language_and_level import LanguageAndLevel
 from api.processors.auxil.log_event_creator import GroupLogEventCreator
 
 
-class GroupManager:
+class GroupBuilderAlgorithm:
     @dataclass
     class GroupSizeRestriction:
         # both min and max student numbers are inclusive:
@@ -61,7 +61,7 @@ class GroupManager:
 
         def __post_init__(self) -> None:
             # Validate group size against age-related restrictions
-            restrictions = GroupManager._get_allowed_group_size(self.age_range)
+            restrictions = GroupBuilderAlgorithm._get_allowed_group_size(self.age_range)
             restrictions.validate_size(len(self.students))
 
     @staticmethod
@@ -74,8 +74,8 @@ class GroupManager:
         )
 
     @staticmethod
-    def create_group_in_db(teacher_id: int) -> Group | None:
-        group_candidate = GroupManager._get_group_candidate(teacher_id)
+    def create_and_save_group(teacher_id: int) -> Group | None:
+        group_candidate = GroupBuilderAlgorithm._get_group_candidate(teacher_id)
         if group_candidate is None:
             # No suitable groups found
             # TODO: maybe log something?
@@ -112,17 +112,17 @@ class GroupManager:
             status=next_teacher_status,
             status_since=group_creation_timestamp,
         )
-        GroupManager._create_log_events(group)
+        GroupBuilderAlgorithm._create_log_events(group)
         return group
 
     @staticmethod
     def _get_allowed_group_size(age_range: AgeRange) -> GroupSizeRestriction:
         if MAX_AGE_TEEN_GROUP < age_range.age_from <= age_range.age_to:
-            return GroupManager.GroupSizeRestriction(min=5, max=10)
+            return GroupBuilderAlgorithm.GroupSizeRestriction(min=5, max=10)
         if MAX_AGE_KIDS_GROUP <= age_range.age_from <= age_range.age_to <= MAX_AGE_TEEN_GROUP:
-            return GroupManager.GroupSizeRestriction(min=2, max=8)
+            return GroupBuilderAlgorithm.GroupSizeRestriction(min=2, max=8)
         if 0 <= age_range.age_from <= age_range.age_to <= MAX_AGE_KIDS_GROUP:
-            return GroupManager.GroupSizeRestriction(min=2, max=6)
+            return GroupBuilderAlgorithm.GroupSizeRestriction(min=2, max=6)
         # If age range does not fall into expected ranges, fail early
         raise ValueError(f"Group age range is inconsistent with boundaries: {age_range}")
 
@@ -133,7 +133,7 @@ class GroupManager:
         # TODO iterate in correct priority order, yield results
         teacher = Teacher.objects.filter(personal_info__id=teacher_id).get()
 
-        return GroupManager.GroupCandidate(
+        return GroupBuilderAlgorithm.GroupCandidate(
             age_range=AgeRange(age_from=18, age_to=90),
             language_and_level=teacher.teaching_languages_and_levels.first(),  # type: ignore
             communication_language_mode=CommunicationLanguageMode(
