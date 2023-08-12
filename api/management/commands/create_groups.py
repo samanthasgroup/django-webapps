@@ -25,7 +25,7 @@ class Command(BaseCommand):
             ]
             for teacher in teachers:
                 if not GroupBuilderAlgorithm.is_teacher_available(teacher):
-                    raise CommandError(f"Teacher {teacher} is not available.")
+                    raise CommandError(f"Teacher is not available: {teacher}")
         else:
             # Get all available teachers if none specified
             teachers = GroupBuilderAlgorithm.get_available_teachers()

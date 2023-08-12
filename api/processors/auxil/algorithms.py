@@ -19,7 +19,11 @@ from api.models.choices.log_event_type import (
     StudentLogEventType,
     TeacherLogEventType,
 )
-from api.models.choices.status import GroupStatus, TeacherStatus
+from api.models.choices.status import (
+    GroupProjectStatus,
+    TeacherProjectStatus,
+    TeacherSituationalStatus,
+)
 from api.models.language_and_level import LanguageAndLevel
 from api.processors.auxil.log_event_creator import GroupLogEventCreator
 
@@ -67,14 +71,18 @@ class GroupBuilderAlgorithm:
     @staticmethod
     def get_available_teachers() -> Iterable[Teacher]:
         return Teacher.objects.filter(
-            status__in=(GroupBuilderAlgorithm._get_available_teacher_statuses())
+            project_status=TeacherProjectStatus.NO_GROUP_YET,
+            situational_status="",
         )
 
     @staticmethod
     def is_teacher_available(teacher: Teacher | None) -> bool:
         if teacher is None:
             return False
-        return teacher.status in GroupBuilderAlgorithm._get_available_teacher_statuses()
+        return (
+            teacher.project_status == TeacherProjectStatus.NO_GROUP_YET
+            and teacher.situational_status == ""
+        )
 
     @staticmethod
     def create_and_save_group(teacher_id: int) -> Group | None:
@@ -99,20 +107,18 @@ class GroupBuilderAlgorithm:
 
         group_creation_timestamp = timezone.now()
         StatusSetter.set_status(
-            obj=group, status=GroupStatus.PENDING, status_since=group_creation_timestamp
+            obj=group,
+            project_status=GroupProjectStatus.PENDING,
+            status_since=group_creation_timestamp,
         )
         group.save()
         group.teachers.add(group_candidate.teacher)
         group.students.set(group_candidate.students)
 
-        next_teacher_status = (
-            TeacherStatus.TEACHING_ANOTHER_GROUP_OFFERED
-            if group_candidate.teacher.status == TeacherStatus.TEACHING_ACCEPTING_MORE
-            else TeacherStatus.GROUP_OFFERED
-        )
+        next_teacher_status = TeacherSituationalStatus.GROUP_OFFERED
         StatusSetter.set_status(
             obj=group_candidate.teacher,
-            status=next_teacher_status,
+            situational_status=next_teacher_status,
             status_since=group_creation_timestamp,
         )
         GroupBuilderAlgorithm._create_log_events(group)
@@ -156,7 +162,3 @@ class GroupBuilderAlgorithm:
             teacher_log_event_type=TeacherLogEventType.GROUP_OFFERED,
             group_log_event_type=GroupLogEventType.FORMED,
         )
-
-    @staticmethod
-    def _get_available_teacher_statuses() -> list[TeacherStatus]:
-        return [TeacherStatus.AWAITING_OFFER, TeacherStatus.TEACHING_ACCEPTING_MORE]
