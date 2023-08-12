@@ -20,7 +20,7 @@ class Command(BaseCommand):
         teachers: Iterable[Teacher] = []
         if options["teacher_ids"]:
             teachers = [
-                Teacher.objects.filter(personal_info__id=teacher_id).get()
+                Teacher.objects.get(personal_info__id=teacher_id)
                 for teacher_id in options["teacher_ids"]
             ]
             for teacher in teachers:

@@ -134,7 +134,7 @@ class GroupBuilderAlgorithm:
         # THIS IS A STUB METHOD RETURNING DUMMY VALUES
         # TODO filter for language+level, communication language, age groups, time slots (all UTC?)
         # TODO iterate in correct priority order, yield results
-        teacher = Teacher.objects.filter(personal_info__id=teacher_id).get()
+        teacher = Teacher.objects.get(personal_info__id=teacher_id)
 
         return GroupBuilderAlgorithm.GroupCandidate(
             age_range=AgeRange(age_from=18, age_to=90),
