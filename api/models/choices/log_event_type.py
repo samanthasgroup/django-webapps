@@ -38,14 +38,6 @@ class CoordinatorLogEventType(models.TextChoices):
 
 class GroupLogEventType(models.TextChoices):
     FORMED = "formed", "Formed (automatically or by coordinator)"
-    NOT_CONFIRMED_TEACHER_REFUSED = (
-        "not_confirmed_teacher",
-        "Not confirmed because teacher refused",
-    )
-    NOT_CONFIRMED_NOT_ENOUGH_STUDENTS = (
-        "not_confirmed_students",
-        "Not confirmed because not enough students confirmed their participation",
-    )
     CONFIRMED = "confirmed", "Confirmed"
     STARTED = "started", "Started classes"
     ABORTED = "aborted", "Finished prematurely"
@@ -70,6 +62,10 @@ class StudentLogEventType(models.TextChoices):
     GROUP_OFFERED = "group_offered", "Was offered a group, has not responded yet"
     ACCEPTED_OFFER = "accepted_offer", "Was offered a group and accepted it"
     DECLINED_OFFER = "declined_offer", "Was offered a group but declined it"
+    TENTATIVE_GROUP_DISCARDED = (
+        "tentative_group_discarded",
+        "Tentative group was discarded for reasons other than the person's own decision",
+    )
     GROUP_CONFIRMED = "group_confirmed", "Group confirmed, awaiting start of classes"
     STUDY_START = "start", "Started studying in a group"
     MISSED_CLASS_NOTIFIED = (
@@ -104,6 +100,10 @@ class TeacherLogEventType(models.TextChoices):
     ACCEPTED_OFFER = "accepted_offer", "Was offered a group and accepted it"
     VALIDATED = "Validated in a face-to-face interview"
     DECLINED_OFFER = "declined_offer", "Was offered a group but declined it"
+    TENTATIVE_GROUP_DISCARDED = (
+        "tentative_group_discarded",
+        "Tentative group was discarded for reasons other than the person's own decision",
+    )
     GROUP_CONFIRMED = "group_confirmed", "Group confirmed, awaiting start of classes"
     STUDY_START = "started_teaching_group", "Started teaching a group"
     HOSTED_SPEAKING_CLUB = "hosted_speaking_club", "Hosted a speaking club session"
