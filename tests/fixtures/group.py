@@ -51,3 +51,10 @@ def active_group(timestamp, availability_slots):
     group.coordinators_former.clear()
     group.save()
     yield group
+
+
+@pytest.fixture
+def pending_group(active_group):
+    active_group.project_status = GroupProjectStatus.PENDING
+    active_group.save()
+    yield active_group

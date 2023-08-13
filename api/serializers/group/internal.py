@@ -1,7 +1,10 @@
+from typing import Any
+
 from django.utils import timezone
 from rest_framework import serializers
 
 from api.models import Group
+from api.models.auxil.constants import GroupDiscardReason
 from api.models.choices.status import GroupProjectStatus
 from api.serializers import (
     DayAndTimeSlotSerializer,
@@ -39,3 +42,7 @@ class GroupReadSerializer(serializers.ModelSerializer[Group]):
     class Meta:
         model = Group
         fields = "__all__"
+
+
+class GroupDiscardSerializer(serializers.Serializer[Any]):
+    discard_reason = serializers.ChoiceField(choices=[(e.value) for e in GroupDiscardReason])

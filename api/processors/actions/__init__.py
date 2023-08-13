@@ -1,5 +1,11 @@
 from api.processors.actions.group.abort import GroupAbortProcessor
 from api.processors.actions.group.create import GroupCreateProcessor
+from api.processors.actions.group.discard import GroupDiscardProcessor
 from api.processors.actions.group.start import GroupStartProcessor
 
-__all__ = ["GroupAbortProcessor", "GroupStartProcessor", "GroupCreateProcessor"]
+__all__ = [
+    "GroupAbortProcessor",
+    "GroupStartProcessor",
+    "GroupCreateProcessor",
+    "GroupDiscardProcessor",
+]
