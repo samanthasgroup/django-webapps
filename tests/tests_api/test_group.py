@@ -480,11 +480,16 @@ class TestDashboardGroupConfirmReadyToStart:
 
 
 class TestDashboardGroupDiscard:
-    @staticmethod
-    def _make_url(group: Group) -> str:
-        return reverse("groups-discard", kwargs={"pk": group.id})
-
-    def test_dashboard_group_discard_general_check(self, api_client, pending_group, timestamp):
+    @pytest.mark.parametrize(
+        "base_path",
+        [
+            "/api/dashboard/groups",
+            "/api/groups",
+        ],
+    )
+    def test_dashboard_group_discard_general_check(
+        self, api_client, pending_group, timestamp, base_path
+    ):
         group_students, group_teachers, group_coordinators = (
             list(pending_group.students.iterator()),
             list(pending_group.teachers.iterator()),
@@ -497,7 +502,7 @@ class TestDashboardGroupDiscard:
         ]
         discard_reason = GroupDiscardReason.NOT_ENOUGH_STUDENTS
         response = api_client.delete(
-            f"{self._make_url(pending_group)}?discard_reason={discard_reason}"
+            f"{base_path}/{pending_group.id}/discard/?discard_reason={discard_reason}"
         )
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
