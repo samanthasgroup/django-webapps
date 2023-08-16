@@ -62,8 +62,6 @@ def test_dashboard_personal_info_get_applies_email_filter(
     )
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()) == 1
-    # checking some basic attrs (cannot compare two objects directly
-    # because some fields were added during creation)
     result = response.json()[0]
     assert result["id"] == expected_id
     assert result["email"] == expected_email
