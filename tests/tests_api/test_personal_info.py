@@ -48,7 +48,7 @@ def test_personal_info_get_with_params_returns_200_and_data_with_existing_chat_i
         assert response.json()[0][param] == fake_personal_info_data[param]
 
 
-def test_personal_info_get_with_params_returns_200_and_data_with_existing_email(
+def test_personal_info_get_applies_email_filter(
     api_client, fake_personal_info_data, fake_personal_info_list
 ):
     for item in fake_personal_info_list:
