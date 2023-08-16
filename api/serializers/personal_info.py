@@ -54,7 +54,11 @@ class CheckChatIdExistenceSerializer(serializers.ModelSerializer[PersonalInfo]):
 
 
 class DashboardPersonalInfoSerializer(serializers.ModelSerializer[PersonalInfo]):
-    """A serializer used to return information about a person in dashboard (Tooljet) views."""
+    """
+    A serializer used to return information about a person in dashboard (Tooljet) views.
+    The data returned is nested inside a parent entity (teacher or student),
+    so fields like id and name are not returned here.
+    """
 
     class Meta:
         model = PersonalInfo
@@ -65,3 +69,18 @@ class DashboardPersonalInfoSerializer(serializers.ModelSerializer[PersonalInfo])
             "registration_telegram_bot_chat_id",
             "telegram_username",
         )
+
+
+class DashboardStandalonePersonalInfoSerializer(serializers.ModelSerializer[PersonalInfo]):
+    """
+    Used in the Tooljet dashboard to identify a coordinator by their email.
+    Returns minimal data.
+    """
+
+    class Meta:
+        model = PersonalInfo
+        fields = (
+            "id",
+            "email",
+        )
+        read_only_fields = fields

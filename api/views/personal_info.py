@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
 from api.filters import PersonalInfoFilter
+from api.filters.personal_info import DashboardPersonalInfoFilter
 from api.models import PersonalInfo
 from api.serializers import (
     CheckChatIdExistenceSerializer,
@@ -14,6 +15,7 @@ from api.serializers import (
     PersonalInfoSerializer,
 )
 from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
+from api.serializers.personal_info import DashboardStandalonePersonalInfoSerializer
 
 
 class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
@@ -56,7 +58,6 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
     @extend_schema(
         parameters=[
             OpenApiParameter(name="registration_telegram_bot_chat_id", type=int, required=True),
-            OpenApiParameter(name="email", type=str, required=False),
         ],
         responses={
             status.HTTP_200_OK: OpenApiResponse(
@@ -83,3 +84,10 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         return Response(request.query_params)
+
+
+class DashboardPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[PersonalInfo]):
+    queryset = PersonalInfo.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = DashboardPersonalInfoFilter
+    serializer_class = DashboardStandalonePersonalInfoSerializer

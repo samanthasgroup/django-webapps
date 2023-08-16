@@ -48,24 +48,36 @@ def test_personal_info_get_with_params_returns_200_and_data_with_existing_chat_i
         assert response.json()[0][param] == fake_personal_info_data[param]
 
 
-def test_personal_info_get_applies_email_filter(
+def test_dashboard_personal_info_get_applies_email_filter(
     api_client, fake_personal_info_data, fake_personal_info_list
 ):
     for item in fake_personal_info_list:
         api_client.post("/api/personal_info/", data=item)
 
-    api_client.post("/api/personal_info/", data=fake_personal_info_data)
+    expected_id = api_client.post("/api/personal_info/", data=fake_personal_info_data).json()["id"]
     expected_email = fake_personal_info_data["email"]
 
     response = api_client.get(
-        path=f"/api/personal_info/?email={expected_email}",
+        path=f"/api/dashboard/personal_info/?email={expected_email}",
     )
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()) == 1
     # checking some basic attrs (cannot compare two objects directly
     # because some fields were added during creation)
-    for param in ["first_name", "last_name", "email", "information_source"]:
-        assert response.json()[0][param] == fake_personal_info_data[param]
+    result = response.json()[0]
+    assert result["id"] == expected_id
+    assert result["email"] == expected_email
+
+
+def test_dashboard_personal_info_get_handles_unknown_email(api_client, fake_personal_info_list):
+    for item in fake_personal_info_list:
+        api_client.post("/api/personal_info/", data=item)
+
+    response = api_client.get(
+        path="/api/dashboard/personal_info/?email=unknownEmail@samanthasgroup.com",
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == []
 
 
 def test_personal_info_get_with_params_returns_200_and_empty_list_with_unknown_chat_id(
