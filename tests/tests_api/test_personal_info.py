@@ -58,7 +58,10 @@ def test_dashboard_personal_info_get_applies_email_filter(
     expected_email = fake_personal_info_data["email"]
 
     response = api_client.get(
-        path=f"/api/dashboard/personal_info/?email={expected_email}",
+        path="/api/dashboard/personal_info/",
+        data={
+            "email": expected_email,
+        },
     )
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()) == 1
@@ -72,7 +75,10 @@ def test_dashboard_personal_info_get_handles_unknown_email(api_client, fake_pers
         api_client.post("/api/personal_info/", data=item)
 
     response = api_client.get(
-        path="/api/dashboard/personal_info/?email=unknownEmail@samanthasgroup.com",
+        path="/api/dashboard/personal_info/",
+        data={
+            "email": "unknownEmail@samanthasgroup.com",
+        },
     )
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == []

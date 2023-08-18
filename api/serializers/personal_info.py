@@ -71,7 +71,7 @@ class DashboardPersonalInfoSerializer(serializers.ModelSerializer[PersonalInfo])
         )
 
 
-class DashboardStandalonePersonalInfoSerializer(serializers.ModelSerializer[PersonalInfo]):
+class DashboardMinifiedPersonalInfoSerializer(serializers.ModelSerializer[PersonalInfo]):
     """
     Used in the Tooljet dashboard to identify a coordinator by their email.
     Returns minimal data.

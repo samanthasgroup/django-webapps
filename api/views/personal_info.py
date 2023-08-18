@@ -15,7 +15,7 @@ from api.serializers import (
     PersonalInfoSerializer,
 )
 from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
-from api.serializers.personal_info import DashboardStandalonePersonalInfoSerializer
+from api.serializers.personal_info import DashboardMinifiedPersonalInfoSerializer
 
 
 class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
@@ -90,4 +90,4 @@ class DashboardPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[PersonalInfo]):
     queryset = PersonalInfo.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = DashboardPersonalInfoFilter
-    serializer_class = DashboardStandalonePersonalInfoSerializer
+    serializer_class = DashboardMinifiedPersonalInfoSerializer
