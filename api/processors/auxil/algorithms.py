@@ -1,6 +1,6 @@
 # DO NOT USE IN PROD, WORK IN PROGRESS
 
-from collections.abc import Iterator
+from collections.abc import Collection, Iterator
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -57,7 +57,7 @@ class GroupCandidate:
     communication_language_mode: CommunicationLanguageMode
     age_range: AgeRange
     teacher: Teacher
-    students: list[Student]
+    students: Collection[Student]
     monday: datetime | None = None
     tuesday: datetime | None = None
     wednesday: datetime | None = None
