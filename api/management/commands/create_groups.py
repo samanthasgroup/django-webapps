@@ -19,16 +19,13 @@ class Command(BaseCommand):
     def handle(self, *_: str, **options: Any) -> None:
         teachers: Iterable[Teacher] = []
         if options["teacher_ids"]:
-            teachers = [
-                Teacher.objects.get(personal_info__id=teacher_id)
-                for teacher_id in options["teacher_ids"]
-            ]
+            teachers = Teacher.objects.filter(pk__in=options["teacher_ids"])
             for teacher in teachers:
-                if not GroupBuilderAlgorithm.is_teacher_available(teacher):
+                if not teacher.can_take_more_groups:
                     raise CommandError(f"Teacher is not available: {teacher}")
         else:
             # Get all available teachers if none specified
             teachers = GroupBuilderAlgorithm.get_available_teachers()
 
         for teacher in teachers:
-            GroupBuilderAlgorithm.create_and_save_group(teacher.personal_info.pk)
+            GroupBuilderAlgorithm.create_and_save_group(teacher.pk)
