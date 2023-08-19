@@ -29,7 +29,7 @@ class PersonalInfoAdminForm(forms.ModelForm[models.PersonalInfo]):
         }
         params["email"] = self.cleaned_data["email"].lower()
 
-        if self.Meta.model.objects.filter(**params).exists():
+        if self.Meta.model.objects.filter(**params).exclude(pk=self.instance.pk).exists():
             raise forms.ValidationError(
                 "User with these first name, last name and email already exists, "
                 "although they may be written in different letter cases."
