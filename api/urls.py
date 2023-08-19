@@ -19,6 +19,7 @@ from api.views import (
     TeacherUnder18ViewSet,
     TeacherViewSet,
 )
+from api.views.personal_info import DashboardPersonalInfoViewSet
 
 internal_router = DefaultRouter()
 internal_router.register(r"groups", GroupViewSet, basename="groups")
@@ -54,6 +55,11 @@ dashboard_router.register(
     r"teachers_with_personal_info",
     DashboardTeacherWithPersonalInfoViewSet,
     basename="teachers_with_personal_info",
+)
+dashboard_router.register(
+    "personal_info",
+    DashboardPersonalInfoViewSet,
+    basename="personal_info",
 )
 
 # "Internal" API is used by bot and "dashboard" API is used by the Tooljet

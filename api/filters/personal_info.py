@@ -7,3 +7,9 @@ class PersonalInfoFilter(filters.FilterSet):
     class Meta:
         model = PersonalInfo
         fields = ("registration_telegram_bot_chat_id",)
+
+
+class DashboardPersonalInfoFilter(filters.FilterSet):
+    class Meta:
+        model = PersonalInfo
+        fields = ("email",)
