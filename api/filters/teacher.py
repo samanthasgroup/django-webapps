@@ -10,4 +10,7 @@ class TeacherFilter(filters.FilterSet):
 
     class Meta:
         model = Teacher
-        fields = ("for_coordinator_email",)
+        fields = (
+            "for_coordinator_email",
+            "project_status",
+        )
