@@ -3,6 +3,7 @@ from typing import Any
 from django.utils import timezone
 from rest_framework import serializers
 
+from api.exceptions import ConflictError
 from api.models import Group
 from api.models.auxil.constants import GroupDiscardReason
 from api.models.choices.status import GroupProjectStatus
@@ -45,4 +46,12 @@ class GroupReadSerializer(serializers.ModelSerializer[Group]):
 
 
 class GroupDiscardSerializer(serializers.Serializer[Any]):
-    discard_reason = serializers.ChoiceField(choices=[(e.value) for e in GroupDiscardReason])
+    discard_reason = serializers.ChoiceField(choices=[e.value for e in GroupDiscardReason])
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        if (
+            self.instance is not None
+            and self.instance.project_status != GroupProjectStatus.PENDING
+        ):
+            raise ConflictError("Group is not in the pending state")
+        return attrs
