@@ -1,6 +1,6 @@
 from django.db import transaction
 
-from api.models import Group, Teacher
+from api.models import Group
 from api.models.auxil.status_setter import StatusSetter
 from api.models.choices.log_event_type import StudentLogEventType, TeacherLogEventType
 from api.models.choices.status import StudentProjectStatus, TeacherProjectStatus
@@ -20,6 +20,7 @@ class GroupDiscardProcessor(GroupActionProcessor):
         self._delete()
 
     def _create_log_events(self) -> None:
+        # TODO add from_groupd once CASCAD policy removed
         GroupLogEventCreator.create(
             group=self.group,
             student_log_event_type=StudentLogEventType.TENTATIVE_GROUP_DISCARDED,
@@ -37,15 +38,13 @@ class GroupDiscardProcessor(GroupActionProcessor):
         StatusSetter.update_statuses_of_active_coordinators(self.timestamp)
 
     def _set_teachers_status(self) -> None:
-        teachers = Teacher.objects.filter_active()
-
-        teachers.filter_has_groups().update(
+        self.group.teachers_with_other_groups().update(
             project_status=TeacherProjectStatus.WORKING,
             situational_status="",
             status_since=self.timestamp,
         )
 
-        teachers.filter_has_no_groups().update(
+        self.group.teachers_with_no_other_groups().update(
             project_status=TeacherProjectStatus.NO_GROUP_YET,
             situational_status="",
             status_since=self.timestamp,
