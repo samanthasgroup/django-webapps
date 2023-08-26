@@ -1,7 +1,4 @@
 from api.views.mixins.common import ReadWriteSerializersMixin
-from api.views.mixins.group import CreateGroupMixin
+from api.views.mixins.group import CreateGroupMixin, DiscardGroupMixin
 
-__all__ = [
-    "ReadWriteSerializersMixin",
-    "CreateGroupMixin",
-]
+__all__ = ["ReadWriteSerializersMixin", "CreateGroupMixin", "DiscardGroupMixin"]

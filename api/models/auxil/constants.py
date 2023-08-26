@@ -16,6 +16,12 @@ class LanguageLevelId(str, Enum):
     # no C2 at this school
 
 
+class GroupDiscardReason(str, Enum):
+    TEACHER_DECLINED = "teacher_declined"
+    TEACHER_DID_NOT_REACT = "teacher_did_not_react"
+    NOT_ENOUGH_STUDENTS = "not_enough_students_accepted"
+
+
 DEFAULT_CHAR_FIELD_MAX_LEN = 255
 DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH = 50
 

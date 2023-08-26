@@ -1,5 +1,10 @@
 from api.models import Group
-from api.processors.actions import GroupAbortProcessor, GroupCreateProcessor, GroupStartProcessor
+from api.processors.actions import (
+    GroupAbortProcessor,
+    GroupCreateProcessor,
+    GroupDiscardProcessor,
+    GroupStartProcessor,
+)
 from api.processors.actions.group.confirm_ready_to_start import GroupConfirmReadyToStartProcessor
 
 
@@ -21,3 +26,7 @@ class GroupProcessor:
     @staticmethod
     def confirm_ready_to_start(group: Group) -> None:
         GroupConfirmReadyToStartProcessor(group=group).process()
+
+    @staticmethod
+    def discard(group: Group, reason: str) -> None:
+        GroupDiscardProcessor(group, reason).process()
