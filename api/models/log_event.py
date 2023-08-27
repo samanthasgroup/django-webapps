@@ -94,14 +94,14 @@ class StudentLogEvent(LogEvent):
         Group,
         null=True,
         blank=True,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="student_log_events_from_this_group",
     )
     to_group = models.ForeignKey(
         Group,
         null=True,
         blank=True,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="student_log_events_to_this_group",
     )
     student = models.ForeignKey(Student, related_name="log", on_delete=models.CASCADE)
@@ -129,14 +129,14 @@ class TeacherLogEvent(LogEvent):
         Group,
         null=True,
         blank=True,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="teacher_log_events_from_this_group",
     )
     to_group = models.ForeignKey(
         Group,
         null=True,
         blank=True,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="teacher_log_events_to_this_group",
     )
     teacher = models.ForeignKey(Teacher, related_name="log", on_delete=models.CASCADE)
