@@ -22,6 +22,7 @@ from api.models.choices.log_event_type import (
 from api.models.choices.status import (
     GroupProjectStatus,
     StudentSituationalStatus,
+    TeacherProjectStatus,
     TeacherSituationalStatus,
 )
 from api.models.language_and_level import LanguageAndLevel
@@ -68,21 +69,27 @@ class GroupCandidate:
 
     def __post_init__(self) -> None:
         # Validate group size against age-related restrictions
-        restrictions = GroupBuilderAlgorithm._get_allowed_group_size(self.age_range)
+        restrictions = GroupBuilder._get_allowed_group_size(self.age_range)
         restrictions.validate_size(len(self.students))
 
 
-class GroupBuilderAlgorithm:
+class GroupBuilder:
     @staticmethod
     def get_available_teachers() -> Iterator[Teacher]:
         return filter(
             lambda t: t.can_take_more_groups,
-            Teacher.objects.filter(project_status__in=("NO_GROUP_YET", "WORKING")),
+            Teacher.objects.filter(
+                project_status__in=(
+                    TeacherProjectStatus.NO_GROUP_YET,
+                    TeacherProjectStatus.WORKING,
+                ),
+                situational_status="",
+            ),
         )
 
     @staticmethod
     def create_and_save_group(teacher_id: int) -> Group | None:
-        group_candidate = GroupBuilderAlgorithm._get_group_candidate(teacher_id)
+        group_candidate = GroupBuilder._get_group_candidate(teacher_id)
         if group_candidate is None:
             # No suitable groups found
             # TODO: log something to the bot eventually?
@@ -123,7 +130,7 @@ class GroupBuilderAlgorithm:
                 situational_status=StudentSituationalStatus.GROUP_OFFERED,
                 status_since=group_creation_timestamp,
             )
-        GroupBuilderAlgorithm._create_log_events(group)
+        GroupBuilder._create_log_events(group)
         # TODO: post to bot webhook
         return group
 

@@ -4,7 +4,7 @@ from typing import Any
 from django.core.management.base import BaseCommand, CommandError, CommandParser
 
 from api.models import Teacher
-from api.processors.auxil.algorithms import GroupBuilderAlgorithm
+from api.processors.auxil.group_builder import GroupBuilder
 
 
 class Command(BaseCommand):
@@ -25,7 +25,7 @@ class Command(BaseCommand):
                     raise CommandError(f"Teacher is not available: {teacher}")
         else:
             # Get all available teachers if none specified
-            teachers = GroupBuilderAlgorithm.get_available_teachers()
+            teachers = GroupBuilder.get_available_teachers()
 
         for teacher in teachers:
-            GroupBuilderAlgorithm.create_and_save_group(teacher.pk)
+            GroupBuilder.create_and_save_group(teacher.pk)
