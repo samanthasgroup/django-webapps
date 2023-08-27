@@ -72,7 +72,9 @@ class EnrollmentTestQuestionOption(models.Model):
 class EnrollmentTestResult(models.Model):
     """Model for a test result for a given student. Consists of answers to assessment questions."""
 
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name="enrollment_test_results"
+    )
     answers = models.ManyToManyField(EnrollmentTestQuestionOption)
 
     def __str__(self) -> str:

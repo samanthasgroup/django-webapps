@@ -15,11 +15,11 @@ from api.serializers import (
     GroupReadSerializer,
     GroupWriteSerializer,
 )
-from api.views.mixins import CreateGroupMixin, ReadWriteSerializersMixin
+from api.views.mixins import CreateGroupMixin, DiscardGroupMixin, ReadWriteSerializersMixin
 
 
 class GroupViewSet(  # type: ignore
-    ReadWriteSerializersMixin, CreateGroupMixin, viewsets.ModelViewSet[Group]
+    ReadWriteSerializersMixin, CreateGroupMixin, DiscardGroupMixin, viewsets.ModelViewSet[Group]
 ):
     """Internal group viewset. Used by bot."""
 
@@ -30,7 +30,9 @@ class GroupViewSet(  # type: ignore
     filterset_class = GroupFilter
 
 
-class DashboardGroupViewSet(viewsets.ReadOnlyModelViewSet[Group], CreateGroupMixin):
+class DashboardGroupViewSet(
+    viewsets.ReadOnlyModelViewSet[Group], DiscardGroupMixin, CreateGroupMixin
+):
     """
     Dashboard viewset for groups. Used for dashboard API (Tooljet).
     """

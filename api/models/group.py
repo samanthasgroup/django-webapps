@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Q
+from django.db.models import Count, Q, QuerySet
 
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.choices.status import GroupProjectStatus, GroupSituationalStatus
@@ -121,6 +121,12 @@ class Group(GroupCommon):
             f"Group {self.pk}, {self.language_and_level} (coordinators: {coordinator_names}, "
             f"teachers: {teacher_names}, {self.students.count()} students."
         )
+
+    def teachers_with_other_groups(self) -> QuerySet[Teacher]:
+        return self.teachers.annotate(group_count=Count("groups")).filter(group_count__gt=1)
+
+    def teachers_with_no_other_groups(self) -> QuerySet[Teacher]:
+        return self.teachers.annotate(group_count=Count("groups")).filter(group_count__lte=1)
 
 
 class SpeakingClub(GroupCommon):

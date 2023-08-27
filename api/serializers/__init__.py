@@ -34,7 +34,12 @@ from api.serializers.group.dashboard import (  # isort:skip
     DashboardGroupSerializer,
     DashboardGroupWithStudentsSerializer,
 )
-from api.serializers.group.internal import GroupReadSerializer, GroupWriteSerializer  # isort:skip
+
+from api.serializers.group.internal import (  # isort:skip
+    GroupDiscardSerializer,
+    GroupReadSerializer,
+    GroupWriteSerializer,
+)
 
 __all__ = [
     "AgeRangeSerializer",
@@ -63,4 +68,5 @@ __all__ = [
     "TeacherUnder18WriteSerializer",
     "EnrollmentTestSerializer",
     "EnrollmentTestResultCreateSerializer",
+    "GroupDiscardSerializer",
 ]

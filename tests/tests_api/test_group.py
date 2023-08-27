@@ -12,7 +12,7 @@ from api.models import (
     Teacher,
     TeacherLogEvent,
 )
-from api.models.auxil.constants import CoordinatorGroupLimit
+from api.models.auxil.constants import CoordinatorGroupLimit, GroupDiscardReason
 from api.models.choices.log_event_type import (
     CoordinatorLogEventType,
     StudentLogEventType,
@@ -476,4 +476,76 @@ class TestDashboardGroupConfirmReadyToStart:
 
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
             assert log_event.type == TeacherLogEventType.GROUP_CONFIRMED
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+
+class TestDashboardGroupDiscard:
+    @pytest.mark.parametrize(
+        "base_path",
+        [
+            "/api/dashboard/groups",
+            "/api/groups",
+        ],
+    )
+    def test_dashboard_group_discard_general_check(
+        self, api_client, pending_group, timestamp, base_path
+    ):
+        group_students, group_teachers, group_coordinators = (
+            list(pending_group.students.iterator()),
+            list(pending_group.teachers.iterator()),
+            list(pending_group.coordinators.iterator()),
+        )
+        students_group_count = [student.groups.count() - 1 for student in group_students]
+        teachers_group_count = [teacher.groups.count() - 1 for teacher in group_teachers]
+        coordinators_group_count = [
+            coordinator.groups.count() - 1 for coordinator in group_coordinators
+        ]
+        discard_reason = GroupDiscardReason.NOT_ENOUGH_STUDENTS
+        response = api_client.delete(
+            f"{base_path}/{pending_group.id}/discard/?discard_reason={discard_reason}"
+        )
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+        try:
+            pending_group.refresh_from_db()
+            assert False, "group should be deleted from DB"
+        except Group.DoesNotExist:
+            pass
+
+        for coordinator in group_coordinators:
+            coordinator.refresh_from_db()
+        for teacher in group_teachers:
+            teacher.refresh_from_db()
+        for student in group_students:
+            student.refresh_from_db()
+
+        students_group_count_new = [student.groups.count() for student in group_students]
+        teachers_group_count_new = [teacher.groups.count() for teacher in group_teachers]
+        coordinators_group_count_new = [
+            coordinator.groups.count() for coordinator in group_coordinators
+        ]
+
+        assert [
+            students_group_count_new,
+            teachers_group_count_new,
+            coordinators_group_count_new,
+        ] == [students_group_count, teachers_group_count, coordinators_group_count]
+
+        for student in group_students:
+            assert student.project_status == StudentProjectStatus.NO_GROUP_YET
+            assert_date_time_with_timestamp(student.status_since, timestamp)
+            log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
+            assert log_event.type == StudentLogEventType.TENTATIVE_GROUP_DISCARDED
+            assert log_event.comment == discard_reason
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+        for teacher in group_teachers:
+            assert teacher.project_status in (
+                TeacherProjectStatus.WORKING,
+                TeacherProjectStatus.NO_GROUP_YET,
+            )
+            assert_date_time_with_timestamp(teacher.status_since, timestamp)
+            log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
+            assert log_event.type == TeacherLogEventType.TENTATIVE_GROUP_DISCARDED
+            assert log_event.comment == discard_reason
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
