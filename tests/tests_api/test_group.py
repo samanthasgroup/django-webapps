@@ -549,3 +549,64 @@ class TestDashboardGroupDiscard:
             assert log_event.type == TeacherLogEventType.TENTATIVE_GROUP_DISCARDED
             assert log_event.comment == discard_reason
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+
+class TestDashboardGroupFinish:
+    @staticmethod
+    def _make_url(group: Group) -> str:
+        return reverse("groups-finish", kwargs={"pk": group.id})
+
+    def test_dashboard_group_abort_general_check(self, api_client, active_group, timestamp):
+        prev_student_count, prev_teacher_count, prev_coordinator_count = (
+            active_group.students.count(),
+            active_group.teachers.count(),
+            active_group.coordinators.count(),
+        )
+        response = api_client.post(self._make_url(active_group))
+        assert response.status_code == status.HTTP_200_OK
+
+        active_group.refresh_from_db()
+        assert active_group.project_status == GroupProjectStatus.FINISHED
+        assert active_group.students_former.count() == prev_student_count
+        assert active_group.teachers_former.count() == prev_teacher_count
+        assert active_group.coordinators_former.count() == prev_coordinator_count
+
+        common_status_since = active_group.status_since
+        assert_date_time_with_timestamp(common_status_since, timestamp)
+
+        assert not active_group.students.count()
+        assert not active_group.teachers.count()
+        assert not active_group.coordinators.count()
+
+        for coordinator in active_group.coordinators_former.iterator():
+            assert coordinator.project_status in (
+                CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD,
+                CoordinatorProjectStatus.WORKING_OK,
+                CoordinatorProjectStatus.WORKING_LIMIT_REACHED,
+            )
+            assert coordinator.status_since == common_status_since
+
+            log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(
+                coordinator_id=coordinator.pk
+            )
+            assert log_event.type == CoordinatorLogEventType.GROUP_FINISHED
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+        for student in active_group.students_former.iterator():
+            assert student.project_status == StudentProjectStatus.STUDYING
+            assert student.status_since == common_status_since
+
+            log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
+            assert log_event.type == StudentLogEventType.GROUP_FINISHED
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+        for teacher in active_group.teachers_former.iterator():
+            assert teacher.project_status in (
+                TeacherProjectStatus.WORKING,
+                TeacherProjectStatus.NO_GROUP_YET,
+            )
+            assert teacher.status_since == common_status_since
+
+            log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
+            assert log_event.type == TeacherLogEventType.GROUP_FINISHED
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)

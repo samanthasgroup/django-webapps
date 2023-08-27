@@ -50,6 +50,13 @@ class GroupProjectStatus(models.TextChoices):
     ABORTED = "aborted", "Finished prematurely"
     FINISHED = "finished", "Finished (completed the course)"
 
+    @classmethod
+    def active_statuses(cls) -> list["GroupProjectStatus"]:
+        return [
+            cls.WORKING,
+            cls.AWAITING_START,
+        ]
+
 
 class StudentProjectStatus(models.TextChoices):
     """Enumeration of possible project-level statuses of a student."""

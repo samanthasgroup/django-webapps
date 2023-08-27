@@ -38,13 +38,13 @@ class GroupDiscardProcessor(GroupActionProcessor):
         StatusSetter.update_statuses_of_active_coordinators(self.timestamp)
 
     def _set_teachers_status(self) -> None:
-        self.group.teachers_with_other_groups().update(
+        self.group.teachers_with_other_active_groups().update(
             project_status=TeacherProjectStatus.WORKING,
             situational_status="",
             status_since=self.timestamp,
         )
 
-        self.group.teachers_with_no_other_groups().update(
+        self.group.teachers_with_no_other_active_groups().update(
             project_status=TeacherProjectStatus.NO_GROUP_YET,
             situational_status="",
             status_since=self.timestamp,
