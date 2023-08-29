@@ -556,7 +556,7 @@ class TestDashboardGroupFinish:
     def _make_url(group: Group) -> str:
         return reverse("groups-finish", kwargs={"pk": group.id})
 
-    def test_dashboard_group_abort_general_check(self, api_client, active_group, timestamp):
+    def test_dashboard_group_finish_general_check(self, api_client, active_group, timestamp):
         prev_student_count, prev_teacher_count, prev_coordinator_count = (
             active_group.students.count(),
             active_group.teachers.count(),
