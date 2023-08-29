@@ -611,7 +611,7 @@ class TestDashboardGroupFinish:
             assert log_event.type == TeacherLogEventType.GROUP_FINISHED
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
-    def test_abort_appends_former_entity_lists(self, api_client, active_group, availability_slots):
+    def test_finish_appends_former_entity_lists(self, api_client, active_group, availability_slots):
         # test that lists are not overwritten
         student = baker.make(Student, _fill_optional=True, availability_slots=availability_slots)
         teacher = baker.make(Teacher, _fill_optional=True, availability_slots=availability_slots)
