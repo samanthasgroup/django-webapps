@@ -433,8 +433,8 @@ class TestGroupCreation:
         for teacher in group.teachers.iterator():
             assert teacher.project_status == TeacherProjectStatus.NO_GROUP_YET
             assert teacher.status_since == common_status_since
-            assert log_event.to_group.id == created_group.id
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
+            assert log_event.to_group.id == created_group.id
             assert log_event.type == TeacherLogEventType.GROUP_OFFERED
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
