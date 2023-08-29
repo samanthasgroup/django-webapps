@@ -27,6 +27,20 @@ class GroupActionProcessor(abc.ABC):
         self._set_students_status()
         self._set_teachers_status()
 
+    def _move_related_people_to_former(self) -> None:
+        teachers_current, students_current, coordinators_current = (
+            self.group.teachers,
+            self.group.students,
+            self.group.coordinators,
+        )
+        self.group.teachers_former.add(*teachers_current.all())
+        self.group.students_former.add(*students_current.all())
+        self.group.coordinators_former.add(*coordinators_current.all())
+        self.group.teachers.clear()
+        self.group.students.clear()
+        self.group.coordinators.clear()
+        self.group.save()
+
     @abc.abstractmethod
     def _set_coordinators_status(self) -> None:
         pass
