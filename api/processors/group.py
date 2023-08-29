@@ -3,6 +3,7 @@ from api.processors.actions import (
     GroupAbortProcessor,
     GroupCreateProcessor,
     GroupDiscardProcessor,
+    GroupFinishProcessor,
     GroupStartProcessor,
 )
 from api.processors.actions.group.confirm_ready_to_start import GroupConfirmReadyToStartProcessor
@@ -30,3 +31,7 @@ class GroupProcessor:
     @staticmethod
     def discard(group: Group, reason: str) -> None:
         GroupDiscardProcessor(group, reason).process()
+
+    @staticmethod
+    def finish(group: Group) -> None:
+        GroupFinishProcessor(group).process()

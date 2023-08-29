@@ -433,8 +433,8 @@ class TestGroupCreation:
         for teacher in group.teachers.iterator():
             assert teacher.project_status == TeacherProjectStatus.NO_GROUP_YET
             assert teacher.status_since == common_status_since
-            assert log_event.to_group.id == created_group.id
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
+            assert log_event.to_group.id == created_group.id
             assert log_event.type == TeacherLogEventType.GROUP_OFFERED
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
@@ -549,3 +549,86 @@ class TestDashboardGroupDiscard:
             assert log_event.type == TeacherLogEventType.TENTATIVE_GROUP_DISCARDED
             assert log_event.comment == discard_reason
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+
+class TestDashboardGroupFinish:
+    @staticmethod
+    def _make_url(group: Group) -> str:
+        return reverse("groups-finish", kwargs={"pk": group.id})
+
+    def test_dashboard_group_finish_general_check(self, api_client, active_group, timestamp):
+        prev_student_count, prev_teacher_count, prev_coordinator_count = (
+            active_group.students.count(),
+            active_group.teachers.count(),
+            active_group.coordinators.count(),
+        )
+        response = api_client.post(self._make_url(active_group))
+        assert response.status_code == status.HTTP_200_OK
+
+        active_group.refresh_from_db()
+        assert active_group.project_status == GroupProjectStatus.FINISHED
+        assert active_group.students_former.count() == prev_student_count
+        assert active_group.teachers_former.count() == prev_teacher_count
+        assert active_group.coordinators_former.count() == prev_coordinator_count
+
+        common_status_since = active_group.status_since
+        assert_date_time_with_timestamp(common_status_since, timestamp)
+
+        assert not active_group.students.count()
+        assert not active_group.teachers.count()
+        assert not active_group.coordinators.count()
+
+        for coordinator in active_group.coordinators_former.iterator():
+            assert coordinator.project_status in (
+                CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD,
+                CoordinatorProjectStatus.WORKING_OK,
+                CoordinatorProjectStatus.WORKING_LIMIT_REACHED,
+            )
+            assert coordinator.status_since == common_status_since
+
+            log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(
+                coordinator_id=coordinator.pk
+            )
+            assert log_event.type == CoordinatorLogEventType.GROUP_FINISHED
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+        for student in active_group.students_former.iterator():
+            assert student.project_status == StudentProjectStatus.STUDYING
+            assert student.status_since == common_status_since
+
+            log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
+            assert log_event.type == StudentLogEventType.GROUP_FINISHED
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+        for teacher in active_group.teachers_former.iterator():
+            assert teacher.project_status in (
+                TeacherProjectStatus.WORKING,
+                TeacherProjectStatus.NO_GROUP_YET,
+            )
+            assert teacher.status_since == common_status_since
+
+            log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
+            assert log_event.type == TeacherLogEventType.GROUP_FINISHED
+            assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+    def test_finish_appends_former_entity_lists(
+        self, api_client, active_group, availability_slots
+    ):
+        # test that lists are not overwritten
+        student = baker.make(Student, _fill_optional=True, availability_slots=availability_slots)
+        teacher = baker.make(Teacher, _fill_optional=True, availability_slots=availability_slots)
+        coordinator = baker.make(Coordinator, _fill_optional=True)
+        active_group.students_former.add(student)
+        active_group.teachers_former.add(teacher)
+        active_group.coordinators_former.add(coordinator)
+        active_group.save()
+
+        response = api_client.post(self._make_url(active_group))
+
+        assert response.status_code == status.HTTP_200_OK
+
+        active_group.refresh_from_db()
+        assert active_group.project_status == GroupProjectStatus.FINISHED
+        assert active_group.students_former.filter(pk=student.pk).exists()
+        assert active_group.teachers_former.filter(pk=teacher.pk).exists()
+        assert active_group.coordinators_former.filter(pk=coordinator.pk).exists()
