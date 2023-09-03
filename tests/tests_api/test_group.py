@@ -433,8 +433,8 @@ class TestGroupCreation:
         for teacher in group.teachers.iterator():
             assert teacher.project_status == TeacherProjectStatus.NO_GROUP_YET
             assert teacher.status_since == common_status_since
-            assert log_event.to_group.id == created_group.id
             log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
+            assert log_event.to_group.id == created_group.id
             assert log_event.type == TeacherLogEventType.GROUP_OFFERED
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
@@ -556,7 +556,7 @@ class TestDashboardGroupFinish:
     def _make_url(group: Group) -> str:
         return reverse("groups-finish", kwargs={"pk": group.id})
 
-    def test_dashboard_group_abort_general_check(self, api_client, active_group, timestamp):
+    def test_dashboard_group_finish_general_check(self, api_client, active_group, timestamp):
         prev_student_count, prev_teacher_count, prev_coordinator_count = (
             active_group.students.count(),
             active_group.teachers.count(),
@@ -611,7 +611,9 @@ class TestDashboardGroupFinish:
             assert log_event.type == TeacherLogEventType.GROUP_FINISHED
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
-    def test_abort_appends_former_entity_lists(self, api_client, active_group, availability_slots):
+    def test_finish_appends_former_entity_lists(
+        self, api_client, active_group, availability_slots
+    ):
         # test that lists are not overwritten
         student = baker.make(Student, _fill_optional=True, availability_slots=availability_slots)
         teacher = baker.make(Teacher, _fill_optional=True, availability_slots=availability_slots)
