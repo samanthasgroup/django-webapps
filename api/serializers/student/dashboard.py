@@ -1,6 +1,9 @@
+from typing import Any
+
 from rest_framework import serializers
 
-from api.models import Student
+from api.exceptions import ConflictError
+from api.models import Group, Student
 from api.serializers import DashboardPersonalInfoSerializer
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
@@ -65,3 +68,15 @@ class DashboardStudentWithPersonalInfoSerializer(CommonDashboardStudentSerialize
             "personal_info",
             "groups",
         )
+
+
+class DashboardStudentTransferSerializer(serializers.Serializer[Any]):
+    to_group_id = serializers.IntegerField()
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        try:
+            group = Group.objects.get(pk=int(attrs["to_group_id"]))
+            attrs["to_group"] = group
+        except Group.DoesNotExist:
+            raise ConflictError("Transfer group is no found")
+        return attrs

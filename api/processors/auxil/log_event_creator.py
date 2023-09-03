@@ -31,7 +31,6 @@ class GroupLogEventCreator:
                 )
                 for coordinator in group.coordinators.iterator()
             )
-
         StudentLogEvent.objects.bulk_create(
             StudentLogEvent(
                 student=student,
