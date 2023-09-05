@@ -61,6 +61,12 @@ dashboard_router.register(
     DashboardPersonalInfoViewSet,
     basename="personal_info",
 )
+dashboard_router.register(
+    r"languages_and_levels", LanguageAndLevelViewSet, basename="languages_and_levels"
+)
+dashboard_router.register(
+    r"day_and_time_slots", DayAndTimeSlotViewSet, basename="day_and_time_slots"
+)
 
 # "Internal" API is used by bot and "dashboard" API is used by the Tooljet
 urlpatterns = [
