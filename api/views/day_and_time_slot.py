@@ -7,3 +7,8 @@ from api.serializers import DayAndTimeSlotSerializer
 class DayAndTimeSlotViewSet(viewsets.ReadOnlyModelViewSet[DayAndTimeSlot]):
     queryset = DayAndTimeSlot.objects.all()
     serializer_class = DayAndTimeSlotSerializer
+
+
+class DashboardDayAndTimeSlotViewSet(viewsets.ReadOnlyModelViewSet[DayAndTimeSlot]):
+    queryset = DayAndTimeSlot.objects.all()
+    serializer_class = DayAndTimeSlotSerializer
