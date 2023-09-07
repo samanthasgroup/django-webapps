@@ -72,11 +72,23 @@ class DashboardStudentWithPersonalInfoSerializer(CommonDashboardStudentSerialize
 
 class DashboardStudentTransferSerializer(serializers.Serializer[Any]):
     to_group_id = serializers.IntegerField()
+    from_group_id = serializers.IntegerField()
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         try:
-            group = Group.objects.get(pk=int(attrs["to_group_id"]))
-            attrs["to_group"] = group
+            to_group = Group.objects.get(pk=int(attrs["to_group_id"]))
+            attrs["to_group"] = to_group
+            if self.instance is not None and self.instance in to_group.students.all():
+                raise ConflictError("Student is already in that group")
         except Group.DoesNotExist:
-            raise ConflictError("Transfer group is no found")
+            raise ConflictError("Transfer to group is no found")
+
+        try:
+            from_group = Group.objects.get(pk=int(attrs["from_group_id"]))
+            if self.instance is not None and self.instance not in from_group.students.all():
+                raise ConflictError("Student must be in group from which he is being transferred")
+            attrs["from_group"] = from_group
+        except Group.DoesNotExist:
+            raise ConflictError("Transfer from group is no found")
+
         return attrs

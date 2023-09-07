@@ -53,9 +53,15 @@ class DashboardStudentViewSet(viewsets.ReadOnlyModelViewSet[Student]):
     @action(detail=True, methods=["post"])
     def transfer(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
         student = self.get_object()
-        query_params_serializer = DashboardStudentTransferSerializer(data=request.data)
+        query_params_serializer = DashboardStudentTransferSerializer(
+            data=request.data, instance=student
+        )
         query_params_serializer.is_valid(raise_exception=True)
-        StudentProcessor.transfer(student, query_params_serializer.validated_data["to_group"])
+        StudentProcessor.transfer(
+            student,
+            query_params_serializer.validated_data["to_group"],
+            query_params_serializer.validated_data["from_group"],
+        )
         return Response(status=status.HTTP_200_OK)
 
 

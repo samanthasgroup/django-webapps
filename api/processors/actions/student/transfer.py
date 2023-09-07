@@ -1,5 +1,4 @@
 from django.db import transaction
-from django.db.models import QuerySet
 
 from api.models import Group, Student
 from api.models.choices.log_event_type import StudentLogEventType
@@ -9,8 +8,9 @@ from api.processors.actions.student import StudentActionProcessor
 
 
 class StudentTransferProcessor(StudentActionProcessor):
-    def __init__(self, student: Student, to_group: Group):
+    def __init__(self, student: Student, to_group: Group, from_group: Group):
         self.to_group = to_group
+        self.from_group = from_group
         super().__init__(student)
 
     @transaction.atomic
@@ -20,14 +20,11 @@ class StudentTransferProcessor(StudentActionProcessor):
         self._create_log_events()
 
     def _transfer(self) -> None:
-        self.old_groups: QuerySet[Group] = self.student.groups.all()
-        for old_group in self.old_groups:
-            self.student.groups.remove(old_group)
-            old_group.students_former.add(self.student)
-            old_group.save()
+        self.student.groups.remove(self.from_group)
+        self.from_group.students_former.add(self.student)
         self.to_group.students.add(self.student)
-        self.to_group.save()
         self.student.save()
+        self.to_group.save()
 
     def _set_statuses(self) -> None:
         self.student.project_status = StudentProjectStatus.STUDYING
@@ -36,15 +33,9 @@ class StudentTransferProcessor(StudentActionProcessor):
         self.student.save()
 
     def _create_log_events(self) -> None:
-        if self.old_groups:
-            for old_group in self.old_groups:
-                StudentLogEvent.objects.create(
-                    student=self.student,
-                    from_group=old_group,
-                    to_group=self.to_group,
-                    type=StudentLogEventType.TRANSFERRED,
-                )
-        else:
-            StudentLogEvent.objects.create(
-                student=self.student, to_group=self.to_group, type=StudentLogEventType.TRANSFERRED
-            )
+        StudentLogEvent.objects.create(
+            student=self.student,
+            from_group=self.from_group,
+            to_group=self.to_group,
+            type=StudentLogEventType.TRANSFERRED,
+        )

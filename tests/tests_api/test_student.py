@@ -260,16 +260,37 @@ class TestDashboardStudentTransfer:
         old_group.save()
         response = api_client.post(
             f"/api/dashboard/students/{student.personal_info.id}/transfer/",
-            data={"to_group_id": active_group.pk},
+            data={"to_group_id": active_group.pk, "from_group_id": old_group.pk},
         )
         assert response.status_code == status.HTTP_200_OK
         student.refresh_from_db()
-        current_groups = student.groups.all()
-        assert len(current_groups) == 1
-        assert current_groups[0].pk == active_group.pk
-        assert any(s.pk == student.pk for s in old_group.students_former.all())
-        assert all(s.pk != student.pk for s in old_group.students.all())
+        current_student_groups = student.groups.all()
+        assert len(current_student_groups) == 1
+        assert current_student_groups[0] == active_group
+        assert student in old_group.students_former.all()
+        assert student not in old_group.students.all()
         log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
         assert log_event.type == StudentLogEventType.TRANSFERRED
         assert student.project_status == StudentProjectStatus.STUDYING
         assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+    def test_dashboard_student_transfer_from_empty_group(
+        self, api_client, active_group: Group, availability_slots
+    ):
+        student = baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        old_group = baker.make(
+            Group,
+            _fill_optional=True,
+            make_m2m=True,
+            availability_slots_for_auto_matching=availability_slots,
+        )
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/transfer/",
+            data={"to_group_id": active_group.pk, "from_group_id": old_group.pk},
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT
