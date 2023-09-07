@@ -43,7 +43,7 @@ class GroupAbortProcessor(GroupActionProcessor):
         )
 
     def _set_teachers_status(self) -> None:
-        teachers = Teacher.objects.filter_active()  # type: ignore[attr-defined]
+        teachers = Teacher.objects.filter_active()
 
         teachers.filter_has_groups().update(
             project_status=TeacherProjectStatus.WORKING,

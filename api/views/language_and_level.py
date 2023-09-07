@@ -11,3 +11,10 @@ class LanguageAndLevelViewSet(viewsets.ReadOnlyModelViewSet[LanguageAndLevel]):
     serializer_class = LanguageAndLevelSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = LanguageAndLevelFilter
+
+
+class DashboardLanguageAndLevelViewSet(viewsets.ReadOnlyModelViewSet[LanguageAndLevel]):
+    queryset = LanguageAndLevel.objects.all()
+    serializer_class = LanguageAndLevelSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = LanguageAndLevelFilter
