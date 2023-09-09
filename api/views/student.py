@@ -62,7 +62,7 @@ class DashboardStudentViewSet(viewsets.ReadOnlyModelViewSet[Student]):
             query_params_serializer.validated_data["to_group"],
             query_params_serializer.validated_data["from_group"],
         )
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class DashboardStudentWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Student]):

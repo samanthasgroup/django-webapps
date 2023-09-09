@@ -262,7 +262,7 @@ class TestDashboardStudentTransfer:
             f"/api/dashboard/students/{student.personal_info.id}/transfer/",
             data={"to_group_id": active_group.pk, "from_group_id": old_group.pk},
         )
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         student.refresh_from_db()
         current_student_groups = student.groups.all()
         assert len(current_student_groups) == 1
