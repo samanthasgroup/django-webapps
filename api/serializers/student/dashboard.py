@@ -78,7 +78,7 @@ class DashboardStudentTransferSerializer(serializers.Serializer[Any]):
         try:
             to_group = Group.objects.get(pk=int(attrs["to_group_id"]))
         except Group.DoesNotExist:
-            raise ConflictError(f"Group {attrs['to_gorup_id']} is no found")
+            raise ConflictError(f"Group {attrs['to_group_id']} not found")
         if self.instance is not None and self.instance in to_group.students.all():
             raise ConflictError(
                 f"Student {self.instance.pk} is already in that group {to_group.pk}"
@@ -88,7 +88,7 @@ class DashboardStudentTransferSerializer(serializers.Serializer[Any]):
         try:
             from_group = Group.objects.get(pk=int(attrs["from_group_id"]))
         except Group.DoesNotExist:
-            raise ConflictError(f"Group {attrs['from_group_id']} is no found")
+            raise ConflictError(f"Group {attrs['from_group_id']} not found")
         if self.instance is not None and self.instance not in from_group.students.all():
             student_id = self.instance.pk
             raise ConflictError(f"Student {student_id} must be in group {from_group.pk}")
