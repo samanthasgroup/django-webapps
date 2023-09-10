@@ -1,5 +1,6 @@
 # DO NOT USE IN PROD, WORK IN PROGRESS
 
+import itertools
 import logging
 from collections.abc import Collection, Iterable, Iterator
 from dataclasses import dataclass
@@ -155,10 +156,10 @@ class GroupBuilder:
         group_candidates: list[GroupCandidate] = []
 
         for language_and_level in teacher.teaching_languages_and_levels.all():
-            logger.info(language_and_level)
+            logger.debug(language_and_level)
             for first_time_slot, second_time_slot in GroupBuilder._iterate_lesson_times(teacher):
                 for age_range in teacher.student_age_ranges.all():
-                    group_candidate = GroupBuilder._get_group_candidate(
+                    group_candidate = GroupBuilder._build_group_candidate(
                         teacher=teacher,
                         age_range=age_range,
                         language_and_level=language_and_level,
@@ -174,11 +175,11 @@ class GroupBuilder:
         return group_candidates[0]
 
     @staticmethod
-    def _get_group_candidate(
+    def _build_group_candidate(
         teacher: Teacher,
         age_range: AgeRange,
         language_and_level: LanguageAndLevel,
-        day_time_slots: Collection[DayAndTimeSlot],
+        day_time_slots: Iterable[DayAndTimeSlot],
     ) -> GroupCandidate | None:
         restrictions = GroupBuilder._get_allowed_group_size(age_range)
         communication_language = CommunicationLanguageMode(
@@ -228,35 +229,44 @@ class GroupBuilder:
     @staticmethod
     def _iterate_lesson_times(teacher: Teacher) -> Iterator[tuple[DayAndTimeSlot, DayAndTimeSlot]]:
         """
-        Iterates tuples of available time slots.
+        Iterate over tuples of available time slots.
         There should be at least one free day between lessons.
         """
         teacher_availability_slots = teacher.availability_slots.all()
-        for first_availability in teacher_availability_slots:
-            for second_availability in teacher_availability_slots:
-                if GroupBuilder._availability_slots_have_break(
-                    first_availability, second_availability
-                ):
-                    yield (first_availability, second_availability)
+        for first_availability, second_availability in itertools.product(
+            teacher_availability_slots, repeat=2
+        ):
+            if GroupBuilder._availability_slots_have_break(
+                first_availability, second_availability
+            ):
+                yield (first_availability, second_availability)
 
     @staticmethod
     def _availability_slots_have_break(
         first_availability: DayAndTimeSlot, second_availability: DayAndTimeSlot
     ) -> bool:
         """
-        Checks that second availability slot is not too early from first
+        Check that second availability slot is strictly after first, but not too soon after.
         """
         first_day = first_availability.day_of_week_index
         second_day = second_availability.day_of_week_index
-        if second_day - first_day < MIN_DAYS_BETWEEN_LESSONS:
+
+        if first_day >= second_day:
             return False
-        # this checks e.g. Monday and Sunday is just 1 day apart
-        if (first_day + 7) - second_day < MIN_DAYS_BETWEEN_LESSONS:
-            return False
-        return True
+
+        days_between_two_weekdays = min((second_day - first_day) % 7, (first_day - second_day) % 7)
+        return days_between_two_weekdays > MIN_DAYS_BETWEEN_LESSONS
 
     @staticmethod
     def _get_datetime_kwargs(day_time_slots: Iterable[DayAndTimeSlot]) -> dict[str, time]:
+        """
+        Convert custom day and time slots to dict in format we use in data model.
+
+        E.g.
+        {
+            weekday_name: datetime.time
+        }
+        """
         datetime_kwargs = {}
         for day_time_slot in day_time_slots:
             day_value = day_time_slot.day_of_week_index
