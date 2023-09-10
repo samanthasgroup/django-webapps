@@ -12,9 +12,16 @@ from api.models import (
     PersonalInfo,
     Teacher,
 )
+from api.models.choices.log_event_type import TeacherLogEventType
 from api.models.choices.status import TeacherProjectStatus
+from api.models.group import Group
+from api.models.log_event import TeacherLogEvent
 from api.serializers import DashboardTeacherSerializer, TeacherWriteSerializer
-from tests.tests_api.asserts import assert_response_data, assert_response_data_list
+from tests.tests_api.asserts import (
+    assert_date_time_with_timestamp,
+    assert_response_data,
+    assert_response_data_list,
+)
 
 
 def test_teacher_create(api_client, faker):
@@ -218,3 +225,58 @@ def test_dashboard_teache_list(api_client, faker, availability_slots):
     teacher_data = DashboardTeacherSerializer(teacher).data
     teacher_data["utc_timedelta"] = f"UTC{sign}{utc_offset_hours:02}:{utc_offset_minutes:02}"
     assert_response_data_list(response.data, [teacher_data])
+
+
+class TestDashboardTeacherTransfer:
+    def test_dashboard_teacher_transfer_general_check(
+        self, api_client, active_group: Group, timestamp, availability_slots
+    ):
+        teacher = baker.make(
+            Teacher,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        old_group = baker.make(
+            Group,
+            _fill_optional=True,
+            make_m2m=True,
+            availability_slots_for_auto_matching=availability_slots,
+        )
+        old_group.teachers.add(teacher)
+        old_group.save()
+        response = api_client.post(
+            f"/api/dashboard/teachers/{teacher.personal_info.id}/transfer/",
+            data={"to_group_id": active_group.pk, "from_group_id": old_group.pk},
+        )
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        teacher.refresh_from_db()
+        current_teacher_groups = teacher.groups.all()
+        assert len(current_teacher_groups) == 1
+        assert current_teacher_groups[0] == active_group
+        assert teacher in old_group.teachers_former.all()
+        assert teacher not in old_group.teachers.all()
+        log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
+        assert log_event.type == TeacherLogEventType.STUDY_START
+        assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+    def test_dashboard_teacher_transfer_from_empty_group(
+        self, api_client, active_group: Group, availability_slots
+    ):
+        teacher = baker.make(
+            Teacher,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        old_group = baker.make(
+            Group,
+            _fill_optional=True,
+            make_m2m=True,
+            availability_slots_for_auto_matching=availability_slots,
+        )
+        response = api_client.post(
+            f"/api/dashboard/teachers/{teacher.personal_info.id}/transfer/",
+            data={"to_group_id": active_group.pk, "from_group_id": old_group.pk},
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT

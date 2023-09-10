@@ -1,5 +1,8 @@
+from typing import Any
+
 from rest_framework import serializers
 
+from api.exceptions import ConflictError
 from api.models import Teacher
 from api.models.auxil.constants import (
     TEACHER_PEER_SUPPORT_FIELD_NAME_PREFIX,
@@ -11,6 +14,7 @@ from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
 from api.serializers.group.minified import MinifiedGroupSerializer
 from api.serializers.language_and_level import MinifiedLanguageAndLevelSerializer
 from api.serializers.non_teaching_help import NonTeachingHelpSerializerField
+from api.serializers.shared import PersonTransferSerializer
 from api.serializers.utc_timedelta import UTCTimedeltaField
 
 
@@ -86,3 +90,20 @@ class DashboardTeacherWithPersonalInfoSerializer(CommonDashboardTeacherSerialize
             "personal_info",
             "groups",
         )
+
+
+class DashboardTeacherTransferSerializer(PersonTransferSerializer):
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        validated_attrs = super().validate(attrs)
+        to_group = validated_attrs["to_group"]
+        from_group = validated_attrs["from_group"]
+        if self.instance is not None and self.instance in to_group.teachers.all():
+            raise ConflictError(
+                f"Teacher {self.instance.pk} is already in that group {to_group.pk}"
+            )
+
+        if self.instance is not None and self.instance not in from_group.teachers.all():
+            teacher_id = self.instance.pk
+            raise ConflictError(f"Teacher {teacher_id} must be in group {from_group.pk}")
+
+        return validated_attrs

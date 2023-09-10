@@ -1,4 +1,5 @@
 from api.processors.group import GroupProcessor
 from api.processors.student import StudentProcessor
+from api.processors.teacher import TeacherProcessor
 
-__all__ = ["GroupProcessor", "StudentProcessor"]
+__all__ = ["GroupProcessor", "StudentProcessor", "TeacherProcessor"]

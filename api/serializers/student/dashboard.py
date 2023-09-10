@@ -3,13 +3,14 @@ from typing import Any
 from rest_framework import serializers
 
 from api.exceptions import ConflictError
-from api.models import Group, Student
+from api.models import Student
 from api.serializers import DashboardPersonalInfoSerializer
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
 from api.serializers.group.minified import MinifiedGroupSerializer
 from api.serializers.language_and_level import MinifiedLanguageAndLevelSerializer
 from api.serializers.non_teaching_help import NonTeachingHelpSerializerField
+from api.serializers.shared import PersonTransferSerializer
 from api.serializers.utc_timedelta import UTCTimedeltaField
 
 
@@ -70,28 +71,18 @@ class DashboardStudentWithPersonalInfoSerializer(CommonDashboardStudentSerialize
         )
 
 
-class DashboardStudentTransferSerializer(serializers.Serializer[Any]):
-    to_group_id = serializers.IntegerField()
-    from_group_id = serializers.IntegerField()
-
+class DashboardStudentTransferSerializer(PersonTransferSerializer):
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        try:
-            to_group = Group.objects.get(pk=int(attrs["to_group_id"]))
-        except Group.DoesNotExist:
-            raise ConflictError(f"Group {attrs['to_group_id']} not found")
+        validated_attrs = super().validate(attrs)
+        to_group = validated_attrs["to_group"]
+        from_group = validated_attrs["from_group"]
         if self.instance is not None and self.instance in to_group.students.all():
             raise ConflictError(
                 f"Student {self.instance.pk} is already in that group {to_group.pk}"
             )
-        attrs["to_group"] = to_group
 
-        try:
-            from_group = Group.objects.get(pk=int(attrs["from_group_id"]))
-        except Group.DoesNotExist:
-            raise ConflictError(f"Group {attrs['from_group_id']} not found")
         if self.instance is not None and self.instance not in from_group.students.all():
             student_id = self.instance.pk
             raise ConflictError(f"Student {student_id} must be in group {from_group.pk}")
-        attrs["from_group"] = from_group
 
-        return attrs
+        return validated_attrs
