@@ -36,7 +36,7 @@ class Command(BaseCommand):
             GroupBuilder.create_and_save_group(teacher.pk)
 
     @staticmethod
-    def get_teacher_ids(teacher_ids: Iterable[str]) -> Collection[Teacher]:
+    def get_teacher_ids(teacher_ids: Iterable[int]) -> Collection[Teacher]:
         teachers = []
         for teacher_id in teacher_ids:
             try:
