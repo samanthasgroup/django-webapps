@@ -1,3 +1,4 @@
+from django_filters import rest_framework as filters
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -71,8 +72,8 @@ class DashboardStudentWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Stud
     """
 
     # TODO permissions?
-    # TODO test this API
     lookup_field = "personal_info_id"
     queryset = Student.objects.all()
     serializer_class = DashboardStudentWithPersonalInfoSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = StudentFilter
