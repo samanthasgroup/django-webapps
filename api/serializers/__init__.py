@@ -14,6 +14,7 @@ from api.serializers.personal_info import (
 )
 from api.serializers.student.dashboard import (
     DashboardStudentSerializer,
+    DashboardStudentTransferSerializer,
     DashboardStudentWithPersonalInfoSerializer,
 )
 from api.serializers.student.internal import StudentReadSerializer, StudentWriteSerializer
@@ -56,6 +57,7 @@ __all__ = [
     "DashboardGroupWithStudentsSerializer",
     "DashboardStudentSerializer",
     "DashboardStudentWithPersonalInfoSerializer",
+    "DashboardStudentTransferSerializer",
     "DashboardTeacherSerializer",
     "DashboardTeacherWithPersonalInfoSerializer",
     "StudentReadSerializer",

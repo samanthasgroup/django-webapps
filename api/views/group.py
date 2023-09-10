@@ -69,3 +69,9 @@ class DashboardGroupViewSet(
         group = self.get_object()
         GroupProcessor.confirm_ready_to_start(group)
         return Response(status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["post"])
+    def finish(self, request: Request, pk: int) -> Response:  # noqa: ARG002
+        group = self.get_object()
+        GroupProcessor.finish(group)
+        return Response(status=status.HTTP_200_OK)

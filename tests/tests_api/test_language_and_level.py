@@ -5,7 +5,8 @@ from api.models import LanguageAndLevel
 
 
 @pytest.mark.parametrize("language", [None, "en", "fr"])
-def test_languages_and_levels_list(api_client, language):
+@pytest.mark.parametrize("base_route", ["api", "api/dashboard"])
+def test_languages_and_levels_list(api_client, language, base_route):
     queryset = LanguageAndLevel.objects.all()
 
     if language:
@@ -14,7 +15,7 @@ def test_languages_and_levels_list(api_client, language):
     else:
         query_string = ""
 
-    response = api_client.get(f"/api/languages_and_levels/{query_string}")
+    response = api_client.get(f"/{base_route}/languages_and_levels/{query_string}")
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == [
         {
@@ -29,9 +30,10 @@ def test_languages_and_levels_list(api_client, language):
     ]
 
 
-def test_languages_and_levels_retrieve(api_client):
+@pytest.mark.parametrize("base_route", ["api", "api/dashboard"])
+def test_languages_and_levels_retrieve(api_client, base_route):
     language_and_level = LanguageAndLevel.objects.first()
-    response = api_client.get(f"/api/languages_and_levels/{language_and_level.id}/")
+    response = api_client.get(f"/{base_route}/languages_and_levels/{language_and_level.id}/")
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {
