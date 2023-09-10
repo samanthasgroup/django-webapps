@@ -1,5 +1,5 @@
 import logging
-from collections.abc import Iterable
+from collections.abc import Collection, Iterable
 from typing import Any
 
 from django.core.management.base import BaseCommand, CommandError, CommandParser
@@ -23,20 +23,27 @@ class Command(BaseCommand):
 
     def handle(self, *_: str, **options: Any) -> None:
         teachers: Iterable[Teacher]
-        if options["teacher_ids"]:
-            teachers = []
-            for teacher_id in options["teacher_ids"]:
-                try:
-                    teacher = Teacher.objects.get(pk=teacher_id)
-                except Teacher.DoesNotExist:
-                    raise CommandError(f"Teacher id does not exist: {teacher_id}")
-                if not teacher.can_take_more_groups:
-                    raise CommandError(f"Teacher is not available: {teacher}")
-                teachers.append(teacher)
-        else:
-            # Get all available teachers if none specified
-            teachers = GroupBuilder.get_available_teachers()
+        custom_teacher_ids = options.get("teacher_ids")
+        # Get all available teachers if none specified
+        teachers = (
+            self.get_teacher_ids(custom_teacher_ids)
+            if custom_teacher_ids
+            else GroupBuilder.get_available_teachers()
+        )
 
         for teacher in teachers:
             logger.debug(teacher)
             GroupBuilder.create_and_save_group(teacher.pk)
+
+    @staticmethod
+    def get_teacher_ids(teacher_ids: Iterable[str]) -> Collection[Teacher]:
+        teachers = []
+        for teacher_id in teacher_ids:
+            try:
+                teacher = Teacher.objects.get(pk=teacher_id)
+            except Teacher.DoesNotExist:
+                raise CommandError(f"Teacher id does not exist: {teacher_id}")
+            if not teacher.can_take_more_groups:
+                raise CommandError(f"Teacher is not available: {teacher}")
+            teachers.append(teacher)
+        return teachers
