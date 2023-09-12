@@ -1,8 +1,10 @@
 # DO NOT USE IN PROD, WORK IN PROGRESS
 
-from collections.abc import Collection, Iterator
+import itertools
+import logging
+from collections.abc import Collection, Iterable, Iterator
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import time
 
 from django.utils import timezone
 
@@ -11,6 +13,7 @@ from api.models.auxil.constants import (
     DEFAULT_LESSON_DURATION_MIN,
     MAX_AGE_KIDS_GROUP,
     MAX_AGE_TEEN_GROUP,
+    MIN_DAYS_BETWEEN_LESSONS,
 )
 from api.models.auxil.status_setter import StatusSetter
 from api.models.choices.communication_language_mode import CommunicationLanguageMode
@@ -21,12 +24,16 @@ from api.models.choices.log_event_type import (
 )
 from api.models.choices.status import (
     GroupProjectStatus,
+    StudentProjectStatus,
     StudentSituationalStatus,
     TeacherProjectStatus,
     TeacherSituationalStatus,
 )
+from api.models.day_and_time_slot import DayAndTimeSlot
 from api.models.language_and_level import LanguageAndLevel
 from api.processors.auxil.log_event_creator import GroupLogEventCreator
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -59,13 +66,16 @@ class GroupCandidate:
     age_range: AgeRange
     teacher: Teacher
     students: Collection[Student]
-    monday: datetime | None = None
-    tuesday: datetime | None = None
-    wednesday: datetime | None = None
-    thursday: datetime | None = None
-    friday: datetime | None = None
-    saturday: datetime | None = None
-    sunday: datetime | None = None
+    day_time_slots: Iterable[DayAndTimeSlot]
+
+    @property
+    def priority(self) -> int:
+        """
+        Numerical value for group priority.
+        Bigger value means more priority.
+        """
+        # TODO implement
+        return 1
 
     def __post_init__(self) -> None:
         # Validate group size against age-related restrictions
@@ -89,23 +99,18 @@ class GroupBuilder:
 
     @staticmethod
     def create_and_save_group(teacher_id: int) -> Group | None:
-        group_candidate = GroupBuilder._get_group_candidate(teacher_id)
+        group_candidate = GroupBuilder._get_best_group_candidate(teacher_id)
         if group_candidate is None:
             # No suitable groups found
             # TODO: log something to the bot eventually?
             return None
 
+        datetime_kwargs = GroupBuilder._get_datetime_kwargs(group_candidate.day_time_slots)
         group = Group(
             language_and_level=group_candidate.language_and_level,
             communication_language_mode=group_candidate.communication_language_mode,
             lesson_duration_in_minutes=DEFAULT_LESSON_DURATION_MIN,
-            monday=group_candidate.monday,
-            tuesday=group_candidate.tuesday,
-            wednesday=group_candidate.wednesday,
-            thursday=group_candidate.thursday,
-            friday=group_candidate.friday,
-            saturday=group_candidate.saturday,
-            sunday=group_candidate.sunday,
+            **datetime_kwargs,
         )
 
         group_creation_timestamp = timezone.now()
@@ -146,23 +151,129 @@ class GroupBuilder:
         raise ValueError(f"Group age range is inconsistent with boundaries: {age_range}")
 
     @staticmethod
-    def _get_group_candidate(teacher_id: int) -> GroupCandidate | None:
-        # THIS IS A STUB METHOD RETURNING DUMMY VALUES
-        # TODO filter for language+level, communication language, age groups, time slots (all UTC?)
-        # TODO iterate in correct priority order, yield results
+    def _get_best_group_candidate(teacher_id: int) -> GroupCandidate | None:
         teacher = Teacher.objects.get(pk=teacher_id)
+        group_candidates: list[GroupCandidate] = []
+
+        for language_and_level in teacher.teaching_languages_and_levels.all():
+            logger.debug(language_and_level)
+            for first_time_slot, second_time_slot in GroupBuilder._iterate_lesson_times(teacher):
+                for age_range in teacher.student_age_ranges.all():
+                    group_candidate = GroupBuilder._build_group_candidate(
+                        teacher=teacher,
+                        age_range=age_range,
+                        language_and_level=language_and_level,
+                        day_time_slots=(first_time_slot, second_time_slot),
+                    )
+                    if group_candidate is not None:
+                        group_candidates.append(group_candidate)
+
+        if len(group_candidates) == 0:
+            return None
+
+        group_candidates.sort(key=lambda candidate: candidate.priority, reverse=True)
+        return group_candidates[0]
+
+    @staticmethod
+    def _build_group_candidate(
+        teacher: Teacher,
+        age_range: AgeRange,
+        language_and_level: LanguageAndLevel,
+        day_time_slots: Iterable[DayAndTimeSlot],
+    ) -> GroupCandidate | None:
+        restrictions = GroupBuilder._get_allowed_group_size(age_range)
+        communication_language = CommunicationLanguageMode(
+            teacher.personal_info.communication_language_mode
+        )
+        students = GroupBuilder._get_students(
+            language_and_level=language_and_level,
+            age_range=age_range,
+            communication_language=communication_language,
+            day_time_slots=day_time_slots,
+            max_students_num=restrictions.max,
+        )
+        logger.debug(students)
+        if len(students) < restrictions.min:
+            return None
 
         return GroupCandidate(
-            age_range=AgeRange(age_from=18, age_to=90),
-            language_and_level=teacher.teaching_languages_and_levels.first(),  # type: ignore
-            communication_language_mode=CommunicationLanguageMode(
-                teacher.personal_info.communication_language_mode
-            ),
+            age_range=age_range,
+            language_and_level=language_and_level,
+            communication_language_mode=communication_language,
             teacher=teacher,
-            students=list(range(1, 10)),  # type: ignore
-            monday=timezone.now(),
-            wednesday=timezone.now(),
+            students=students,
+            day_time_slots=day_time_slots,
         )
+
+    @staticmethod
+    def _get_students(
+        language_and_level: LanguageAndLevel,
+        age_range: AgeRange,
+        communication_language: CommunicationLanguageMode,
+        day_time_slots: Iterable[DayAndTimeSlot],
+        max_students_num: int,
+    ) -> Collection[Student]:
+        # TODO: handle age ranges properly (add more ranges when necessary)
+        student_manager = Student.objects.filter(
+            project_status=StudentProjectStatus.NO_GROUP_YET,
+            teaching_languages_and_levels=language_and_level,
+            personal_info__communication_language_mode=communication_language,
+            age_range__age_from__gte=age_range.age_from,
+            age_range__age_to__lte=age_range.age_to,
+        )
+        for time_slot in day_time_slots:
+            student_manager = student_manager.filter(availability_slots=time_slot)
+
+        return student_manager.order_by("personal_info__date_and_time_added")[:max_students_num]
+
+    @staticmethod
+    def _iterate_lesson_times(teacher: Teacher) -> Iterator[tuple[DayAndTimeSlot, DayAndTimeSlot]]:
+        """
+        Iterate over tuples of available time slots.
+        There should be at least one free day between lessons.
+        """
+        teacher_availability_slots = teacher.availability_slots.all()
+        for first_availability, second_availability in itertools.product(
+            teacher_availability_slots, repeat=2
+        ):
+            if GroupBuilder._availability_slots_have_break(
+                first_availability, second_availability
+            ):
+                yield (first_availability, second_availability)
+
+    @staticmethod
+    def _availability_slots_have_break(
+        first_availability: DayAndTimeSlot, second_availability: DayAndTimeSlot
+    ) -> bool:
+        """
+        Check that second availability slot is strictly after first, but not too soon after.
+        """
+        first_day = first_availability.day_of_week_index
+        second_day = second_availability.day_of_week_index
+
+        if first_day >= second_day:
+            return False
+
+        days_between_two_weekdays = min((second_day - first_day) % 7, (first_day - second_day) % 7)
+        return days_between_two_weekdays > MIN_DAYS_BETWEEN_LESSONS
+
+    @staticmethod
+    def _get_datetime_kwargs(day_time_slots: Iterable[DayAndTimeSlot]) -> dict[str, time]:
+        """
+        Convert custom day and time slots to dict in format we use in data model.
+
+        E.g.
+        {
+            weekday_name: datetime.time
+        }
+        """
+        datetime_kwargs = {}
+        for day_time_slot in day_time_slots:
+            day_value = day_time_slot.day_of_week_index
+            day_name = DayAndTimeSlot.DayOfWeek(day_value).name.lower()
+            first_hour = day_time_slot.time_slot.from_utc_hour
+            datetime_kwargs[day_name] = first_hour
+        return datetime_kwargs
 
     @staticmethod
     def _create_log_events(group: Group) -> None:
