@@ -104,6 +104,9 @@ class TeacherLogEventType(models.TextChoices):
     GROUP_CONFIRMED = "group_confirmed", "Group confirmed, awaiting start of classes"
     STUDY_START = "started_teaching_group", "Started teaching a group"
     HOSTED_SPEAKING_CLUB = "hosted_speaking_club", "Hosted a speaking club session"
+    REQUESTED_TRANSFER = "requested_transfer", "Requested transfer"
+    TRANSFERRED = "transferred", "Transferred"
+    TRANSFER_CANCELED = "transfer_canceled", "Transfer canceled"
     LEFT_PREMATURELY = "left_prematurely", "Left the project prematurely"
     FINISHED_AND_LEAVING = (
         "finished_and_leaving",

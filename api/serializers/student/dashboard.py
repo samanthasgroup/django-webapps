@@ -76,13 +76,15 @@ class DashboardStudentTransferSerializer(PersonTransferSerializer):
         validated_attrs = super().validate(attrs)
         to_group = validated_attrs["to_group"]
         from_group = validated_attrs["from_group"]
-        if self.instance is not None and self.instance in to_group.students.all():
+        if self.instance is not None and to_group.students.filter(pk=self.instance.pk).exists():
             raise ConflictError(
                 f"Student {self.instance.pk} is already in that group {to_group.pk}"
             )
 
-        if self.instance is not None and self.instance not in from_group.students.all():
-            student_id = self.instance.pk
-            raise ConflictError(f"Student {student_id} must be in group {from_group.pk}")
+        if (
+            self.instance is not None
+            and not from_group.students.filter(pk=self.instance.pk).exists()
+        ):
+            raise ConflictError(f"Student {self.instance.pk} must be in group {from_group.pk}")
 
         return validated_attrs

@@ -257,7 +257,7 @@ class TestDashboardTeacherTransfer:
         assert teacher in old_group.teachers_former.all()
         assert teacher not in old_group.teachers.all()
         log_event: TeacherLogEvent = TeacherLogEvent.objects.get(teacher_id=teacher.pk)
-        assert log_event.type == TeacherLogEventType.STUDY_START
+        assert log_event.type == TeacherLogEventType.TRANSFERRED
         assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
     def test_dashboard_teacher_transfer_from_empty_group(

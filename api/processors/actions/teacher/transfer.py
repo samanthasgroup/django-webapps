@@ -23,8 +23,8 @@ class TeacherTransferProcessor(TeacherActionProcessor):
         self.teacher.groups.remove(self.from_group)
         self.from_group.teachers_former.add(self.teacher)
         self.to_group.teachers.add(self.teacher)
-        self.teacher.save()
         self.to_group.save()
+        self.from_group.save()
 
     def _set_statuses(self) -> None:
         self.teacher.project_status = TeacherProjectStatus.WORKING
@@ -37,5 +37,5 @@ class TeacherTransferProcessor(TeacherActionProcessor):
             teacher=self.teacher,
             from_group=self.from_group,
             to_group=self.to_group,
-            type=TeacherLogEventType.STUDY_START,
+            type=TeacherLogEventType.TRANSFERRED,
         )
