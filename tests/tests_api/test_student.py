@@ -6,6 +6,7 @@ from rest_framework import status
 
 from api.models import (
     AgeRange,
+    Coordinator,
     DayAndTimeSlot,
     LanguageAndLevel,
     NonTeachingHelp,
@@ -294,3 +295,49 @@ class TestDashboardStudentTransfer:
             data={"to_group_id": active_group.pk, "from_group_id": old_group.pk},
         )
         assert response.status_code == status.HTTP_409_CONFLICT
+
+
+class TestStudentWithPersonalInfo:
+    def test_dashboard_student_with_personal_info_for_coordinator(
+        self, api_client, faker, availability_slots
+    ):
+        utc_offset_hours = faker.pyint(min_value=-12, max_value=12)
+        utc_offset_minutes = faker.random_element([0, 30])
+        utc_timedelta = datetime.timedelta(hours=utc_offset_hours, minutes=utc_offset_minutes)
+        student = baker.make(
+            Student,
+            make_m2m=True,
+            personal_info__utc_timedelta=utc_timedelta,
+            availability_slots=availability_slots,
+        )
+
+        other_student = baker.make(
+            Student,
+            make_m2m=True,
+            personal_info__utc_timedelta=utc_timedelta,
+            availability_slots=availability_slots,
+        )  # This student is not in the group and should not be included in the response.
+        coordinator = baker.make(Coordinator, make_m2m=True, _fill_optional=True)
+        group = baker.make(
+            Group,
+            _fill_optional=True,
+            make_m2m=True,
+            availability_slots_for_auto_matching=availability_slots,
+        )
+        group.students.add(student)
+        group.save()
+        group.coordinators.add(coordinator)
+        group.save()
+
+        response = api_client.get(
+            "/api/dashboard/students_with_personal_info/",
+            data={"for_coordinator_email": coordinator.personal_info.email},
+        )
+        assert response.status_code == status.HTTP_200_OK
+        # Note: the JSON representation structure is tested elsewhere,
+        # this tests that the right students are returned
+
+        returned_ids = [x["id"] for x in response.json()]
+
+        assert student.personal_info.id in returned_ids
+        assert other_student.personal_info.id not in returned_ids
