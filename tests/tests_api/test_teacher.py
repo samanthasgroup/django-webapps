@@ -280,3 +280,26 @@ class TestDashboardTeacherTransfer:
             data={"to_group_id": active_group.pk, "from_group_id": old_group.pk},
         )
         assert response.status_code == status.HTTP_409_CONFLICT
+
+    def test_dashboard_teacher_transfer_to_none_exsiting_group(
+        self, api_client, active_group: Group, availability_slots
+    ):
+        teacher = baker.make(
+            Teacher,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        old_group = baker.make(
+            Group,
+            _fill_optional=True,
+            make_m2m=True,
+            availability_slots_for_auto_matching=availability_slots,
+        )
+        group_id = active_group.pk
+        active_group.delete()
+        response = api_client.post(
+            f"/api/dashboard/teachers/{teacher.personal_info.id}/transfer/",
+            data={"to_group_id": group_id, "from_group_id": old_group.pk},
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT
