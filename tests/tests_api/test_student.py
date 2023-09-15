@@ -1,5 +1,6 @@
 import datetime
 
+import pytest
 import pytz
 from model_bakery import baker, seq
 from rest_framework import status
@@ -298,9 +299,7 @@ class TestDashboardStudentTransfer:
 
 
 class TestStudentWithPersonalInfo:
-    def test_dashboard_student_with_personal_info_for_coordinator(
-        self, api_client, faker, availability_slots
-    ):
+    def test_can_filter_by_coordinator_email(self, api_client, faker, availability_slots):
         utc_offset_hours = faker.pyint(min_value=-12, max_value=12)
         utc_offset_minutes = faker.random_element([0, 30])
         utc_timedelta = datetime.timedelta(hours=utc_offset_hours, minutes=utc_offset_minutes)
@@ -325,19 +324,48 @@ class TestStudentWithPersonalInfo:
             availability_slots_for_auto_matching=availability_slots,
         )
         group.students.add(student)
-        group.save()
         group.coordinators.add(coordinator)
-        group.save()
 
         response = api_client.get(
             "/api/dashboard/students_with_personal_info/",
             data={"for_coordinator_email": coordinator.personal_info.email},
         )
         assert response.status_code == status.HTTP_200_OK
-        # Note: the JSON representation structure is tested elsewhere,
-        # this tests that the right students are returned
 
-        returned_ids = [x["id"] for x in response.json()]
+        returned_ids = [student["id"] for student in response.json()]
 
         assert student.personal_info.id in returned_ids
         assert other_student.personal_info.id not in returned_ids
+
+    @pytest.mark.parametrize("project_status", StudentProjectStatus.values)
+    def test_can_filter_by_project_status(self, api_client, availability_slots, project_status):
+        group = baker.make(
+            Group,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots_for_auto_matching=availability_slots,
+        )
+
+        students = [
+            baker.make(
+                Student,
+                make_m2m=True,
+                personal_info__utc_timedelta=datetime.timedelta(),
+                availability_slots=availability_slots,
+                project_status=ps,
+            )
+            for ps in StudentProjectStatus.values
+        ]
+
+        group.students.add(*students)
+
+        response = api_client.get(
+            "/api/dashboard/students_with_personal_info/",
+            data={"project_status": project_status},
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+
+        returned_statuses = [student["project_status"] for student in response.json()]
+
+        assert all(returned_status == project_status for returned_status in returned_statuses)

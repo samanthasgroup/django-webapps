@@ -1,12 +1,15 @@
 import datetime
 
+import pytest
 import pytz
 from model_bakery import baker, seq
 from rest_framework import status
 
 from api.models import (
     AgeRange,
+    Coordinator,
     DayAndTimeSlot,
+    Group,
     LanguageAndLevel,
     NonTeachingHelp,
     PersonalInfo,
@@ -14,7 +17,6 @@ from api.models import (
 )
 from api.models.choices.log_event_type import TeacherLogEventType
 from api.models.choices.status import TeacherProjectStatus
-from api.models.group import Group
 from api.models.log_event import TeacherLogEvent
 from api.serializers import DashboardTeacherSerializer, TeacherWriteSerializer
 from tests.tests_api.asserts import (
@@ -208,7 +210,7 @@ def test_dashboard_teacher_retrieve(api_client, faker, availability_slots):
     assert_response_data(response.data, teacher_data)
 
 
-def test_dashboard_teache_list(api_client, faker, availability_slots):
+def test_dashboard_teacher_list(api_client, faker, availability_slots):
     utc_offset_hours = faker.pyint(min_value=-12, max_value=12)
     sign = "+" if utc_offset_hours >= 0 else "-"
     utc_offset_minutes = faker.random_element([0, 30])
@@ -303,3 +305,76 @@ class TestDashboardTeacherTransfer:
             data={"to_group_id": group_id, "from_group_id": old_group.pk},
         )
         assert response.status_code == status.HTTP_409_CONFLICT
+
+
+class TestDashboardTeacherWithPersonalInfo:
+    def test_can_filter_by_coordinator_email(self, api_client, faker, availability_slots):
+        utc_offset_hours = faker.pyint(min_value=-12, max_value=12)
+        utc_offset_minutes = faker.random_element([0, 30])
+        utc_timedelta = datetime.timedelta(hours=utc_offset_hours, minutes=utc_offset_minutes)
+        teacher = baker.make(
+            Teacher,
+            make_m2m=True,
+            personal_info__utc_timedelta=utc_timedelta,
+            availability_slots=availability_slots,
+        )
+
+        other_teacher = baker.make(
+            Teacher,
+            make_m2m=True,
+            personal_info__utc_timedelta=utc_timedelta,
+            availability_slots=availability_slots,
+        )  # This teacher is not in the group and should not be included in the response.
+        coordinator = baker.make(Coordinator, make_m2m=True, _fill_optional=True)
+        group = baker.make(
+            Group,
+            _fill_optional=True,
+            make_m2m=True,
+            availability_slots_for_auto_matching=availability_slots,
+        )
+        group.teachers.add(teacher)
+        group.coordinators.add(coordinator)
+
+        response = api_client.get(
+            "/api/dashboard/teachers_with_personal_info/",
+            data={"for_coordinator_email": coordinator.personal_info.email},
+        )
+        assert response.status_code == status.HTTP_200_OK
+
+        returned_ids = [teacher["id"] for teacher in response.json()]
+
+        assert teacher.personal_info.id in returned_ids
+        assert other_teacher.personal_info.id not in returned_ids
+
+    @pytest.mark.parametrize("project_status", TeacherProjectStatus.values)
+    def test_can_filter_by_project_status(self, api_client, availability_slots, project_status):
+        group = baker.make(
+            Group,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots_for_auto_matching=availability_slots,
+        )
+
+        teachers = [
+            baker.make(
+                Teacher,
+                make_m2m=True,
+                personal_info__utc_timedelta=datetime.timedelta(),
+                availability_slots=availability_slots,
+                project_status=ps,
+            )
+            for ps in TeacherProjectStatus.values
+        ]
+
+        group.teachers.add(*teachers)
+
+        response = api_client.get(
+            "/api/dashboard/teachers_with_personal_info/",
+            data={"project_status": project_status},
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+
+        returned_statuses = [teacher["project_status"] for teacher in response.json()]
+
+        assert all(returned_status == project_status for returned_status in returned_statuses)
