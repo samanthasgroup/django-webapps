@@ -133,3 +133,5 @@ dmypy.json
 /django_webapps/settings.py
 
 /static/
+
+.vscode/
