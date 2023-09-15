@@ -23,7 +23,7 @@ class StudentTransferProcessor(StudentActionProcessor):
         self.student.groups.remove(self.from_group)
         self.from_group.students_former.add(self.student)
         self.to_group.students.add(self.student)
-        self.student.save()
+        self.from_group.save()
         self.to_group.save()
 
     def _set_statuses(self) -> None:
