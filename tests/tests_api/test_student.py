@@ -324,19 +324,15 @@ class TestStudentWithPersonalInfo:
             availability_slots_for_auto_matching=availability_slots,
         )
         group.students.add(student)
-        group.save()
         group.coordinators.add(coordinator)
-        group.save()
 
         response = api_client.get(
             "/api/dashboard/students_with_personal_info/",
             data={"for_coordinator_email": coordinator.personal_info.email},
         )
         assert response.status_code == status.HTTP_200_OK
-        # Note: the JSON representation structure is tested elsewhere,
-        # this tests that the right students are returned
 
-        returned_ids = [x["id"] for x in response.json()]
+        returned_ids = [student["id"] for student in response.json()]
 
         assert student.personal_info.id in returned_ids
         assert other_student.personal_info.id not in returned_ids
@@ -362,7 +358,6 @@ class TestStudentWithPersonalInfo:
         ]
 
         group.students.add(*students)
-        group.save()
 
         response = api_client.get(
             "/api/dashboard/students_with_personal_info/",
@@ -371,6 +366,6 @@ class TestStudentWithPersonalInfo:
 
         assert response.status_code == status.HTTP_200_OK
 
-        returned_statuses = [x["project_status"] for x in response.json()]
+        returned_statuses = [student["project_status"] for student in response.json()]
 
-        assert all(rs == project_status for rs in returned_statuses)
+        assert all(returned_status == project_status for returned_status in returned_statuses)

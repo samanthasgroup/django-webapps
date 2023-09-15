@@ -240,7 +240,7 @@ class TestDashboardTeacherWithPersonalInfo:
             make_m2m=True,
             personal_info__utc_timedelta=utc_timedelta,
             availability_slots=availability_slots,
-        )  # This student is not in the group and should not be included in the response.
+        )  # This teacher is not in the group and should not be included in the response.
         coordinator = baker.make(Coordinator, make_m2m=True, _fill_optional=True)
         group = baker.make(
             Group,
@@ -249,19 +249,15 @@ class TestDashboardTeacherWithPersonalInfo:
             availability_slots_for_auto_matching=availability_slots,
         )
         group.teachers.add(teacher)
-        group.save()
         group.coordinators.add(coordinator)
-        group.save()
 
         response = api_client.get(
             "/api/dashboard/teachers_with_personal_info/",
             data={"for_coordinator_email": coordinator.personal_info.email},
         )
         assert response.status_code == status.HTTP_200_OK
-        # Note: the JSON representation structure is tested elsewhere,
-        # this tests that the right students are returned
 
-        returned_ids = [x["id"] for x in response.json()]
+        returned_ids = [teacher["id"] for teacher in response.json()]
 
         assert teacher.personal_info.id in returned_ids
         assert other_teacher.personal_info.id not in returned_ids
@@ -287,7 +283,6 @@ class TestDashboardTeacherWithPersonalInfo:
         ]
 
         group.teachers.add(*teachers)
-        group.save()
 
         response = api_client.get(
             "/api/dashboard/teachers_with_personal_info/",
@@ -296,6 +291,6 @@ class TestDashboardTeacherWithPersonalInfo:
 
         assert response.status_code == status.HTTP_200_OK
 
-        returned_statuses = [x["project_status"] for x in response.json()]
+        returned_statuses = [teacher["project_status"] for teacher in response.json()]
 
-        assert all(rs == project_status for rs in returned_statuses)
+        assert all(returned_status == project_status for returned_status in returned_statuses)
