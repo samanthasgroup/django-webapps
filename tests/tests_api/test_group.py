@@ -25,6 +25,7 @@ from api.models.choices.status import (
     TeacherProjectStatus,
 )
 from api.serializers import GroupReadSerializer, GroupWriteSerializer
+from tests.fixtures.group import make_active_group
 from tests.tests_api.asserts import (
     assert_date_time_with_timestamp,
     assert_response_data,
@@ -556,7 +557,16 @@ class TestDashboardGroupFinish:
     def _make_url(group: Group) -> str:
         return reverse("groups-finish", kwargs={"pk": group.id})
 
-    def test_dashboard_group_finish_general_check(self, api_client, active_group, timestamp):
+    def test_dashboard_group_finish_general_check(
+        self, api_client, active_group, timestamp, availability_slots
+    ):
+        student_studying_in_multiple_groups = active_group.students.first()
+
+        # Created for checking case when students studying in multiple groups
+        other_active_group = make_active_group(timestamp, availability_slots)
+        other_active_group.students.add(student_studying_in_multiple_groups)
+        other_active_group.save()
+
         prev_student_count, prev_teacher_count, prev_coordinator_count = (
             active_group.students.count(),
             active_group.teachers.count(),
@@ -593,7 +603,11 @@ class TestDashboardGroupFinish:
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
         for student in active_group.students_former.iterator():
-            assert student.project_status == StudentProjectStatus.STUDYING
+            if student == student_studying_in_multiple_groups:
+                assert student.project_status == StudentProjectStatus.STUDYING
+            else:
+                assert student.project_status == StudentProjectStatus.AWAITING_DECISION
+
             assert student.status_since == common_status_since
 
             log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)

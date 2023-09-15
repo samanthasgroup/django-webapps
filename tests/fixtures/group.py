@@ -31,8 +31,7 @@ def group(timestamp, availability_slots):
     yield group
 
 
-@pytest.fixture
-def active_group(timestamp, availability_slots):
+def make_active_group(timestamp, availability_slots):
     group = baker.make(
         Group,
         _fill_optional=True,
@@ -50,6 +49,12 @@ def active_group(timestamp, availability_slots):
     group.students_former.clear()
     group.coordinators_former.clear()
     group.save()
+    return group
+
+
+@pytest.fixture
+def active_group(timestamp, availability_slots):
+    group = make_active_group(timestamp, availability_slots)
     yield group
 
 

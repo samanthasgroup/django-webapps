@@ -1,5 +1,7 @@
 from django.db import transaction
+from django.db.models import Count
 
+from api.models import Student
 from api.models.auxil.status_setter import StatusSetter
 from api.models.choices.log_event_type import (
     CoordinatorLogEventType,
@@ -55,8 +57,19 @@ class GroupFinishProcessor(GroupActionProcessor):
         )
 
     def _set_students_status(self) -> None:
-        self.group.students.update(
+        annotated_students = Student.objects.annotate(groups_count=Count("groups")).filter(
+            groups=self.group
+        )
+
+        annotated_students.filter(groups_count__gt=1).update(
             project_status=StudentProjectStatus.STUDYING,
+            situational_status="",
+            status_since=self.timestamp,
+        )
+
+        # after moving the student, this 1 will become 0
+        annotated_students.filter(groups_count=1).update(
+            project_status=StudentProjectStatus.AWAITING_DECISION,
             situational_status="",
             status_since=self.timestamp,
         )
