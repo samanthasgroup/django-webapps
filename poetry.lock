@@ -325,13 +325,13 @@ phonenumberslite = ["phonenumberslite (>=7.0.2)"]
 
 [[package]]
 name = "django-stubs"
-version = "4.2.3"
+version = "4.2.4"
 description = "Mypy stubs for Django"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django-stubs-4.2.3.tar.gz", hash = "sha256:dadab39b46d9ae8f37a8e879c590f39a9e042b565c03fa0c5a8f754b441b1f23"},
-    {file = "django_stubs-4.2.3-py3-none-any.whl", hash = "sha256:e30e2e4927ba14bec587ed2c686404b6b8e473cabe9baca445e7d2e1e0d7b14f"},
+    {file = "django-stubs-4.2.4.tar.gz", hash = "sha256:7d4a132c381519815e865c27a89eca41bcbd06056832507224816a43d75c601c"},
+    {file = "django_stubs-4.2.4-py3-none-any.whl", hash = "sha256:834b60fd81510cce6b56c1c6c28bec3c504a418bc90ff7d0063fabe8ab9a7868"},
 ]
 
 [package.dependencies]
@@ -344,7 +344,7 @@ types-PyYAML = "*"
 typing-extensions = "*"
 
 [package.extras]
-compatible-mypy = ["mypy (==1.4.*)"]
+compatible-mypy = ["mypy (==1.5.*)"]
 
 [[package]]
 name = "django-stubs-ext"
@@ -1257,4 +1257,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "126716e5f0b3c5dc7cf95befb55579ed3ba49d85e6ceb8c8f7c83d85d1b0b364"
+content-hash = "89f65ac21b012fc39dddb27ef33b49f62374e829381c1f654e67af31d22bf690"
