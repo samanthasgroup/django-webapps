@@ -525,6 +525,9 @@ class Migration(migrations.Migration):
                             ("group_confirmed", "Group confirmed, awaiting start of classes"),
                             ("started_teaching_group", "Started teaching a group"),
                             ("hosted_speaking_club", "Hosted a speaking club session"),
+                            ("requested_transfer", "Requested transfer"),
+                            ("transferred", "Transferred"),
+                            ("transfer_canceled", "Transfer canceled"),
                             ("left_prematurely", "Left the project prematurely"),
                             (
                                 "finished_and_leaving",
