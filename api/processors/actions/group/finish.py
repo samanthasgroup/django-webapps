@@ -61,16 +61,13 @@ class GroupFinishProcessor(GroupActionProcessor):
             groups=self.group
         )
 
-        # TODO: We should check group status or something
-        #  to set correct status, not just count of groups
-        #  Because other groups also could be finished etc.
-        #  Maybe just don't change status for such students?
         annotated_students.filter(groups_count__gt=1).update(
             project_status=StudentProjectStatus.STUDYING,
             situational_status="",
             status_since=self.timestamp,
         )
 
+        # after moving the student, this 1 will become 0
         annotated_students.filter(groups_count=1).update(
             project_status=StudentProjectStatus.AWAITING_DECISION,
             situational_status="",
