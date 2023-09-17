@@ -1,6 +1,6 @@
 from api.models import Student
 from api.models.group import Group
-from api.processors.actions import StudentTransferProcessor
+from api.processors.actions import StudentMissedClassProcessor, StudentTransferProcessor
 
 
 class StudentProcessor:
@@ -9,3 +9,7 @@ class StudentProcessor:
     @staticmethod
     def transfer(student: Student, to_group: Group, from_group: Group) -> None:
         StudentTransferProcessor(student, to_group, from_group).process()
+
+    @staticmethod
+    def missed_class(student: Student, group: Group, notified: bool) -> None:
+        StudentMissedClassProcessor(student, group, notified).process()

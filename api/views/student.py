@@ -9,6 +9,7 @@ from api.filters import StudentFilter
 from api.models import Student
 from api.processors import StudentProcessor
 from api.serializers import (
+    DashboardStudentMissedClassSerializer,
     DashboardStudentSerializer,
     DashboardStudentTransferSerializer,
     DashboardStudentWithPersonalInfoSerializer,
@@ -62,6 +63,34 @@ class DashboardStudentViewSet(viewsets.ReadOnlyModelViewSet[Student]):
             student,
             query_params_serializer.validated_data["to_group"],
             query_params_serializer.validated_data["from_group"],
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(
+        request=DashboardStudentMissedClassSerializer,
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
+            status.HTTP_409_CONFLICT: OpenApiResponse(
+                response=BaseAPIExceptionSerializer,
+                description="invalid group or student is not in the group",
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=ValidationErrorSerializer,
+                description="Something is wrong with the query params",
+            ),
+        },
+    )
+    @action(detail=True, methods=["post"])
+    def missed_class(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
+        student = self.get_object()
+        query_params_serializer = DashboardStudentMissedClassSerializer(
+            data=request.data, instance=student
+        )
+        query_params_serializer.is_valid(raise_exception=True)
+        StudentProcessor.missed_class(
+            student,
+            query_params_serializer.validated_data["group"],
+            query_params_serializer.validated_data["notified"],
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 

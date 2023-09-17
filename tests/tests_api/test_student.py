@@ -15,7 +15,7 @@ from api.models import (
     Student,
 )
 from api.models.choices.log_event_type import StudentLogEventType
-from api.models.choices.status import StudentProjectStatus
+from api.models.choices.status import StudentProjectStatus, StudentSituationalStatus
 from api.models.group import Group
 from api.models.log_event import StudentLogEvent
 from api.serializers import DashboardStudentSerializer, StudentWriteSerializer
@@ -369,3 +369,122 @@ class TestStudentWithPersonalInfo:
         returned_statuses = [student["project_status"] for student in response.json()]
 
         assert all(returned_status == project_status for returned_status in returned_statuses)
+
+
+class TestDashboardStudentMissedClass:
+    def _create_logs_for_past_missed_days(
+        self, past_missed_days: list[int], timestamp, student
+    ) -> None:
+        for days in past_missed_days:
+            date_time = timestamp - datetime.timedelta(days=days)
+            log_event = StudentLogEvent.objects.create(
+                student=student,
+                type=StudentLogEventType.MISSED_CLASS_SILENTLY,
+            )
+            log_event.date_time = date_time
+            log_event.save()
+
+    def test_dashboard_student_missed_class_general_checks(
+        self, api_client, active_group: Group, timestamp, availability_slots
+    ):
+        student = baker.make(
+            Student,
+            situational_status="",
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        active_group.students.add(student)
+        active_group.save()
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/missed_class/",
+            data={"group_id": active_group.pk, "notified": True},
+        )
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        student.refresh_from_db()
+        log_event: StudentLogEvent = StudentLogEvent.objects.get(student_id=student.pk)
+        assert log_event.type == StudentLogEventType.MISSED_CLASS_NOTIFIED
+        assert student.situational_status == ""
+        assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+        self._create_logs_for_past_missed_days([21, 15, 10], timestamp, student)
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/missed_class/",
+            data={"group_id": active_group.pk, "notified": False},
+        )
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        student.refresh_from_db()
+        log_event: StudentLogEvent = StudentLogEvent.objects.filter(student_id=student.pk).last()
+        assert log_event.type == StudentLogEventType.MISSED_CLASS_SILENTLY
+        assert student.situational_status == ""
+        assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+    @pytest.mark.parametrize(
+        "past_missed_days",
+        [[2, 10], [3, 10, 12], [0, 0], [13, 13], [12, 13], [1, 2], [26, 21, 4, 9]],
+    )
+    def test_dashboard_student_missed_class_reached_limit(  # noqa: PLR0913
+        self, api_client, active_group: Group, timestamp, availability_slots, past_missed_days
+    ):
+        student = baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        active_group.students.add(student)
+        active_group.save()
+        self._create_logs_for_past_missed_days(past_missed_days, timestamp, student)
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/missed_class/",
+            data={"group_id": active_group.pk, "notified": False},
+        )
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        student.refresh_from_db()
+        log_event: StudentLogEvent = StudentLogEvent.objects.filter(student_id=student.pk).last()
+        assert log_event.type == StudentLogEventType.MISSED_CLASS_SILENTLY
+        assert student.situational_status == StudentSituationalStatus.NOT_ATTENDING
+        assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+    @pytest.mark.parametrize(
+        "past_missed_days",
+        [[21, 14], [14, 14], [14, 15], [100, 35], [10, 15, 20], [25, 24, 14, 20]],
+    )
+    def test_dashboard_student_missed_class_not_reached_limit(  # noqa: PLR0913
+        self, api_client, active_group: Group, timestamp, availability_slots, past_missed_days
+    ):
+        student = baker.make(
+            Student,
+            situational_status="",
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        active_group.students.add(student)
+        active_group.save()
+        self._create_logs_for_past_missed_days(past_missed_days, timestamp, student)
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/missed_class/",
+            data={"group_id": active_group.pk, "notified": False},
+        )
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        student.refresh_from_db()
+        log_event: StudentLogEvent = StudentLogEvent.objects.filter(student_id=student.pk).last()
+        assert log_event.type == StudentLogEventType.MISSED_CLASS_SILENTLY
+        assert student.situational_status == ""
+        assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+    def test_dashboard_student_missed_class_bad_group(
+        self, api_client, active_group: Group, availability_slots
+    ):
+        student = baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/missed_class/",
+            data={"group_id": active_group.pk, "notified": False},
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT
