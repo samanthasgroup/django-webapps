@@ -448,7 +448,7 @@ class TestDashboardStudentMissedClass:
 
     @pytest.mark.parametrize(
         "past_missed_days",
-        [[21, 14], [14, 14], [14, 15], [100, 35], [10, 15, 20], [25, 24, 14, 20]],
+        [[0], [3], [21, 14], [14, 14], [14, 15], [100, 35], [10, 15, 20], [25, 24, 14, 20]],
     )
     def test_dashboard_student_missed_class_not_reached_limit(  # noqa: PLR0913
         self, api_client, active_group: Group, timestamp, availability_slots, past_missed_days
