@@ -23,14 +23,12 @@ class StudentMissedClassProcessor(StudentActionProcessor):
 
     def _is_student_reached_limit(self) -> bool:
         last_two_weeks_date = self.timestamp - timedelta(weeks=2)
-        student_class_misses = StudentLogEvent.objects.filter(
+        student_class_misses_count = StudentLogEvent.objects.filter(
             date_time__gte=last_two_weeks_date,
             type=StudentLogEventType.MISSED_CLASS_SILENTLY,
             student=self.student,
-        ).all()
-        if student_class_misses.count() >= STUDENT_CLASS_MISS_LIMIT:
-            return True
-        return False
+        ).count()
+        return student_class_misses_count >= STUDENT_CLASS_MISS_LIMIT
 
     def _set_statuses(self) -> None:
         if self._is_student_reached_limit():
