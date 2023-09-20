@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from api.exceptions import ConflictError
 from api.models import Student
+from api.models.group import Group
 from api.serializers import DashboardPersonalInfoSerializer
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
@@ -88,3 +89,21 @@ class DashboardStudentTransferSerializer(PersonTransferSerializer):
             raise ConflictError(f"Student {self.instance.pk} must be in group {from_group.pk}")
 
         return validated_attrs
+
+
+class DashboardStudentMissedClassSerializer(serializers.Serializer[Any]):
+    group_id = serializers.IntegerField()
+    notified = serializers.BooleanField()
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        try:
+            group = Group.objects.get(pk=int(attrs["group_id"]))
+        except Group.DoesNotExist:
+            raise ConflictError(f"Group {attrs['group_id']} not found")
+
+        if self.instance is not None and not group.students.filter(pk=self.instance.pk).exists():
+            raise ConflictError(f"Student {self.instance.pk} is not in group {group.pk}")
+
+        attrs["group"] = group
+
+        return attrs
