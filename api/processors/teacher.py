@@ -1,6 +1,6 @@
 from api.models import Teacher
 from api.models.group import Group
-from api.processors.actions import TeacherTransferProcessor
+from api.processors.actions import TeacherTransferProcessor, TeacherWentOnLeaveProcessor
 
 
 class TeacherProcessor:
@@ -9,3 +9,7 @@ class TeacherProcessor:
     @staticmethod
     def transfer(teacher: Teacher, to_group: Group, from_group: Group) -> None:
         TeacherTransferProcessor(teacher, to_group, from_group).process()
+
+    @staticmethod
+    def went_on_leave(teacher: Teacher) -> None:
+        TeacherWentOnLeaveProcessor(teacher).process()

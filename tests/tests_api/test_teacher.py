@@ -378,3 +378,22 @@ class TestDashboardTeacherWithPersonalInfo:
         returned_statuses = [teacher["project_status"] for teacher in response.json()]
 
         assert all(returned_status == project_status for returned_status in returned_statuses)
+
+
+def test_dashboard_teacher_went_on_leave(api_client, availability_slots, timestamp):
+    teacher = baker.make(
+        Teacher,
+        make_m2m=True,
+        _fill_optional=True,
+        project_status=TeacherProjectStatus.LEFT_PREMATURELY,
+        availability_slots=availability_slots,
+    )
+    response = api_client.post(
+        f"/api/dashboard/teachers/{teacher.personal_info.id}/went_on_leave/",
+    )
+    teacher.refresh_from_db()
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    log_event: TeacherLogEvent = TeacherLogEvent.objects.filter(teacher_id=teacher.pk).last()
+    assert log_event.type == TeacherLogEventType.GONE_ON_LEAVE
+    assert teacher.project_status == TeacherProjectStatus.ON_LEAVE
+    assert_date_time_with_timestamp(log_event.date_time, timestamp)
