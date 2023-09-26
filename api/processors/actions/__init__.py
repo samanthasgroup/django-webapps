@@ -18,7 +18,6 @@ __all__ = [
     "StudentTransferProcessor",
     "StudentMissedClassProcessor",
     "TeacherTransferProcessor",
-    "StudentWantOnLeave",
     "TeacherWentOnLeaveProcessor",
     "StudentWentOnLeaveProcessor",
 ]
