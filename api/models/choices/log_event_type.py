@@ -85,6 +85,8 @@ class StudentLogEventType(models.TextChoices):
     FINISHED_AND_LEAVING = "finished_left", "Completed the course and left the project"
     GROUP_ABORTED = "group_aborted", "Group finished prematurely"
     GROUP_FINISHED = "group_finished", "Group finished successfully"
+    GONE_ON_LEAVE = "gone_on_leave", "Gone on leave"
+    RETURNED_FROM_LEAVE = "returned_from_leave", "Returned from leave"
 
 
 class TeacherLogEventType(models.TextChoices):
@@ -120,6 +122,8 @@ class TeacherLogEventType(models.TextChoices):
     ACCESS_REVOKED = "access_revoked", "Access to corporate resources revoked"
     GROUP_ABORTED = "group_aborted", "Group finished prematurely"
     GROUP_FINISHED = "group_finished", "Group finished successfully"
+    GONE_ON_LEAVE = "gone_on_leave", "Gone on leave"
+    RETURNED_FROM_LEAVE = "returned_from_leave", "Returned from leave"
 
 
 class TeacherUnder18LogEventType(models.TextChoices):
@@ -129,3 +133,5 @@ class TeacherUnder18LogEventType(models.TextChoices):
     LEFT = "left", "Left the project"
     EXPELLED = "expelled", "Expelled from the project"
     ACCESS_REVOKED = "access_revoked", "Access to corporate resources revoked"
+    GONE_ON_LEAVE = "gone_on_leave", "Gone on leave"
+    RETURNED_FROM_LEAVE = "returned_from_leave", "Returned from leave"

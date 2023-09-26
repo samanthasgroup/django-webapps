@@ -94,6 +94,17 @@ class DashboardStudentViewSet(viewsets.ReadOnlyModelViewSet[Student]):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
+        },
+    )
+    @action(detail=True, methods=["post"])
+    def went_on_leave(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
+        student = self.get_object()
+        StudentProcessor.went_on_leave(student)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class DashboardStudentWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Student]):
     """
