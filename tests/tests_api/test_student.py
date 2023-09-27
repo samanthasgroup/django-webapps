@@ -488,3 +488,22 @@ class TestDashboardStudentMissedClass:
             data={"group_id": active_group.pk, "notified": False},
         )
         assert response.status_code == status.HTTP_409_CONFLICT
+
+
+def test_dashboard_student_went_on_leave(api_client, availability_slots, timestamp):
+    student = baker.make(
+        Student,
+        make_m2m=True,
+        _fill_optional=True,
+        project_status=StudentProjectStatus.LEFT_PREMATURELY,
+        availability_slots=availability_slots,
+    )
+    response = api_client.post(
+        f"/api/dashboard/students/{student.personal_info.id}/went_on_leave/",
+    )
+    student.refresh_from_db()
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    log_event: StudentLogEvent = StudentLogEvent.objects.filter(student_id=student.pk).last()
+    assert log_event.type == StudentLogEventType.GONE_ON_LEAVE
+    assert student.project_status == StudentProjectStatus.ON_LEAVE
+    assert_date_time_with_timestamp(log_event.date_time, timestamp)
