@@ -17,10 +17,19 @@ from api.serializers import (
     StudentWriteSerializer,
 )
 from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
-from api.views.mixins import ReadWriteSerializersMixin
+from api.views.mixins import (
+    ReadWriteSerializersMixin,
+    StudentReturnedFromLeaveMixin,
+    StudentWentOnLeaveMixin,
+)
 
 
-class StudentViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Student]):  # type: ignore
+class StudentViewSet(  # type: ignore
+    ReadWriteSerializersMixin,
+    viewsets.ModelViewSet[Student],
+    StudentWentOnLeaveMixin,
+    StudentReturnedFromLeaveMixin,
+):
     """Student viewset. Used by bot."""
 
     lookup_field = "personal_info_id"
@@ -29,7 +38,9 @@ class StudentViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Student]):
     serializer_write_class = StudentWriteSerializer
 
 
-class DashboardStudentViewSet(viewsets.ReadOnlyModelViewSet[Student]):
+class DashboardStudentViewSet(
+    viewsets.ReadOnlyModelViewSet[Student], StudentWentOnLeaveMixin, StudentReturnedFromLeaveMixin
+):
     """
     Student dashboard viewset. Used for dashboard API (Tooljet).
     """
@@ -92,30 +103,6 @@ class DashboardStudentViewSet(viewsets.ReadOnlyModelViewSet[Student]):
             query_params_serializer.validated_data["group"],
             query_params_serializer.validated_data["notified"],
         )
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @extend_schema(
-        responses={
-            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
-        },
-    )
-    @action(detail=True, methods=["post"])
-    def went_on_leave(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
-        student = self.get_object()
-        StudentProcessor.went_on_leave(student)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @extend_schema(
-        responses={
-            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
-        },
-    )
-    @action(detail=True, methods=["post"])
-    def returned_from_leave(
-        self, request: Request, personal_info_id: int  # noqa: ARG002
-    ) -> Response:
-        student = self.get_object()
-        StudentProcessor.returned_from_leave(student)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

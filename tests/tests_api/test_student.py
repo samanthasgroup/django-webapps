@@ -490,7 +490,14 @@ class TestDashboardStudentMissedClass:
         assert response.status_code == status.HTTP_409_CONFLICT
 
 
-def test_dashboard_student_went_on_leave(api_client, availability_slots, timestamp):
+@pytest.mark.parametrize(
+    "endpoint",
+    [
+        "/api/dashboard/students/",
+        "/api/students/",
+    ],
+)
+def test_dashboard_student_went_on_leave(api_client, availability_slots, timestamp, endpoint):
     student = baker.make(
         Student,
         make_m2m=True,
@@ -499,7 +506,7 @@ def test_dashboard_student_went_on_leave(api_client, availability_slots, timesta
         availability_slots=availability_slots,
     )
     response = api_client.post(
-        f"/api/dashboard/students/{student.personal_info.id}/went_on_leave/",
+        f"{endpoint}{student.personal_info.id}/went_on_leave/",
     )
     student.refresh_from_db()
     assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -510,7 +517,14 @@ def test_dashboard_student_went_on_leave(api_client, availability_slots, timesta
 
 
 class TestDashboardStudentReturnedFromLeave:
-    def test_no_group(self, api_client, availability_slots, timestamp):
+    @pytest.mark.parametrize(
+        "endpoint",
+        [
+            "/api/dashboard/students/",
+            "/api/students/",
+        ],
+    )
+    def test_no_group(self, api_client, availability_slots, timestamp, endpoint):
         student = baker.make(
             Student,
             make_m2m=True,
@@ -519,7 +533,7 @@ class TestDashboardStudentReturnedFromLeave:
             availability_slots=availability_slots,
         )
         response = api_client.post(
-            f"/api/dashboard/students/{student.personal_info.id}/returned_from_leave/",
+            f"{endpoint}{student.personal_info.id}/returned_from_leave/",
         )
         student.refresh_from_db()
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -530,7 +544,21 @@ class TestDashboardStudentReturnedFromLeave:
         assert student.project_status == StudentProjectStatus.NO_GROUP_YET
         assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
-    def test_with_group(self, api_client, availability_slots, timestamp, active_group: Group):
+    @pytest.mark.parametrize(
+        "endpoint",
+        [
+            "/api/dashboard/students/",
+            "/api/students/",
+        ],
+    )
+    def test_with_group(  # noqa: PLR0913
+        self,
+        api_client,
+        availability_slots,
+        timestamp,
+        active_group: Group,
+        endpoint,
+    ):
         student = baker.make(
             Student,
             make_m2m=True,
@@ -541,7 +569,7 @@ class TestDashboardStudentReturnedFromLeave:
         active_group.students.add(student)
         active_group.save()
         response = api_client.post(
-            f"/api/dashboard/students/{student.personal_info.id}/returned_from_leave/",
+            f"{endpoint}{student.personal_info.id}/returned_from_leave/",
         )
         student.refresh_from_db()
         assert response.status_code == status.HTTP_204_NO_CONTENT
