@@ -507,3 +507,45 @@ def test_dashboard_student_went_on_leave(api_client, availability_slots, timesta
     assert log_event.type == StudentLogEventType.GONE_ON_LEAVE
     assert student.project_status == StudentProjectStatus.ON_LEAVE
     assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+
+class TestDashboardStudentReturnedFromLeave:
+    def test_no_group(self, api_client, availability_slots, timestamp):
+        student = baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            project_status=StudentProjectStatus.LEFT_PREMATURELY,
+            availability_slots=availability_slots,
+        )
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/returned_from_leave/",
+        )
+        student.refresh_from_db()
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        log_event: StudentLogEvent | None = StudentLogEvent.objects.filter(
+            student_id=student.pk
+        ).last()
+        assert log_event is not None and log_event.type == StudentLogEventType.RETURNED_FROM_LEAVE
+        assert student.project_status == StudentProjectStatus.NO_GROUP_YET
+        assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+    def test_with_group(self, api_client, availability_slots, timestamp, active_group: Group):
+        student = baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            project_status=StudentProjectStatus.LEFT_PREMATURELY,
+            availability_slots=availability_slots,
+        )
+        active_group.students.add(student)
+        active_group.save()
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/returned_from_leave/",
+        )
+        student.refresh_from_db()
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        log_event = StudentLogEvent.objects.filter(student_id=student.pk).last()
+        assert log_event is not None and log_event.type == StudentLogEventType.RETURNED_FROM_LEAVE
+        assert student.project_status == StudentProjectStatus.STUDYING
+        assert_date_time_with_timestamp(log_event.date_time, timestamp)
