@@ -392,7 +392,6 @@ def test_dashboard_teacher_went_on_leave(api_client, availability_slots, timesta
         Teacher,
         make_m2m=True,
         _fill_optional=True,
-        project_status=TeacherProjectStatus.LEFT_PREMATURELY,
         availability_slots=availability_slots,
     )
     response = api_client.post(
@@ -419,7 +418,6 @@ class TestDashboardTeacherReturnedFromLeave:
             Teacher,
             make_m2m=True,
             _fill_optional=True,
-            project_status=TeacherProjectStatus.LEFT_PREMATURELY,
             availability_slots=availability_slots,
         )
         response = api_client.post(
@@ -446,7 +444,6 @@ class TestDashboardTeacherReturnedFromLeave:
             Teacher,
             make_m2m=True,
             _fill_optional=True,
-            project_status=TeacherProjectStatus.LEFT_PREMATURELY,
             availability_slots=availability_slots,
         )
         active_group.teachers.add(teacher)

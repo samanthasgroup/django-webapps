@@ -502,7 +502,6 @@ def test_dashboard_student_went_on_leave(api_client, availability_slots, timesta
         Student,
         make_m2m=True,
         _fill_optional=True,
-        project_status=StudentProjectStatus.LEFT_PREMATURELY,
         availability_slots=availability_slots,
     )
     response = api_client.post(
@@ -529,7 +528,6 @@ class TestDashboardStudentReturnedFromLeave:
             Student,
             make_m2m=True,
             _fill_optional=True,
-            project_status=StudentProjectStatus.LEFT_PREMATURELY,
             availability_slots=availability_slots,
         )
         response = api_client.post(
@@ -563,7 +561,6 @@ class TestDashboardStudentReturnedFromLeave:
             Student,
             make_m2m=True,
             _fill_optional=True,
-            project_status=StudentProjectStatus.LEFT_PREMATURELY,
             availability_slots=availability_slots,
         )
         active_group.students.add(student)

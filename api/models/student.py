@@ -70,4 +70,4 @@ class Student(Person):
 
     @property
     def has_groups(self) -> bool:
-        return self.groups.count() > 0
+        return self.groups.exists()
