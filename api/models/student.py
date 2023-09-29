@@ -67,3 +67,7 @@ class Student(Person):
             models.Index(fields=("project_status",), name="student_pr_status_idx"),
             models.Index(fields=("situational_status",), name="student_si_status_idx"),
         ]
+
+    @property
+    def has_groups(self) -> bool:
+        return self.groups.exists()
