@@ -122,14 +122,14 @@ class Group(GroupCommon):
             f"teachers: {teacher_names}, {self.students.count()} students."
         )
 
-    def _group_count_annotation(self) -> QuerySet[Teacher]:
+    def _teachers_group_count_annotation(self) -> QuerySet[Teacher]:
         return self.teachers.annotate(group_count=Count("groups"))
 
     def teachers_with_other_groups(self) -> QuerySet[Teacher]:
-        return self._group_count_annotation().filter(group_count__gt=1)
+        return self._teachers_group_count_annotation().filter(group_count__gt=1)
 
     def teachers_with_no_other_groups(self) -> QuerySet[Teacher]:
-        return self._group_count_annotation().filter(group_count__lte=1)
+        return self._teachers_group_count_annotation().filter(group_count__lte=1)
 
 
 class SpeakingClub(GroupCommon):

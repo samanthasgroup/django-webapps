@@ -380,16 +380,22 @@ class TestDashboardTeacherWithPersonalInfo:
         assert all(returned_status == project_status for returned_status in returned_statuses)
 
 
-def test_dashboard_teacher_went_on_leave(api_client, availability_slots, timestamp):
+@pytest.mark.parametrize(
+    "endpoint",
+    [
+        "/api/dashboard/teachers/",
+        "/api/teachers/",
+    ],
+)
+def test_dashboard_teacher_went_on_leave(api_client, availability_slots, timestamp, endpoint):
     teacher = baker.make(
         Teacher,
         make_m2m=True,
         _fill_optional=True,
-        project_status=TeacherProjectStatus.LEFT_PREMATURELY,
         availability_slots=availability_slots,
     )
     response = api_client.post(
-        f"/api/dashboard/teachers/{teacher.personal_info.id}/went_on_leave/",
+        f"{endpoint}{teacher.personal_info.id}/went_on_leave/",
     )
     teacher.refresh_from_db()
     assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -397,3 +403,57 @@ def test_dashboard_teacher_went_on_leave(api_client, availability_slots, timesta
     assert log_event.type == TeacherLogEventType.GONE_ON_LEAVE
     assert teacher.project_status == TeacherProjectStatus.ON_LEAVE
     assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+
+class TestDashboardTeacherReturnedFromLeave:
+    @pytest.mark.parametrize(
+        "endpoint",
+        [
+            "/api/dashboard/teachers/",
+            "/api/teachers/",
+        ],
+    )
+    def test_no_group(self, api_client, availability_slots, timestamp, endpoint):
+        teacher = baker.make(
+            Teacher,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        response = api_client.post(
+            f"{endpoint}{teacher.personal_info.id}/returned_from_leave/",
+        )
+        teacher.refresh_from_db()
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        log_event: TeacherLogEvent = TeacherLogEvent.objects.filter(teacher_id=teacher.pk).last()
+        assert log_event.type == TeacherLogEventType.RETURNED_FROM_LEAVE
+        assert teacher.project_status == TeacherProjectStatus.NO_GROUP_YET
+        assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+    @pytest.mark.parametrize(
+        "endpoint",
+        [
+            "/api/dashboard/teachers/",
+            "/api/teachers/",
+        ],
+    )
+    def test_with_group(  # noqa: PLR0913
+        self, api_client, availability_slots, timestamp, active_group, endpoint
+    ):
+        teacher = baker.make(
+            Teacher,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        active_group.teachers.add(teacher)
+        active_group.save()
+        response = api_client.post(
+            f"{endpoint}{teacher.personal_info.id}/returned_from_leave/",
+        )
+        teacher.refresh_from_db()
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        log_event: TeacherLogEvent = TeacherLogEvent.objects.filter(teacher_id=teacher.pk).last()
+        assert log_event.type == TeacherLogEventType.RETURNED_FROM_LEAVE
+        assert teacher.project_status == TeacherProjectStatus.WORKING
+        assert_date_time_with_timestamp(log_event.date_time, timestamp)

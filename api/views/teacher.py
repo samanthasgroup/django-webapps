@@ -17,10 +17,19 @@ from api.serializers import (
     TeacherWriteSerializer,
 )
 from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
-from api.views.mixins import ReadWriteSerializersMixin
+from api.views.mixins import (
+    ReadWriteSerializersMixin,
+    TeacherReturnedFromLeaveMixin,
+    TeacherWentOnLeaveMixin,
+)
 
 
-class TeacherViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Teacher]):  # type: ignore
+class TeacherViewSet(  # type: ignore
+    ReadWriteSerializersMixin,
+    viewsets.ModelViewSet[Teacher],
+    TeacherReturnedFromLeaveMixin,
+    TeacherWentOnLeaveMixin,
+):
     """Teacher viewset. Used by bot."""
 
     lookup_field = "personal_info_id"
@@ -29,7 +38,9 @@ class TeacherViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[Teacher]):
     serializer_write_class = TeacherWriteSerializer
 
 
-class DashboardTeacherViewSet(viewsets.ReadOnlyModelViewSet[Teacher]):
+class DashboardTeacherViewSet(
+    viewsets.ReadOnlyModelViewSet[Teacher], TeacherWentOnLeaveMixin, TeacherReturnedFromLeaveMixin
+):
     """
     Teacher dashboard viewset. Used for dashboard API (Tooljet).
     """
@@ -64,17 +75,6 @@ class DashboardTeacherViewSet(viewsets.ReadOnlyModelViewSet[Teacher]):
             query_params_serializer.validated_data["to_group"],
             query_params_serializer.validated_data["from_group"],
         )
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @extend_schema(
-        responses={
-            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
-        },
-    )
-    @action(detail=True, methods=["post"])
-    def went_on_leave(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
-        teacher = self.get_object()
-        TeacherProcessor.went_on_leave(teacher)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

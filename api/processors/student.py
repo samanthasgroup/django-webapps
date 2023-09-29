@@ -2,6 +2,7 @@ from api.models import Student
 from api.models.group import Group
 from api.processors.actions import (
     StudentMissedClassProcessor,
+    StudentReturnedFromLeaveProcessor,
     StudentTransferProcessor,
     StudentWentOnLeaveProcessor,
 )
@@ -21,3 +22,7 @@ class StudentProcessor:
     @staticmethod
     def went_on_leave(student: Student) -> None:
         StudentWentOnLeaveProcessor(student).process()
+
+    @staticmethod
+    def returned_from_leave(student: Student) -> None:
+        StudentReturnedFromLeaveProcessor(student).process()

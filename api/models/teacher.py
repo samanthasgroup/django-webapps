@@ -115,3 +115,7 @@ class Teacher(TeacherCommon):
     def can_take_more_groups(self) -> bool:
         """`True` if a teacher can take more groups than they already have."""
         return self.groups.count() < self.simultaneous_groups
+
+    @property
+    def has_groups(self) -> bool:
+        return self.groups.exists()
