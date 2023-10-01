@@ -4,15 +4,19 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.serializers import ListSerializer
 
 from api.filters import StudentFilter
 from api.models import Student
+from api.models.choices.status.project import StudentProjectStatus
 from api.processors import StudentProcessor
 from api.serializers import (
+    DashboardAvailableStudentsSerializer,
     DashboardStudentMissedClassSerializer,
     DashboardStudentSerializer,
     DashboardStudentTransferSerializer,
     DashboardStudentWithPersonalInfoSerializer,
+    MinifiedStudentSerializer,
     StudentReadSerializer,
     StudentWriteSerializer,
 )
@@ -104,6 +108,34 @@ class DashboardStudentViewSet(
             query_params_serializer.validated_data["notified"],
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(
+        parameters=[DashboardAvailableStudentsSerializer],
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=ListSerializer(child=MinifiedStudentSerializer()),
+                description="Action is taken",
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=ValidationErrorSerializer,
+                description="Something is wrong with the query params",
+            ),
+        },
+    )
+    @action(detail=False, methods=["get"])
+    def available_students_list(self, request: Request) -> Response:  # noqa: ARG002
+        query_params_serializer = DashboardAvailableStudentsSerializer(
+            data=request.query_params,
+        )
+        query_params_serializer.is_valid(raise_exception=True)
+        matched_students = Student.objects.filter(
+            project_status=StudentProjectStatus.NO_GROUP_YET,
+            availability_slots__id__in=query_params_serializer.validated_data["time_slot_ids"],
+        ).distinct()
+        return Response(
+            data=MinifiedStudentSerializer(matched_students, many=True).data,
+            status=status.HTTP_200_OK,
+        )
 
 
 class DashboardStudentWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Student]):
