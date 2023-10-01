@@ -114,11 +114,15 @@ class DashboardStudentViewSet(
         responses={
             status.HTTP_200_OK: OpenApiResponse(
                 response=ListSerializer(child=MinifiedStudentSerializer()),
-                description="Action is taken",
+                description="Students returned",
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=ValidationErrorSerializer,
                 description="Something is wrong with the query params",
+            ),
+            status.HTTP_409_CONFLICT: OpenApiResponse(
+                response=BaseAPIExceptionSerializer,
+                description="Invalid time slots",
             ),
         },
     )
