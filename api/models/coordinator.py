@@ -1,7 +1,11 @@
 from django.db import models
 from django.db.models import Count
 
-from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, CoordinatorGroupLimit
+from api.models.auxil.constants import (
+    DEFAULT_CHAR_FIELD_MAX_LEN,
+    DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+    CoordinatorGroupLimit,
+)
 from api.models.choices.status import CoordinatorProjectStatus, CoordinatorSituationalStatus
 from api.models.shared_abstract.person import Person
 
@@ -33,6 +37,11 @@ class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
 class Coordinator(Person):
     """Model for a coordinator."""
 
+    additional_skills_comment = models.CharField(
+        max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
+        blank=True,
+        verbose_name="comment on additional skills",
+    )
     is_admin = models.BooleanField(
         default=False,
         help_text=(
