@@ -1,4 +1,5 @@
 from api.serializers.age_range import AgeRangeSerializer
+from api.serializers.coordinator import CoordinatorWriteSerializer
 from api.serializers.day_and_time_slot import DayAndTimeSlotSerializer
 from api.serializers.enrollment_test import (
     EnrollmentTestResultCreateSerializer,
@@ -44,6 +45,7 @@ from api.serializers.group.internal import (  # isort:skip
     GroupWriteSerializer,
 )
 
+
 __all__ = [
     "AgeRangeSerializer",
     "DayAndTimeSlotSerializer",
@@ -75,4 +77,5 @@ __all__ = [
     "EnrollmentTestSerializer",
     "EnrollmentTestResultCreateSerializer",
     "GroupDiscardSerializer",
+    "CoordinatorWriteSerializer",
 ]

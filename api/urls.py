@@ -19,11 +19,13 @@ from api.views import (
     TeacherUnder18ViewSet,
     TeacherViewSet,
 )
+from api.views.coordinator import CoordinatorViewSet
 from api.views.day_and_time_slot import DashboardDayAndTimeSlotViewSet
 from api.views.language_and_level import DashboardLanguageAndLevelViewSet
 from api.views.personal_info import DashboardPersonalInfoViewSet
 
 internal_router = DefaultRouter()
+internal_router.register(r"coordinators", CoordinatorViewSet, basename="coordinator")
 internal_router.register(r"groups", GroupViewSet, basename="groups")
 internal_router.register(r"personal_info", PersonalInfoViewSet, basename="personal_info")
 internal_router.register(r"students", StudentViewSet, basename="students")
