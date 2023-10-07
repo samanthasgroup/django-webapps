@@ -54,6 +54,11 @@ class GroupProjectStatus(models.TextChoices):
 class StudentProjectStatus(models.TextChoices):
     """Enumeration of possible project-level statuses of a student."""
 
+    NEEDS_INTERVIEW_TO_DETERMINE_LEVEL = (
+        "needs_interview_to_determine_level",
+        "Requires oral interview to determine language level before getting 'no_group_yet' status",
+    )
+    # TODO an API view needs to be created to switch status from ^ to "no_group_yet" in dashboard
     NO_GROUP_YET = "no_group_yet", "Not studying, waiting for a group"
     STUDYING = "study", "Studying in a group"
     ON_LEAVE = "on_leave", "On leave"
