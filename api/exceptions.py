@@ -7,6 +7,12 @@ class ConflictError(exceptions.APIException):
     default_code = "conflict"
 
 
+class UnproccessableEntityError(exceptions.APIException):
+    status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+    default_detail = "Failed to process input data."
+    default_code = "unprocessable content"
+
+
 class NotAcceptableError(exceptions.APIException):
     status_code = status.HTTP_406_NOT_ACCEPTABLE
     default_detail = "No object with this data exists."

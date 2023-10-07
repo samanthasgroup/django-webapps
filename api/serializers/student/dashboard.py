@@ -2,8 +2,8 @@ from typing import Any
 
 from rest_framework import serializers
 
-from api.exceptions import ConflictError
-from api.models import Student
+from api.exceptions import ConflictError, UnproccessableEntityError
+from api.models import DayAndTimeSlot, Student
 from api.models.group import Group
 from api.serializers import DashboardPersonalInfoSerializer
 from api.serializers.age_range import AgeRangeStringField
@@ -106,4 +106,16 @@ class DashboardStudentMissedClassSerializer(serializers.Serializer[Any]):
 
         attrs["group"] = group
 
+        return attrs
+
+
+class DashboardAvailableStudentsSerializer(serializers.Serializer[Any]):
+    time_slot_ids = serializers.ListField(child=serializers.IntegerField(), min_length=2)
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        for time_slot_id in attrs["time_slot_ids"]:
+            try:
+                DayAndTimeSlot.objects.get(pk=time_slot_id)
+            except DayAndTimeSlot.DoesNotExist:
+                raise UnproccessableEntityError(f"Time slot {time_slot_id} not found")
         return attrs

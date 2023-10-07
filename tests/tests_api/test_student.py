@@ -574,3 +574,97 @@ class TestDashboardStudentReturnedFromLeave:
         assert log_event is not None and log_event.type == StudentLogEventType.RETURNED_FROM_LEAVE
         assert student.project_status == StudentProjectStatus.STUDYING
         assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+
+class TestDashboardStudentListByTimeSlots:
+    def test_same_slots(self, api_client, availability_slots):
+        slots_to_test = availability_slots[0:2]
+        Student.objects.all().delete()
+        student1 = baker.make(
+            Student,
+            project_status=StudentProjectStatus.NO_GROUP_YET,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=slots_to_test,
+        )
+        student2 = baker.make(
+            Student,
+            make_m2m=True,
+            project_status=StudentProjectStatus.NO_GROUP_YET,
+            _fill_optional=True,
+            availability_slots=slots_to_test,
+        )
+        response = api_client.get(
+            "/api/dashboard/students/available_students_list/",
+            data={"time_slot_ids": [s.pk for s in slots_to_test]},
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data == [
+            {"full_name": student1.personal_info.full_name, "id": student1.pk},
+            {"full_name": student2.personal_info.full_name, "id": student2.pk},
+        ]
+
+    def test_different_slots(self, api_client, availability_slots):
+        slots_to_test = availability_slots[0:2]
+        Student.objects.all().delete()
+        baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots[4:5],
+        )
+        response = api_client.get(
+            "/api/dashboard/students/available_students_list/",
+            data={"time_slot_ids": [s.pk for s in slots_to_test]},
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data == []
+
+    def test_different_project_status(self, api_client, availability_slots):
+        slots_to_test = availability_slots[0:2]
+        Student.objects.all().delete()
+        baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            project_status=StudentProjectStatus.STUDYING,
+            availability_slots=slots_to_test,
+        )
+        response = api_client.get(
+            "/api/dashboard/students/available_students_list/",
+            data={"time_slot_ids": [s.pk for s in slots_to_test]},
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data == []
+
+    def test_wrong_input_params(self, api_client, availability_slots):
+        slots_to_test = availability_slots[0:2]
+        Student.objects.all().delete()
+        baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            project_status=StudentProjectStatus.STUDYING,
+            availability_slots=slots_to_test,
+        )
+        response = api_client.get(
+            "/api/dashboard/students/available_students_list/",
+            data={"time_slot_ids": [availability_slots[0].pk]},
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_wrong_time_slots(self, api_client, availability_slots):
+        slots_to_test = availability_slots[0:2]
+        Student.objects.all().delete()
+        baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            project_status=StudentProjectStatus.STUDYING,
+            availability_slots=slots_to_test,
+        )
+        response = api_client.get(
+            "/api/dashboard/students/available_students_list/",
+            data={"time_slot_ids": [-1, -2]},
+        )
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
