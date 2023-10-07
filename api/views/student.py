@@ -120,9 +120,9 @@ class DashboardStudentViewSet(
                 response=ValidationErrorSerializer,
                 description="Something is wrong with the query params",
             ),
-            status.HTTP_409_CONFLICT: OpenApiResponse(
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=BaseAPIExceptionSerializer,
-                description="Invalid time slots",
+                description="Some of time slots not found",
             ),
         },
     )
