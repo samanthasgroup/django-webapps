@@ -12,3 +12,9 @@ class MinifiedCoordinatorSerializer(serializers.ModelSerializer[Coordinator]):
     class Meta:
         model = Coordinator
         fields = ("id", "full_name")
+
+
+class CoordinatorWriteSerializer(serializers.ModelSerializer[Coordinator]):
+    class Meta:
+        model = Coordinator
+        fields = "__all__"

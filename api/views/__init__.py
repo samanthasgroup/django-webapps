@@ -1,4 +1,5 @@
 from api.views.age_range import AgeRangeViewSet
+from api.views.coordinator import CoordinatorViewSet
 from api.views.day_and_time_slot import DayAndTimeSlotViewSet
 from api.views.enrollment_test import EnrollmentTestResultViewSet, EnrollmentTestViewSet
 from api.views.group import DashboardGroupViewSet, GroupViewSet
@@ -34,4 +35,5 @@ __all__ = [
     "TeacherUnder18ViewSet",
     "EnrollmentTestViewSet",
     "EnrollmentTestResultViewSet",
+    "CoordinatorViewSet",
 ]
