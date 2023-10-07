@@ -1,9 +1,8 @@
 from typing import Any
 
 from rest_framework import serializers
-from rest_framework.exceptions import NotFound
 
-from api.exceptions import ConflictError
+from api.exceptions import ConflictError, UnproccessableEntityError
 from api.models import DayAndTimeSlot, Student
 from api.models.group import Group
 from api.serializers import DashboardPersonalInfoSerializer
@@ -118,5 +117,5 @@ class DashboardAvailableStudentsSerializer(serializers.Serializer[Any]):
             try:
                 DayAndTimeSlot.objects.get(pk=time_slot_id)
             except DayAndTimeSlot.DoesNotExist:
-                raise NotFound(f"Time slot {time_slot_id} not found")
+                raise UnproccessableEntityError(f"Time slot {time_slot_id} not found")
         return attrs

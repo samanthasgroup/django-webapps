@@ -652,3 +652,19 @@ class TestDashboardStudentListByTimeSlots:
             data={"time_slot_ids": [availability_slots[0].pk]},
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_wrong_time_slots(self, api_client, availability_slots):
+        slots_to_test = availability_slots[0:2]
+        Student.objects.all().delete()
+        baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            project_status=StudentProjectStatus.STUDYING,
+            availability_slots=slots_to_test,
+        )
+        response = api_client.get(
+            "/api/dashboard/students/available_students_list/",
+            data={"time_slot_ids": [-1, -2]},
+        )
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY

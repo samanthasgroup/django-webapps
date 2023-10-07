@@ -120,7 +120,7 @@ class DashboardStudentViewSet(
                 response=ValidationErrorSerializer,
                 description="Something is wrong with the query params",
             ),
-            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+            status.HTTP_422_UNPROCESSABLE_ENTITY: OpenApiResponse(
                 response=BaseAPIExceptionSerializer,
                 description="Some of time slots not found",
             ),
