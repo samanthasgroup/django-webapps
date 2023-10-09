@@ -141,6 +141,7 @@ class CoordinatorAdminLogEventCreator:
             event_type=log_event_type,
         )
 
+        # TODO: In future it could be a case that we need to set only one status
         if project_status is not None and situational_status is not None:
             StatusSetter.set_status(
                 obj=coordinator,
