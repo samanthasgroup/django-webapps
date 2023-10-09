@@ -1,4 +1,6 @@
 """Module for temporary statuses that can 'turn on and off' again depending on situation."""
+import typing
+
 from django.db import models
 
 from api.models.auxil.constants import STUDENT_CLASS_MISS_LIMIT
@@ -7,7 +9,6 @@ from api.models.auxil.constants import STUDENT_CLASS_MISS_LIMIT
 class CoordinatorSituationalStatus(models.TextChoices):
     """Enumeration of possible transient statuses of a coordinator."""
 
-    PENDING = "pending", "Completed registration, waiting for onboarding"
     ONBOARDING = "onboarding", "In onboarding"
     STALE = (
         "onboarding_stale",
@@ -57,4 +58,7 @@ SituationalStatus = (
     | GroupSituationalStatus
     | StudentSituationalStatus
     | TeacherSituationalStatus
+    | typing.Literal[""]
 )
+
+CoordinatorSituationalStatusOrEmpty = CoordinatorSituationalStatus | typing.Literal[""]
