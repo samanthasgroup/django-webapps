@@ -110,8 +110,6 @@ class CoordinatorAdmin(admin.ModelAdmin[models.Coordinator]):
                     log_event_type=log_event_type,
                 )
 
-        action.short_description = f"Create log event: {log_event_type}"  # type: ignore
-
         return action
 
     def get_actions(
@@ -122,6 +120,7 @@ class CoordinatorAdmin(admin.ModelAdmin[models.Coordinator]):
             actions[f"create_log_event_{log_event_type}"] = (  # type: ignore  # looks like stubs bug
                 self._make_create_log_event_action(log_event_type),
                 f"create_log_event_{log_event_type}",
+                # TODO: maybe some more human-readable description?
                 f"Create log event: {log_event_type}",
             )
 
