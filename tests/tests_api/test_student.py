@@ -668,3 +668,118 @@ class TestDashboardStudentListByTimeSlots:
             data={"time_slot_ids": [-1, -2]},
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+def test_dashboard_student_finished_and_leaved(api_client, availability_slots, timestamp):
+    student = baker.make(
+        Student,
+        make_m2m=True,
+        _fill_optional=True,
+        availability_slots=availability_slots,
+    )
+    response = api_client.post(
+        f"/api/dashboard/students/{student.personal_info.id}/finished_and_left/",
+    )
+    student.refresh_from_db()
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    log_event: StudentLogEvent = StudentLogEvent.objects.filter(student_id=student.pk).last()
+    assert log_event.type == StudentLogEventType.FINISHED_AND_LEAVING
+    assert student.project_status == StudentProjectStatus.FINISHED
+    assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+
+def test_dashboard_student_put_on_wait(api_client, availability_slots, timestamp):
+    student = baker.make(
+        Student,
+        make_m2m=True,
+        _fill_optional=True,
+        availability_slots=availability_slots,
+    )
+    response = api_client.post(
+        f"/api/dashboard/students/{student.personal_info.id}/put_on_wait/",
+    )
+    student.refresh_from_db()
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    log_event: StudentLogEvent = StudentLogEvent.objects.filter(student_id=student.pk).last()
+    assert log_event.type == StudentLogEventType.AWAITING_OFFER
+    assert student.project_status == StudentProjectStatus.NO_GROUP_YET
+    assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+
+class TestDashboardActiveStudentsWithNoGroups:
+    def test_general_check(self, faker, api_client, active_group: Group, availability_slots):
+        Student.objects.all().delete()
+        utc_offset_hours = faker.pyint(min_value=-12, max_value=12)
+        sign = "+" if utc_offset_hours >= 0 else "-"
+        utc_offset_minutes = faker.random_element([0, 30])
+        utc_timedelta = datetime.timedelta(hours=utc_offset_hours, minutes=utc_offset_minutes)
+        student = baker.make(
+            Student,
+            project_status=StudentProjectStatus.STUDYING,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+            personal_info__utc_timedelta=utc_timedelta,
+        )
+        baker.make(
+            Student,
+            project_status=StudentProjectStatus.NO_GROUP_YET,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        student_with_group = baker.make(
+            Student,
+            project_status=StudentProjectStatus.STUDYING,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        active_group.students.add(student_with_group)
+        active_group.save()
+        response = api_client.get(
+            "/api/dashboard/students/active_students_with_no_groups/",
+        )
+        assert response.status_code == status.HTTP_200_OK
+        languages_and_levels = [
+            {
+                "id": language_and_level.pk,
+                "language": language_and_level.language.name,
+                "level": language_and_level.level.id,
+            }
+            for language_and_level in student.teaching_languages_and_levels.all()
+        ]
+        availability_slots = [
+            {
+                "id": slot.pk,
+                "day_of_week_index": slot.day_of_week_index,
+                "from_utc_hour": slot.time_slot.from_utc_hour.isoformat(),
+                "to_utc_hour": slot.time_slot.to_utc_hour.isoformat(),
+            }
+            for slot in student.availability_slots.all()
+        ]
+        assert response.json() == [
+            {
+                "id": student.personal_info.id,
+                "first_name": student.personal_info.first_name,
+                "last_name": student.personal_info.last_name,
+                "age_range": f"{student.age_range.age_from}-{student.age_range.age_to}",
+                "teaching_languages_and_levels": languages_and_levels,
+                "availability_slots": availability_slots,
+                "comment": student.comment,
+                "project_status": student.project_status.value,
+                "situational_status": student.situational_status,
+                "communication_language_mode": student.personal_info.communication_language_mode,
+                "is_member_of_speaking_club": student.is_member_of_speaking_club,
+                "utc_timedelta": f"UTC{sign}{utc_offset_hours:02}:{utc_offset_minutes:02}",
+                "non_teaching_help_required": {
+                    "career_strategy": False,
+                    "career_switch": False,
+                    "cv_proofread": False,
+                    "cv_write_edit": False,
+                    "job_search": False,
+                    "linkedin": False,
+                    "mock_interview": False,
+                    "portfolio": False,
+                    "translate_docs": False,
+                    "uni_abroad": False,
+                },
+            }
+        ]
