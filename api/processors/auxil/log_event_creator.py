@@ -73,7 +73,7 @@ class CoordinatorAdminLogEventCreator:
         group_count = coordinator.groups.count()
         if group_count < CoordinatorGroupLimit.MIN:
             return CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD
-        if CoordinatorGroupLimit.MAX > group_count >= CoordinatorGroupLimit.MIN:
+        if CoordinatorGroupLimit.MIN <= group_count < CoordinatorGroupLimit.MAX:
             return CoordinatorProjectStatus.WORKING_OK
         if group_count >= CoordinatorGroupLimit.MAX:
             return CoordinatorProjectStatus.WORKING_LIMIT_REACHED
