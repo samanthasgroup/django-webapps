@@ -670,7 +670,7 @@ class TestDashboardStudentListByTimeSlots:
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_dashboard_student_finished_and_leaved(api_client, availability_slots, timestamp):
+def test_dashboard_student_finished_and_left(api_client, availability_slots, timestamp):
     student = baker.make(
         Student,
         make_m2m=True,
