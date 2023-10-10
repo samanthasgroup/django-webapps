@@ -1,8 +1,14 @@
+from collections.abc import Callable
+
 from django import forms
 from django.contrib import admin
+from django.db.models import QuerySet
+from django.http import HttpRequest
 from django.utils.html import format_html
 
 from api import models
+from api.models.choices.log_event_type import CoordinatorLogEventType
+from api.processors.auxil.log_event_creator import CoordinatorAdminLogEventCreator
 from api.utils import capitalize_each_word
 
 
@@ -89,11 +95,43 @@ class StudentAdmin(admin.ModelAdmin[models.Student]):
         return format_html(result)
 
 
+class CoordinatorAdmin(admin.ModelAdmin[models.Coordinator]):
+    def _make_create_log_event_action(
+        self, log_event_type: CoordinatorLogEventType
+    ) -> Callable[..., None]:
+        def action(
+            _: admin.ModelAdmin[models.Coordinator],
+            __: HttpRequest,
+            queryset: QuerySet[models.Coordinator],
+        ) -> None:
+            for coordinator in queryset:
+                CoordinatorAdminLogEventCreator.create(
+                    coordinator=coordinator,
+                    log_event_type=log_event_type,
+                )
+
+        return action
+
+    def get_actions(
+        self, request: HttpRequest
+    ) -> dict[str, tuple[Callable[..., str], str, str] | None]:
+        actions = super().get_actions(request)
+        for log_event_type in list(CoordinatorLogEventType):
+            actions[f"create_log_event_{log_event_type}"] = (  # type: ignore  # looks like stubs bug
+                self._make_create_log_event_action(log_event_type),
+                f"create_log_event_{log_event_type}",
+                # TODO: maybe some more human-readable description?
+                f"Create log event: {log_event_type}",
+            )
+
+        return actions
+
+
 admin.site.register(models.PersonalInfo, PersonalInfoAdmin)
 admin.site.register(models.Student, StudentAdmin)
+admin.site.register(models.Coordinator, CoordinatorAdmin)
 
 for model in (
-    models.Coordinator,
     models.EnrollmentTest,
     models.EnrollmentTestQuestion,
     models.EnrollmentTestQuestionOption,
