@@ -78,7 +78,10 @@ class CoordinatorAdminLogEventCreator:
         if group_count >= CoordinatorGroupLimit.MAX:
             return CoordinatorProjectStatus.WORKING_LIMIT_REACHED
 
-        raise ValueError(f"Unexpected group count: {group_count}, coordinator: {coordinator}")
+        raise NotImplementedError(
+            f"Unexpected group count: {group_count}, coordinator: {coordinator}, "
+            f"limits: {CoordinatorGroupLimit.MAX=}, {CoordinatorGroupLimit.MIN=}"
+        )
 
     @classmethod
     def _get_statuses_by_event_type(  # noqa: PLR0911
@@ -86,6 +89,12 @@ class CoordinatorAdminLogEventCreator:
         coordinator: Coordinator,
         event_type: CoordinatorLogEventType,
     ) -> tuple[CoordinatorProjectStatus | None, CoordinatorSituationalStatusOrEmpty | None]:
+        """Get statuses by event type.
+
+        Returns project status and situational status
+            which should be set for coordinator by event type.
+        Returned None as status means that status should not be changed.
+        """
         match event_type:
             case CoordinatorLogEventType.APPLIED | CoordinatorLogEventType.JOINED:
                 return CoordinatorProjectStatus.PENDING, ""
@@ -120,7 +129,6 @@ class CoordinatorAdminLogEventCreator:
                 CoordinatorLogEventType.REQUESTED_TRANSFER
                 | CoordinatorLogEventType.TRANSFER_CANCELED
             ):
-                # None means that status should not be changed
                 return None, None
 
     @classmethod
