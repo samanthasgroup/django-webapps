@@ -6,6 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 
+from api.exceptions import ConflictError
 from api.filters import StudentFilter
 from api.models import Student
 from api.models.choices.status.project import StudentProjectStatus
@@ -124,7 +125,7 @@ class DashboardStudentViewSet(
     ) -> Response:
         student = self.get_object()
         if student.has_groups:
-            raise ConnectionError("Only students with no groups can be processed")
+            raise ConflictError("Only students with no groups can be processed")
         StudentProcessor.finished_and_left(student)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -138,11 +139,13 @@ class DashboardStudentViewSet(
         },
     )
     @action(detail=True, methods=["post"])
-    def put_on_wait(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
+    def put_in_waiting_queue(  # noqa: ARG002
+        self, request: Request, personal_info_id: int  # noqa: ARG002
+    ) -> Response:
         student = self.get_object()
         if student.has_groups:
-            raise ConnectionError("Only students with no groups can be processed")
-        StudentProcessor.put_on_wait(student)
+            raise ConflictError("Only students with no groups can be processed")
+        StudentProcessor.put_in_waiting_queue(student)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(

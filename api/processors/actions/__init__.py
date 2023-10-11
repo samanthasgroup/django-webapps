@@ -5,7 +5,7 @@ from api.processors.actions.group.finish import GroupFinishProcessor
 from api.processors.actions.group.start import GroupStartProcessor
 from api.processors.actions.student.finished_and_left import StudentFinishedAndLeftProcessor
 from api.processors.actions.student.missed_class import StudentMissedClassProcessor
-from api.processors.actions.student.put_on_wait import StudentPutOnWaitProcessor
+from api.processors.actions.student.put_in_waiting_queue import StudentPutInWaitingQueueProcessor
 from api.processors.actions.student.returned_from_leave import StudentReturnedFromLeaveProcessor
 from api.processors.actions.student.transfer import StudentTransferProcessor
 from api.processors.actions.student.went_on_leave import StudentWentOnLeaveProcessor
@@ -26,6 +26,6 @@ __all__ = [
     "StudentWentOnLeaveProcessor",
     "TeacherReturnedFromLeaveProcessor",
     "StudentReturnedFromLeaveProcessor",
-    "StudentPutOnWaitProcessor",
+    "StudentPutInWaitingQueueProcessor",
     "StudentFinishedAndLeftProcessor",
 ]

@@ -670,7 +670,9 @@ class TestDashboardStudentListByTimeSlots:
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_dashboard_student_finished_and_left(api_client, availability_slots, timestamp):
+def test_dashboard_student_finished_and_left(
+    api_client, availability_slots, active_group, timestamp
+):
     student = baker.make(
         Student,
         make_m2m=True,
@@ -686,9 +688,20 @@ def test_dashboard_student_finished_and_left(api_client, availability_slots, tim
     assert log_event.type == StudentLogEventType.FINISHED_AND_LEAVING
     assert student.project_status == StudentProjectStatus.FINISHED
     assert_date_time_with_timestamp(log_event.date_time, timestamp)
+    student2 = baker.make(
+        Student,
+        make_m2m=True,
+        _fill_optional=True,
+        availability_slots=availability_slots,
+    )
+    active_group.students.add(student2)
+    response = api_client.post(
+        f"/api/dashboard/students/{student2.personal_info.id}/finished_and_left/",
+    )
+    assert response.status_code == status.HTTP_409_CONFLICT
 
 
-def test_dashboard_student_put_on_wait(api_client, availability_slots, timestamp):
+def test_dashboard_student_put_on_wait(api_client, availability_slots, active_group, timestamp):
     student = baker.make(
         Student,
         make_m2m=True,
@@ -696,7 +709,7 @@ def test_dashboard_student_put_on_wait(api_client, availability_slots, timestamp
         availability_slots=availability_slots,
     )
     response = api_client.post(
-        f"/api/dashboard/students/{student.personal_info.id}/put_on_wait/",
+        f"/api/dashboard/students/{student.personal_info.id}/put_in_waiting_queue/",
     )
     student.refresh_from_db()
     assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -704,6 +717,17 @@ def test_dashboard_student_put_on_wait(api_client, availability_slots, timestamp
     assert log_event.type == StudentLogEventType.AWAITING_OFFER
     assert student.project_status == StudentProjectStatus.NO_GROUP_YET
     assert_date_time_with_timestamp(log_event.date_time, timestamp)
+    student2 = baker.make(
+        Student,
+        make_m2m=True,
+        _fill_optional=True,
+        availability_slots=availability_slots,
+    )
+    active_group.students.add(student2)
+    response = api_client.post(
+        f"/api/dashboard/students/{student2.personal_info.id}/put_in_waiting_queue/",
+    )
+    assert response.status_code == status.HTTP_409_CONFLICT
 
 
 class TestDashboardActiveStudentsWithNoGroups:

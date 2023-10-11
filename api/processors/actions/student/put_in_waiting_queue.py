@@ -7,7 +7,7 @@ from api.models.log_event import StudentLogEvent
 from api.processors.actions.student import StudentActionProcessor
 
 
-class StudentPutOnWaitProcessor(StudentActionProcessor):
+class StudentPutInWaitingQueueProcessor(StudentActionProcessor):
     """Put student to awaiting queue"""
 
     def __init__(self, student: Student):

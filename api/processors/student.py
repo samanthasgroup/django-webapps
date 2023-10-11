@@ -3,7 +3,7 @@ from api.models.group import Group
 from api.processors.actions import (
     StudentFinishedAndLeftProcessor,
     StudentMissedClassProcessor,
-    StudentPutOnWaitProcessor,
+    StudentPutInWaitingQueueProcessor,
     StudentReturnedFromLeaveProcessor,
     StudentTransferProcessor,
     StudentWentOnLeaveProcessor,
@@ -34,5 +34,5 @@ class StudentProcessor:
         StudentFinishedAndLeftProcessor(student).process()
 
     @staticmethod
-    def put_on_wait(student: Student) -> None:
-        StudentPutOnWaitProcessor(student).process()
+    def put_in_waiting_queue(student: Student) -> None:
+        StudentPutInWaitingQueueProcessor(student).process()
