@@ -69,7 +69,7 @@ class GroupFinishProcessor(GroupActionProcessor):
 
         # after moving the student, this 1 will become 0
         annotated_students.filter(groups_count=1).update(
-            project_status=StudentProjectStatus.AWAITING_DECISION,
+            project_status=StudentProjectStatus.NO_GROUP_YET,
             situational_status="",
             status_since=self.timestamp,
         )

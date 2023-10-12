@@ -606,7 +606,7 @@ class TestDashboardGroupFinish:
             if student == student_studying_in_multiple_groups:
                 assert student.project_status == StudentProjectStatus.STUDYING
             else:
-                assert student.project_status == StudentProjectStatus.AWAITING_DECISION
+                assert student.project_status == StudentProjectStatus.NO_GROUP_YET
 
             assert student.status_since == common_status_since
 

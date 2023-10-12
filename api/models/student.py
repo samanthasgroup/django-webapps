@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Count
 
 from api.models.age_range import AgeRange
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
@@ -7,6 +8,19 @@ from api.models.day_and_time_slot import DayAndTimeSlot
 from api.models.language_and_level import LanguageAndLevel
 from api.models.non_teaching_help import NonTeachingHelp
 from api.models.shared_abstract.person import Person
+
+
+class StudentQuerySet(models.QuerySet["Student"]):
+    def annotate_with_group_count(self) -> "StudentQuerySet":
+        return self.annotate(group_count=Count("groups"))
+
+    def filter_has_groups(self) -> "StudentQuerySet":
+        """QuerySet with Students that have at least one group."""
+        return self.annotate_with_group_count().filter(group_count__gt=0)
+
+    def filter_has_no_groups(self) -> "StudentQuerySet":
+        """QuerySet with Students that have no groups."""
+        return self.annotate_with_group_count().filter(group_count=0)
 
 
 class Student(Person):
@@ -61,6 +75,7 @@ class Student(Person):
     # The general rule is that one student can only learn one language,
     # but we don't want to limit this in the database.
     teaching_languages_and_levels = models.ManyToManyField(LanguageAndLevel)
+    objects = StudentQuerySet.as_manager()
 
     class Meta:
         indexes = [

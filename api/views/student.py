@@ -6,6 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 
+from api.exceptions import ConflictError
 from api.filters import StudentFilter
 from api.models import Student
 from api.models.choices.status.project import StudentProjectStatus
@@ -110,6 +111,44 @@ class DashboardStudentViewSet(
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
+            status.HTTP_409_CONFLICT: OpenApiResponse(
+                response=ValidationErrorSerializer,
+                description="Only students with no groups can be processed",
+            ),
+        },
+    )
+    @action(detail=True, methods=["post"])
+    def finished_and_left(
+        self, request: Request, personal_info_id: int  # noqa: ARG002
+    ) -> Response:
+        student = self.get_object()
+        if student.has_groups:
+            raise ConflictError("Only students with no groups can be processed")
+        StudentProcessor.finished_and_left(student)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
+            status.HTTP_409_CONFLICT: OpenApiResponse(
+                response=ValidationErrorSerializer,
+                description="Only students with no groups can be processed",
+            ),
+        },
+    )
+    @action(detail=True, methods=["post"])
+    def put_in_waiting_queue(  # noqa: ARG002
+        self, request: Request, personal_info_id: int  # noqa: ARG002
+    ) -> Response:
+        student = self.get_object()
+        if student.has_groups:
+            raise ConflictError("Only students with no groups can be processed")
+        StudentProcessor.put_in_waiting_queue(student)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(
         parameters=[DashboardAvailableStudentsSerializer],
         responses={
             status.HTTP_200_OK: OpenApiResponse(
@@ -138,6 +177,24 @@ class DashboardStudentViewSet(
         ).distinct()
         return Response(
             data=MinifiedStudentSerializer(matched_students, many=True).data,
+            status=status.HTTP_200_OK,
+        )
+
+    @extend_schema(
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(
+                response=ListSerializer(child=DashboardStudentSerializer()),
+                description="Students returned",
+            ),
+        }
+    )
+    @action(detail=False, methods=["get"])
+    def active_students_with_no_groups(self, request: Request) -> Response:  # noqa: ARG002
+        matched_students = Student.objects.filter(
+            project_status=StudentProjectStatus.STUDYING
+        ).filter_has_no_groups()
+        return Response(
+            data=DashboardStudentSerializer(matched_students, many=True).data,
             status=status.HTTP_200_OK,
         )
 

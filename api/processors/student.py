@@ -1,7 +1,9 @@
 from api.models import Student
 from api.models.group import Group
 from api.processors.actions import (
+    StudentFinishedAndLeftProcessor,
     StudentMissedClassProcessor,
+    StudentPutInWaitingQueueProcessor,
     StudentReturnedFromLeaveProcessor,
     StudentTransferProcessor,
     StudentWentOnLeaveProcessor,
@@ -26,3 +28,11 @@ class StudentProcessor:
     @staticmethod
     def returned_from_leave(student: Student) -> None:
         StudentReturnedFromLeaveProcessor(student).process()
+
+    @staticmethod
+    def finished_and_left(student: Student) -> None:
+        StudentFinishedAndLeftProcessor(student).process()
+
+    @staticmethod
+    def put_in_waiting_queue(student: Student) -> None:
+        StudentPutInWaitingQueueProcessor(student).process()

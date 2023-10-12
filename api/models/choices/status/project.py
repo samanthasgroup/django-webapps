@@ -65,7 +65,6 @@ class StudentProjectStatus(models.TextChoices):
     LEFT_PREMATURELY = "left_prematurely", "Left the project prematurely"
     FINISHED = "finished", "Completed the course and left the project"
     BANNED = "banned", "Banned from the project"
-    AWAITING_DECISION = "awaiting_decision", "Awaiting decision"
 
 
 class TeacherProjectStatus(models.TextChoices):
