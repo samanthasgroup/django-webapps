@@ -826,6 +826,7 @@ class TestDashboardStudentOfferJoinGroup:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         log_event: StudentLogEvent = StudentLogEvent.objects.filter(student_id=student.pk).last()
         assert log_event.type == StudentLogEventType.GROUP_OFFERED
+        assert log_event.to_group == active_group
         assert student.situational_status == StudentSituationalStatus.GROUP_OFFERED
         assert student.project_status == prev_project_status
         assert_date_time_with_timestamp(log_event.date_time, timestamp)
