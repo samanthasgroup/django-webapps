@@ -109,6 +109,23 @@ class DashboardStudentMissedClassSerializer(serializers.Serializer[Any]):
         return attrs
 
 
+class DashboardStudentOfferJoinGroupSerializer(serializers.Serializer[Any]):
+    group_id = serializers.IntegerField()
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        try:
+            group = Group.objects.get(pk=int(attrs["group_id"]))
+        except Group.DoesNotExist:
+            raise ConflictError(f"Group {attrs['group_id']} not found")
+
+        if self.instance is not None and group.students.filter(pk=self.instance.pk).exists():
+            raise ConflictError(f"Student {self.instance.pk} is already in group {group.pk}")
+
+        attrs["group"] = group
+
+        return attrs
+
+
 class DashboardAvailableStudentsSerializer(serializers.Serializer[Any]):
     time_slot_ids = serializers.ListField(child=serializers.IntegerField(), min_length=2)
 

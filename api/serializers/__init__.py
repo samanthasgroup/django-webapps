@@ -16,6 +16,7 @@ from api.serializers.personal_info import (
 from api.serializers.student.dashboard import (
     DashboardAvailableStudentsSerializer,
     DashboardStudentMissedClassSerializer,
+    DashboardStudentOfferJoinGroupSerializer,
     DashboardStudentSerializer,
     DashboardStudentTransferSerializer,
     DashboardStudentWithPersonalInfoSerializer,
@@ -80,4 +81,5 @@ __all__ = [
     "EnrollmentTestResultCreateSerializer",
     "GroupDiscardSerializer",
     "CoordinatorWriteSerializer",
+    "DashboardStudentOfferJoinGroupSerializer",
 ]
