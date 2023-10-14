@@ -1,6 +1,6 @@
-from api.models import Student
-from api.models.group import Group
+from api.models import Coordinator, Group, Student
 from api.processors.actions import (
+    StudentAcceptedOfferedGroupProcessor,
     StudentFinishedAndLeftProcessor,
     StudentMissedClassProcessor,
     StudentPutInWaitingQueueProcessor,
@@ -36,3 +36,7 @@ class StudentProcessor:
     @staticmethod
     def put_in_waiting_queue(student: Student) -> None:
         StudentPutInWaitingQueueProcessor(student).process()
+
+    @staticmethod
+    def accepted_offered_group(student: Student, coordinator: Coordinator, group: Group) -> None:
+        StudentAcceptedOfferedGroupProcessor(student, coordinator, group).process()
