@@ -13,7 +13,9 @@ from api.models.choices.status.project import StudentProjectStatus
 from api.processors import StudentProcessor
 from api.serializers import (
     DashboardAvailableStudentsSerializer,
+    DashboardStudentAcceptedOfferedGroupSerializer,
     DashboardStudentMissedClassSerializer,
+    DashboardStudentOfferJoinGroupSerializer,
     DashboardStudentSerializer,
     DashboardStudentTransferSerializer,
     DashboardStudentWithPersonalInfoSerializer,
@@ -111,6 +113,36 @@ class DashboardStudentViewSet(
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(
+        request=DashboardStudentAcceptedOfferedGroupSerializer,
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
+            status.HTTP_409_CONFLICT: OpenApiResponse(
+                response=BaseAPIExceptionSerializer,
+                description="invalid group or coordinator or student is not in the group",
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=ValidationErrorSerializer,
+                description="Something is wrong with the query params",
+            ),
+        },
+    )
+    @action(detail=True, methods=["post"])
+    def accepted_offered_group(  # noqa: ARG002
+        self, request: Request, personal_info_id: int  # noqa: ARG002
+    ) -> Response:
+        student = self.get_object()
+        query_params_serializer = DashboardStudentAcceptedOfferedGroupSerializer(
+            data=request.data, instance=student
+        )
+        query_params_serializer.is_valid(raise_exception=True)
+        StudentProcessor.accepted_offered_group(
+            student,
+            query_params_serializer.validated_data["coordinator"],
+            query_params_serializer.validated_data["group"],
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
             status.HTTP_409_CONFLICT: OpenApiResponse(
@@ -127,6 +159,35 @@ class DashboardStudentViewSet(
         if student.has_groups:
             raise ConflictError("Only students with no groups can be processed")
         StudentProcessor.finished_and_left(student)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(
+        request=DashboardStudentOfferJoinGroupSerializer,
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
+            status.HTTP_409_CONFLICT: OpenApiResponse(
+                response=BaseAPIExceptionSerializer,
+                description="invalid group or student is in the group",
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=ValidationErrorSerializer,
+                description="Something is wrong with the query params",
+            ),
+        },
+    )
+    @action(detail=True, methods=["post"])
+    def offer_join_group(  # noqa: ARG002
+        self, request: Request, personal_info_id: int  # noqa: ARG002
+    ) -> Response:
+        student = self.get_object()
+        query_params_serializer = DashboardStudentOfferJoinGroupSerializer(
+            data=request.data, instance=student
+        )
+        query_params_serializer.is_valid(raise_exception=True)
+        StudentProcessor.offer_join_group(
+            student,
+            query_params_serializer.validated_data["group"],
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(
