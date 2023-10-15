@@ -902,3 +902,56 @@ class TestDashboardStudentAcceptedOfferedGroup:
             data={"group_id": group_id, "coordinator_id": coordinator_id},
         )
         assert response.status_code == status.HTTP_409_CONFLICT
+
+
+class TestDashboardStudentOfferJoinGroup:
+    def test_general(self, api_client, active_group: Group, availability_slots, timestamp):
+        student = baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        prev_project_status = student.project_status
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/offer_join_group/",
+            data={"group_id": active_group.pk},
+        )
+        student.refresh_from_db()
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        log_event: StudentLogEvent = StudentLogEvent.objects.filter(student_id=student.pk).last()
+        assert log_event.type == StudentLogEventType.GROUP_OFFERED
+        assert log_event.to_group == active_group
+        assert student.situational_status == StudentSituationalStatus.GROUP_OFFERED
+        assert student.project_status == prev_project_status
+        assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+    def test_student_already_in_group(self, api_client, active_group: Group, availability_slots):
+        student = baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        active_group.students.add(student)
+        active_group.save()
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/offer_join_group/",
+            data={"group_id": active_group.pk},
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT
+
+    def test_group_not_found(self, api_client, active_group: Group, availability_slots):
+        student = baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        group_id = active_group.pk
+        active_group.delete()
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/offer_join_group/",
+            data={"group_id": group_id},
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT

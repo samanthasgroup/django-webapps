@@ -3,6 +3,7 @@ from api.processors.actions import (
     StudentAcceptedOfferedGroupProcessor,
     StudentFinishedAndLeftProcessor,
     StudentMissedClassProcessor,
+    StudentOfferJoinGroupProcessor,
     StudentPutInWaitingQueueProcessor,
     StudentReturnedFromLeaveProcessor,
     StudentTransferProcessor,
@@ -40,3 +41,7 @@ class StudentProcessor:
     @staticmethod
     def accepted_offered_group(student: Student, coordinator: Coordinator, group: Group) -> None:
         StudentAcceptedOfferedGroupProcessor(student, coordinator, group).process()
+
+    @staticmethod
+    def offer_join_group(student: Student, group: Group) -> None:
+        StudentOfferJoinGroupProcessor(student, group).process()

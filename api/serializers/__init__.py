@@ -17,6 +17,7 @@ from api.serializers.student.dashboard import (
     DashboardAvailableStudentsSerializer,
     DashboardStudentAcceptedOfferedGroupSerializer,
     DashboardStudentMissedClassSerializer,
+    DashboardStudentOfferJoinGroupSerializer,
     DashboardStudentSerializer,
     DashboardStudentTransferSerializer,
     DashboardStudentWithPersonalInfoSerializer,
@@ -82,4 +83,5 @@ __all__ = [
     "GroupDiscardSerializer",
     "CoordinatorWriteSerializer",
     "DashboardStudentAcceptedOfferedGroupSerializer",
+    "DashboardStudentOfferJoinGroupSerializer",
 ]
