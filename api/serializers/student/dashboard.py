@@ -3,8 +3,7 @@ from typing import Any
 from rest_framework import serializers
 
 from api.exceptions import ConflictError, UnproccessableEntityError
-from api.models import DayAndTimeSlot, Student
-from api.models.group import Group
+from api.models import Coordinator, DayAndTimeSlot, Group, Student
 from api.serializers import DashboardPersonalInfoSerializer
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
@@ -105,6 +104,31 @@ class DashboardStudentMissedClassSerializer(serializers.Serializer[Any]):
             raise ConflictError(f"Student {self.instance.pk} is not in group {group.pk}")
 
         attrs["group"] = group
+
+        return attrs
+
+
+class DashboardStudentAcceptedOfferedGroupSerializer(serializers.Serializer[Any]):
+    group_id = serializers.IntegerField()
+    coordinator_id = serializers.IntegerField()
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        try:
+            group = Group.objects.get(pk=int(attrs["group_id"]))
+        except Group.DoesNotExist:
+            raise ConflictError(f"Group {attrs['group_id']} not found")
+
+        if self.instance is not None and group.students.filter(pk=self.instance.pk).exists():
+            raise ConflictError(f"Student {self.instance.pk} is already in group {group.pk}")
+
+        attrs["group"] = group
+
+        try:
+            coordinator = Coordinator.objects.get(pk=int(attrs["coordinator_id"]))
+        except Coordinator.DoesNotExist:
+            raise ConflictError(f"Coordinator {attrs['coordinator_id']} not found")
+
+        attrs["coordinator"] = coordinator
 
         return attrs
 

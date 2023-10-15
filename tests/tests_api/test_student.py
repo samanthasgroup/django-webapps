@@ -14,10 +14,10 @@ from api.models import (
     PersonalInfo,
     Student,
 )
-from api.models.choices.log_event_type import StudentLogEventType
+from api.models.choices.log_event_type import CoordinatorLogEventType, StudentLogEventType
 from api.models.choices.status import StudentProjectStatus, StudentSituationalStatus
 from api.models.group import Group
-from api.models.log_event import StudentLogEvent
+from api.models.log_event import CoordinatorLogEvent, StudentLogEvent
 from api.serializers import DashboardStudentSerializer, StudentWriteSerializer
 from tests.tests_api.asserts import (
     assert_date_time_with_timestamp,
@@ -807,6 +807,101 @@ class TestDashboardActiveStudentsWithNoGroups:
                 },
             }
         ]
+
+
+class TestDashboardStudentAcceptedOfferedGroup:
+    def test_general(self, api_client, availability_slots, timestamp, active_group: Group):
+        student = baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        coordinator = baker.make(
+            Coordinator,
+            make_m2m=True,
+            _fill_optional=True,
+        )
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/accepted_offered_group/",
+            data={"group_id": active_group.pk, "coordinator_id": coordinator.pk},
+        )
+        student.refresh_from_db()
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        log_event: StudentLogEvent = StudentLogEvent.objects.filter(student_id=student.pk).last()
+        assert log_event.type == StudentLogEventType.STUDY_START
+        assert log_event.to_group == active_group
+        assert student.project_status == StudentProjectStatus.STUDYING
+        assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+        coordinator_log_event = CoordinatorLogEvent.objects.filter(
+            coordinator_id=coordinator.pk
+        ).last()
+        assert (
+            coordinator_log_event.type == CoordinatorLogEventType.ADDED_STUDENT_TO_EXISTING_GROUP
+        )
+        assert_date_time_with_timestamp(coordinator_log_event.date_time, timestamp)
+
+    def test_none_existing_group(self, api_client, availability_slots, active_group: Group):
+        student = baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        coordinator = baker.make(
+            Coordinator,
+            make_m2m=True,
+            _fill_optional=True,
+        )
+        group_id = active_group.pk
+        active_group.delete()
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/accepted_offered_group/",
+            data={"group_id": group_id, "coordinator_id": coordinator.pk},
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT
+
+    def test_student_already_in_group(self, api_client, availability_slots, active_group: Group):
+        student = baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        coordinator = baker.make(
+            Coordinator,
+            make_m2m=True,
+            _fill_optional=True,
+        )
+        group_id = active_group.pk
+        active_group.students.add(student)
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/accepted_offered_group/",
+            data={"group_id": group_id, "coordinator_id": coordinator.pk},
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT
+
+    def test_none_existing_coordinator(self, api_client, availability_slots, active_group: Group):
+        student = baker.make(
+            Student,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        coordinator = baker.make(
+            Coordinator,
+            make_m2m=True,
+            _fill_optional=True,
+        )
+        group_id = active_group.pk
+        coordinator_id = coordinator.pk
+        coordinator.delete()
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/accepted_offered_group/",
+            data={"group_id": group_id, "coordinator_id": coordinator_id},
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT
 
 
 class TestDashboardStudentOfferJoinGroup:
