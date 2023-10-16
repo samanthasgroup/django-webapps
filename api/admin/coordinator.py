@@ -1,10 +1,13 @@
 from collections.abc import Callable
 
+from django import forms
 from django.contrib import admin
+from django.contrib.admin.helpers import ActionForm
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
 from api import models
+from api.models import Group
 from api.models.choices.log_event_type import CoordinatorLogEventType
 from api.processors.auxil.log_event_creator import CoordinatorAdminLogEventCreator
 
@@ -20,6 +23,10 @@ class BaseCoordinatorGroupInline(
     can_add = False
     extra = 0
     max_num = 0
+
+
+class GroupActionForm(ActionForm):
+    group = forms.ModelChoiceField(queryset=Group.objects.all(), required=False)
 
 
 class CoordinatorActiveGroupsInline(BaseCoordinatorGroupInline):
@@ -45,6 +52,7 @@ class CoordinatorLogEventsInline(
     )
     extra = 0
     max_num = 0
+    show_change_link = True
 
 
 class CoordinatorAdmin(admin.ModelAdmin[models.Coordinator]):
@@ -58,6 +66,7 @@ class CoordinatorAdmin(admin.ModelAdmin[models.Coordinator]):
         CoordinatorFormerGroupsInline,
         CoordinatorLogEventsInline,
     ]
+    action_form = GroupActionForm
 
     def get_queryset(self, _: HttpRequest) -> QuerySet[models.Coordinator]:
         return models.Coordinator.objects.annotate_with_group_count().prefetch_related("groups")
@@ -72,13 +81,14 @@ class CoordinatorAdmin(admin.ModelAdmin[models.Coordinator]):
     ) -> Callable[..., None]:
         def action(
             _: admin.ModelAdmin[models.Coordinator],
-            __: HttpRequest,
+            request: HttpRequest,
             queryset: QuerySet[models.Coordinator],
         ) -> None:
             for coordinator in queryset:
                 CoordinatorAdminLogEventCreator.create(
                     coordinator=coordinator,
                     log_event_type=log_event_type,
+                    group=Group.objects.get(pk=request.POST["group"]),
                 )
 
         return action

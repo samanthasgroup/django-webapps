@@ -23,5 +23,6 @@ for model in (
     models.Language,
     models.LanguageAndLevel,
     models.NonTeachingHelp,
+    models.CoordinatorLogEvent,
 ):
     admin.site.register(model)
