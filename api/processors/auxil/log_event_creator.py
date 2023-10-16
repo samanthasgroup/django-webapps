@@ -130,6 +130,7 @@ class CoordinatorAdminLogEventCreator:
                 | CoordinatorLogEventType.TRANSFER_CANCELED
             ):
                 return None, None
+        return None, None
 
     @classmethod
     @transaction.atomic

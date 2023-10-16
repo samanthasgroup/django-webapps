@@ -1,6 +1,6 @@
 digraph model_graph {
   // Dotfile by Django-Extensions graph_models
-  // Created: 2023-10-10 18:37
+  // Created: 2023-10-14 21:43
   // Cli Options: --output erd.dot --theme django2018 --layout fdp --rankdir TB --arrow crow --verbosity 2 api
 
   fontname = "Roboto"

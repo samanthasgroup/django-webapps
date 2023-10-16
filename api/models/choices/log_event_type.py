@@ -35,6 +35,10 @@ class CoordinatorLogEventType(models.TextChoices):
     ACCESS_REVOKED = "access_revoked", "Access to corporate resources revoked"
     GROUP_ABORTED = "group_aborted", "Group finished prematurely"
     GROUP_FINISHED = "group_finished", "Group studies are finished"
+    ADDED_STUDENT_TO_EXISTING_GROUP = (
+        "added_student_to_existing group",
+        "Added student to a group that was already studying",
+    )
 
 
 class GroupLogEventType(models.TextChoices):
