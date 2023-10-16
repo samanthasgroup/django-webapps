@@ -1,6 +1,7 @@
 from api.models import Teacher
 from api.models.group import Group
 from api.processors.actions import (
+    TeacherLeftProjectPrematurelyProcessor,
     TeacherReturnedFromLeaveProcessor,
     TeacherTransferProcessor,
     TeacherWentOnLeaveProcessor,
@@ -21,3 +22,7 @@ class TeacherProcessor:
     @staticmethod
     def returned_from_leave(teacher: Teacher) -> None:
         TeacherReturnedFromLeaveProcessor(teacher).process()
+
+    @staticmethod
+    def left_project_prematurely(teacher: Teacher) -> None:
+        TeacherLeftProjectPrematurelyProcessor(teacher).process()
