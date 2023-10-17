@@ -139,11 +139,13 @@ class CoordinatorAdminLogEventCreator:
         coordinator: Coordinator,
         log_event_type: CoordinatorLogEventType,
         comment: str = "",
+        group: Group | None = None,
     ) -> None:
         created_log_event = CoordinatorLogEvent.objects.create(
             coordinator=coordinator,
             type=log_event_type,
             comment=comment,
+            group=group,
         )
         project_status, situational_status = cls._get_statuses_by_event_type(
             coordinator=coordinator,
