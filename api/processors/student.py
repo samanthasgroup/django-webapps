@@ -2,6 +2,7 @@ from api.models import Coordinator, Group, Student
 from api.processors.actions import (
     StudentAcceptedOfferedGroupProcessor,
     StudentFinishedAndLeftProcessor,
+    StudentLeftProjectPrematurelyProcessor,
     StudentMissedClassProcessor,
     StudentOfferJoinGroupProcessor,
     StudentPutInWaitingQueueProcessor,
@@ -45,3 +46,7 @@ class StudentProcessor:
     @staticmethod
     def offer_join_group(student: Student, group: Group) -> None:
         StudentOfferJoinGroupProcessor(student, group).process()
+
+    @staticmethod
+    def left_project_prematurely(student: Student) -> None:
+        StudentLeftProjectPrematurelyProcessor(student).process()

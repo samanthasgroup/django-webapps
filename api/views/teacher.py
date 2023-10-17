@@ -77,6 +77,23 @@ class DashboardTeacherViewSet(
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Teacher is transferred"),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=ValidationErrorSerializer,
+                description="Something is wrong with the query params",
+            ),
+        },
+    )
+    @action(detail=True, methods=["post"])
+    def left_project_prematurely(  # noqa: ARG002
+        self, request: Request, personal_info_id: int  # noqa: ARG002
+    ) -> Response:
+        teacher = self.get_object()
+        TeacherProcessor.left_project_prematurely(teacher)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class DashboardTeacherWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Teacher]):
     """
