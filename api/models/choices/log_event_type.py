@@ -41,6 +41,18 @@ class CoordinatorLogEventType(models.TextChoices):
     )
 
 
+COORDINATOR_LOG_EVENTS_REQUIRE_GROUP = [
+    CoordinatorLogEventType.TOOK_NEW_GROUP,
+    CoordinatorLogEventType.GROUP_STARTED_CLASSES,
+    CoordinatorLogEventType.TOOK_TRANSFERRED_GROUP,
+    CoordinatorLogEventType.REQUESTED_TRANSFER,
+    CoordinatorLogEventType.TRANSFER_CANCELED,
+    CoordinatorLogEventType.TRANSFER_COMPLETED,
+    CoordinatorLogEventType.GROUP_ABORTED,
+    CoordinatorLogEventType.GROUP_FINISHED,
+]
+
+
 class GroupLogEventType(models.TextChoices):
     FORMED = "formed", "Formed (automatically or by coordinator)"
     CONFIRMED = "confirmed", "Confirmed"

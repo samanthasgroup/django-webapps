@@ -1,14 +1,17 @@
 from collections.abc import Callable
 
 from django import forms
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.admin.helpers import ActionForm
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
 from api import models
 from api.models import Group
-from api.models.choices.log_event_type import CoordinatorLogEventType
+from api.models.choices.log_event_type import (
+    COORDINATOR_LOG_EVENTS_REQUIRE_GROUP,
+    CoordinatorLogEventType,
+)
 from api.processors.auxil.log_event_creator import CoordinatorAdminLogEventCreator
 
 
@@ -84,11 +87,27 @@ class CoordinatorAdmin(admin.ModelAdmin[models.Coordinator]):
             request: HttpRequest,
             queryset: QuerySet[models.Coordinator],
         ) -> None:
+            group_from_request = request.POST["group"]
+
+            if log_event_type in COORDINATOR_LOG_EVENTS_REQUIRE_GROUP:
+                if not group_from_request:
+                    self.message_user(
+                        request, "You should choose group for this action.", messages.ERROR
+                    )
+                    return
+            elif group_from_request:
+                self.message_user(
+                    request,
+                    "You should not choose group for this action.",
+                    messages.ERROR,
+                )
+                return
+
             for coordinator in queryset:
                 CoordinatorAdminLogEventCreator.create(
                     coordinator=coordinator,
                     log_event_type=log_event_type,
-                    group=Group.objects.get(pk=request.POST["group"]),
+                    group=Group.objects.get(pk=group_from_request) if group_from_request else None,
                 )
 
         return action
