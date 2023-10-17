@@ -19,7 +19,6 @@ class TeacherLeftProjectPrematurelyProcessor(TeacherActionProcessor):
     def _update_groups(self) -> None:
         self.teacher.groups_former.add(*self.teacher.groups.all())
         self.teacher.groups.clear()
-        self.teacher.save()
 
     def _set_statuses(self) -> None:
         self.teacher.project_status = TeacherLogEventType.LEFT_PREMATURELY

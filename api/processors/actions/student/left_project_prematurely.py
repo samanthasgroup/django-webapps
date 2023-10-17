@@ -20,7 +20,6 @@ class StudentLeftProjectPrematurelyProcessor(StudentActionProcessor):
     def _update_groups(self) -> None:
         self.student.groups_former.add(*self.student.groups.all())
         self.student.groups.clear()
-        self.student.save()
 
     def _set_statuses(self) -> None:
         self.student.project_status = StudentProjectStatus.LEFT_PREMATURELY
