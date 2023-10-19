@@ -481,3 +481,27 @@ def test_dashboard_teacher_left_project_prematurely(
     assert teacher in active_group.teachers_former.all()
     assert teacher not in active_group.teachers.all()
     assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+
+def test_dashboard_teacher_expelled(
+    api_client, availability_slots, active_group: Group, timestamp
+):
+    teacher = baker.make(
+        Teacher,
+        make_m2m=True,
+        _fill_optional=True,
+        availability_slots=availability_slots,
+    )
+    active_group.teachers.add(teacher)
+    response = api_client.post(
+        f"/api/dashboard/teachers/{teacher.personal_info.id}/expelled/",
+    )
+    teacher.refresh_from_db()
+    active_group.refresh_from_db()
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    log_event: TeacherLogEvent = TeacherLogEvent.objects.filter(teacher_id=teacher.pk).last()
+    assert log_event.type == TeacherLogEventType.EXPELLED
+    assert teacher.project_status == TeacherProjectStatus.BANNED
+    assert teacher in active_group.teachers_former.all()
+    assert teacher not in active_group.teachers.all()
+    assert_date_time_with_timestamp(log_event.date_time, timestamp)
