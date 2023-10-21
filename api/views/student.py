@@ -122,6 +122,23 @@ class DashboardStudentViewSet(
         },
     )
     @action(detail=True, methods=["post"])
+    def expelled(  # noqa: ARG002
+        self, request: Request, personal_info_id: int  # noqa: ARG002
+    ) -> Response:
+        student = self.get_object()
+        StudentProcessor.expelled(student)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=ValidationErrorSerializer,
+                description="Something is wrong with the query params",
+            ),
+        },
+    )
+    @action(detail=True, methods=["post"])
     def left_project_prematurely(  # noqa: ARG002
         self, request: Request, personal_info_id: int  # noqa: ARG002
     ) -> Response:

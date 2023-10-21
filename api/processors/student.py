@@ -1,6 +1,7 @@
 from api.models import Coordinator, Group, Student
 from api.processors.actions import (
     StudentAcceptedOfferedGroupProcessor,
+    StudentExpelledProcessor,
     StudentFinishedAndLeftProcessor,
     StudentLeftProjectPrematurelyProcessor,
     StudentMissedClassProcessor,
@@ -50,3 +51,7 @@ class StudentProcessor:
     @staticmethod
     def left_project_prematurely(student: Student) -> None:
         StudentLeftProjectPrematurelyProcessor(student).process()
+
+    @staticmethod
+    def expelled(student: Student) -> None:
+        StudentExpelledProcessor(student).process()

@@ -7,7 +7,7 @@ from api.models.log_event import TeacherLogEvent
 from api.processors.actions.teacher import TeacherActionProcessor
 
 
-class TeacherLeftProjectPrematurelyProcessor(TeacherActionProcessor):
+class TeacherExpelledProcessor(TeacherActionProcessor):
     def __init__(self, teacher: Teacher):
         super().__init__(teacher)
 
@@ -22,12 +22,10 @@ class TeacherLeftProjectPrematurelyProcessor(TeacherActionProcessor):
         self.teacher.groups.clear()
 
     def _set_statuses(self) -> None:
-        self.teacher.project_status = TeacherProjectStatus.LEFT_PREMATURELY
+        self.teacher.project_status = TeacherProjectStatus.BANNED
         self.teacher.situational_status = ""
         self.teacher.status_since = self.timestamp
         self.teacher.save()
 
     def _create_log_events(self) -> None:
-        TeacherLogEvent.objects.create(
-            teacher=self.teacher, type=TeacherLogEventType.LEFT_PREMATURELY
-        )
+        TeacherLogEvent.objects.create(teacher=self.teacher, type=TeacherLogEventType.EXPELLED)
