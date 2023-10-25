@@ -1,8 +1,9 @@
-from api.models import Coordinator, Group, Student
+from api.models import Coordinator, Group, LanguageAndLevel, Student
 from api.processors.actions import (
     StudentAcceptedOfferedGroupProcessor,
     StudentExpelledProcessor,
     StudentFinishedAndLeftProcessor,
+    StudentFinishedOralInterviewProcessor,
     StudentLeftProjectPrematurelyProcessor,
     StudentMissedClassProcessor,
     StudentOfferJoinGroupProcessor,
@@ -55,3 +56,7 @@ class StudentProcessor:
     @staticmethod
     def expelled(student: Student) -> None:
         StudentExpelledProcessor(student).process()
+
+    @staticmethod
+    def finished_oral_interview(student: Student, language_and_level: LanguageAndLevel) -> None:
+        StudentFinishedOralInterviewProcessor(student, language_and_level).process()

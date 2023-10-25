@@ -3,7 +3,7 @@ from typing import Any
 from rest_framework import serializers
 
 from api.exceptions import ConflictError, UnproccessableEntityError
-from api.models import Coordinator, DayAndTimeSlot, Group, Student
+from api.models import Coordinator, DayAndTimeSlot, Group, LanguageAndLevel, Student
 from api.serializers import DashboardPersonalInfoSerializer
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
@@ -159,4 +159,18 @@ class DashboardAvailableStudentsSerializer(serializers.Serializer[Any]):
                 DayAndTimeSlot.objects.get(pk=time_slot_id)
             except DayAndTimeSlot.DoesNotExist:
                 raise UnproccessableEntityError(f"Time slot {time_slot_id} not found")
+        return attrs
+
+
+class DashboardFinishedOralInterviewSerializer(serializers.Serializer[Any]):
+    language_and_level_id = serializers.IntegerField()
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        try:
+            language_and_level = LanguageAndLevel.objects.get(pk=attrs["language_and_level_id"])
+        except LanguageAndLevel.DoesNotExist:
+            raise UnproccessableEntityError(
+                f"Language and level {attrs['language_and_level_id']} not found"
+            )
+        attrs["language_and_level"] = language_and_level
         return attrs

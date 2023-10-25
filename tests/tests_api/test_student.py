@@ -1003,3 +1003,64 @@ def test_dashboard_student_expelled(
     assert student in active_group.students_former.all()
     assert student not in active_group.students.all()
     assert_date_time_with_timestamp(log_event.date_time, timestamp)
+
+
+class TestDashboardStudentFinishedOralInterview:
+    def test_general_check(self, api_client, availability_slots, timestamp):
+        student = baker.make(
+            Student,
+            teaching_languages_and_levels=[],
+            project_status=StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        language_and_level = baker.make(LanguageAndLevel)
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/finished_oral_interview/",
+            data={"language_and_level_id": language_and_level.pk},
+        )
+        student.refresh_from_db()
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        log_event: StudentLogEvent = StudentLogEvent.objects.filter(student_id=student.pk).last()
+        assert log_event.type == StudentLogEventType.AWAITING_OFFER
+        assert student.project_status == StudentProjectStatus.NO_GROUP_YET
+        assert language_and_level in student.teaching_languages_and_levels.all()
+        assert_date_time_with_timestamp(log_event.date_time, timestamp)
+        assert_date_time_with_timestamp(student.status_since, timestamp)
+
+    def test_wrong_project_status(self, api_client, availability_slots):
+        student = baker.make(
+            Student,
+            teaching_languages_and_levels=[],
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        language_and_level = baker.make(LanguageAndLevel)
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/finished_oral_interview/",
+            data={"language_and_level_id": language_and_level.pk},
+        )
+        if student.project_status == StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL:
+            assert response.status_code == status.HTTP_204_NO_CONTENT
+        else:
+            assert response.status_code == status.HTTP_409_CONFLICT
+
+    def test_wrong_language_and_level(self, api_client, availability_slots):
+        student = baker.make(
+            Student,
+            teaching_languages_and_levels=[],
+            make_m2m=True,
+            project_status=StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        language_and_level = baker.make(LanguageAndLevel)
+        language_pk = language_and_level.pk
+        language_and_level.delete()
+        response = api_client.post(
+            f"/api/dashboard/students/{student.personal_info.id}/finished_oral_interview/",
+            data={"language_and_level_id": language_pk},
+        )
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
