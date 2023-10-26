@@ -304,7 +304,7 @@ class TestDashboardTeacherTransfer:
             f"/api/dashboard/teachers/{teacher.personal_info.id}/transfer/",
             data={"to_group_id": group_id, "from_group_id": old_group.pk},
         )
-        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 class TestDashboardTeacherWithPersonalInfo:

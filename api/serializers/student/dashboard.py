@@ -98,7 +98,7 @@ class DashboardStudentMissedClassSerializer(serializers.Serializer[Any]):
         try:
             group = Group.objects.get(pk=int(attrs["group_id"]))
         except Group.DoesNotExist:
-            raise ConflictError(f"Group {attrs['group_id']} not found")
+            raise UnproccessableEntityError(f"Group {attrs['group_id']} not found")
 
         if self.instance is not None and not group.students.filter(pk=self.instance.pk).exists():
             raise ConflictError(f"Student {self.instance.pk} is not in group {group.pk}")
@@ -116,7 +116,7 @@ class DashboardStudentAcceptedOfferedGroupSerializer(serializers.Serializer[Any]
         try:
             group = Group.objects.get(pk=int(attrs["group_id"]))
         except Group.DoesNotExist:
-            raise ConflictError(f"Group {attrs['group_id']} not found")
+            raise UnproccessableEntityError(f"Group {attrs['group_id']} not found")
 
         if self.instance is not None and group.students.filter(pk=self.instance.pk).exists():
             raise ConflictError(f"Student {self.instance.pk} is already in group {group.pk}")
@@ -126,7 +126,7 @@ class DashboardStudentAcceptedOfferedGroupSerializer(serializers.Serializer[Any]
         try:
             coordinator = Coordinator.objects.get(pk=int(attrs["coordinator_id"]))
         except Coordinator.DoesNotExist:
-            raise ConflictError(f"Coordinator {attrs['coordinator_id']} not found")
+            raise UnproccessableEntityError(f"Coordinator {attrs['coordinator_id']} not found")
 
         attrs["coordinator"] = coordinator
 
@@ -140,7 +140,7 @@ class DashboardStudentOfferJoinGroupSerializer(serializers.Serializer[Any]):
         try:
             group = Group.objects.get(pk=int(attrs["group_id"]))
         except Group.DoesNotExist:
-            raise ConflictError(f"Group {attrs['group_id']} not found")
+            raise UnproccessableEntityError(f"Group {attrs['group_id']} not found")
 
         if self.instance is not None and group.students.filter(pk=self.instance.pk).exists():
             raise ConflictError(f"Student {self.instance.pk} is already in group {group.pk}")
@@ -162,7 +162,7 @@ class DashboardAvailableStudentsSerializer(serializers.Serializer[Any]):
         return attrs
 
 
-class DashboardFinishedOralInterviewSerializer(serializers.Serializer[Any]):
+class DashboardCompletedOralInterviewSerializer(serializers.Serializer[Any]):
     language_and_level_id = serializers.IntegerField()
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:

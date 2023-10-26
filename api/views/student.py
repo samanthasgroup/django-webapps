@@ -13,7 +13,7 @@ from api.models.choices.status.project import StudentProjectStatus
 from api.processors import StudentProcessor
 from api.serializers import (
     DashboardAvailableStudentsSerializer,
-    DashboardFinishedOralInterviewSerializer,
+    DashboardCompletedOralInterviewSerializer,
     DashboardStudentAcceptedOfferedGroupSerializer,
     DashboardStudentMissedClassSerializer,
     DashboardStudentOfferJoinGroupSerializer,
@@ -63,11 +63,15 @@ class DashboardStudentViewSet(
             status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Student is transferred"),
             status.HTTP_409_CONFLICT: OpenApiResponse(
                 response=BaseAPIExceptionSerializer,
-                description="Transfer group is not found",
+                description="Student is already in transfer_to group or not in transfer_from",
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=ValidationErrorSerializer,
                 description="Something is wrong with the query params",
+            ),
+            status.HTTP_422_UNPROCESSABLE_ENTITY: OpenApiResponse(
+                response=BaseAPIExceptionSerializer,
+                description="Group not found",
             ),
         },
     )
@@ -91,11 +95,15 @@ class DashboardStudentViewSet(
             status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
             status.HTTP_409_CONFLICT: OpenApiResponse(
                 response=BaseAPIExceptionSerializer,
-                description="invalid group or student is not in the group",
+                description="Student is not in the group",
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=ValidationErrorSerializer,
                 description="Something is wrong with the query params",
+            ),
+            status.HTTP_422_UNPROCESSABLE_ENTITY: OpenApiResponse(
+                response=BaseAPIExceptionSerializer,
+                description="Group not found",
             ),
         },
     )
@@ -153,11 +161,15 @@ class DashboardStudentViewSet(
             status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
             status.HTTP_409_CONFLICT: OpenApiResponse(
                 response=BaseAPIExceptionSerializer,
-                description="invalid group or coordinator or student is not in the group",
+                description="Coordinator or student is not in the group",
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=BaseAPIExceptionSerializer,
                 description="Something is wrong with the query params",
+            ),
+            status.HTTP_422_UNPROCESSABLE_ENTITY: OpenApiResponse(
+                response=BaseAPIExceptionSerializer,
+                description="Group not found",
             ),
         },
     )
@@ -202,11 +214,15 @@ class DashboardStudentViewSet(
             status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
             status.HTTP_409_CONFLICT: OpenApiResponse(
                 response=BaseAPIExceptionSerializer,
-                description="invalid group or student is in the group",
+                description="Student is in the group",
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=ValidationErrorSerializer,
                 description="Something is wrong with the query params",
+            ),
+            status.HTTP_422_UNPROCESSABLE_ENTITY: OpenApiResponse(
+                response=BaseAPIExceptionSerializer,
+                description="Group not found",
             ),
         },
     )
@@ -295,12 +311,12 @@ class DashboardStudentViewSet(
         )
 
     @extend_schema(
-        request=DashboardFinishedOralInterviewSerializer,
+        request=DashboardCompletedOralInterviewSerializer,
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
             status.HTTP_409_CONFLICT: OpenApiResponse(
                 response=BaseAPIExceptionSerializer,
-                description="Only with status NEEDS_INTERVIEW_TO_DETERMINE_LEVEL can be processed",
+                description='Student status must be "needs_interview_to_determine_level"',
             ),
             status.HTTP_422_UNPROCESSABLE_ENTITY: OpenApiResponse(
                 response=BaseAPIExceptionSerializer,
@@ -309,7 +325,7 @@ class DashboardStudentViewSet(
         },
     )
     @action(detail=True, methods=["post"])
-    def finished_oral_interview(  # noqa: ARG002
+    def completed_oral_interview(  # noqa: ARG002
         self, request: Request, personal_info_id: int  # noqa: ARG002
     ) -> Response:
         student = self.get_object()
@@ -317,9 +333,9 @@ class DashboardStudentViewSet(
             raise ConflictError(
                 "Only with status NEEDS_INTERVIEW_TO_DETERMINE_LEVEL can be processed"
             )
-        data_serializer = DashboardFinishedOralInterviewSerializer(data=request.data)
+        data_serializer = DashboardCompletedOralInterviewSerializer(data=request.data)
         data_serializer.is_valid(raise_exception=True)
-        StudentProcessor.finished_oral_interview(
+        StudentProcessor.completed_oral_interview(
             student, data_serializer.validated_data["language_and_level"]
         )
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -8,7 +8,7 @@ from api.models.log_event import StudentLogEvent
 from api.processors.actions.student import StudentActionProcessor
 
 
-class StudentFinishedOralInterviewProcessor(StudentActionProcessor):
+class StudentCompletedOralInterviewProcessor(StudentActionProcessor):
     def __init__(self, student: Student, language_and_level: LanguageAndLevel):
         self.student = student
         self.language_and_level = language_and_level

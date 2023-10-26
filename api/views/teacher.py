@@ -61,6 +61,10 @@ class DashboardTeacherViewSet(
                 response=ValidationErrorSerializer,
                 description="Something is wrong with the query params",
             ),
+            status.HTTP_422_UNPROCESSABLE_ENTITY: OpenApiResponse(
+                response=BaseAPIExceptionSerializer,
+                description="Teacher is already in transfer_to group or not in transfer_from",
+            ),
         },
     )
     @action(detail=True, methods=["post"])

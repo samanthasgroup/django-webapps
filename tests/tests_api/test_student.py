@@ -860,7 +860,7 @@ class TestDashboardStudentAcceptedOfferedGroup:
             f"/api/dashboard/students/{student.personal_info.id}/accepted_offered_group/",
             data={"group_id": group_id, "coordinator_id": coordinator.pk},
         )
-        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_student_already_in_group(self, api_client, availability_slots, active_group: Group):
         student = baker.make(
@@ -901,7 +901,7 @@ class TestDashboardStudentAcceptedOfferedGroup:
             f"/api/dashboard/students/{student.personal_info.id}/accepted_offered_group/",
             data={"group_id": group_id, "coordinator_id": coordinator_id},
         )
-        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 class TestDashboardStudentOfferJoinGroup:
@@ -954,7 +954,7 @@ class TestDashboardStudentOfferJoinGroup:
             f"/api/dashboard/students/{student.personal_info.id}/offer_join_group/",
             data={"group_id": group_id},
         )
-        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_dashboard_student_left_project_prematurely(
@@ -1005,7 +1005,7 @@ def test_dashboard_student_expelled(
     assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
 
-class TestDashboardStudentFinishedOralInterview:
+class TestDashboardStudentCompletedOralInterview:
     def test_general_check(self, api_client, availability_slots, timestamp):
         student = baker.make(
             Student,
@@ -1017,7 +1017,7 @@ class TestDashboardStudentFinishedOralInterview:
         )
         language_and_level = baker.make(LanguageAndLevel)
         response = api_client.post(
-            f"/api/dashboard/students/{student.personal_info.id}/finished_oral_interview/",
+            f"/api/dashboard/students/{student.personal_info.id}/completed_oral_interview/",
             data={"language_and_level_id": language_and_level.pk},
         )
         student.refresh_from_db()
@@ -1039,7 +1039,7 @@ class TestDashboardStudentFinishedOralInterview:
         )
         language_and_level = baker.make(LanguageAndLevel)
         response = api_client.post(
-            f"/api/dashboard/students/{student.personal_info.id}/finished_oral_interview/",
+            f"/api/dashboard/students/{student.personal_info.id}/completed_oral_interview/",
             data={"language_and_level_id": language_and_level.pk},
         )
         if student.project_status == StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL:
@@ -1060,7 +1060,7 @@ class TestDashboardStudentFinishedOralInterview:
         language_pk = language_and_level.pk
         language_and_level.delete()
         response = api_client.post(
-            f"/api/dashboard/students/{student.personal_info.id}/finished_oral_interview/",
+            f"/api/dashboard/students/{student.personal_info.id}/completed_oral_interview/",
             data={"language_and_level_id": language_pk},
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY

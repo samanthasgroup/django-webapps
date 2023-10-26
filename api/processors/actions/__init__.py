@@ -6,11 +6,11 @@ from api.processors.actions.group.start import GroupStartProcessor
 from api.processors.actions.student.accepted_offered_group import (
     StudentAcceptedOfferedGroupProcessor,
 )
+from api.processors.actions.student.completed_oral_interview import (
+    StudentCompletedOralInterviewProcessor,
+)
 from api.processors.actions.student.expelled import StudentExpelledProcessor
 from api.processors.actions.student.finished_and_left import StudentFinishedAndLeftProcessor
-from api.processors.actions.student.finished_oral_interview import (
-    StudentFinishedOralInterviewProcessor,
-)
 from api.processors.actions.student.left_project_prematurely import (
     StudentLeftProjectPrematurelyProcessor,
 )
@@ -49,5 +49,5 @@ __all__ = [
     "TeacherLeftProjectPrematurelyProcessor",
     "StudentExpelledProcessor",
     "TeacherExpelledProcessor",
-    "StudentFinishedOralInterviewProcessor",
+    "StudentCompletedOralInterviewProcessor",
 ]
