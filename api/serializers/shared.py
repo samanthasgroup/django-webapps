@@ -2,7 +2,7 @@ from typing import Any
 
 from rest_framework import serializers
 
-from api.exceptions import ConflictError
+from api.exceptions import UnproccessableEntityError
 from api.models import Group
 
 
@@ -14,14 +14,14 @@ class PersonTransferSerializer(serializers.Serializer[Any]):
         try:
             to_group = Group.objects.get(pk=int(attrs["to_group_id"]))
         except Group.DoesNotExist:
-            raise ConflictError(f"Group {attrs['to_group_id']} not found")
+            raise UnproccessableEntityError(f"Group {attrs['to_group_id']} not found")
 
         attrs["to_group"] = to_group
 
         try:
             from_group = Group.objects.get(pk=int(attrs["from_group_id"]))
         except Group.DoesNotExist:
-            raise ConflictError(f"Group {attrs['from_group_id']} not found")
+            raise UnproccessableEntityError(f"Group {attrs['from_group_id']} not found")
         attrs["from_group"] = from_group
 
         return attrs
