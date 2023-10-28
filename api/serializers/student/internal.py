@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Student
+from api.models import LanguageAndLevel, Student
 from api.serializers import (
     AgeRangeSerializer,
     DayAndTimeSlotSerializer,
@@ -9,6 +9,10 @@ from api.serializers import (
 
 
 class StudentWriteSerializer(serializers.ModelSerializer[Student]):
+    teaching_languages_and_levels = serializers.PrimaryKeyRelatedField(
+        queryset=LanguageAndLevel.objects.all(), required=False, allow_empty=True, many=True
+    )
+
     class Meta:
         model = Student
         exclude = ("children",)

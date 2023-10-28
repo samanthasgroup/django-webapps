@@ -1,6 +1,7 @@
 from api.models import Teacher
 from api.models.group import Group
 from api.processors.actions import (
+    TeacherCreateProcessor,
     TeacherExpelledProcessor,
     TeacherLeftProjectPrematurelyProcessor,
     TeacherReturnedFromLeaveProcessor,
@@ -31,3 +32,7 @@ class TeacherProcessor:
     @staticmethod
     def expelled(teacher: Teacher) -> None:
         TeacherExpelledProcessor(teacher).process()
+
+    @staticmethod
+    def create(teacher: Teacher) -> None:
+        TeacherCreateProcessor(teacher).process()

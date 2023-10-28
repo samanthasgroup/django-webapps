@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.db.models import Count, Prefetch
 from django_filters import rest_framework as filters
 from drf_spectacular.utils import OpenApiResponse, extend_schema
@@ -36,6 +38,12 @@ class TeacherViewSet(  # type: ignore
     queryset = Teacher.objects.all()
     serializer_read_class = TeacherReadSerializer
     serializer_write_class = TeacherWriteSerializer
+
+    def create(self, request: Request, *args: tuple[Any], **kwargs: dict[str, Any]) -> Response:
+        response = super().create(request, *args, **kwargs)
+        teacher = Teacher.objects.get(personal_info__id=response.data["personal_info"])
+        TeacherProcessor.create(teacher)
+        return response
 
 
 class DashboardTeacherViewSet(

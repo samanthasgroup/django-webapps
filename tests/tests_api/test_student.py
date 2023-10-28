@@ -26,14 +26,20 @@ from tests.tests_api.asserts import (
 )
 
 
-def test_student_create(api_client, faker):
+@pytest.mark.parametrize(
+    "include_language_and_level",
+    [True, False],
+)
+def test_student_create(api_client, faker, timestamp, include_language_and_level):
     initial_count = Student.objects.count()
     personal_info = baker.make(PersonalInfo, first_name=seq("Ivan"))
     age_range_id = AgeRange.objects.first().id
-    teaching_languages_and_levels_ids = [
-        LanguageAndLevel.objects.first().id,
-        LanguageAndLevel.objects.last().id,
-    ]
+    teaching_languages_and_levels_ids = []
+    if include_language_and_level:
+        teaching_languages_and_levels_ids = [
+            LanguageAndLevel.objects.first().id,
+            LanguageAndLevel.objects.last().id,
+        ]
     availability_slots_ids = [
         DayAndTimeSlot.objects.first().id,
         DayAndTimeSlot.objects.last().id,
@@ -49,27 +55,38 @@ def test_student_create(api_client, faker):
         "situational_status": "",
         "status_since": faker.date_time(tzinfo=pytz.utc),
         "age_range": age_range_id,
-        "teaching_languages_and_levels": teaching_languages_and_levels_ids,
         "is_member_of_speaking_club": faker.pybool(),
         "can_read_in_english": faker.pybool(),
         "non_teaching_help_required": non_teaching_help_ids,
         "availability_slots": availability_slots_ids,
     }
+    if include_language_and_level:
+        data["teaching_languages_and_levels"] = teaching_languages_and_levels_ids
     response = api_client.post("/api/students/", data=data)
 
     assert response.status_code == status.HTTP_201_CREATED
     assert Student.objects.count() == initial_count + 1
 
     m2m_fields = [
-        "teaching_languages_and_levels",
         "availability_slots",
         "non_teaching_help_required",
     ]  # TODO children
     # Changing for further filtering
+    if include_language_and_level:
+        m2m_fields.append("teaching_languages_and_levels")
     for field in m2m_fields:
         data[f"{field}__in"] = data.pop(field)
 
     assert Student.objects.filter(**data).exists()
+    if include_language_and_level:
+        log_events = StudentLogEvent.objects.filter(student_id=personal_info.id)
+        assert log_events[0].type == StudentLogEventType.REGISTERED
+        assert_date_time_with_timestamp(log_events[0].date_time, timestamp)
+        assert log_events[1].type == StudentLogEventType.AWAITING_OFFER
+        assert_date_time_with_timestamp(log_events[1].date_time, timestamp)
+    else:
+        log_event = StudentLogEvent.objects.filter(student_id=personal_info.id).last()
+        assert log_event.type == StudentLogEventType.REGISTERED
 
 
 def test_student_retrieve(api_client, availability_slots):
