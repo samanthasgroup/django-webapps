@@ -51,7 +51,7 @@ def test_student_create(api_client, faker, timestamp, include_language_and_level
     data = {
         "personal_info": personal_info.id,
         "comment": faker.text(),
-        "project_status": StudentProjectStatus.NO_GROUP_YET.value,
+        "project_status": StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL.value,
         "situational_status": "",
         "status_since": faker.date_time(tzinfo=pytz.utc),
         "age_range": age_range_id,

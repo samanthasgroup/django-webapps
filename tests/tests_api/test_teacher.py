@@ -26,19 +26,15 @@ from tests.tests_api.asserts import (
 )
 
 
-@pytest.mark.parametrize(
-    "include_language_and_level",
-    [True, False],
-)
-def test_teacher_create(api_client, faker, timestamp, include_language_and_level):
+def test_teacher_create(api_client, faker, timestamp):
     initial_count = Teacher.objects.count()
     personal_info = baker.make(PersonalInfo, first_name=seq("Ivan"))
     teaching_languages_and_levels_ids = []
-    if include_language_and_level:
-        teaching_languages_and_levels_ids = [
-            LanguageAndLevel.objects.first().id,
-            LanguageAndLevel.objects.last().id,
-        ]
+
+    teaching_languages_and_levels_ids = [
+        LanguageAndLevel.objects.first().id,
+        LanguageAndLevel.objects.last().id,
+    ]
     availability_slots_ids = [
         DayAndTimeSlot.objects.first().id,
         DayAndTimeSlot.objects.last().id,
@@ -75,8 +71,7 @@ def test_teacher_create(api_client, faker, timestamp, include_language_and_level
         "non_teaching_help_provided": non_teaching_help_ids,
         "non_teaching_help_provided_comment": faker.text(),
     }
-    if include_language_and_level:
-        data["teaching_languages_and_levels"] = teaching_languages_and_levels_ids
+    data["teaching_languages_and_levels"] = teaching_languages_and_levels_ids
     response = api_client.post("/api/teachers/", data=data)
 
     assert response.status_code == status.HTTP_201_CREATED
@@ -86,24 +81,16 @@ def test_teacher_create(api_client, faker, timestamp, include_language_and_level
         "availability_slots",
         "student_age_ranges",
         "non_teaching_help_provided",
+        "teaching_languages_and_levels",
     ]
-    if include_language_and_level:
-        m2m_fields.append("teaching_languages_and_levels")
     # Changing for further filtering
     for field in m2m_fields:
         data[f"{field}__in"] = data.pop(field)
 
     assert Teacher.objects.filter(**data).exists()
-    if include_language_and_level:
-        log_events = TeacherLogEvent.objects.filter(teacher_id=personal_info.id)
-        assert log_events[0].type == TeacherLogEventType.REGISTERED
-        assert_date_time_with_timestamp(log_events[0].date_time, timestamp)
-        assert log_events[1].type == TeacherLogEventType.AWAITING_OFFER
-        assert_date_time_with_timestamp(log_events[1].date_time, timestamp)
-    else:
-        log_event = TeacherLogEvent.objects.filter(teacher_id=personal_info.id).last()
-        assert log_event.type == TeacherLogEventType.REGISTERED
-        assert_date_time_with_timestamp(log_event.date_time, timestamp)
+    log_event = TeacherLogEvent.objects.filter(teacher_id=personal_info.id).last()
+    assert log_event.type == TeacherLogEventType.REGISTERED
+    assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
 
 def test_teacher_update(api_client, faker, availability_slots):

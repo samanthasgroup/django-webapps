@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import LanguageAndLevel, Teacher
+from api.models import Teacher
 from api.serializers import (
     AgeRangeSerializer,
     DayAndTimeSlotSerializer,
@@ -10,10 +10,6 @@ from api.serializers import (
 
 
 class TeacherWriteSerializer(serializers.ModelSerializer[Teacher]):
-    teaching_languages_and_levels = serializers.PrimaryKeyRelatedField(
-        queryset=LanguageAndLevel.objects.all(), required=False, allow_empty=True, many=True
-    )
-
     class Meta:
         model = Teacher
         fields = "__all__"

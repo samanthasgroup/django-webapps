@@ -19,7 +19,3 @@ class TeacherCreateProcessor(TeacherActionProcessor):
 
     def _create_log_events(self) -> None:
         TeacherLogEvent.objects.create(teacher=self.teacher, type=TeacherLogEventType.REGISTERED)
-        if self.teacher.teaching_languages_and_levels.exists():
-            TeacherLogEvent.objects.create(
-                teacher=self.teacher, type=TeacherLogEventType.AWAITING_OFFER
-            )
