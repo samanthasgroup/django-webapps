@@ -19,7 +19,7 @@ class StudentWriteSerializer(serializers.ModelSerializer[Student]):
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         if (
-            not attrs["teaching_languages_and_levels"]
+            not attrs.get("teaching_languages_and_levels")
             and attrs["project_status"]
             != StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL.value
         ):
