@@ -18,13 +18,22 @@ class StudentWriteSerializer(serializers.ModelSerializer[Student]):
     )
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        project_status = None
+        levels = None
+        if self.instance is not None:
+            project_status = self.instance.project_status  # type: ignore
+            levels = self.instance.teaching_languages_and_levels  # type: ignore
+        if attrs.get("project_status"):
+            project_status = attrs.get("project_status")
+        if attrs.get("teaching_languages_and_levels"):
+            levels = attrs.get("teaching_languages_and_levels")
         if (
-            not attrs.get("teaching_languages_and_levels")
-            and attrs["project_status"]
-            != StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL.value
+            project_status
+            and not levels
+            and project_status != StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL.value
         ):
             raise ConflictError(
-                """Poject status should be needs_interview_to_determine_level 
+                """Poject status should be only needs_interview_to_determine_level 
                    if language and level is not specified"""
             )
 

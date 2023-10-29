@@ -149,7 +149,7 @@ def test_student_update(api_client, availability_slots):
     )
     Student.objects.get(pk=student.pk)
     fields_to_update = {
-        "project_status": StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL,
+        "project_status": StudentProjectStatus.BANNED,
         "is_member_of_speaking_club": True,
         "availability_slots": [i.id for i in availability_slots[2:5]],
     }
