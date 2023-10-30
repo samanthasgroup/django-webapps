@@ -619,13 +619,13 @@ format-nongpl = ["fqdn", "idna", "isoduration", "jsonpointer (>1.13)", "rfc3339-
 
 [[package]]
 name = "model-bakery"
-version = "1.16.0"
+version = "1.17.0"
 description = "Smart object creation facility for Django."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "model_bakery-1.16.0-py3-none-any.whl", hash = "sha256:d12a61089d4ba7bd673dc5c5a12597ab3f7c0514499a01941703361a49b21c13"},
-    {file = "model_bakery-1.16.0.tar.gz", hash = "sha256:d7261ae31befda0585c677aadc04d39b34c1aff6da48e3f5f89a9ccbd3371ad3"},
+    {file = "model_bakery-1.17.0-py3-none-any.whl", hash = "sha256:1d26f1a7043c46e6729145b964a7740bf8f6dddac16510fd18323a1492fba757"},
+    {file = "model_bakery-1.17.0.tar.gz", hash = "sha256:fe808132cd966164600f0450cc05b3cfa50c6c062e00f739a861c5a4b9f236ca"},
 ]
 
 [package.dependencies]
@@ -828,6 +828,8 @@ files = [
     {file = "psycopg2_binary-2.9.9-cp312-cp312-musllinux_1_1_i686.whl", hash = "sha256:cb16c65dcb648d0a43a2521f2f0a2300f40639f6f8c1ecbc662141e4e3e1ee07"},
     {file = "psycopg2_binary-2.9.9-cp312-cp312-musllinux_1_1_ppc64le.whl", hash = "sha256:911dda9c487075abd54e644ccdf5e5c16773470a6a5d3826fda76699410066fb"},
     {file = "psycopg2_binary-2.9.9-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:57fede879f08d23c85140a360c6a77709113efd1c993923c59fde17aa27599fe"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-win32.whl", hash = "sha256:64cf30263844fa208851ebb13b0732ce674d8ec6a0c86a4e160495d299ba3c93"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-win_amd64.whl", hash = "sha256:81ff62668af011f9a48787564ab7eded4e9fb17a4a6a74af5ffa6a457400d2ab"},
     {file = "psycopg2_binary-2.9.9-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:2293b001e319ab0d869d660a704942c9e2cce19745262a8aba2115ef41a0a42a"},
     {file = "psycopg2_binary-2.9.9-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:03ef7df18daf2c4c07e2695e8cfd5ee7f748a1d54d802330985a78d2a5a6dca9"},
     {file = "psycopg2_binary-2.9.9-cp37-cp37m-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:0a602ea5aff39bb9fac6308e9c9d82b9a35c2bf288e184a816002c9fae930b77"},
@@ -1268,4 +1270,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "02547973fda945b85e242c8f4d6d5410306d5027820ec9d85bff06131877999d"
+content-hash = "775ee11f5aeb442c99ac427d2e26c1a0f42b569ebf47651ead8c9b22c9c2ff9a"
