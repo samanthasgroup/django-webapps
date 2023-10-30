@@ -119,7 +119,6 @@ class GroupBuilder:
             project_status=GroupProjectStatus.PENDING,
             status_since=group_creation_timestamp,
         )
-        group.save()
         group.teachers.add(group_candidate.teacher)
         group.students.set(group_candidate.students)
 

@@ -39,7 +39,6 @@ class GroupActionProcessor(abc.ABC):
         self.group.teachers.clear()
         self.group.students.clear()
         self.group.coordinators.clear()
-        self.group.save()
 
     @abc.abstractmethod
     def _set_coordinators_status(self) -> None:
