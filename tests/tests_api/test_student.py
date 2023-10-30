@@ -259,7 +259,6 @@ class TestDashboardStudentTransfer:
             availability_slots_for_auto_matching=availability_slots,
         )
         old_group.students.add(student)
-        old_group.save()
         response = api_client.post(
             f"/api/dashboard/students/{student.personal_info.id}/transfer/",
             data={"to_group_id": active_group.pk, "from_group_id": old_group.pk},
@@ -395,7 +394,6 @@ class TestDashboardStudentMissedClass:
             availability_slots=availability_slots,
         )
         active_group.students.add(student)
-        active_group.save()
         response = api_client.post(
             f"/api/dashboard/students/{student.personal_info.id}/missed_class/",
             data={"group_id": active_group.pk, "notified": True},
@@ -433,7 +431,6 @@ class TestDashboardStudentMissedClass:
             availability_slots=availability_slots,
         )
         active_group.students.add(student)
-        active_group.save()
         self._create_logs_for_past_missed_days(past_missed_days, timestamp, student)
         response = api_client.post(
             f"/api/dashboard/students/{student.personal_info.id}/missed_class/",
@@ -461,7 +458,6 @@ class TestDashboardStudentMissedClass:
             availability_slots=availability_slots,
         )
         active_group.students.add(student)
-        active_group.save()
         self._create_logs_for_past_missed_days(past_missed_days, timestamp, student)
         response = api_client.post(
             f"/api/dashboard/students/{student.personal_info.id}/missed_class/",
@@ -564,7 +560,6 @@ class TestDashboardStudentReturnedFromLeave:
             availability_slots=availability_slots,
         )
         active_group.students.add(student)
-        active_group.save()
         response = api_client.post(
             f"{endpoint}{student.personal_info.id}/returned_from_leave/",
         )
@@ -757,7 +752,6 @@ class TestDashboardActiveStudentsWithNoGroups:
             availability_slots=availability_slots,
         )
         active_group.students.add(student_with_group)
-        active_group.save()
         response = api_client.get(
             "/api/dashboard/students/active_students_with_no_groups/",
         )
@@ -934,7 +928,6 @@ class TestDashboardStudentOfferJoinGroup:
             availability_slots=availability_slots,
         )
         active_group.students.add(student)
-        active_group.save()
         response = api_client.post(
             f"/api/dashboard/students/{student.personal_info.id}/offer_join_group/",
             data={"group_id": active_group.pk},

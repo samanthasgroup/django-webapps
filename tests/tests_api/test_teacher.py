@@ -246,7 +246,6 @@ class TestDashboardTeacherTransfer:
             availability_slots_for_auto_matching=availability_slots,
         )
         old_group.teachers.add(teacher)
-        old_group.save()
         response = api_client.post(
             f"/api/dashboard/teachers/{teacher.personal_info.id}/transfer/",
             data={"to_group_id": active_group.pk, "from_group_id": old_group.pk},
@@ -447,7 +446,6 @@ class TestDashboardTeacherReturnedFromLeave:
             availability_slots=availability_slots,
         )
         active_group.teachers.add(teacher)
-        active_group.save()
         response = api_client.post(
             f"{endpoint}{teacher.personal_info.id}/returned_from_leave/",
         )
