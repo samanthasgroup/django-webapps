@@ -1,6 +1,10 @@
+from typing import Any
+
 from rest_framework import serializers
 
-from api.models import Student
+from api.exceptions import ConflictError
+from api.models import LanguageAndLevel, Student
+from api.models.choices.status.project import StudentProjectStatus
 from api.serializers import (
     AgeRangeSerializer,
     DayAndTimeSlotSerializer,
@@ -9,6 +13,32 @@ from api.serializers import (
 
 
 class StudentWriteSerializer(serializers.ModelSerializer[Student]):
+    teaching_languages_and_levels = serializers.PrimaryKeyRelatedField(
+        queryset=LanguageAndLevel.objects.all(), required=False, allow_empty=True, many=True
+    )
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        project_status = None
+        levels = None
+        if self.instance is not None:
+            project_status = self.instance.project_status  # type: ignore
+            levels = self.instance.teaching_languages_and_levels  # type: ignore
+        if attrs.get("project_status"):
+            project_status = attrs.get("project_status")
+        if attrs.get("teaching_languages_and_levels"):
+            levels = attrs.get("teaching_languages_and_levels")
+        if (
+            project_status
+            and not levels
+            and project_status != StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL.value
+        ):
+            enu_val = StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL.value
+            raise ConflictError(
+                f"Project status can only be {enu_val} if language and level is not specified"
+            )
+
+        return attrs
+
     class Meta:
         model = Student
         exclude = ("children",)

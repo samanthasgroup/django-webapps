@@ -1,3 +1,5 @@
+from typing import Any
+
 from django_filters import rest_framework as filters
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status, viewsets
@@ -44,6 +46,12 @@ class StudentViewSet(  # type: ignore
     queryset = Student.objects.all()
     serializer_read_class = StudentReadSerializer
     serializer_write_class = StudentWriteSerializer
+
+    def create(self, request: Request, *args: tuple[Any], **kwargs: dict[str, Any]) -> Response:
+        response = super().create(request, *args, **kwargs)
+        student = Student.objects.get(personal_info__id=response.data["personal_info"])
+        StudentProcessor.create(student)
+        return response
 
 
 class DashboardStudentViewSet(

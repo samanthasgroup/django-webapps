@@ -26,9 +26,11 @@ from tests.tests_api.asserts import (
 )
 
 
-def test_teacher_create(api_client, faker):
+def test_teacher_create(api_client, faker, timestamp):
     initial_count = Teacher.objects.count()
     personal_info = baker.make(PersonalInfo, first_name=seq("Ivan"))
+    teaching_languages_and_levels_ids = []
+
     teaching_languages_and_levels_ids = [
         LanguageAndLevel.objects.first().id,
         LanguageAndLevel.objects.last().id,
@@ -48,7 +50,6 @@ def test_teacher_create(api_client, faker):
     data = {
         "personal_info": personal_info.id,
         "student_age_ranges": age_range_ids,
-        "teaching_languages_and_levels": teaching_languages_and_levels_ids,
         "availability_slots": availability_slots_ids,
         "comment": faker.text(),
         "peer_support_can_check_syllabus": faker.pybool(),
@@ -70,22 +71,26 @@ def test_teacher_create(api_client, faker):
         "non_teaching_help_provided": non_teaching_help_ids,
         "non_teaching_help_provided_comment": faker.text(),
     }
+    data["teaching_languages_and_levels"] = teaching_languages_and_levels_ids
     response = api_client.post("/api/teachers/", data=data)
 
     assert response.status_code == status.HTTP_201_CREATED
     assert Teacher.objects.count() == initial_count + 1
 
     m2m_fields = [
-        "teaching_languages_and_levels",
         "availability_slots",
         "student_age_ranges",
         "non_teaching_help_provided",
+        "teaching_languages_and_levels",
     ]
     # Changing for further filtering
     for field in m2m_fields:
         data[f"{field}__in"] = data.pop(field)
 
     assert Teacher.objects.filter(**data).exists()
+    log_event = TeacherLogEvent.objects.filter(teacher_id=personal_info.id).last()
+    assert log_event.type == TeacherLogEventType.REGISTERED
+    assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
 
 def test_teacher_update(api_client, faker, availability_slots):
