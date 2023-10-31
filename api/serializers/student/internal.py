@@ -32,10 +32,11 @@ class StudentWriteSerializer(serializers.ModelSerializer[Student]):
             and not levels
             and project_status != StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL.value
         ):
-            raise ConflictError(
-                """Poject status should be only needs_interview_to_determine_level 
-                   if language and level is not specified"""
+            msg = (
+                f'Project status can only be "{StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL.value}"'
+                "if language and level is not specified"
             )
+            raise ConflictError(msg)
 
         return attrs
 
