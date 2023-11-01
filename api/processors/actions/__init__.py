@@ -24,6 +24,9 @@ from api.processors.actions.student.transfer import StudentTransferProcessor
 from api.processors.actions.student.went_on_leave import StudentWentOnLeaveProcessor
 from api.processors.actions.teacher.create import TeacherCreateProcessor
 from api.processors.actions.teacher.expelled import TeacherExpelledProcessor
+from api.processors.actions.teacher.finished_but_stays_in_project import (
+    TeacherFinishedStudiesButStaysInProjectProcessor,
+)
 from api.processors.actions.teacher.left_project_prematurely import (
     TeacherLeftProjectPrematurelyProcessor,
 )
@@ -56,4 +59,5 @@ __all__ = [
     "CoordinatorCreateProcessor",
     "StudentCreateProcessor",
     "TeacherCreateProcessor",
+    "TeacherFinishedStudiesButStaysInProjectProcessor",
 ]

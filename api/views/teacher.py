@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from api.exceptions import UnproccessableEntityError
 from api.filters import TeacherFilter
 from api.models import Group, Teacher
 from api.processors.teacher import TeacherProcessor
@@ -63,7 +64,7 @@ class DashboardTeacherViewSet(
             status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Teacher is transferred"),
             status.HTTP_409_CONFLICT: OpenApiResponse(
                 response=BaseAPIExceptionSerializer,
-                description="Transfer group is not found",
+                description="Teacher is already in transfer_to group or not in transfer_from",
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=ValidationErrorSerializer,
@@ -71,7 +72,7 @@ class DashboardTeacherViewSet(
             ),
             status.HTTP_422_UNPROCESSABLE_ENTITY: OpenApiResponse(
                 response=BaseAPIExceptionSerializer,
-                description="Teacher is already in transfer_to group or not in transfer_from",
+                description="Group not found",
             ),
         },
     )
@@ -91,7 +92,7 @@ class DashboardTeacherViewSet(
 
     @extend_schema(
         responses={
-            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Teacher is transferred"),
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=ValidationErrorSerializer,
                 description="Something is wrong with the query params",
@@ -108,7 +109,7 @@ class DashboardTeacherViewSet(
 
     @extend_schema(
         responses={
-            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Teacher is transferred"),
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=ValidationErrorSerializer,
                 description="Something is wrong with the query params",
@@ -121,6 +122,29 @@ class DashboardTeacherViewSet(
     ) -> Response:
         teacher = self.get_object()
         TeacherProcessor.expelled(teacher)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=ValidationErrorSerializer,
+                description="Something is wrong with the query params",
+            ),
+            status.HTTP_422_UNPROCESSABLE_ENTITY: OpenApiResponse(
+                response=BaseAPIExceptionSerializer,
+                description="Unable to process teacher with group(s)",
+            ),
+        },
+    )
+    @action(detail=True, methods=["post"])
+    def finished_but_stays_in_project(  # noqa: ARG002
+        self, request: Request, personal_info_id: int  # noqa: ARG002
+    ) -> Response:
+        teacher = self.get_object()
+        if teacher.has_groups:
+            raise UnproccessableEntityError("Unable to process teacher with group(s)")
+        TeacherProcessor.finished_but_stays_in_project(teacher)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
