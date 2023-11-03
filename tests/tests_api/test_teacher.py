@@ -541,4 +541,4 @@ class TestDashboardTeacherFinishedButStaysInProject:
         )
         teacher.refresh_from_db()
         active_group.refresh_from_db()
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_409_CONFLICT

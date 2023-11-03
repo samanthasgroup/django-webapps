@@ -13,14 +13,13 @@ class TeacherFinishedStudiesButStaysInProjectProcessor(TeacherActionProcessor):
 
     @transaction.atomic
     def process(self) -> None:
-        self._update_groups()
+        self._check_groups()
         self._create_log_events()
         self._set_statuses()
 
-    def _update_groups(self) -> None:
+    def _check_groups(self) -> None:
         if self.teacher.has_groups:
-            self.teacher.groups_former.add(*self.teacher.groups.all())
-            self.teacher.groups.clear()
+            raise ValueError("Unable to process teacher with groups")
 
     def _set_statuses(self) -> None:
         self.teacher.project_status = TeacherProjectStatus.FINISHED_STAYS

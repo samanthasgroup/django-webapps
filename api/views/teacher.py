@@ -8,7 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from api.exceptions import UnproccessableEntityError
+from api.exceptions import ConflictError
 from api.filters import TeacherFilter
 from api.models import Group, Teacher
 from api.processors.teacher import TeacherProcessor
@@ -64,7 +64,7 @@ class DashboardTeacherViewSet(
             status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Teacher is transferred"),
             status.HTTP_409_CONFLICT: OpenApiResponse(
                 response=BaseAPIExceptionSerializer,
-                description="Teacher is already in transfer_to group or not in transfer_from",
+                description='Teacher is not in "from_group" or already in "to_group"',
             ),
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(
                 response=ValidationErrorSerializer,
@@ -131,7 +131,7 @@ class DashboardTeacherViewSet(
                 response=ValidationErrorSerializer,
                 description="Something is wrong with the query params",
             ),
-            status.HTTP_422_UNPROCESSABLE_ENTITY: OpenApiResponse(
+            status.HTTP_409_CONFLICT: OpenApiResponse(
                 response=BaseAPIExceptionSerializer,
                 description="Unable to process teacher with group(s)",
             ),
@@ -143,7 +143,7 @@ class DashboardTeacherViewSet(
     ) -> Response:
         teacher = self.get_object()
         if teacher.has_groups:
-            raise UnproccessableEntityError("Unable to process teacher with group(s)")
+            raise ConflictError("Unable to process teacher with group(s)")
         TeacherProcessor.finished_but_stays_in_project(teacher)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
