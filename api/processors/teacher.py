@@ -3,6 +3,7 @@ from api.models.group import Group
 from api.processors.actions import (
     TeacherCreateProcessor,
     TeacherExpelledProcessor,
+    TeacherFinishedStudiesButStaysInProjectProcessor,
     TeacherLeftProjectPrematurelyProcessor,
     TeacherReturnedFromLeaveProcessor,
     TeacherTransferProcessor,
@@ -36,3 +37,7 @@ class TeacherProcessor:
     @staticmethod
     def create(teacher: Teacher) -> None:
         TeacherCreateProcessor(teacher).process()
+
+    @staticmethod
+    def finished_but_stays_in_project(teacher: Teacher) -> None:
+        TeacherFinishedStudiesButStaysInProjectProcessor(teacher).process()
