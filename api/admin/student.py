@@ -1,6 +1,6 @@
 from django import forms
-from django.contrib import admin
 from django.utils.html import format_html
+from reversion.admin import VersionAdmin
 
 from api import models
 
@@ -11,7 +11,7 @@ class StudentAdminForm(forms.ModelForm[models.Student]):
         fields = "__all__"
 
 
-class StudentAdmin(admin.ModelAdmin[models.Student]):
+class StudentAdmin(VersionAdmin):
     form = StudentAdminForm
     readonly_fields = (
         "enrollment_tests_summary",
