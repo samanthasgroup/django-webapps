@@ -1,6 +1,7 @@
 from api.models import Teacher
 from api.models.group import Group
 from api.processors.actions import (
+    TeacherAccessRevokedProcessor,
     TeacherCreateProcessor,
     TeacherExpelledProcessor,
     TeacherFinishedStudiesButStaysInProjectProcessor,
@@ -41,3 +42,7 @@ class TeacherProcessor:
     @staticmethod
     def finished_but_stays_in_project(teacher: Teacher) -> None:
         TeacherFinishedStudiesButStaysInProjectProcessor(teacher).process()
+
+    @staticmethod
+    def access_revoked(teacher: Teacher) -> None:
+        TeacherAccessRevokedProcessor(teacher).process()

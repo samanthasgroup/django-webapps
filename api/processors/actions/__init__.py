@@ -22,6 +22,7 @@ from api.processors.actions.student.put_in_waiting_queue import StudentPutInWait
 from api.processors.actions.student.returned_from_leave import StudentReturnedFromLeaveProcessor
 from api.processors.actions.student.transfer import StudentTransferProcessor
 from api.processors.actions.student.went_on_leave import StudentWentOnLeaveProcessor
+from api.processors.actions.teacher.access_revoked import TeacherAccessRevokedProcessor
 from api.processors.actions.teacher.create import TeacherCreateProcessor
 from api.processors.actions.teacher.expelled import TeacherExpelledProcessor
 from api.processors.actions.teacher.finished_but_stays_in_project import (
@@ -60,4 +61,5 @@ __all__ = [
     "StudentCreateProcessor",
     "TeacherCreateProcessor",
     "TeacherFinishedStudiesButStaysInProjectProcessor",
+    "TeacherAccessRevokedProcessor",
 ]

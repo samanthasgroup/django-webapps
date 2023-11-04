@@ -542,3 +542,40 @@ class TestDashboardTeacherFinishedButStaysInProject:
         teacher.refresh_from_db()
         active_group.refresh_from_db()
         assert response.status_code == status.HTTP_409_CONFLICT
+
+
+class TestDashboardTeacherAccessRevoked:
+    def test_general(self, api_client, availability_slots, timestamp):
+        teacher = baker.make(
+            Teacher,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        response = api_client.post(
+            f"/api/dashboard/teachers/{teacher.personal_info.id}/access_revoked/",
+        )
+        teacher.refresh_from_db()
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        log_events = TeacherLogEvent.objects.filter(teacher_id=teacher.pk)
+        assert log_events[0].type == TeacherLogEventType.ACCESS_REVOKED
+        assert log_events[1].type == TeacherLogEventType.FINISHED_AND_LEAVING
+        assert teacher.project_status == TeacherProjectStatus.FINISHED_LEFT
+        assert_date_time_with_timestamp(log_events[0].date_time, timestamp)
+        assert_date_time_with_timestamp(log_events[1].date_time, timestamp)
+        assert log_events[0].date_time + datetime.timedelta(seconds=1) == log_events[1].date_time
+
+    def test_with_groups(self, api_client, availability_slots, active_group: Group):
+        teacher = baker.make(
+            Teacher,
+            make_m2m=True,
+            _fill_optional=True,
+            availability_slots=availability_slots,
+        )
+        active_group.teachers.add(teacher)
+        response = api_client.post(
+            f"/api/dashboard/teachers/{teacher.personal_info.id}/access_revoked/",
+        )
+        teacher.refresh_from_db()
+        active_group.refresh_from_db()
+        assert response.status_code == status.HTTP_409_CONFLICT
