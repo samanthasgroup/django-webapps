@@ -30,7 +30,7 @@ class LogEvent(models.Model):
     """
 
     comment = models.TextField()
-    date_time = models.DateTimeField(default=timezone.now())
+    date_time = models.DateTimeField(default=timezone.now)
 
     class Meta:
         abstract = True
