@@ -1,4 +1,5 @@
 from django.contrib import admin
+from reversion.admin import VersionAdmin
 
 from api import models
 
@@ -25,4 +26,4 @@ for model in (
     models.NonTeachingHelp,
     models.CoordinatorLogEvent,
 ):
-    admin.site.register(model)
+    admin.site.register(model, VersionAdmin)

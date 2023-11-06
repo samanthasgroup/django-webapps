@@ -1,10 +1,12 @@
 from collections.abc import Callable
 
+import reversion
 from django import forms
 from django.contrib import admin, messages
 from django.contrib.admin.helpers import ActionForm
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from reversion.admin import VersionAdmin
 
 from api import models
 from api.models import Group
@@ -58,7 +60,7 @@ class CoordinatorLogEventsInline(
     show_change_link = True
 
 
-class CoordinatorAdmin(admin.ModelAdmin[models.Coordinator]):
+class CoordinatorAdmin(VersionAdmin):
     list_display = (
         "__str__",
         "active_groups_count",
@@ -104,11 +106,16 @@ class CoordinatorAdmin(admin.ModelAdmin[models.Coordinator]):
                 return
 
             for coordinator in queryset:
-                CoordinatorAdminLogEventCreator.create(
-                    coordinator=coordinator,
-                    log_event_type=log_event_type,
-                    group=Group.objects.get(pk=group_from_request) if group_from_request else None,
-                )
+                with reversion.create_revision():
+                    reversion.set_user(request.user)
+                    reversion.set_comment(f"Created log event {log_event_type}")
+                    CoordinatorAdminLogEventCreator.create(
+                        coordinator=coordinator,
+                        log_event_type=log_event_type,
+                        group=Group.objects.get(pk=group_from_request)
+                        if group_from_request
+                        else None,
+                    )
 
         return action
 
@@ -117,7 +124,7 @@ class CoordinatorAdmin(admin.ModelAdmin[models.Coordinator]):
     ) -> dict[str, tuple[Callable[..., str], str, str] | None]:
         actions = super().get_actions(request)
         for log_event_type in list(CoordinatorLogEventType):
-            actions[f"create_log_event_{log_event_type}"] = (  # type: ignore  # looks like stubs bug
+            actions[f"create_log_event_{log_event_type}"] = (
                 self._make_create_log_event_action(log_event_type),
                 f"create_log_event_{log_event_type}",
                 # TODO: maybe some more human-readable description?
