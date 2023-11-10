@@ -21,7 +21,8 @@ Can be found at `/docs/swagger` or `/docs/redoc` after deployment (or when runni
 9. Collect static content: `python manage.py collectstatic`
 10. Create a superuser for admin interface: `python manage.py createsuperuser`
 11. Run the server locally: `python manage.py runserver`
-12. Run tests: `poetry run pytest` (or `make test`)
+12. Whenever you register a model with django-reversion, run `python manage.py createinitialrevisions`.
+13. Run tests: `poetry run pytest` (or `make test`)
 
 Note that in development mode (if you don't change the settings) you will be working with an SQLite database. Since some models contain [`JSONField`](https://docs.djangoproject.com/en/4.1/ref/models/fields/#django.db.models.JSONField)s, it is required that your SQLite installation supports JSON. To check if it does, follow the instructions [here](https://code.djangoproject.com/wiki/JSON1Extension).
 
