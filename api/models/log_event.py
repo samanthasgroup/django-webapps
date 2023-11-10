@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.choices.log_event_type import (
@@ -29,7 +30,7 @@ class LogEvent(models.Model):
     """
 
     comment = models.TextField()
-    date_time = models.DateTimeField(auto_now_add=True)
+    date_time = models.DateTimeField(default=timezone.now)
 
     class Meta:
         abstract = True

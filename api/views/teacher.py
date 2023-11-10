@@ -147,6 +147,29 @@ class DashboardTeacherViewSet(
         TeacherProcessor.finished_but_stays_in_project(teacher)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description="Action is taken"),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=ValidationErrorSerializer,
+                description="Something is wrong with the query params",
+            ),
+            status.HTTP_409_CONFLICT: OpenApiResponse(
+                response=BaseAPIExceptionSerializer,
+                description="Unable to process teacher with group(s)",
+            ),
+        },
+    )
+    @action(detail=True, methods=["post"])
+    def finished_and_leaving(  # noqa: ARG002
+        self, request: Request, personal_info_id: int  # noqa: ARG002
+    ) -> Response:
+        teacher = self.get_object()
+        if teacher.has_groups:
+            raise ConflictError("Unable to process teacher with group(s)")
+        TeacherProcessor.finished_and_leaving(teacher)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class DashboardTeacherWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Teacher]):
     """
