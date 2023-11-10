@@ -544,7 +544,7 @@ class TestDashboardTeacherFinishedButStaysInProject:
         assert response.status_code == status.HTTP_409_CONFLICT
 
 
-class TestDashboardTeacherAccessRevoked:
+class TestDashboardFinishedAndLeaving:
     def test_general(self, api_client, availability_slots, timestamp):
         teacher = baker.make(
             Teacher,
@@ -553,7 +553,7 @@ class TestDashboardTeacherAccessRevoked:
             availability_slots=availability_slots,
         )
         response = api_client.post(
-            f"/api/dashboard/teachers/{teacher.personal_info.id}/access_revoked/",
+            f"/api/dashboard/teachers/{teacher.personal_info.id}/finished_and_leaving/",
         )
         teacher.refresh_from_db()
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -574,7 +574,7 @@ class TestDashboardTeacherAccessRevoked:
         )
         active_group.teachers.add(teacher)
         response = api_client.post(
-            f"/api/dashboard/teachers/{teacher.personal_info.id}/access_revoked/",
+            f"/api/dashboard/teachers/{teacher.personal_info.id}/finished_and_leaving/",
         )
         teacher.refresh_from_db()
         active_group.refresh_from_db()

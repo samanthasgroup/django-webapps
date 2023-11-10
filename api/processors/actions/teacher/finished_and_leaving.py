@@ -9,7 +9,7 @@ from api.models.log_event import TeacherLogEvent
 from api.processors.actions.teacher import TeacherActionProcessor
 
 
-class TeacherAccessRevokedProcessor(TeacherActionProcessor):
+class TeacherFinishedAndLeavingProcessor(TeacherActionProcessor):
     def __init__(self, teacher: Teacher):
         super().__init__(teacher)
 

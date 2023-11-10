@@ -161,13 +161,13 @@ class DashboardTeacherViewSet(
         },
     )
     @action(detail=True, methods=["post"])
-    def access_revoked(  # noqa: ARG002
+    def finished_and_leaving(  # noqa: ARG002
         self, request: Request, personal_info_id: int  # noqa: ARG002
     ) -> Response:
         teacher = self.get_object()
         if teacher.has_groups:
             raise ConflictError("Unable to process teacher with group(s)")
-        TeacherProcessor.access_revoked(teacher)
+        TeacherProcessor.finished_and_leaving(teacher)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
