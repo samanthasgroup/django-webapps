@@ -21,4 +21,11 @@ class MinifiedGroupSerializer(serializers.ModelSerializer[Group]):
             "language_and_level",
             "students_count",
             "teachers",
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday",
         )
