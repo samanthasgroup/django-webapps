@@ -72,8 +72,7 @@ class StaffOnlyFilter(admin.SimpleListFilter):
         )
 
     def queryset(self, _request: HttpRequest, queryset: QuerySet[Any]) -> QuerySet[Any]:
-        value = self.value()
-        if value in {"True", "False"}:
+        if (value := self.value()) in {"True", "False"}:
             return queryset.filter(is_for_staff_only=(value == "True"))
         return queryset
 
