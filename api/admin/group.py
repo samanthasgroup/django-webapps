@@ -26,7 +26,7 @@ class TeachersFilter(admin.SimpleListFilter):
                 "personal_info__id", "personal_info__first_name", "personal_info__last_name"
             )
             .distinct()
-            .order_by("personal_info__first_name", "personal_info__last_name")
+            .order_by("personal_info__id")
         )
         return [(teacher_id, f"{first} {last}") for teacher_id, first, last in teachers]
 
@@ -49,7 +49,7 @@ class CoordinatorsFilter(admin.SimpleListFilter):
                 "personal_info__id", "personal_info__first_name", "personal_info__last_name"
             )
             .distinct()
-            .order_by("personal_info__first_name", "personal_info__last_name")
+            .order_by("personal_info__id")
         )
         return [(coord_id, f"{first} {last}") for coord_id, first, last in coordinators]
 
