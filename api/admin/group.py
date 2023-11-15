@@ -127,6 +127,7 @@ class GroupAdmin(VersionAdmin):
         "teachers__personal_info__last_name",
     )
 
+    @admin.display(description="Coordinators")
     def coordinators_list(self, group: models.Group) -> str:
         links = [
             format_html(
@@ -138,8 +139,7 @@ class GroupAdmin(VersionAdmin):
         ]
         return mark_safe(", ".join(links))
 
-    coordinators_list.short_description = "Coordinators"  # type: ignore
-
+    @admin.display(description="Teachers")
     def teachers_list(self, group: models.Group) -> str:
         links = [
             format_html(
@@ -151,13 +151,11 @@ class GroupAdmin(VersionAdmin):
         ]
         return mark_safe(", ".join(links))
 
-    teachers_list.short_description = "Teachers"  # type: ignore
-
+    @admin.display(description="Number of Students")
     def students_count(self, group: models.Group) -> int:
         return group.students.count()
 
-    students_count.short_description = "Number of students"  # type: ignore
-
+    @admin.display(description="Schedule")
     def get_schedule(self, group: models.Group) -> str:
         days = (
             ("monday", "Mo"),
@@ -175,12 +173,10 @@ class GroupAdmin(VersionAdmin):
         ]
         return mark_safe(",<br>".join(schedule))
 
-    get_schedule.short_description = "Schedule"  # type: ignore
     get_schedule.allow_tags = True  # type: ignore
 
+    @admin.display(description="For Staff")
     def staff_only(self, group: models.Group) -> str:
         if getattr(group, "is_for_staff_only"):
             return format_html('<img src="{}" alt="icon"/>', "/static/admin/img/icon-yes.svg")
         return ""
-
-    staff_only.short_description = "For Staff"  # type: ignore
