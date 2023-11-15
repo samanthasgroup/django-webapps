@@ -127,38 +127,38 @@ class GroupAdmin(VersionAdmin):
         "teachers__personal_info__last_name",
     )
 
-    def coordinators_list(self, obj: models.Group) -> str:
+    def coordinators_list(self, group: models.Group) -> str:
         links = [
             format_html(
                 '<a href="{}">{}</a>',
                 reverse("admin:api_coordinator_change", args=(coordinator.pk,)),
                 coordinator.personal_info.full_name,
             )
-            for coordinator in obj.coordinators.all()
+            for coordinator in group.coordinators.all()
         ]
         return mark_safe(", ".join(links))
 
     coordinators_list.short_description = "Coordinators"  # type: ignore
 
-    def teachers_list(self, obj: models.Group) -> str:
+    def teachers_list(self, group: models.Group) -> str:
         links = [
             format_html(
                 '<a href="{}">{}</a>',
                 reverse("admin:api_teacher_change", args=(teacher.pk,)),
                 teacher.personal_info.full_name,
             )
-            for teacher in obj.teachers.all()
+            for teacher in group.teachers.all()
         ]
         return mark_safe(", ".join(links))
 
     teachers_list.short_description = "Teachers"  # type: ignore
 
-    def students_count(self, obj: models.Group) -> int:
-        return obj.students.count()
+    def students_count(self, group: models.Group) -> int:
+        return group.students.count()
 
     students_count.short_description = "Number of students"  # type: ignore
 
-    def get_schedule(self, obj: models.Group) -> str:
+    def get_schedule(self, group: models.Group) -> str:
         days = (
             ("monday", "Mo"),
             ("tuesday", "Tu"),
@@ -169,17 +169,17 @@ class GroupAdmin(VersionAdmin):
             ("sunday", "Su"),
         )
         schedule = [
-            f"{short_name}: {getattr(obj, day).strftime('%H:%M')}"
+            f"{short_name}: {getattr(group, day).strftime('%H:%M')}"
             for day, short_name in days
-            if getattr(obj, day)
+            if getattr(group, day)
         ]
         return mark_safe(",<br>".join(schedule))
 
     get_schedule.short_description = "Schedule"  # type: ignore
     get_schedule.allow_tags = True  # type: ignore
 
-    def staff_only(self, obj: models.Group) -> str:
-        if getattr(obj, "is_for_staff_only"):
+    def staff_only(self, group: models.Group) -> str:
+        if getattr(group, "is_for_staff_only"):
             return format_html('<img src="{}" alt="icon"/>', "/static/admin/img/icon-yes.svg")
         return ""
 
