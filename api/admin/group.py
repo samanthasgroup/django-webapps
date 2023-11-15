@@ -167,7 +167,7 @@ class GroupAdmin(VersionAdmin):
             ("sunday", "Su"),
         )
         schedule = [
-            f"{short_name}: {getattr(group, day).strftime('%H:%M')}"
+            f"{short_name} {getattr(group, day).strftime('%H:%M')}"
             for day, short_name in days
             if getattr(group, day)
         ]
