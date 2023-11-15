@@ -173,8 +173,6 @@ class GroupAdmin(VersionAdmin):
         ]
         return mark_safe(",<br>".join(schedule))
 
-    get_schedule.allow_tags = True  # type: ignore
-
     @admin.display(description="For Staff")
     def staff_only(self, group: models.Group) -> str:
         if getattr(group, "is_for_staff_only"):
