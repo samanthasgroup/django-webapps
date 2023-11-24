@@ -13,52 +13,6 @@ from reversion.admin import VersionAdmin
 from api import models
 
 
-class TeachersFilter(admin.SimpleListFilter):
-    title = "teacher name"
-    parameter_name = "teacher"
-
-    def lookups(
-        self, _request: HttpRequest, _model_admin: ModelAdmin[models.Teacher]
-    ) -> list[tuple[int, str]]:
-        teachers = (
-            models.Teacher.objects.select_related("personal_info")
-            .values_list(
-                "personal_info__id", "personal_info__first_name", "personal_info__last_name"
-            )
-            .distinct()
-            .order_by("personal_info__id")
-        )
-        return [(teacher_id, f"{first} {last}") for teacher_id, first, last in teachers]
-
-    def queryset(self, _request: HttpRequest, queryset: QuerySet[Any]) -> QuerySet[Any]:
-        if value := self.value():
-            return queryset.filter(teachers__personal_info__id=value)
-        return queryset
-
-
-class CoordinatorsFilter(admin.SimpleListFilter):
-    title = "coordinator name"
-    parameter_name = "coordinator"
-
-    def lookups(
-        self, _request: HttpRequest, _model_admin: ModelAdmin[models.Coordinator]
-    ) -> list[tuple[int, str]]:
-        coordinators = (
-            models.Coordinator.objects.select_related("personal_info")
-            .values_list(
-                "personal_info__id", "personal_info__first_name", "personal_info__last_name"
-            )
-            .distinct()
-            .order_by("personal_info__id")
-        )
-        return [(coord_id, f"{first} {last}") for coord_id, first, last in coordinators]
-
-    def queryset(self, _request: HttpRequest, queryset: QuerySet[Any]) -> QuerySet[Any]:
-        if value := self.value():
-            return queryset.filter(coordinators__personal_info__id=value)
-        return queryset
-
-
 class StaffOnlyFilter(admin.SimpleListFilter):
     title = "Staff Only"
     parameter_name = "staff"
@@ -103,21 +57,21 @@ class GroupAdmin(VersionAdmin):
         "coordinators_list",
         "teachers_list",
         "students_count",
-        "start_date",
-        "end_date",
+        "get_start_date",
+        "get_end_date",
         "get_schedule",
         "project_status",
         "situational_status",
-        "status_since",
+        "get_status_since",
         "staff_only",
     )
+
+    ordering = ["id"]
 
     list_filter = (
         StaffOnlyFilter,
         "project_status",
         "situational_status",
-        TeachersFilter,
-        CoordinatorsFilter,
     )
 
     search_fields = (
@@ -126,6 +80,40 @@ class GroupAdmin(VersionAdmin):
         "teachers__personal_info__first_name",
         "teachers__personal_info__last_name",
     )
+
+    def get_search_results(
+        self, request: HttpRequest, queryset: QuerySet[Any], search_term: str
+    ) -> tuple[QuerySet[Any], bool]:
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        if search_term.isdigit():
+            queryset |= self.model.objects.filter(
+                coordinators__personal_info__id=search_term
+            ) | self.model.objects.filter(teachers__personal_info__id=search_term)
+        return queryset, use_distinct
+
+    @admin.display(description="Start Date")
+    def get_start_date(self, group: models.Group) -> str:
+        if group.start_date is not None:
+            return format_html(
+                "<span style='white-space: nowrap;'>{}</span>",
+                group.start_date.strftime("%d-%m-%Y"),
+            )
+        return ""
+
+    @admin.display(description="End Date")
+    def get_end_date(self, group: models.Group) -> str:
+        if group.end_date is not None:
+            return format_html(
+                "<span style='white-space: nowrap;'>{}</span>", group.end_date.strftime("%d-%m-%Y")
+            )
+        return ""
+
+    @admin.display(description="Status Since")
+    def get_status_since(self, group: models.Group) -> str:
+        return format_html(
+            "<span style='white-space: nowrap;'>{}</span>",
+            group.status_since.strftime("%d-%m-%Y %H:%M"),
+        )
 
     @admin.display(description="Coordinators")
     def coordinators_list(self, group: models.Group) -> str:
