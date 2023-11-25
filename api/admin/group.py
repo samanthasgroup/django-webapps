@@ -14,7 +14,7 @@ from api import models
 
 
 class StaffOnlyFilter(admin.SimpleListFilter):
-    title = "Staff Only"
+    title = "is for staff only"
     parameter_name = "staff"
 
     def lookups(
