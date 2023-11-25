@@ -4,12 +4,14 @@ from reversion.admin import VersionAdmin
 from api import models
 
 from .coordinator import CoordinatorAdmin
+from .group import GroupAdmin
 from .personal_info import PersonalInfoAdmin
 from .student import StudentAdmin
 
 admin.site.register(models.Coordinator, CoordinatorAdmin)
 admin.site.register(models.PersonalInfo, PersonalInfoAdmin)
 admin.site.register(models.Student, StudentAdmin)
+admin.site.register(models.Group, GroupAdmin)
 
 
 for model in (
@@ -17,7 +19,6 @@ for model in (
     models.EnrollmentTestQuestion,
     models.EnrollmentTestQuestionOption,
     models.EnrollmentTestResult,
-    models.Group,
     models.SpeakingClub,
     models.Teacher,
     models.TeacherUnder18,
