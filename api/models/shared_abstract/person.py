@@ -34,4 +34,4 @@ class Person(models.Model):
         abstract = True
 
     def __str__(self) -> str:
-        return f"{self.personal_info.full_name}. Status: {getattr(self, 'project_status')}"
+        return f"{self.personal_info.pk_full_name}"

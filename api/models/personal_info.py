@@ -71,9 +71,6 @@ class PersonalInfo(GroupOrPerson):
         ordering = ("last_name", "first_name")
         verbose_name_plural = "personal info records"
 
-    def __str__(self) -> str:
-        return f"{self.full_name} ({self.pk})"
-
     def save(
         self,
         force_insert: bool = False,
@@ -94,3 +91,7 @@ class PersonalInfo(GroupOrPerson):
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
+
+    @property
+    def pk_full_name(self) -> str:
+        return f"{self.pk}: {self.full_name}"
