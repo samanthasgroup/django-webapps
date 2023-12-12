@@ -81,8 +81,7 @@ class Coordinator(Person):
         ]
 
     def __str__(self) -> str:
-        role = " (admin)" if self.is_admin else ""
-        return f"{super().__str__()}{role}"
+        return f"{self.pk}: {self.personal_info.full_name}"
 
     @property
     def has_enough_groups(self) -> bool:

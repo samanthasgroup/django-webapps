@@ -88,10 +88,9 @@ class PersonalInfo(GroupOrPerson):
             update_fields=update_fields,
         )
 
+    def __str__(self) -> str:
+        return f"{self.pk}: {self.full_name}"
+
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
-
-    @property
-    def pk_full_name(self) -> str:
-        return f"{self.pk}: {self.full_name}"

@@ -121,7 +121,7 @@ class GroupAdmin(VersionAdmin):
             format_html(
                 '<a style="white-space: nowrap;" href="{}">{}\n</a>',
                 reverse("admin:api_coordinator_change", args=(coordinator.pk,)),
-                coordinator.personal_info.pk_full_name,
+                coordinator,
             )
             for coordinator in group.coordinators.all()
         ]
@@ -133,7 +133,7 @@ class GroupAdmin(VersionAdmin):
             format_html(
                 '<a style="white-space: nowrap;" href="{}">{}\n</a>',
                 reverse("admin:api_teacher_change", args=(teacher.pk,)),
-                teacher.personal_info.pk_full_name,
+                teacher,
             )
             for teacher in group.teachers.all()
         ]
