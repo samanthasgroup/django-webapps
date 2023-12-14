@@ -119,10 +119,9 @@ class GroupAdmin(VersionAdmin):
     def coordinators_list(self, group: models.Group) -> str:
         links = [
             format_html(
-                '<a style="white-space: nowrap;" href="{}">{}: {}\n</a>',
+                '<a style="white-space: nowrap;" href="{}">{}\n</a>',
                 reverse("admin:api_coordinator_change", args=(coordinator.pk,)),
-                coordinator.personal_info.pk,
-                coordinator.personal_info.full_name,
+                coordinator,
             )
             for coordinator in group.coordinators.all()
         ]
@@ -132,10 +131,9 @@ class GroupAdmin(VersionAdmin):
     def teachers_list(self, group: models.Group) -> str:
         links = [
             format_html(
-                '<a style="white-space: nowrap;" href="{}">{}: {}\n</a>',
+                '<a style="white-space: nowrap;" href="{}">{}\n</a>',
                 reverse("admin:api_teacher_change", args=(teacher.pk,)),
-                teacher.personal_info.pk,
-                teacher.personal_info.full_name,
+                teacher,
             )
             for teacher in group.teachers.all()
         ]
