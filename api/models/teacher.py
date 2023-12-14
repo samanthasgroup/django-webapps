@@ -119,6 +119,3 @@ class Teacher(TeacherCommon):
     @property
     def has_groups(self) -> bool:
         return self.groups.exists()
-
-    def __str__(self) -> str:
-        return f"{self.pk}: {self.personal_info.full_name}"

@@ -34,4 +34,4 @@ class Person(models.Model):
         abstract = True
 
     def __str__(self) -> str:
-        return f"{self.pk}: {self.personal_info.full_name}"
+        return str(self.personal_info)

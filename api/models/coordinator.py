@@ -80,9 +80,6 @@ class Coordinator(Person):
             models.Index(fields=("situational_status",), name="coordinator_si_status_idx"),
         ]
 
-    def __str__(self) -> str:
-        return f"{self.pk}: {self.personal_info.full_name}"
-
     @property
     def has_enough_groups(self) -> bool:
         """Returns `True` if coordinator has required minimum amount of groups."""
