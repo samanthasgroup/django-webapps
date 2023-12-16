@@ -69,7 +69,7 @@ django-stubs = "^4.2.6"
 pytest = "^7.4.3"
 pytest-django = "^4.7.0"
 pytest-asyncio = "^0.23.2"
-faker = "^20.1.0"
+faker = "^21.0.0"
 model-bakery = "^1.17.0"
 
 [tool.ruff]
