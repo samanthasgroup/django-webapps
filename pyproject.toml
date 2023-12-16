@@ -52,7 +52,7 @@ djangorestframework = "^3.14.0"
 drf-spectacular = "^0.27.0"
 django-filter = "^23.5"
 # this one definitely needs to be in main dependencies, django will break withouth its monkeypatch:
-django-stubs-ext = "^4.2.5"
+django-stubs-ext = "^4.2.7"
 django-reversion = "^5.0.8"
 
 [tool.poetry.group.dev.dependencies]
