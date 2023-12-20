@@ -17,7 +17,7 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies:
-            - "django-stubs"
+            - "django-stubs<=4.2.6" #see https://github.com/typeddjango/django-stubs/issues/1872
             - "djangorestframework"
             - "djangorestframework-stubs"
             - "django-filter-stubs"
