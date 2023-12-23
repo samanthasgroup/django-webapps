@@ -1,36 +1,45 @@
 import re
+from enum import Enum
 
-from email_validator import validate_email
+from email_validator import EmailNotValidError, validate_email
 
+from api.models.auxil.constants import TIME_SLOTS, LanguageLevelId
 from api.models.choices.status.project import TeacherProjectStatus
 from api.models.choices.status.situational import TeacherSituationalStatus
 
 
-def parse_project_status(status_str: str) -> TeacherProjectStatus | None:
+class ProjectStatusAction(str, Enum):
+    SPEAKING_CLUB = "speking_club"
+    CV_AND_INTERVIEW = "cv_and_interview"
+    NONE = "none"
+
+
+def parse_project_status(
+    status_str: str,
+) -> tuple[TeacherProjectStatus, ProjectStatusAction] | None:
     status_str = status_str.lower()
+    result = None
     if status_str in ["идут занятия"]:
-        return TeacherProjectStatus.WORKING
-    if status_str in ["перерыв в преподавании"]:
-        return TeacherProjectStatus.FINISHED_STAYS
-    if status_str in ["закончил участие в проекте"]:
-        return TeacherProjectStatus.FINISHED_LEFT
-    if status_str in ["готов начать позже (см.коммент)"]:
+        result = (TeacherProjectStatus.WORKING, ProjectStatusAction.NONE)
+    elif status_str in ["перерыв в преподавании"]:
+        result = (TeacherProjectStatus.ON_LEAVE, ProjectStatusAction.NONE)
+    elif status_str in ["закончил участие в проекте"]:
+        result = (TeacherProjectStatus.FINISHED_LEFT, ProjectStatusAction.NONE)
+    elif status_str in ["готов начать позже (см.коммент)"]:  # noqa: SIM114
         pass
-    if status_str in ["Substitute Teacher"]:
+    elif status_str in ["Substitute Teacher"]:
         pass
-    if status_str in ["Speaking Clubs"]:
+    elif status_str in ["Speaking Clubs"]:
+        result = (TeacherProjectStatus.WORKING, ProjectStatusAction.SPEAKING_CLUB)
+    elif status_str in ["жду ответа", "ищу учеников"]:
+        result = (TeacherProjectStatus.NO_GROUP_YET, ProjectStatusAction.NONE)
+    elif status_str in ["не сможет участвовать в проекте"]:
         pass
-    if status_str in ["жду ответа"]:
+    elif status_str in ["CV and Interview"]:
+        result = (TeacherProjectStatus.NO_GROUP_YET, ProjectStatusAction.CV_AND_INTERVIEW)
+    elif status_str in ["дубль"]:  # duplicate?
         pass
-    if status_str in ["не сможет участвовать в проекте"]:
-        pass
-    if status_str in ["ищу учеников"]:
-        pass
-    if status_str in ["CV and Interview"]:
-        pass
-    if status_str in ["дубль"]:  # duplicate?
-        pass
-    return None
+    return result
 
 
 def parse_situational_status(status_str: str) -> TeacherSituationalStatus | None:
@@ -49,27 +58,27 @@ def parse_name(name_str: str) -> str:
 def parse_email(email_str: str) -> str | None:
     try:
         validate_email(email_str)
-    except Exception as _:
+    except EmailNotValidError as _:
         return None
     return email_str
 
 
-def parse_has_expirience(exp_str: str) -> bool:
-    if exp_str.lower() == "да":
+def parse_has_experience(exp_str: str) -> bool:
+    if exp_str.lower().strip() == "да":
         return True
     return False
 
 
 def parse_telegram_name(tg_str: str) -> str | None:
     tg_regex = re.compile(r"@(?=\w{5,32}\b)[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*.*")
-    match_result = re.findall(tg_regex, tg_str)
-    if len(match_result) > 0:
-        return match_result[0]
+    match_result = re.search(tg_regex, tg_str)
+    if match_result is not None:
+        return match_result.group(0)
     return None
 
 
 def parse_can_give_feedback(fd_str: str) -> bool:
-    if fd_str.lower() == "да":
+    if fd_str.lower().strip() == "да":
         return True
     return False
 
@@ -84,15 +93,16 @@ def parse_weekly_frequency(freq_str: str) -> int | None:
 
 
 def parse_age_ranges(age_ranges_str: str) -> bool:
-    if age_ranges_str.lower() == "да":
+    if age_ranges_str.lower().strip() == "да":
         return True
     return False
 
 
 def parse_language_level(level_str: str) -> list[str]:
+    language_levels = [e.value for e in LanguageLevelId]
     if "any" in level_str.lower() or "любой" in level_str.lower():
-        return ["A0", "A1", "A2", "B1", "B2"]
-    regex = re.compile(r"A0|A1|A2|B1|B2")
+        return language_levels
+    regex = re.compile(rf"{'|'.join(language_levels)}")
     result = re.findall(regex, level_str.upper())
     return list(set(result))
 
@@ -101,14 +111,19 @@ def parse_availability_slots(
     slot_str: str, time_slots: list[tuple[int, int]] | None = None
 ) -> list[tuple[int, int]]:
     if time_slots is None:
-        time_slots = [(5, 8), (8, 11), (11, 17), (17, 21)]
+        time_slots = TIME_SLOTS
 
     slot_str = slot_str.lower()
     result = []
     if "утро" in slot_str or "morning" in slot_str:
         result.extend([(8, 11), (5, 8)])
     if "вечер" in slot_str or "evening" in slot_str:
-        result.append((17, 21))
+        result.extend(
+            [
+                (11, 14),
+                (14, 17),
+            ]
+        )
     if "день" in slot_str or "afternoon" in slot_str:
         result.append((11, 17))
     if len(result) > 0:
@@ -139,6 +154,6 @@ def parse_non_teaching_help(help_str: str) -> bool:
 
 
 def parse_speaking_club(club_str: str) -> bool:
-    if club_str.lower() == "да":
+    if club_str.lower().strip() == "да":
         return True
     return False

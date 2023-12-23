@@ -71,6 +71,8 @@ STUDENT_AGE_RANGES = {
     )
 }
 
+TIME_SLOTS = [(5, 8), (8, 11), (11, 14), (14, 17), (17, 21)]
+
 # Match string ranges presented to the teacher (for them to choose desired age groups of students)
 # to actual ranges
 STUDENT_AGE_RANGES_FOR_TEACHER = {

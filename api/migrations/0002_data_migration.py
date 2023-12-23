@@ -10,6 +10,7 @@ from api.models.auxil.constants import (
     STUDENT_AGE_RANGES,
     STUDENT_AGE_RANGES_FOR_MATCHING,
     STUDENT_AGE_RANGES_FOR_TEACHER, LanguageLevelId,
+    TIME_SLOTS
 )
 from api.models.auxil.data_populator import DataPopulator
 
@@ -57,7 +58,7 @@ class InitialDataPopulator(DataPopulator):
             TimeSlot(
                 from_utc_hour=datetime.time(hour=pair[0]), to_utc_hour=datetime.time(hour=pair[1])
             )
-            for pair in ((5, 8), (8, 11), (11, 14), (14, 17), (17, 21))
+            for pair in TIME_SLOTS
         )
         TimeSlot.objects.bulk_create(slots)
 
