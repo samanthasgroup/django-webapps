@@ -1,4 +1,3 @@
-import contextlib
 import datetime
 import re
 
@@ -17,22 +16,21 @@ def _city_to_timezone(city_name: str) -> str | None:
     return None
 
 
-def parse_timezone(tz: str) -> datetime.tzinfo | None:
-    tz_str = str(tz)
+def parse_timezone(tz_str: str) -> datetime.tzinfo | None:
     tz_name = None
     offset = None
     regex_right = r"((UTC|GMT)([\+|\-]\d*))"
     regex_left = r"(([\+|\-]\d*)(UTC|GMT))"
-    tz_str = str(tz).replace(" ", "").upper()
+    tz_str = tz_str.replace(" ", "").upper()
 
-    match_result_right = re.findall(regex_right, tz_str)
-    match_result_left = re.findall(regex_left, tz_str)
-    if len(match_result_right) > 0:
-        offset, tz_name = match_result_right[0][2], match_result_right[0][1]
-    elif len(match_result_left) > 0:
-        offset, tz_name = match_result_left[0][1], match_result_left[0][2]
+    match_result_right = re.search(regex_right, tz_str)
+    match_result_left = re.search(regex_left, tz_str)
+    if match_result_right is not None:
+        offset, tz_name = match_result_right.groups()[2], match_result_right.groups()[1]
+    elif match_result_left is not None:
+        offset, tz_name = match_result_left.groups()[1], match_result_left.groups()[2]
 
-    if offset is None:
+    if offset is None:  # TODO refactor this
         if "CET" in tz_str or "CEST" in tz_str:
             offset, tz_name = 2, "CET"
         if "EST" in tz_str or "EASTERNSTANDARDTIME" in tz_str:
@@ -51,8 +49,7 @@ def parse_timezone(tz: str) -> datetime.tzinfo | None:
         sign = -1 if offset < 0 else 1
         return datetime.timezone(sign * datetime.timedelta(hours=abs(offset)), name=tz_name)
 
-    with contextlib.suppress(Exception):
-        tz_name = _city_to_timezone(tz_str)
-        if tz_name is not None:
-            return pytz.timezone(tz_name)
+    tz_name = _city_to_timezone(tz_str)
+    if tz_name is not None:
+        return pytz.timezone(tz_name)
     return None  # or return default "UTC"?
