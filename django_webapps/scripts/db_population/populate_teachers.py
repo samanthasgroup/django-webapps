@@ -2,13 +2,14 @@ import argparse
 import csv
 
 COLUMN_NAME_TO_INDEX = {
+    "tid": 0,
     "cid": 1,
     "status": 3,
     "name": 4,
     "email": 5,
     "tg": 6,
     "timezone": 7,
-    "expirience": 8,
+    "experience": 8,
     "groups_number": 12,
     "age_ranges": 13,
     "language_levels": 14,
@@ -33,24 +34,23 @@ def get_args() -> argparse.Namespace:
 
 def load_teachers(path_to_csv_file: str) -> list[list[str]]:
     with open(path_to_csv_file, newline="") as csvfile:  # noqa: PTH123
-        spamreader = csv.reader(csvfile)
-        return list(spamreader)
+        return list(csv.reader(csvfile))
 
 
 class TeacherPopulator:
     def run(self) -> None:
         pass
 
-    def _create_tacher(self) -> None:
+    def _create_teacher(self) -> None:
         pass
 
     def _create_personal_info(self) -> None:
         pass
 
-    def _create_language_and_level(self) -> None:
+    def _create_language_and_levels(self) -> None:
         pass
 
-    def _create_availability_slot(self) -> None:
+    def _create_availability_slots(self) -> None:
         pass
 
     def _create_comment(self) -> None:
