@@ -22,7 +22,6 @@ class StudentAdminForm(forms.ModelForm[models.Student]):
             "comment",
             "children",
         )
-        readonly_fields = ("smalltalk_test_result",)
 
 
 class StudentAdmin(VersionAdmin):
@@ -30,6 +29,7 @@ class StudentAdmin(VersionAdmin):
     readonly_fields = (
         "enrollment_tests_summary",
         "enrollment_tests_result_answers",
+        "smalltalk_test_result",
     )
 
     # TODO: searching is case-sensitive, better to make it case-insensitive somehow
