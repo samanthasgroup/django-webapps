@@ -8,7 +8,20 @@ from api import models
 class StudentAdminForm(forms.ModelForm[models.Student]):
     class Meta:
         model = models.Student
-        fields = "__all__"
+        fields = (
+            "personal_info",
+            "project_status",
+            "situational_status",
+            "status_since",
+            "age_range",
+            "teaching_languages_and_levels",
+            "availability_slots",
+            "is_member_of_speaking_club",
+            "non_teaching_help_required",
+            "can_read_in_english",
+            "comment",
+            "children",
+        )
 
 
 class StudentAdmin(VersionAdmin):
@@ -16,6 +29,7 @@ class StudentAdmin(VersionAdmin):
     readonly_fields = (
         "enrollment_tests_summary",
         "enrollment_tests_result_answers",
+        "smalltalk_test_result",
     )
 
     # TODO: searching is case-sensitive, better to make it case-insensitive somehow
