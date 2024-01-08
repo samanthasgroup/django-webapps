@@ -8,7 +8,21 @@ from api import models
 class StudentAdminForm(forms.ModelForm[models.Student]):
     class Meta:
         model = models.Student
-        fields = "__all__"
+        fields = (
+            "personal_info",
+            "project_status",
+            "situational_status",
+            "status_since",
+            "age_range",
+            "teaching_languages_and_levels",
+            "availability_slots",
+            "is_member_of_speaking_club",
+            "non_teaching_help_required",
+            "can_read_in_english",
+            "comment",
+            "children",
+        )
+        readonly_fields = ("smalltalk_test_result",)
 
 
 class StudentAdmin(VersionAdmin):
