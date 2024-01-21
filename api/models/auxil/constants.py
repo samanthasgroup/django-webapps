@@ -16,6 +16,9 @@ class LanguageLevelId(str, Enum):
     # no C2 at this school
 
 
+LANGUAGE_AND_LEVEL_ID_TO_INDEX = {level: index for index, level in enumerate(LanguageLevelId)}
+
+
 class GroupDiscardReason(str, Enum):
     TEACHER_DECLINED = "teacher_declined"
     TEACHER_DID_NOT_REACT = "teacher_did_not_react"

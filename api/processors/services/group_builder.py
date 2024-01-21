@@ -1,10 +1,10 @@
 # DO NOT USE IN PROD, WORK IN PROGRESS
-
+import functools
 import itertools
 import logging
 from collections.abc import Collection, Iterable, Iterator
 from dataclasses import dataclass
-from datetime import time
+from datetime import time, timedelta
 
 from django.utils import timezone
 
@@ -35,6 +35,9 @@ from api.processors.auxil.log_event_creator import GroupLogEventCreator
 
 logger = logging.getLogger(__name__)
 
+MAX_WAITING_TIME = timedelta(weeks=4)
+LEVEL_DIFFERENCE_THRESHOLD = 2
+
 
 @dataclass
 class GroupSizeRestriction:
@@ -51,7 +54,7 @@ class GroupSizeRestriction:
     def validate_size(self, size: int) -> None:
         if self.min > size:
             raise ValueError(
-                f"Group candidate must respect upper group boundaries, but {size} > {self.max}"
+                f"Group candidate must respect upper group boundaries, but {size} < {self.min}"
             )
         if self.max < size:
             raise ValueError(
@@ -67,15 +70,6 @@ class GroupCandidate:
     teacher: Teacher
     students: Collection[Student]
     day_time_slots: Iterable[DayAndTimeSlot]
-
-    @property
-    def priority(self) -> int:
-        """
-        Numerical value for group priority.
-        Bigger value means more priority.
-        """
-        # TODO implement
-        return 1
 
     def __post_init__(self) -> None:
         # Validate group size against age-related restrictions
@@ -170,7 +164,7 @@ class GroupBuilder:
         if len(group_candidates) == 0:
             return None
 
-        group_candidates.sort(key=lambda candidate: candidate.priority, reverse=True)
+        group_candidates.sort(key=functools.cmp_to_key(GroupBuilder._compare_groups_priority))
         return group_candidates[0]
 
     @staticmethod
@@ -223,7 +217,7 @@ class GroupBuilder:
         for time_slot in day_time_slots:
             student_manager = student_manager.filter(availability_slots=time_slot)
 
-        return student_manager.order_by("personal_info__date_and_time_added")[:max_students_num]
+        return student_manager.order_by("status_since")[:max_students_num]
 
     @staticmethod
     def _iterate_lesson_times(teacher: Teacher) -> Iterator[tuple[DayAndTimeSlot, DayAndTimeSlot]]:
@@ -238,7 +232,7 @@ class GroupBuilder:
             if GroupBuilder._availability_slots_have_break(
                 first_availability, second_availability
             ):
-                yield (first_availability, second_availability)
+                yield first_availability, second_availability
 
     @staticmethod
     def _availability_slots_have_break(
@@ -282,3 +276,37 @@ class GroupBuilder:
             teacher_log_event_type=TeacherLogEventType.GROUP_OFFERED,
             group_log_event_type=GroupLogEventType.FORMED,
         )
+
+    @staticmethod
+    def _compare_groups_priority(group1: GroupCandidate, group2: GroupCandidate) -> int:
+        """
+        Compare priority of two group candidates.
+        Returns:
+            -1 if group1 has higher priority
+            0 if both candidates have equal priority
+            1 if group2 has higher priority
+        """
+        level_difference = abs(
+            group1.language_and_level.level.index - group2.language_and_level.level.index
+        )
+        time_threshold = timezone.now() - MAX_WAITING_TIME
+
+        if level_difference >= LEVEL_DIFFERENCE_THRESHOLD:
+            # If levels difference is 2 or more, prefer the lower level
+            if group1.language_and_level.level.index < group2.language_and_level.level.index:
+                return -1
+            return 1
+
+        # If levels difference is 1 or less, compare based on waiting time
+        # TODO: project_status_since?
+        group1_waiting_students = sum(
+            1 for student in group1.students if student.status_since >= time_threshold
+        )
+        group2_waiting_students = sum(
+            1 for student in group2.students if student.status_since >= time_threshold
+        )
+        if group1_waiting_students > group2_waiting_students:
+            return -1
+        if group1_waiting_students < group2_waiting_students:
+            return 1
+        return 0
