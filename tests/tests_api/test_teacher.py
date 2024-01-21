@@ -213,6 +213,7 @@ def test_dashboard_teacher_retrieve(api_client, faker, availability_slots):
 
     teacher_data["utc_timedelta"] = f"UTC{sign}{utc_offset_hours:02}:{utc_offset_minutes:02}"
     assert_response_data(response.data, teacher_data)
+    teacher.has_prior_teaching_experience == response.data["has_prior_teaching_experience"]
 
 
 def test_dashboard_teacher_list(api_client, faker, availability_slots):
@@ -232,6 +233,7 @@ def test_dashboard_teacher_list(api_client, faker, availability_slots):
     teacher_data = DashboardTeacherSerializer(teacher).data
     teacher_data["utc_timedelta"] = f"UTC{sign}{utc_offset_hours:02}:{utc_offset_minutes:02}"
     assert_response_data_list(response.data, [teacher_data])
+    teacher.has_prior_teaching_experience == response.data[0]["has_prior_teaching_experience"]
 
 
 class TestDashboardTeacherTransfer:

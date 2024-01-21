@@ -66,6 +66,7 @@ class CommonDashboardTeacherSerializer(serializers.ModelSerializer[Teacher]):
             "non_teaching_help_provided",
             "peer_support",
             "date_and_time_added",
+            "has_prior_teaching_experience",
         )
         read_only_fields = fields
 

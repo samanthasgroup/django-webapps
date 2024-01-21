@@ -80,10 +80,6 @@ class Coordinator(Person):
             models.Index(fields=("situational_status",), name="coordinator_si_status_idx"),
         ]
 
-    def __str__(self) -> str:
-        role = " (admin)" if self.is_admin else ""
-        return f"{super().__str__()}{role}"
-
     @property
     def has_enough_groups(self) -> bool:
         """Returns `True` if coordinator has required minimum amount of groups."""
