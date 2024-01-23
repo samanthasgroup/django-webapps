@@ -58,6 +58,7 @@ email-validator = "^2.1.0.post1"
 geopy = "^2.4.1"
 timezonefinder = "^6.2.0"
 pytz = "^2023.3.post1"
+tqdm = "^4.66.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.12.1"

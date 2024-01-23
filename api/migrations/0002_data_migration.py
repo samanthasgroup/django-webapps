@@ -56,9 +56,9 @@ class InitialDataPopulator(DataPopulator):
 
         slots = (
             TimeSlot(
-                from_utc_hour=datetime.time(hour=pair[0]), to_utc_hour=datetime.time(hour=pair[1])
+                from_utc_hour=datetime.time(hour=hour_from), to_utc_hour=datetime.time(hour=hour_to)
             )
-            for pair in TIME_SLOTS
+            for hour_from, hour_to in TIME_SLOTS
         )
         TimeSlot.objects.bulk_create(slots)
 

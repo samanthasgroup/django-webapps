@@ -1,8 +1,6 @@
 import re
 from enum import Enum
 
-from email_validator import EmailNotValidError, validate_email
-
 from api.models.auxil.constants import TIME_SLOTS, LanguageLevelId
 from api.models.choices.status.project import TeacherProjectStatus
 from api.models.choices.status.situational import TeacherSituationalStatus
@@ -14,94 +12,59 @@ class ProjectStatusAction(str, Enum):
     NONE = "none"
 
 
-def parse_project_status(
+RAW_PROJECT_STATUS_TO_PARSED: dict[
+    str, tuple[TeacherProjectStatus | TeacherSituationalStatus, ProjectStatusAction]
+] = {
+    "идут занятия": (TeacherProjectStatus.WORKING, ProjectStatusAction.NONE),
+    "перерыв в преподавании": (TeacherProjectStatus.ON_LEAVE, ProjectStatusAction.NONE),
+    "закончил участие в проекте": (TeacherProjectStatus.FINISHED_LEFT, ProjectStatusAction.NONE),
+    "speaking clubs": (TeacherProjectStatus.WORKING, ProjectStatusAction.SPEAKING_CLUB),
+    "жду ответа": (TeacherProjectStatus.NO_GROUP_YET, ProjectStatusAction.NONE),
+    "ищу учеников": (TeacherProjectStatus.NO_GROUP_YET, ProjectStatusAction.NONE),
+    "cv and interview": (TeacherProjectStatus.NO_GROUP_YET, ProjectStatusAction.CV_AND_INTERVIEW),
+    "готов начать позже (см.коммент)": (
+        TeacherProjectStatus.NO_GROUP_YET,
+        ProjectStatusAction.NONE,
+    ),
+    "substitute teacher": (TeacherProjectStatus.WORKING, ProjectStatusAction.NONE),
+    "группы набраны": (TeacherSituationalStatus.AWAITING_START, ProjectStatusAction.NONE),
+    "не вышел на связь": (TeacherSituationalStatus.NO_RESPONSE, ProjectStatusAction.NONE),
+}
+
+
+def parse_status(
     status_str: str,
-) -> tuple[TeacherProjectStatus, ProjectStatusAction] | None:
-    status_str = status_str.lower()
-    result = None
-    if status_str in ["идут занятия"]:
-        result = (TeacherProjectStatus.WORKING, ProjectStatusAction.NONE)
-    elif status_str in ["перерыв в преподавании"]:
-        result = (TeacherProjectStatus.ON_LEAVE, ProjectStatusAction.NONE)
-    elif status_str in ["закончил участие в проекте"]:
-        result = (TeacherProjectStatus.FINISHED_LEFT, ProjectStatusAction.NONE)
-    elif status_str in ["готов начать позже (см.коммент)"]:  # noqa: SIM114
-        pass
-    elif status_str in ["Substitute Teacher"]:
-        pass
-    elif status_str in ["Speaking Clubs"]:
-        result = (TeacherProjectStatus.WORKING, ProjectStatusAction.SPEAKING_CLUB)
-    elif status_str in ["жду ответа", "ищу учеников"]:
-        result = (TeacherProjectStatus.NO_GROUP_YET, ProjectStatusAction.NONE)
-    elif status_str in ["не сможет участвовать в проекте"]:
-        pass
-    elif status_str in ["CV and Interview"]:
-        result = (TeacherProjectStatus.NO_GROUP_YET, ProjectStatusAction.CV_AND_INTERVIEW)
-    elif status_str in ["дубль"]:  # duplicate?
-        pass
-    return result
-
-
-def parse_situational_status(status_str: str) -> TeacherSituationalStatus | None:
-    status_str = status_str.lower()
-    if status_str in ["не вышел на связь"]:
-        return TeacherSituationalStatus.NO_RESPONSE
-    if status_str in ["группы набраны"]:
-        return TeacherSituationalStatus.AWAITING_START
-    return None
+) -> tuple[TeacherProjectStatus | TeacherSituationalStatus, ProjectStatusAction] | None:
+    status_str = status_str.lower().strip()
+    return RAW_PROJECT_STATUS_TO_PARSED.get(status_str)
 
 
 def parse_name(name_str: str) -> str:
     return name_str
 
 
-def parse_email(email_str: str) -> str | None:
-    try:
-        validate_email(email_str)
-    except EmailNotValidError as _:
-        return None
-    return email_str
-
-
-def parse_has_experience(exp_str: str) -> bool:
-    if exp_str.lower().strip() == "да":
-        return True
-    return False
-
-
-def parse_telegram_name(tg_str: str) -> str | None:
-    tg_regex = re.compile(r"@(?=\w{5,32}\b)[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*.*")
-    match_result = re.search(tg_regex, tg_str)
-    if match_result is not None:
-        return match_result.group(0)
-    return None
-
-
 def parse_can_give_feedback(fd_str: str) -> bool:
-    if fd_str.lower().strip() == "да":
-        return True
-    return False
+    return fd_str.lower().strip() == "да"
 
 
-def parse_weekly_frequency(freq_str: str) -> int | None:
-    if "мин" in freq_str.lower() or "час" in freq_str.lower():
+def parse_groups_number(groups_str: str) -> int | None:
+    if "мин" in groups_str.lower() or "час" in groups_str.lower():
         return 1
-    numbers = list(map(int, re.findall(r"\d+", str(freq_str))))
+    numbers = list(map(int, re.findall(r"\d+", groups_str)))
     if len(numbers) > 0:
         return max(numbers)
     return None
 
 
 def parse_age_ranges(age_ranges_str: str) -> bool:
-    if age_ranges_str.lower().strip() == "да":
-        return True
-    return False
+    return age_ranges_str.lower().strip() == "да"
 
 
 def parse_language_level(level_str: str) -> list[str]:
     language_levels = [e.value for e in LanguageLevelId]
     if "any" in level_str.lower() or "любой" in level_str.lower():
         return language_levels
+    level_str = level_str.upper().replace("А", "A").replace("В", "B").replace("С", "C")
     regex = re.compile(rf"{'|'.join(language_levels)}")
     result = re.findall(regex, level_str.upper())
     return list(set(result))
@@ -113,7 +76,7 @@ def parse_availability_slots(
     if time_slots is None:
         time_slots = TIME_SLOTS
 
-    slot_str = slot_str.lower()
+    slot_str = slot_str.lower().strip()
     result = []
 
     def find_best_fits(range_to_fit: tuple[int, int]) -> list[tuple[int, int]]:
@@ -163,13 +126,9 @@ def parse_availability_slots(
     return result
 
 
-def parse_non_teaching_help(help_str: str) -> bool:
-    if len(help_str) > 1:
-        return True
-    return False
-
-
 def parse_speaking_club(club_str: str) -> bool:
-    if club_str.lower().strip() == "да":
-        return True
-    return False
+    return club_str.lower().strip() == "да"
+
+
+def parse_has_experience(experience: str) -> bool:
+    return experience.lower().strip() == "да"
