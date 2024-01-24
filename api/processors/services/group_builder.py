@@ -52,11 +52,11 @@ class GroupSizeRestriction:
     max: int
 
     def validate_size(self, size: int) -> None:
-        if self.min > size:
+        if size < self.min:
             raise ValueError(
-                f"Group candidate must respect upper group boundaries, but {size} < {self.min}"
+                f"Group candidate must respect lower group boundaries, but {size} < {self.min}"
             )
-        if self.max < size:
+        if size > self.max:
             raise ValueError(
                 f"Group candidate must respect upper group boundaries, but {size} > {self.max}"
             )
