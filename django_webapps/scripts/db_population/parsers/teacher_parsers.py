@@ -13,28 +13,45 @@ class ProjectStatusAction(str, Enum):
 
 
 RAW_PROJECT_STATUS_TO_PARSED: dict[
-    str, tuple[TeacherProjectStatus | TeacherSituationalStatus, ProjectStatusAction]
+    str, tuple[TeacherSituationalStatus | None, TeacherProjectStatus, ProjectStatusAction]
 ] = {
-    "идут занятия": (TeacherProjectStatus.WORKING, ProjectStatusAction.NONE),
-    "перерыв в преподавании": (TeacherProjectStatus.ON_LEAVE, ProjectStatusAction.NONE),
-    "закончил участие в проекте": (TeacherProjectStatus.FINISHED_LEFT, ProjectStatusAction.NONE),
-    "speaking clubs": (TeacherProjectStatus.WORKING, ProjectStatusAction.SPEAKING_CLUB),
-    "жду ответа": (TeacherProjectStatus.NO_GROUP_YET, ProjectStatusAction.NONE),
-    "ищу учеников": (TeacherProjectStatus.NO_GROUP_YET, ProjectStatusAction.NONE),
-    "cv and interview": (TeacherProjectStatus.NO_GROUP_YET, ProjectStatusAction.CV_AND_INTERVIEW),
+    "идут занятия": (None, TeacherProjectStatus.WORKING, ProjectStatusAction.NONE),
+    "перерыв в преподавании": (None, TeacherProjectStatus.ON_LEAVE, ProjectStatusAction.NONE),
+    "закончил участие в проекте": (
+        None,
+        TeacherProjectStatus.FINISHED_LEFT,
+        ProjectStatusAction.NONE,
+    ),
+    "speaking clubs": (None, TeacherProjectStatus.WORKING, ProjectStatusAction.SPEAKING_CLUB),
+    "жду ответа": (None, TeacherProjectStatus.NO_GROUP_YET, ProjectStatusAction.NONE),
+    "ищу учеников": (None, TeacherProjectStatus.NO_GROUP_YET, ProjectStatusAction.NONE),
+    "cv and interview": (
+        None,
+        TeacherProjectStatus.NO_GROUP_YET,
+        ProjectStatusAction.CV_AND_INTERVIEW,
+    ),
     "готов начать позже (см.коммент)": (
+        None,
         TeacherProjectStatus.NO_GROUP_YET,
         ProjectStatusAction.NONE,
     ),
-    "substitute teacher": (TeacherProjectStatus.WORKING, ProjectStatusAction.NONE),
-    "группы набраны": (TeacherSituationalStatus.AWAITING_START, ProjectStatusAction.NONE),
-    "не вышел на связь": (TeacherSituationalStatus.NO_RESPONSE, ProjectStatusAction.NONE),
+    "substitute teacher": (None, TeacherProjectStatus.WORKING, ProjectStatusAction.NONE),
+    "группы набраны": (
+        TeacherSituationalStatus.AWAITING_START,
+        TeacherProjectStatus.WORKING,
+        ProjectStatusAction.NONE,
+    ),
+    "не вышел на связь": (
+        TeacherSituationalStatus.NO_RESPONSE,
+        TeacherProjectStatus.ON_LEAVE,
+        ProjectStatusAction.NONE,
+    ),
 }
 
 
 def parse_status(
     status_str: str,
-) -> tuple[TeacherProjectStatus | TeacherSituationalStatus, ProjectStatusAction] | None:
+) -> tuple[TeacherSituationalStatus | None, TeacherProjectStatus, ProjectStatusAction] | None:
     status_str = status_str.lower().strip()
     return RAW_PROJECT_STATUS_TO_PARSED.get(status_str)
 
@@ -71,11 +88,11 @@ def parse_language_level(level_str: str) -> list[str]:
 
 
 def parse_availability_slots(
-    slot_str: str, time_slots: list[tuple[int, int]] | None = None
+    slot_str: str,
+    time_slots: tuple[
+        tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int]
+    ] = TIME_SLOTS,
 ) -> list[tuple[int, int]]:
-    if time_slots is None:
-        time_slots = TIME_SLOTS
-
     slot_str = slot_str.lower().strip()
     result = []
 

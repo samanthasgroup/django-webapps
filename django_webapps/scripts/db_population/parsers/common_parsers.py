@@ -32,8 +32,8 @@ def parse_timezone(tz_str: str) -> datetime.tzinfo | None:
         offset, tz_name = match_result_left.groups()[1], match_result_left.groups()[2]
 
     if offset is None:  # TODO refactor this
-        if "CET" in tz_str or "CEST" in tz_str:
-            offset, tz_name = 2, "CET"
+        if "CEST" in tz_str or "CENTRALEUROPEANSUMMERTIME" in tz_str:
+            offset, tz_name = 2, "CEST"
         if "EST" in tz_str or "EASTERNSTANDARDTIME" in tz_str:
             offset, tz_name = 0, "EST"
         if "CST" in tz_str or "CENTRALSTANDARDTIME" in tz_str:
@@ -42,7 +42,7 @@ def parse_timezone(tz_str: str) -> datetime.tzinfo | None:
             offset, tz_name = 1, "CET"
         if "UTC" in tz_str or "COORDINATEDUNIVERSALTIME" in tz_str:
             offset, tz_name = 0, "UTC"
-        if "GMT" in tz_str or "GreenwichMeanTimeZone".upper() in tz_str:
+        if "GMT" in tz_str or "GREENWICHMEANTIME" in tz_str:
             offset, tz_name = 0, "GMT"
 
     if offset is not None and tz_name is not None:
