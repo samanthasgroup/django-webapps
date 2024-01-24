@@ -295,7 +295,9 @@ class GroupBuilder:
             # If levels difference is 2 or more, prefer the lower level
             if group1.language_and_level.level.index < group2.language_and_level.level.index:
                 return -1
-            return 1
+            if group1.language_and_level.level.index > group2.language_and_level.level.index:
+                return 1
+            # if levels are equal, compare based on waiting time
 
         # If levels difference is 1 or less, compare based on waiting time
         # TODO: project_status_since?
