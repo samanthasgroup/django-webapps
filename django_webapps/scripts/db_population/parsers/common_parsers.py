@@ -32,8 +32,8 @@ def parse_timezone(tz_str: str) -> datetime.tzinfo | None:
         offset, tz_name = match_result_left.groups()[1], match_result_left.groups()[2]
 
     if offset is None:  # TODO refactor this
-        if "CET" in tz_str or "CEST" in tz_str:
-            offset, tz_name = 2, "CET"
+        if "CEST" in tz_str or "CENTRALEUROPEANSUMMERTIME" in tz_str:
+            offset, tz_name = 2, "CEST"
         if "EST" in tz_str or "EASTERNSTANDARDTIME" in tz_str:
             offset, tz_name = 0, "EST"
         if "CST" in tz_str or "CENTRALSTANDARDTIME" in tz_str:
@@ -42,7 +42,7 @@ def parse_timezone(tz_str: str) -> datetime.tzinfo | None:
             offset, tz_name = 1, "CET"
         if "UTC" in tz_str or "COORDINATEDUNIVERSALTIME" in tz_str:
             offset, tz_name = 0, "UTC"
-        if "GMT" in tz_str or "GreenwichMeanTimeZone".upper() in tz_str:
+        if "GMT" in tz_str or "GREENWICHMEANTIME" in tz_str:
             offset, tz_name = 0, "GMT"
 
     if offset is not None and tz_name is not None:
@@ -67,8 +67,23 @@ def parse_email(email_str: str) -> str | None:
 
 def parse_telegram_name(tg_str: str) -> str | None:
     tg_str = tg_str.strip()
+
+    # usernames
     tg_regex = re.compile(r"@(?=\w{5,32}\b)[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*.*")
     match_result = re.search(tg_regex, tg_str)
     if match_result is not None:
         return match_result.group(0)
+
+    # http links
+    tg_http_regex = re.compile(r"/t.me/(\w{5,32}\b)")
+    match_result = re.search(tg_http_regex, tg_str)
+    if match_result is not None:
+        return f"@{match_result.group(1)}"
+
+    # just a name
+    tg_http_regex = re.compile(r"\w{5,32}\b")
+    match_result = re.match(tg_http_regex, tg_str)
+    if match_result is not None and len(match_result.group(0)) == len(tg_str):
+        return f"@{match_result.group(0)}"
+
     raise ValueError(f"tg: {tg_str} is not valid")
