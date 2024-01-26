@@ -122,6 +122,8 @@ TEACHER_PEER_SUPPORT_OPTIONS = [
     "can_work_in_tandem",
 ]
 
+TIME_SLOTS = ((5, 8), (8, 11), (11, 14), (14, 17), (17, 21))
+
 DEFAULT_LESSON_DURATION_MIN = 60
 
 MAX_AGE_TEEN_GROUP = 17
