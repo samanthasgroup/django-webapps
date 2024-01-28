@@ -1,8 +1,10 @@
 from collections.abc import Callable
+from typing import Any
 
 import reversion
 from django import forms
 from django.contrib import admin, messages
+from django.contrib.admin import ModelAdmin, SimpleListFilter
 from django.contrib.admin.helpers import ActionForm
 from django.db.models import QuerySet
 from django.http import HttpRequest
@@ -16,6 +18,26 @@ from api.models.choices.log_event_type import (
     CoordinatorLogEventType,
 )
 from api.processors.auxil.log_event_creator import CoordinatorAdminLogEventCreator
+
+
+class AdminStatusFilter(SimpleListFilter):
+    title = "admin status"
+    parameter_name = "is_admin"
+
+    def lookups(
+        self, _request: HttpRequest, _model_admin: ModelAdmin[Any]
+    ) -> tuple[tuple[bool, str], ...]:
+        return (
+            (True, "Yes"),
+            (False, "No"),
+        )
+
+    def queryset(self, _request: HttpRequest, queryset: QuerySet[Any]) -> QuerySet[Coordinator]:
+        if self.value() == "True":
+            return queryset.filter(is_admin=True)
+        if self.value() == "False":
+            return queryset.filter(is_admin=False)
+        return queryset
 
 
 class BaseCoordinatorGroupInline(
@@ -85,7 +107,7 @@ class CoordinatorAdmin(VersionAdmin):
         "get_is_admin",
         "get_additional_skills_comment",
         "get_project_status",
-        "situational_status",
+        "get_situational_status",
         "get_status_since",
         "active_groups_count",
         "get_communication_language_mode",
@@ -97,7 +119,7 @@ class CoordinatorAdmin(VersionAdmin):
 
     list_filter = (
         "is_validated",
-        "is_admin",
+        AdminStatusFilter,
         "project_status",
         "situational_status",
         "personal_info__communication_language_mode",
@@ -144,7 +166,11 @@ class CoordinatorAdmin(VersionAdmin):
 
     @admin.display(description="Project status")
     def get_project_status(self, coordinator: Coordinator) -> str:
-        return coordinator.project_status
+        return coordinator.project_status.replace("_", " ")
+
+    @admin.display(description="Situational Status")
+    def get_situational_status(self, coordinator: Coordinator) -> str:
+        return coordinator.situational_status.replace("_", " ")
 
     @admin.display(description="Status last changed")
     def get_status_since(self, coordinator: Coordinator) -> str:
