@@ -67,10 +67,12 @@ class CoordinatorForm(forms.ModelForm):  # type: ignore
         fields = (
             "is_validated",
             "is_admin",
+            "personal_info",
             "additional_skills_comment",
             "project_status",
             "situational_status",
             "status_since",
+            "mentor",
         )
 
 
@@ -85,10 +87,10 @@ class CoordinatorAdmin(VersionAdmin):
         "get_project_status",
         "situational_status",
         "get_status_since",
+        "active_groups_count",
         "get_communication_language_mode",
         "mentor",
         "get_comment",
-        "active_groups_count",
     )
 
     ordering = ["personal_info_id"]
@@ -106,6 +108,9 @@ class CoordinatorAdmin(VersionAdmin):
         "personal_info__id",
         "personal_info__first_name",
         "personal_info__last_name",
+        "mentor__personal_info__id",
+        "mentor__personal_info__first_name",
+        "mentor__personal_info__last_name",
         "additional_skills_comment",
         "comment",
     )
