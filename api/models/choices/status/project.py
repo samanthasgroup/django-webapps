@@ -1,4 +1,5 @@
 """Module for project-level statuses that describe the 'main state' of a person or a group."""
+
 from django.db import models
 
 from api.models.auxil.constants import CoordinatorGroupLimit
