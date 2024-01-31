@@ -112,9 +112,11 @@ class CoordinatorAdmin(VersionAdmin):
                     CoordinatorAdminLogEventCreator.create(
                         coordinator=coordinator,
                         log_event_type=log_event_type,
-                        group=Group.objects.get(pk=group_from_request)
-                        if group_from_request
-                        else None,
+                        group=(
+                            Group.objects.get(pk=group_from_request)
+                            if group_from_request
+                            else None
+                        ),
                     )
 
         return action

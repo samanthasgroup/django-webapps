@@ -6,6 +6,7 @@ TODO:
  Maybe we should remove some actions from ViewSet?
  Needs to be discussed for all viewsets.
 """
+
 import pytest
 from django.utils.dateparse import parse_duration
 from model_bakery import baker, seq
