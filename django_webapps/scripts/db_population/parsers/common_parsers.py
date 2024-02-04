@@ -87,3 +87,11 @@ def parse_telegram_name(tg_str: str) -> str | None:
         return f"@{match_result.group(0)}"
 
     raise ValueError(f"tg: {tg_str} is not valid")
+
+
+def parse_name(name_str: str) -> str:
+    min_length = 2
+    name_str = name_str.strip()
+    if len(name_str) < min_length:
+        raise ValueError(f"Name {name_str} is not valid")
+    return name_str
