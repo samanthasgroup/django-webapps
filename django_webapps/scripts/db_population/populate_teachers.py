@@ -17,8 +17,8 @@ from api.models.choices.status.project import TeacherProjectStatus  # noqa: E402
 from api.models.choices.status.situational import TeacherSituationalStatus  # noqa: E402
 from api.models.teacher import Teacher  # noqa: E402
 from django_webapps.scripts.db_population.base_populator import (  # noqa: E402
-    BasePersonCsvPopulator,
     BasePersonEntityData,
+    BasePersonPopulatorFromCsv,
     CsvData,
 )
 from django_webapps.scripts.db_population.parsers import (  # noqa: E402
@@ -80,7 +80,8 @@ class TeacherData(BasePersonEntityData):
     situational_status: TeacherSituationalStatus | None = None
 
 
-class TeacherPopulator(BasePersonCsvPopulator):
+class TeacherPopulator(BasePersonPopulatorFromCsv):
+    id_name: str = "tid"
     entity_name: str = "teacher"
 
     def _pre_process_data(self, csv_data: CsvData) -> CsvData:
@@ -91,7 +92,7 @@ class TeacherPopulator(BasePersonCsvPopulator):
             raise TypeError("Value of current teacher can not be None")
 
         parsed_status = self._parse_cell("status", teacher_parsers.parse_status)
-        tid = int(self._current_entity[self._column_to_id["tid"]])
+        tid = int(self._current_entity[self._column_to_id[self.id_name]])
         if parsed_status is None or (
             parsed_status[1] == TeacherSituationalStatus.NO_RESPONSE
             and tid > MAX_TID_WITH_NO_RESPONSE
@@ -110,7 +111,7 @@ class TeacherPopulator(BasePersonCsvPopulator):
             first_name=name,
             telegram_username=telegram_username,
             project_status=project_status,
-            tid=tid,
+            id=tid,
         )
         timezone = self._parse_cell("timezone", common_parsers.parse_timezone, skip_if_empty=True)
         teacher_data.utc_timedelta = timezone.utcoffset(None) if timezone else None
@@ -136,7 +137,6 @@ class TeacherPopulator(BasePersonCsvPopulator):
         teacher_data.teaching_languages_and_levels = self._parse_cell(
             "language_levels", teacher_parsers.parse_language_level, skip_if_empty=True
         )
-        teacher_data.is_validated = project_status == TeacherProjectStatus.WORKING
         teacher_data.has_hosted_speaking_club = (
             project_status == teacher_parsers.ProjectStatusAction.SPEAKING_CLUB
         )
@@ -180,10 +180,10 @@ class TeacherPopulator(BasePersonCsvPopulator):
                 self._create_language_and_levels(entity_data.teaching_languages_and_levels)
             )
             teacher.save()
-            logger.info(f"Successfully created Teacher with tid {entity_data.tid}")
+            logger.info(f"Successfully created Teacher with {self.id_name} {entity_data.id}")
         except (IntegrityError, TransactionManagementError) as e:
             logger.warning(
-                f"Teacher with tid {entity_data.tid} can not be parsed, see errors above"
+                f"Teacher with {self.id_name} {entity_data.id} can not be parsed, see errors above"
             )
             logger.debug(e)
 

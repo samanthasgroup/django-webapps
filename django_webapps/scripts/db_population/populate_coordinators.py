@@ -14,8 +14,8 @@ from django.utils import timezone  # noqa: E402
 from api.models.choices.status.project import CoordinatorProjectStatus  # noqa: E402
 from api.models.coordinator import Coordinator  # noqa: E402
 from django_webapps.scripts.db_population.base_populator import (  # noqa: E402
-    BasePersonCsvPopulator,
     BasePersonEntityData,
+    BasePersonPopulatorFromCsv,
     CsvData,
 )
 from django_webapps.scripts.db_population.parsers import common_parsers  # noqa: E402
@@ -26,12 +26,10 @@ from django_webapps.scripts.db_population.utils import (  # noqa: E402
 )
 
 logger = get_logger("coordinators.log")
-LIST_OF_ADMINS_IDS = [22, 42]
-MAX_TID_WITH_NO_RESPONSE = 1300
-
+LIST_OF_ADMINS_IDS = [1, 22, 39, 42, 225, 238, 208]
 
 COLUMN_TO_ID = {
-    "tid": 0,
+    "cid": 0,
     "name": 1,
     "email": 2,
     "tg": 3,
@@ -43,13 +41,14 @@ COLUMN_TO_ID = {
 class CoordinatorData(BasePersonEntityData):
     project_status: CoordinatorProjectStatus = CoordinatorProjectStatus.WORKING_OK
     last_name: str = ""
-    is_validated: bool = False
+    is_validated: bool = True
     is_admin: bool = False
     utc_timedelta: datetime.timedelta = datetime.timedelta(hours=0)
     status_since: datetime.datetime = timezone.now()
 
 
-class CoordinatorPopulator(BasePersonCsvPopulator):
+class CoordinatorPopulator(BasePersonPopulatorFromCsv):
+    id_name: str = "cid"
     entity_name: str = "coordinator"
 
     def _pre_process_data(self, csv_data: CsvData) -> CsvData:
@@ -61,7 +60,7 @@ class CoordinatorPopulator(BasePersonCsvPopulator):
     def _get_entity_data(self) -> CoordinatorData | None:
         if self._current_entity is None:
             raise TypeError("Value of current teacher can not be None")
-        tid = int(self._current_entity[self._column_to_id["tid"]])
+        entity_id = int(self._current_entity[self._column_to_id[self.id_name]])
         name = self._parse_cell("name", common_parsers.parse_name)
         telegram_username = self._parse_cell("tg", common_parsers.parse_telegram_name)
         email = self._parse_cell("email", common_parsers.parse_email)
@@ -69,8 +68,8 @@ class CoordinatorPopulator(BasePersonCsvPopulator):
             email=email,
             first_name=name,
             telegram_username=telegram_username,
-            tid=tid,
-            is_admin=tid in LIST_OF_ADMINS_IDS,
+            id=entity_id,
+            is_admin=entity_id in LIST_OF_ADMINS_IDS,
         )
         timezone = self._parse_cell("timezone", common_parsers.parse_timezone, skip_if_empty=True)
         coordinator_data.utc_timedelta = timezone.utcoffset(None) if timezone else None
@@ -90,10 +89,10 @@ class CoordinatorPopulator(BasePersonCsvPopulator):
                 status_since=entity_data.status_since,
                 comment=self._create_comment(),
             )
-            logger.info(f"Successfully created Coordinator with tid {entity_data.tid}")
+            logger.info(f"Successfully created Coordinator with {self.id_name} {entity_data.id}")
         except (IntegrityError, TransactionManagementError) as e:
             logger.warning(
-                f"Coordinator with tid {entity_data.tid} can not be parsed, see errors above"
+                f"Coordinator with {self.id_name} {entity_data.id} can not be parsed, see above"
             )
             logger.debug(e)
 

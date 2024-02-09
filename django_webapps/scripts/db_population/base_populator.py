@@ -20,7 +20,7 @@ EntityDataType = TypeVar("EntityDataType", bound="BasePersonEntityData")
 
 @dataclass
 class BasePersonEntityData:
-    tid: int
+    id: int
     first_name: str
     email: str
     telegram_username: str
@@ -34,17 +34,18 @@ class BasePersonEntityData:
         super().__setattr__(name, value)
 
 
-class BasePersonCsvPopulator(ABC):
+class BasePersonPopulatorFromCsv(ABC):
     entity_name: str = "abstract_entity"
+    id_name: str = "aid"
 
     def __init__(  # noqa: PLR0913
         self,
         csv_data: CsvData,
-        colum_to_id: dict[str, int],
+        column_to_id: dict[str, int],
         dry: bool = False,
         logger: logging.Logger = logging.getLogger(__name__),
     ) -> None:
-        self._column_to_id = colum_to_id
+        self._column_to_id = column_to_id
         self.header = csv_data[0]
         self.csv_data = self._pre_process_data(csv_data[1:])
         self._logger = logger
@@ -53,9 +54,9 @@ class BasePersonCsvPopulator(ABC):
 
     def run(self) -> None:
         for entity in tqdm(self.csv_data, desc=f"Processing {self.entity_name}s..."):
-            tid = entity[self._column_to_id["tid"]]
+            entity_id = entity[self._column_to_id[self.id_name]]
             self._logger.info("======================================================= ")
-            self._logger.info(f"Parsing {self.entity_name} with tid {tid}")
+            self._logger.info(f"Parsing {self.entity_name} with {self.id_name} {entity_id}")
             self._current_entity = entity
 
             entity_data = self._get_entity_data()
@@ -67,8 +68,8 @@ class BasePersonCsvPopulator(ABC):
 
     @abstractmethod
     def _pre_process_data(self, csv_data: CsvData) -> CsvData:
-        self.header[0] = "tid"
-        csv_data.sort(key=lambda entity: int(entity[self._column_to_id["tid"]]))
+        self.header[0] = self.id_name
+        csv_data.sort(key=lambda entity: int(entity[self._column_to_id[self.id_name]]))
         return csv_data
 
     @abstractmethod
@@ -83,7 +84,7 @@ class BasePersonCsvPopulator(ABC):
     def _report_error(self, error: ValueError) -> None:
         self._logger.error(error)
 
-    def _report_worning(self, column_name: str, value: str) -> None:
+    def _report_warning(self, column_name: str, value: str) -> None:
         self._logger.warning(f"{column_name} is not provided or can not be parsed, value: {value}")
 
     def _parse_cell(
@@ -100,7 +101,7 @@ class BasePersonCsvPopulator(ABC):
         try:
             result = parser(self._current_entity[index])
             if result is None or (isinstance(result, list) and len(result) == 0):
-                self._report_worning(self.header[index], self._current_entity[index])
+                self._report_warning(self.header[index], self._current_entity[index])
             return result
         except ValueError as error:
             self._report_error(error)
@@ -128,21 +129,22 @@ class BasePersonCsvPopulator(ABC):
     def _create_language_and_levels(
         self, levels: list[str]
     ) -> QuerySetAny[LanguageAndLevel, LanguageAndLevel]:
-        if len(levels) == 0:
-            return LanguageAndLevel.objects.filter(language__name="English")
-        return LanguageAndLevel.objects.filter(language__name="English", level__id__in=levels)
+        qs = LanguageAndLevel.objects.filter(language__name="English")
+        if levels:
+            qs = qs.filter(level_id__in=levels)
+        return qs
 
     def _create_availability_slots(
         self, weekly_slots: list[list[tuple[int, int]]]
     ) -> list[DayAndTimeSlot]:
         result: list[DayAndTimeSlot] = []
         for day_index, slots in enumerate(weekly_slots):
-            for slot in slots:
+            for from_hour, to_hour in slots:
                 result.extend(
                     DayAndTimeSlot.objects.filter(
                         day_of_week_index=day_index,
-                        time_slot__from_utc_hour=datetime.time(hour=slot[0]),
-                        time_slot__to_utc_hour=datetime.time(hour=slot[1]),
+                        time_slot__from_utc_hour=datetime.time(hour=from_hour),
+                        time_slot__to_utc_hour=datetime.time(hour=to_hour),
                     )
                 )
         return result
@@ -153,5 +155,5 @@ class BasePersonCsvPopulator(ABC):
         rows = ["======= OLD CSV DATA ======="]
         for index in self._column_to_id.values():
             rows.append(f"{self.header[index]} - {self._current_entity[index]}\n")
-        rows.append("======= OLD CSV DATA =======")
+        rows.append("======= END OF OLD CSV DATA =======")
         return "\n".join(rows)

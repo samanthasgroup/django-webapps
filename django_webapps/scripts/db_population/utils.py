@@ -15,7 +15,11 @@ def get_logger(file_name: str) -> logging.Logger:
 def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--input_csv", "-i", type=str, required=True, help="Input csv file with teachers"
+        "--input_csv",
+        "-i",
+        type=str,
+        required=True,
+        help="Input csv file with data (coordinators, teachers or students)",
     )
     parser.add_argument(
         "--dry",
