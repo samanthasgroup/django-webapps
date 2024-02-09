@@ -1526,23 +1526,23 @@ test = ["pytest", "pytest-cov"]
 
 [[package]]
 name = "timezonefinder"
-version = "6.2.0"
-description = "fast python package for finding the timezone of any point on earth (coordinates) offline"
+version = "6.4.1"
+description = "python package for finding the timezone of any point on earth (coordinates) offline"
 optional = false
 python-versions = ">=3.8,<4"
 files = [
-    {file = "timezonefinder-6.2.0-cp38-cp38-manylinux_2_35_x86_64.whl", hash = "sha256:06aa5926ed31687ea9eb00ab53203631f09a78f307285b4929da4ac4e2889240"},
-    {file = "timezonefinder-6.2.0.tar.gz", hash = "sha256:d41fd2650bb4221fae5a61f9c2767158f9727c4aaca95e24da86394feb704220"},
+    {file = "timezonefinder-6.4.1-cp38-cp38-manylinux_2_35_x86_64.whl", hash = "sha256:5b55b0a156b84e3271aafe8fa45fa5af6f90e5feec6b64be346749a378d63b69"},
+    {file = "timezonefinder-6.4.1.tar.gz", hash = "sha256:80ee0e277e496cec891849d99e7bf88e5c55cd03471fd720d505ac477b5347de"},
 ]
 
 [package.dependencies]
 cffi = ">=1.15.1,<2"
 h3 = ">=3.7.6,<4"
-numpy = ">=1.18,<2"
+numpy = {version = ">=1.25,<2", markers = "python_version >= \"3.9\""}
 setuptools = ">=65.5"
 
 [package.extras]
-numba = ["numba (>=0.56,<1)"]
+numba = ["numba (<0.59)", "numba (>=0.59,<1)"]
 pytz = ["pytz (>=2022.7.1)"]
 
 [[package]]
@@ -1684,4 +1684,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "6d7d8acffe8cdf26d93709186fc108357d96522d9e756fa90c9e050aafcad05c"
+content-hash = "c66d56c755cd1ad0aa72db098f4d38af8882411fe56a35746c105bf505aa8589"
