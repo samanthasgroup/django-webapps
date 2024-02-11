@@ -164,17 +164,19 @@ class CoordinatorAdmin(VersionAdmin):
             return format_html('<img src="{}" alt="icon"/>', "/static/admin/img/icon-yes.svg")
         return ""
 
-    @admin.display(description="Project status")
+    @admin.display(description=format_html("Project<br>status"))
     def get_project_status(self, coordinator: Coordinator) -> str:
         return coordinator.project_status.replace("_", " ")
 
-    @admin.display(description="Situational Status")
+    @admin.display(description=format_html("Situational<br>Status"))
     def get_situational_status(self, coordinator: Coordinator) -> str:
         return coordinator.situational_status.replace("_", " ")
 
-    @admin.display(description="Status last changed")
+    @admin.display(description=format_html("Status<br>last changed"))
     def get_status_since(self, coordinator: Coordinator) -> str:
-        return coordinator.status_since.strftime("%Y-%m-%d %H:%M:%S")
+        date_str = coordinator.status_since.strftime("%Y-%m-%d")
+        time_str = coordinator.status_since.strftime("%H:%M")
+        return format_html("{} <br> {}", date_str, time_str)
 
     @admin.display(description="Skills")
     def get_additional_skills_comment(self, coordinator: Coordinator) -> str:
@@ -188,7 +190,9 @@ class CoordinatorAdmin(VersionAdmin):
     def get_comment(self, coordinator: Coordinator) -> str:
         comment = coordinator.comment
         return format_html(
-            '<div style="width: 300px; word-wrap: break-word; white-space: pre-line;">{}</div>',
+            '<div style="max-width: 150px; word-wrap: break-word; '
+            "overflow-wrap: break-word; white-space: "
+            'pre-line;">{}</div>',
             comment,
         )
 
