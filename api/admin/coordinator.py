@@ -1,20 +1,43 @@
 from collections.abc import Callable
+from typing import Any
 
 import reversion
 from django import forms
 from django.contrib import admin, messages
+from django.contrib.admin import ModelAdmin, SimpleListFilter
 from django.contrib.admin.helpers import ActionForm
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.utils.html import format_html
 from reversion.admin import VersionAdmin
 
 from api import models
-from api.models import Group
+from api.models import Coordinator, Group
 from api.models.choices.log_event_type import (
     COORDINATOR_LOG_EVENTS_REQUIRE_GROUP,
     CoordinatorLogEventType,
 )
 from api.processors.auxil.log_event_creator import CoordinatorAdminLogEventCreator
+
+
+class AdminStatusFilter(SimpleListFilter):
+    title = "admin status"
+    parameter_name = "is_admin"
+
+    def lookups(
+        self, _request: HttpRequest, _model_admin: ModelAdmin[Any]
+    ) -> tuple[tuple[bool, str], ...]:
+        return (
+            (True, "Yes"),
+            (False, "No"),
+        )
+
+    def queryset(self, _request: HttpRequest, queryset: QuerySet[Any]) -> QuerySet[Coordinator]:
+        if self.value() == "True":
+            return queryset.filter(is_admin=True)
+        if self.value() == "False":
+            return queryset.filter(is_admin=False)
+        return queryset
 
 
 class BaseCoordinatorGroupInline(
@@ -60,10 +83,58 @@ class CoordinatorLogEventsInline(
     show_change_link = True
 
 
+class CoordinatorForm(forms.ModelForm):  # type: ignore
+    class Meta:
+        model = models.Coordinator
+        fields = (
+            "is_validated",
+            "is_admin",
+            "personal_info",
+            "additional_skills_comment",
+            "project_status",
+            "situational_status",
+            "status_since",
+            "mentor",
+        )
+
+
 class CoordinatorAdmin(VersionAdmin):
+    form = CoordinatorForm
     list_display = (
-        "__str__",
+        "get_personal_info_id",
+        "get_personal_info_full_name",
+        "get_is_validated",
+        "get_is_admin",
+        "get_additional_skills_comment",
+        "get_project_status",
+        "get_situational_status",
+        "get_status_since",
         "active_groups_count",
+        "get_communication_language_mode",
+        "mentor",
+        "get_comment",
+    )
+
+    ordering = ["personal_info_id"]
+
+    list_filter = (
+        "is_validated",
+        AdminStatusFilter,
+        "project_status",
+        "situational_status",
+        "personal_info__communication_language_mode",
+        "mentor",
+    )
+
+    search_fields = (
+        "personal_info__id",
+        "personal_info__first_name",
+        "personal_info__last_name",
+        "mentor__personal_info__id",
+        "mentor__personal_info__first_name",
+        "mentor__personal_info__last_name",
+        "additional_skills_comment",
+        "comment",
     )
     readonly_fields = ("active_groups_count",)
     inlines = [
@@ -72,6 +143,58 @@ class CoordinatorAdmin(VersionAdmin):
         CoordinatorLogEventsInline,
     ]
     action_form = GroupActionForm
+
+    @admin.display(description="ID")
+    def get_personal_info_id(self, coordinator: Coordinator) -> int:
+        return coordinator.personal_info.id
+
+    @admin.display(description="Full name")
+    def get_personal_info_full_name(self, coordinator: Coordinator) -> str:
+        return coordinator.personal_info.full_name
+
+    @admin.display(description="Valid")
+    def get_is_validated(self, coordinator: Coordinator) -> str:
+        if getattr(coordinator, "is_validated"):
+            return format_html('<img src="{}" alt="icon"/>', "/static/admin/img/icon-yes.svg")
+        return ""
+
+    @admin.display(description="Admin")
+    def get_is_admin(self, coordinator: Coordinator) -> str:
+        if getattr(coordinator, "is_admin"):
+            return format_html('<img src="{}" alt="icon"/>', "/static/admin/img/icon-yes.svg")
+        return ""
+
+    @admin.display(description=format_html("Project<br>status"))
+    def get_project_status(self, coordinator: Coordinator) -> str:
+        return coordinator.project_status.replace("_", " ")
+
+    @admin.display(description=format_html("Situational<br>Status"))
+    def get_situational_status(self, coordinator: Coordinator) -> str:
+        return coordinator.situational_status.replace("_", " ")
+
+    @admin.display(description=format_html("Status<br>last changed"))
+    def get_status_since(self, coordinator: Coordinator) -> str:
+        date_str = coordinator.status_since.strftime("%Y-%m-%d")
+        time_str = coordinator.status_since.strftime("%H:%M")
+        return format_html("{} <br> {}", date_str, time_str)
+
+    @admin.display(description="Skills")
+    def get_additional_skills_comment(self, coordinator: Coordinator) -> str:
+        return coordinator.additional_skills_comment
+
+    @admin.display(description=format_html("Communication<br>language(s)"))
+    def get_communication_language_mode(self, coordinator: Coordinator) -> str:
+        return coordinator.personal_info.communication_language_mode
+
+    @admin.display(description="Comment")
+    def get_comment(self, coordinator: Coordinator) -> str:
+        comment = coordinator.comment
+        return format_html(
+            '<div style="max-width: 150px; word-wrap: break-word; '
+            "overflow-wrap: break-word; white-space: "
+            'pre-line;">{}</div>',
+            comment,
+        )
 
     def get_queryset(self, _: HttpRequest) -> QuerySet[models.Coordinator]:
         return models.Coordinator.objects.annotate_with_group_count().prefetch_related("groups")
