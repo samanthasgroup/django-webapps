@@ -56,14 +56,6 @@ def parse_status(
     return RAW_PROJECT_STATUS_TO_PARSED.get(status_str)
 
 
-def parse_name(name_str: str) -> str:
-    min_length = 2
-    name_str = name_str.strip()
-    if len(name_str) < min_length:
-        raise ValueError(f"Name {name_str} is not valid")
-    return name_str
-
-
 def parse_can_give_feedback(fd_str: str) -> bool:
     return fd_str.lower().strip() == "да"
 

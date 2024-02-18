@@ -6,6 +6,8 @@ from email_validator import EmailNotValidError, validate_email
 from geopy.geocoders import Nominatim
 from timezonefinder import TimezoneFinder
 
+MIN_NAME_LENGTH = 2
+
 
 def _city_to_timezone(city_name: str) -> str | None:
     geolocator = Nominatim(user_agent="city-to-timezone")
@@ -87,3 +89,10 @@ def parse_telegram_name(tg_str: str) -> str | None:
         return f"@{match_result.group(0)}"
 
     raise ValueError(f"tg: {tg_str} is not valid")
+
+
+def parse_name(name_str: str) -> str:
+    name_str = name_str.strip()
+    if len(name_str) < MIN_NAME_LENGTH:
+        raise ValueError(f"Name {name_str} is not valid")
+    return name_str
