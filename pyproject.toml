@@ -62,7 +62,7 @@ tqdm = "^4.66.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.2.0"
-ruff = "^0.2.1"
+ruff = "^0.2.2"
 pre-commit = "^3.6.2"
 icecream = "^2.1.3"
 isort = "^5.13.2"
