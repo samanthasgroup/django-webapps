@@ -1,7 +1,6 @@
 import re
 from enum import Enum
 
-from api.models.auxil.constants import TIME_SLOTS, LanguageLevelId
 from api.models.choices.status.project import TeacherProjectStatus
 from api.models.choices.status.situational import TeacherSituationalStatus
 
@@ -71,74 +70,6 @@ def parse_groups_number(groups_str: str) -> int | None:
 
 def parse_age_ranges(age_ranges_str: str) -> bool:
     return age_ranges_str.lower().strip() == "да"
-
-
-def parse_language_level(level_str: str) -> list[str]:
-    language_levels = [e.value for e in LanguageLevelId]
-    if "any" in level_str.lower() or "любой" in level_str.lower():
-        return language_levels
-
-    # sometimes people use russian
-    level_str = level_str.upper().replace("А", "A").replace("В", "B").replace("С", "C")
-    regex = re.compile(rf"{'|'.join(language_levels)}")
-    result = re.findall(regex, level_str.upper())
-    return list(set(result))
-
-
-def parse_availability_slots(
-    slot_str: str,
-    time_slots: tuple[
-        tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int]
-    ] = TIME_SLOTS,
-) -> list[tuple[int, int]]:
-    slot_str = slot_str.lower().strip()
-    result = []
-
-    def find_best_fits(range_to_fit: tuple[int, int]) -> list[tuple[int, int]]:
-        result = []
-        for slot in time_slots:
-            if slot[0] >= range_to_fit[0] and slot[1] <= range_to_fit[1]:
-                result.append(slot)
-        return result
-
-    # parse till|from some time, e.g. till 14:00, from 05:00
-    regex_till = re.compile(r"(till|до|c|from|после)(\d{1,2})")
-    re_result = re.search(regex_till, slot_str)
-    if re_result:
-        re_groups = re_result.groups()
-        if re_groups[0] in ["с", "после", "from"]:
-            range_to_fit = (int(re_groups[1]), 21)
-        else:
-            range_to_fit = (5, int(re_groups[1]))
-        result.extend(find_best_fits(range_to_fit))
-    if len(result) > 0:
-        return result
-
-    # parse slots
-    # e.g. 11:00-17:00, 11-17, 11.17 and so on
-    regex_slots = re.compile(
-        r"(\d{1,2})[.\-:]{0,1}(\d{1,2}){0,1}[\-.](\d{1,2})[.\-:]{0,1}(\d{1,2}){0,1}"
-    )
-    slot_str = slot_str.replace(" ", "")
-
-    re_results = re.findall(regex_slots, slot_str)
-    if len(re_results) > 0:
-        for re_groups in re_results:
-            # skip minutes for now, only hours
-            range_to_fit = (int(re_groups[0]), int(re_groups[2]))
-            result.extend(find_best_fits(range_to_fit))
-    if len(result) > 0:
-        return list(set(result))
-
-    # parse parts of day
-    if "утро" in slot_str or "morning" in slot_str:
-        result.extend([(8, 11), (5, 8)])
-    if "вечер" in slot_str or "evening" in slot_str:
-        result.append((17, 21))
-    if "день" in slot_str or "afternoon" in slot_str:
-        result.extend([(11, 14), (14, 17)])
-
-    return result
 
 
 def parse_speaking_club(club_str: str) -> bool:
