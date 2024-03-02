@@ -93,12 +93,16 @@ class TeacherPopulator(BasePersonPopulatorFromCsv):
 
         parsed_status = self._parse_cell("status", teacher_parsers.parse_status)
         tid = int(self._current_entity[self._column_to_id[self.id_name]])
-        if parsed_status is None or (
-            parsed_status[1] == TeacherSituationalStatus.NO_RESPONSE
+
+        if parsed_status is None:
+            logger.info(f"{tid}: skipping teacher since status is unclear")
+            return None
+        if (
+            parsed_status[0] == TeacherSituationalStatus.NO_RESPONSE
             and tid < MIN_TID_WITH_NO_RESPONSE
         ):
             logger.info(
-                "Skipping teacher since there was no response from them or status is unclear"
+                f"{tid}: skipping since no response, and sid is below: {MIN_TID_WITH_NO_RESPONSE}"
             )
             return None
 
@@ -186,7 +190,9 @@ class TeacherPopulator(BasePersonPopulatorFromCsv):
                 self._create_language_and_levels(entity_data.teaching_languages_and_levels)
             )
             teacher.save()
-            logger.info(f"Successfully created Teacher with {self.id_name} {entity_data.id}")
+            logger.info(
+                f"Teacher migrated, old id: {entity_data.id}, new id: {teacher.personal_info.id}"
+            )
         except (IntegrityError, TransactionManagementError, ValueError) as e:
             logger.warning(
                 f"Teacher with {self.id_name} {entity_data.id} can not be parsed, see errors above"

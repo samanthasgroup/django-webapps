@@ -72,15 +72,17 @@ def find_any_email(email_str: str) -> str | None:
 
 
 def parse_email(email_str: str) -> str | None:
-
-    email_str_result: str | None = email_str.strip().rstrip()
-    try:
-        validate_email(email_str)
-    except EmailNotValidError:
-        email_str_result = find_any_email(email_str)
-        if email_str_result is None:
-            raise ValueError(f"email: {email_str} is not valid")
-    return email_str_result
+    email_str = email_str.strip().rstrip()
+    emails_to_test = []
+    emails_to_test.append(email_str)
+    emails_to_test.append(find_any_email(email_str) or "")
+    for email in emails_to_test:
+        try:
+            validate_email(email_str)
+            return email
+        except EmailNotValidError:
+            pass
+    raise ValueError(f"email: {email_str} is not valid")
 
 
 def parse_telegram_name(tg_str: str) -> str | None:
@@ -109,31 +111,42 @@ def parse_telegram_name(tg_str: str) -> str | None:
 
 def find_any_phone_number(number_str: str) -> list[str]:
     number_str = number_str.replace(" ", "")
-    regex = re.compile(r"[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}")
+    regex = re.compile(r"\+?(?:\d{1,3}[-\s\.]?)?(?:\(\d{1,4}\))?[0-9]{3,5}[-\s\.]?[0-9]{3,5}")
     return re.findall(regex, number_str)
 
 
 def parse_phone_number(number_str: str) -> str | None:
-    number_str = number_str.strip().rstrip()
-    country_codes_to_test = ["", "+380", "+7", "+1"]
+    number_str = number_str.replace(" ", "")
+    country_codes_to_test = [("", None)] + [
+        (f"+{code}", region[0])
+        for code, region in phonenumbers.COUNTRY_CODE_TO_REGION_CODE.items()
+    ]
 
     phone_numbers = find_any_phone_number(number_str)
     phone_numbers.append(number_str)
-
+    if number_str and number_str[0] == "0":
+        phone_numbers.append(number_str[1:])
+    if number_str and number_str[0] != "+":
+        phone_numbers.append("+" + number_str)
+    is_can_be_parsed = False
     parsed_number = None
     for raw_phone_number in phone_numbers:
         if parsed_number is not None:
             break
-        for country_code in country_codes_to_test:
+        for country_code, region in country_codes_to_test:
             number_to_parse = country_code + raw_phone_number
             try:
-                parsed_number = phonenumbers.parse(number_to_parse)
-                break
+                _result = phonenumbers.parse(number_to_parse, region=region)
+                is_can_be_parsed = True
+                if phonenumbers.is_valid_number(_result):
+                    parsed_number = _result
+                    break
             except phonenumbers.NumberParseException:
                 pass
 
     if parsed_number is None:
-        raise ValueError(f"Unable to parse phone number: {number_str}")
+        message = "Can be parsed but invalid" if is_can_be_parsed else "Can not be parsed"
+        raise ValueError(f"Phone {message}, phone number: {number_str}")
 
     return phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164)
 
@@ -163,7 +176,7 @@ def parse_availability_slots(
         tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int]
     ] = TIME_SLOTS,
 ) -> list[tuple[int, int]]:
-    slot_str = slot_str.lower().strip()
+    slot_str = slot_str.lower().strip().rstrip()
     result = []
 
     def find_best_fits(range_to_fit: tuple[int, int]) -> list[tuple[int, int]]:

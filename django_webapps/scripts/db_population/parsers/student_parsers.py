@@ -17,7 +17,7 @@ RAW_PROJECT_STATUS_TO_PARSED: dict[
         StudentProjectStatus.STUDYING,
     ),
     "уточнение расписания": (None, StudentProjectStatus.NO_GROUP_YET),
-    "жду ответа": (StudentSituationalStatus.NO_RESPONSE, StudentProjectStatus.NO_GROUP_YET),
+    "жду ответа": (None, StudentProjectStatus.NO_GROUP_YET),
     "БЛОК УЧЕНИКА (коммент)": (None, StudentProjectStatus.BANNED),
     "заблокирована": (None, StudentProjectStatus.BANNED),
     "2 - нет ответа": (StudentSituationalStatus.NO_RESPONSE, StudentProjectStatus.NO_GROUP_YET),
@@ -47,4 +47,4 @@ def parse_age_range(age_range_str: str) -> tuple[int, int] | None:
     for from_age_defined, to_age_defined in STUDENT_AGE_RANGES.values():
         if from_age_defined <= from_age:
             return (from_age_defined, to_age_defined)
-    raise ValueError(f"Unable to parse age range {age_range_str}")
+    raise ValueError(f"Unable to parse age range: {age_range_str}")

@@ -31,7 +31,7 @@ from django_webapps.scripts.db_population.utils import (  # noqa: E402
 )
 
 logger = get_logger("students.log")
-MIN_CID_WITH_NO_RESPONSE = 1300
+MIN_SID_WITH_NO_RESPONSE = 1300
 
 
 COLUMN_TO_ID = {
@@ -86,18 +86,26 @@ class StudentPopulator(BasePersonPopulatorFromCsv):
 
         parsed_status = self._parse_cell("status", student_parsers.parse_status)
         sid = int(self._current_entity[self._column_to_id[self.id_name]])
-        if parsed_status is None or (
+        if parsed_status is None:
+            logger.error(f"{sid}: skipping since status is unclear")
+            return None
+        if (
             parsed_status[0] == StudentSituationalStatus.NO_RESPONSE
-            and sid < MIN_CID_WITH_NO_RESPONSE
+            and sid < MIN_SID_WITH_NO_RESPONSE
         ):
             logger.info(
-                "Skipping student since there was no response from them or status is unclear"
+                f"{sid}: skipping since no response, and sid is below: {MIN_SID_WITH_NO_RESPONSE}"
             )
             return None
 
         name = self._parse_cell("name", common_parsers.parse_name)
         project_status = parsed_status[1]
         phone = self._parse_cell("phone", common_parsers.parse_phone_number)
+        tg = (
+            self._parse_cell("phone", common_parsers.parse_telegram_name)
+            if phone is None
+            else None
+        )
         email = self._parse_cell("email", common_parsers.parse_email)
         student_data = StudentData(
             email=email,
@@ -105,6 +113,7 @@ class StudentPopulator(BasePersonPopulatorFromCsv):
             project_status=project_status,
             phone_number=phone,
             id=sid,
+            telegram_username=tg,
         )
         timezone = self._parse_cell("timezone", common_parsers.parse_timezone, skip_if_empty=True)
         student_data.utc_timedelta = timezone.utcoffset(None) if timezone else None
@@ -144,7 +153,9 @@ class StudentPopulator(BasePersonPopulatorFromCsv):
                 self._create_language_and_levels(entity_data.languages_and_levels)
             )
             student.save()
-            logger.info(f"Successfully created Student with {self.id_name} {entity_data.id}")
+            logger.info(
+                f"Student migrated, old id: {entity_data.id}, new id: {student.personal_info.id}"
+            )
         except (IntegrityError, TransactionManagementError, ValueError) as e:
             logger.warning(
                 f"Student with {self.id_name} {entity_data.id} can not be parsed, see errors above"
