@@ -539,13 +539,13 @@ sidecar = ["drf-spectacular-sidecar"]
 
 [[package]]
 name = "email-validator"
-version = "2.1.0.post1"
+version = "2.1.1"
 description = "A robust email address syntax and deliverability validation library."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "email_validator-2.1.0.post1-py3-none-any.whl", hash = "sha256:c973053efbeddfef924dc0bd93f6e77a1ea7ee0fce935aea7103c7a3d6d2d637"},
-    {file = "email_validator-2.1.0.post1.tar.gz", hash = "sha256:a4b0bd1cf55f073b924258d19321b1f3aa74b4b5a71a42c305575dba920e1a44"},
+    {file = "email_validator-2.1.1-py3-none-any.whl", hash = "sha256:97d882d174e2a65732fb43bfce81a3a834cbc1bde8bf419e30ef5ea976370a05"},
+    {file = "email_validator-2.1.1.tar.gz", hash = "sha256:200a70680ba08904be6d1eef729205cc0d687634399a5924d842533efb824b84"},
 ]
 
 [package.dependencies]
@@ -1684,4 +1684,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "70725b524df0c9df7683f7da05a9181691b00085cbd765b573fa3df1a0aa18bf"
+content-hash = "c0ae5e97ed464134cdd0789d14de112274fd35eaf81ba2bc62e929eb9e5d4188"

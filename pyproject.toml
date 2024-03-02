@@ -54,7 +54,7 @@ django-filter = "^23.5"
 # this one definitely needs to be in main dependencies, django will break withouth its monkeypatch:
 django-stubs-ext = "^4.2.7"
 django-reversion = "^5.0.12"
-email-validator = "^2.1.0.post1"
+email-validator = "^2.1.1"
 geopy = "^2.4.1"
 timezonefinder = "^6.4.1"
 pytz = "^2024.1"
