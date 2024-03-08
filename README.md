@@ -39,3 +39,8 @@ pre-commit uninstall
 pre-commit install
 pre-commit run
 ```
+
+### Licenses of 3rd-party packages
+_DoubleScroll_ is dual-licensed under the MIT and GPL licenses:
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.gnu.org/licenses/gpl.html
