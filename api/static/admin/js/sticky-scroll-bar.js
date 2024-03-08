@@ -147,5 +147,5 @@
 	but Django's "js" attribute in admin.ModelAdmin.Media doesn't seem to support this.
 */
 $(document).ready(function($) { // Note passing of $ as argument, otherwise it doesn't work
-   $('.results').doubleScroll();
+   $('.results').doubleScroll({ resetOnWindowResize: true});
 });
