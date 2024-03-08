@@ -1,4 +1,5 @@
 """Module for temporary statuses that can 'turn on and off' again depending on situation."""
+
 import typing
 
 from django.db import models

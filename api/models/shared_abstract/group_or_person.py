@@ -1,4 +1,5 @@
 """Abstract models that are shared between several modules."""
+
 from django.db import models
 
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH

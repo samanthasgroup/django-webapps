@@ -1,7 +1,13 @@
 from django.db import models
 
+from api.models.auxil.constants import LanguageLevelId
+
 # Sometimes the languages and levels are needed separately, sometimes in combinations.
 # This means that we cannot create a "choices" field for language or level.
+
+LANGUAGE_LEVEL_ID_TO_INDEX = {level: index for index, level in enumerate(sorted(LanguageLevelId))}
+"""Dictionary with names of levels ("A0", "A1" etc.) as values 
+and their position in the enumeration as keys."""
 
 
 class Language(models.Model):
@@ -25,6 +31,10 @@ class LanguageLevel(models.Model):
 
     def __str__(self) -> str:
         return self.id
+
+    @property
+    def index(self) -> int:
+        return LANGUAGE_LEVEL_ID_TO_INDEX[LanguageLevelId(self.id)]
 
 
 class LanguageAndLevel(models.Model):
