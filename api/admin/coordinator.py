@@ -144,6 +144,9 @@ class CoordinatorAdmin(VersionAdmin):
     ]
     action_form = GroupActionForm
 
+    class Media:
+        js = ("admin/js/sticky-scroll-bar.js",)
+
     @admin.display(description="ID")
     def get_personal_info_id(self, coordinator: Coordinator) -> int:
         return coordinator.personal_info.id
