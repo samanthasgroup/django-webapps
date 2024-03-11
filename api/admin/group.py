@@ -81,6 +81,9 @@ class GroupAdmin(VersionAdmin):
         "teachers__personal_info__last_name",
     )
 
+    class Media:
+        js = ("admin/js/sticky-scroll-bar.js",)
+
     def get_search_results(
         self, request: HttpRequest, queryset: QuerySet[Any], search_term: str
     ) -> tuple[QuerySet[Any], bool]:
