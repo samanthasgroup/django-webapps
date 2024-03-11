@@ -124,10 +124,17 @@ def parse_phone_number(number_str: str) -> str | None:
 
     phone_numbers = find_any_phone_number(number_str)
     phone_numbers.append(number_str)
+
+    # handle different rare cases
     if number_str and number_str[0] == "0":
         phone_numbers.append(number_str[1:])
     if number_str and number_str[0] != "+":
         phone_numbers.append("+" + number_str)
+    if number_str and number_str[0:2] == "+8":
+        phone_numbers.append("+3" + number_str[1:])
+    if number_str and number_str[0:2] == "00":
+        phone_numbers.append("+" + number_str[2:])
+
     is_can_be_parsed = False
     parsed_number = None
     for raw_phone_number in phone_numbers:
