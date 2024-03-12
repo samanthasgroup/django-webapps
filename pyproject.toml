@@ -59,6 +59,7 @@ geopy = "^2.4.1"
 timezonefinder = "^6.4.1"
 pytz = "^2024.1"
 tqdm = "^4.66.2"
+phonenumbers = "^8.13.30"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.2.0"

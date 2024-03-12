@@ -3,9 +3,9 @@ import csv
 import logging
 
 
-def get_logger(file_name: str) -> logging.Logger:
+def get_logger(file_name: str, level: int = logging.INFO) -> logging.Logger:
     logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(level)
     file_handler = logging.FileHandler(file_name)
     file_handler.setFormatter(logging.Formatter("%(levelname)s - %(message)s"))
     logger.addHandler(file_handler)

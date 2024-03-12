@@ -23,9 +23,10 @@ class BasePersonEntityData:
     id: int
     first_name: str
     email: str
-    telegram_username: str
+    telegram_username: str = ""
     last_name: str = ""
     utc_timedelta: datetime.timedelta = datetime.timedelta(hours=0)
+    phone_number: str | None = None
 
     # use default values
     def __setattr__(self, name: str, value: Any) -> None:
@@ -51,12 +52,15 @@ class BasePersonPopulatorFromCsv(ABC):
         self._logger = logger
         self._dry = dry
         self._current_entity = None
+        self._current_entity_id = None
 
     def run(self) -> None:
         for entity in tqdm(self.csv_data, desc=f"Processing {self.entity_name}s..."):
-            entity_id = entity[self._column_to_id[self.id_name]]
+            self._current_entity_id = entity[self._column_to_id[self.id_name]]
             self._logger.info("======================================================= ")
-            self._logger.info(f"Parsing {self.entity_name} with {self.id_name} {entity_id}")
+            self._logger.info(
+                f"Parsing {self.entity_name} with {self.id_name} {self._current_entity_id}"
+            )
             self._current_entity = entity
 
             entity_data = self._get_entity_data()
@@ -82,10 +86,11 @@ class BasePersonPopulatorFromCsv(ABC):
         pass
 
     def _report_error(self, error: ValueError) -> None:
-        self._logger.error(error)
+        self._logger.error(f"{self._current_entity_id}: {error}")
 
     def _report_warning(self, column_name: str, value: str) -> None:
-        self._logger.warning(f"{column_name} is not provided or can not be parsed, value: {value}")
+        message = f"{self._current_entity_id}: {column_name} can not be parsed, value: {value}"
+        self._logger.warning(message)
 
     def _parse_cell(
         self,
@@ -121,9 +126,12 @@ class BasePersonPopulatorFromCsv(ABC):
                 telegram_username=entity_data.telegram_username,
                 email=entity_data.email,
                 utc_timedelta=entity_data.utc_timedelta,
+                phone=entity_data.phone_number,
             )
         except IntegrityError as _:
-            self._logger.warning(f"{self.entity_name} might be a duplicate")
+            self._logger.warning(
+                f"{self._current_entity_id}: {self.entity_name} might be a duplicate"
+            )
         return None
 
     def _create_language_and_levels(

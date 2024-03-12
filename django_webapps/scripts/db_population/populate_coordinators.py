@@ -81,7 +81,7 @@ class CoordinatorPopulator(BasePersonPopulatorFromCsv):
             personal_info = self._create_personal_info(entity_data)
             if personal_info is None:
                 return
-            Coordinator.objects.create(
+            coordinator = Coordinator.objects.create(
                 project_status=entity_data.project_status,
                 personal_info=personal_info,
                 is_admin=entity_data.is_admin,
@@ -89,7 +89,8 @@ class CoordinatorPopulator(BasePersonPopulatorFromCsv):
                 status_since=entity_data.status_since,
                 comment=self._create_comment(),
             )
-            logger.info(f"Successfully created Coordinator with {self.id_name} {entity_data.id}")
+            coord_id = coordinator.personal_info.id
+            logger.info(f"Coordinator migrated, old id: {entity_data.id}, new id: {coord_id}")
         except (IntegrityError, TransactionManagementError) as e:
             logger.warning(
                 f"Coordinator with {self.id_name} {entity_data.id} can not be parsed, see above"

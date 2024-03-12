@@ -32,7 +32,7 @@ from django_webapps.scripts.db_population.utils import (  # noqa: E402
 )
 
 logger = get_logger("teachers.log")
-MAX_TID_WITH_NO_RESPONSE = 1300
+MIN_TID_WITH_NO_RESPONSE = 1300
 
 
 COLUMN_TO_ID = {
@@ -93,24 +93,34 @@ class TeacherPopulator(BasePersonPopulatorFromCsv):
 
         parsed_status = self._parse_cell("status", teacher_parsers.parse_status)
         tid = int(self._current_entity[self._column_to_id[self.id_name]])
-        if parsed_status is None or (
-            parsed_status[1] == TeacherSituationalStatus.NO_RESPONSE
-            and tid > MAX_TID_WITH_NO_RESPONSE
+
+        if parsed_status is None:
+            logger.info(f"{tid}: skipping teacher since status is unclear")
+            return None
+        if (
+            parsed_status[0] == TeacherSituationalStatus.NO_RESPONSE
+            and tid < MIN_TID_WITH_NO_RESPONSE
         ):
             logger.info(
-                "Skipping teacher since there was no response from them or status is unclear"
+                f"{tid}: skipping since no response, and sid is below: {MIN_TID_WITH_NO_RESPONSE}"
             )
             return None
 
         name = self._parse_cell("name", common_parsers.parse_name)
         project_status = parsed_status[1]
         telegram_username = self._parse_cell("tg", common_parsers.parse_telegram_name)
+        phone = (
+            self._parse_cell("tg", common_parsers.parse_phone_number)
+            if telegram_username is None
+            else None
+        )
         email = self._parse_cell("email", common_parsers.parse_email)
         teacher_data = TeacherData(
             email=email,
             first_name=name,
             telegram_username=telegram_username,
             project_status=project_status,
+            phone_number=phone,
             id=tid,
         )
         timezone = self._parse_cell("timezone", common_parsers.parse_timezone, skip_if_empty=True)
@@ -135,14 +145,14 @@ class TeacherPopulator(BasePersonPopulatorFromCsv):
             "speaking_club", teacher_parsers.parse_speaking_club, skip_if_empty=True
         )
         teacher_data.teaching_languages_and_levels = self._parse_cell(
-            "language_levels", teacher_parsers.parse_language_level, skip_if_empty=True
+            "language_levels", common_parsers.parse_language_level, skip_if_empty=True
         )
         teacher_data.has_hosted_speaking_club = (
             project_status == teacher_parsers.ProjectStatusAction.SPEAKING_CLUB
         )
         for day in ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]:
             slots = self._parse_cell(
-                day, teacher_parsers.parse_availability_slots, skip_if_empty=True
+                day, common_parsers.parse_availability_slots, skip_if_empty=True
             )
             if slots is not None:
                 teacher_data.availability_slots.append(slots)
@@ -153,7 +163,7 @@ class TeacherPopulator(BasePersonPopulatorFromCsv):
         try:
             personal_info = self._create_personal_info(entity_data)
             if personal_info is None:
-                return
+                raise ValueError("Unable to create mandatory data")
             teacher = Teacher.objects.create(
                 project_status=entity_data.project_status,
                 has_prior_teaching_experience=entity_data.has_prior_teaching_experience,
@@ -180,8 +190,10 @@ class TeacherPopulator(BasePersonPopulatorFromCsv):
                 self._create_language_and_levels(entity_data.teaching_languages_and_levels)
             )
             teacher.save()
-            logger.info(f"Successfully created Teacher with {self.id_name} {entity_data.id}")
-        except (IntegrityError, TransactionManagementError) as e:
+            logger.info(
+                f"Teacher migrated, old id: {entity_data.id}, new id: {teacher.personal_info.id}"
+            )
+        except (IntegrityError, TransactionManagementError, ValueError) as e:
             logger.warning(
                 f"Teacher with {self.id_name} {entity_data.id} can not be parsed, see errors above"
             )
