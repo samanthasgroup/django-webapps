@@ -231,3 +231,38 @@ def parse_availability_slots(
         result.extend([(11, 14), (14, 17)])
 
     return result
+
+
+def parse_list_of_digits(list_str: str) -> list[int]:
+    list_str = list_str.replace(" ", ",")
+    regex = re.compile("\d+")
+    numbers = re.findall(regex, list_str)
+    result = []
+    for number in numbers:
+        try:
+            number_int = int(number)
+        except ValueError:
+            continue
+        result.append(number_int)
+    return result
+
+
+def parse_time_string(input_string: str) -> str | None:
+    regex = re.compile(r"(\d{1,2})[\s.\-:]?(\d{1,2})?")
+
+    match = re.search(regex, input_string)
+    if match is None:
+        return None
+
+    hours = match.group(1).zfill(2)
+    minutes = match.group(2).zfill(2) if match.group(2) else "00"
+
+    return f"{hours}:{minutes}"
+
+
+def find_digit(string: str) -> int | None:
+    digit_regex = re.compile("\d+")
+    result = re.search(digit_regex, string)
+    if result:
+        return int(result.group(0))
+    return None

@@ -17,7 +17,7 @@ from api.models.choices.status.situational import StudentSituationalStatus  # no
 from api.models.student import Student  # noqa: E402
 from django_webapps.scripts.db_population.base_populator import (  # noqa: E402
     BasePersonEntityData,
-    BasePersonPopulatorFromCsv,
+    BasePopulatorFromCsv,
     CsvData,
 )
 from django_webapps.scripts.db_population.parsers import (  # noqa: E402
@@ -73,7 +73,7 @@ class StudentData(BasePersonEntityData):
     situational_status: StudentSituationalStatus | None = None
 
 
-class StudentPopulator(BasePersonPopulatorFromCsv):
+class StudentPopulator(BasePopulatorFromCsv):
     id_name: str = "sid"
     entity_name: str = "student"
 
@@ -153,6 +153,7 @@ class StudentPopulator(BasePersonPopulatorFromCsv):
                 self._create_language_and_levels(entity_data.languages_and_levels)
             )
             student.save()
+            self._update_metadata(entity_data.id, student.personal_info.id, entity_data.first_name)
             logger.info(
                 f"Student migrated, old id: {entity_data.id}, new id: {student.personal_info.id}"
             )
@@ -166,6 +167,9 @@ class StudentPopulator(BasePersonPopulatorFromCsv):
         if age_range is None:
             return None
         return AgeRange.objects.filter(age_from=age_range[0], age_to=age_range[1]).first()
+
+    def _update_metadata(self, old_id: int, new_id: int, name: str) -> None:
+        self._metadata[self.entity_name].append({"name": name, "old_id": old_id, "new_id": new_id})
 
 
 if __name__ == "__main__":

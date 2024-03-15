@@ -19,7 +19,7 @@ class GroupCommon(GroupOrPerson):
     coordinators = models.ManyToManyField(Coordinator, related_name="%(class)ss")
     students = models.ManyToManyField(Student, related_name="%(class)ss")
     teachers = models.ManyToManyField(Teacher, related_name="%(class)ss")
-
+    comment = models.TextField(blank=True)
     coordinators_former = models.ManyToManyField(
         Coordinator,
         blank=True,

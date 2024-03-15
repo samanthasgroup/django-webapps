@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 from abc import ABC, abstractmethod
 from collections.abc import Callable
@@ -12,6 +13,7 @@ from tqdm import tqdm
 from api.models.day_and_time_slot import DayAndTimeSlot
 from api.models.language_and_level import LanguageAndLevel
 from api.models.personal_info import PersonalInfo
+from django_webapps.scripts.db_population.parsers import common_parsers
 
 CsvData = list[list[str]]
 ParseCellReturnType = TypeVar("ParseCellReturnType")
@@ -35,7 +37,7 @@ class BasePersonEntityData:
         super().__setattr__(name, value)
 
 
-class BasePersonPopulatorFromCsv(ABC):
+class BasePopulatorFromCsv(ABC):
     entity_name: str = "abstract_entity"
     id_name: str = "aid"
 
@@ -53,6 +55,8 @@ class BasePersonPopulatorFromCsv(ABC):
         self._dry = dry
         self._current_entity = None
         self._current_entity_id = None
+        self._metadata: dict[str, list[dict[Any, Any]]] = {}
+        self._metadata[self.entity_name] = []
 
     def run(self) -> None:
         for entity in tqdm(self.csv_data, desc=f"Processing {self.entity_name}s..."):
@@ -69,11 +73,19 @@ class BasePersonPopulatorFromCsv(ABC):
 
             if not self._dry:
                 self._create_entity(entity_data)
+        self._save_metadata()
 
     @abstractmethod
     def _pre_process_data(self, csv_data: CsvData) -> CsvData:
         self.header[0] = self.id_name
-        csv_data.sort(key=lambda entity: int(entity[self._column_to_id[self.id_name]]))
+
+        def to_digit(entity: str) -> int:
+            result = common_parsers.find_digit(entity[self._column_to_id[self.id_name]])
+            if result:
+                return result
+            return 0
+
+        csv_data.sort(key=lambda entity: to_digit(entity[self._column_to_id[self.id_name]]))
         return csv_data
 
     @abstractmethod
@@ -121,6 +133,7 @@ class BasePersonPopulatorFromCsv(ABC):
             return None
         try:
             return PersonalInfo.objects.create(
+                legacy_id=int(entity_data.id),
                 first_name=entity_data.first_name,
                 last_name=entity_data.last_name,
                 telegram_username=entity_data.telegram_username,
@@ -165,3 +178,9 @@ class BasePersonPopulatorFromCsv(ABC):
             rows.append(f"{self.header[index]} - {self._current_entity[index]}\n")
         rows.append("======= END OF OLD CSV DATA =======")
         return "\n".join(rows)
+
+    def _save_metadata(self) -> None:
+        file_name = f"{self.entity_name}_meta.json"
+        with open(file_name, "w", encoding="utf-8") as json_file:  # noqa: PTH123
+            json.dump(self._metadata, json_file, indent=6, ensure_ascii=False)
+        print(f"The metadata was saved in the working dir in {file_name}")  # noqa: T201
