@@ -63,6 +63,7 @@ class GroupCommon(GroupOrPerson):
 class Group(GroupCommon):
     """Model for a regular language group."""
 
+    legacy_gid = models.IntegerField(null=True, help_text="Group id from the old database")
     availability_slots_for_auto_matching = models.ManyToManyField(DayAndTimeSlot)
     is_for_staff_only = models.BooleanField(default=False)
     language_and_level = models.ForeignKey(LanguageAndLevel, on_delete=models.PROTECT)
@@ -95,6 +96,7 @@ class Group(GroupCommon):
 
     class Meta:
         constraints = [
+            models.UniqueConstraint(fields=["legacy_gid"], name="legacy_gid"),
             models.UniqueConstraint(fields=["telegram_chat_url"], name="telegram_chat_url"),
             models.CheckConstraint(
                 check=Q(monday__isnull=False)

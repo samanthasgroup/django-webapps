@@ -137,7 +137,15 @@ class StudentPopulator(BasePopulatorFromCsv):
             age_range = self._create_age_range(entity_data.age_range)
             if personal_info is None or age_range is None:
                 raise ValueError("Unable to create mandatory data")
+
+            if Student.objects.filter(legacy_sid=entity_data.id).count():
+                logger.warning(
+                    f"Student with {self.id_name} {entity_data.id} was already migrated"
+                )
+                return
+
             student = Student.objects.create(
+                legacy_sid=entity_data.id,
                 age_range=age_range,
                 project_status=entity_data.project_status,
                 personal_info=personal_info,

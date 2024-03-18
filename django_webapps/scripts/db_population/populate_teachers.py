@@ -164,7 +164,15 @@ class TeacherPopulator(BasePopulatorFromCsv):
             personal_info = self._create_personal_info(entity_data)
             if personal_info is None:
                 raise ValueError("Unable to create mandatory data")
+
+            if Teacher.objects.filter(legacy_tid=entity_data.id).count():
+                logger.warning(
+                    f"Teacher with {self.id_name} {entity_data.id} was already migrated"
+                )
+                return
+
             teacher = Teacher.objects.create(
+                legacy_tid=entity_data.id,
                 project_status=entity_data.project_status,
                 has_prior_teaching_experience=entity_data.has_prior_teaching_experience,
                 peer_support_can_give_feedback=entity_data.peer_support_can_give_feedback,

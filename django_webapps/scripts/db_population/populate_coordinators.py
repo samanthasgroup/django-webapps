@@ -81,7 +81,14 @@ class CoordinatorPopulator(BasePopulatorFromCsv):
             personal_info = self._create_personal_info(entity_data)
             if personal_info is None:
                 return
+            if Coordinator.objects.filter(legacy_cid=entity_data.id).count():
+                logger.warning(
+                    f"Coordinator with {self.id_name} {entity_data.id} was already migrated"
+                )
+                return
+
             coordinator = Coordinator.objects.create(
+                legacy_cid=entity_data.id,
                 project_status=entity_data.project_status,
                 personal_info=personal_info,
                 is_admin=entity_data.is_admin,

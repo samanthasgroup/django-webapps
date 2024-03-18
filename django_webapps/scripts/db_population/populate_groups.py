@@ -125,8 +125,14 @@ class GroupsPopulator(BasePopulatorFromCsv):
             fake_language_and_level = self._create_language_and_levels(levels=["A1"]).first()
             if fake_language_and_level is None:
                 return
+
+            if Group.objects.filter(legacy_gid=entity_data.gid).count():
+                logger.warning(
+                    f"Coordinator with {self.id_name} {entity_data.gid} was already migrated"
+                )
+                return
             group = Group.objects.create(
-                legacy_id=entity_data.gid,
+                legacy_gid=entity_data.gid,
                 project_status=entity_data.project_status,
                 status_since=entity_data.status_since,
                 lesson_duration_in_minutes=entity_data.duration,
@@ -145,15 +151,9 @@ class GroupsPopulator(BasePopulatorFromCsv):
             ]:
                 if day and time:
                     group = self._add_day(group, day, time)
-            group.students.set(
-                Student.objects.filter(personal_info__legacy_id__in=entity_data.sids)
-            )
-            group.teachers.set(
-                Teacher.objects.filter(personal_info__legacy_id__in=entity_data.tids)
-            )
-            group.coordinators.set(
-                Coordinator.objects.filter(personal_info__legacy_id__in=entity_data.cids)
-            )
+            group.students.set(Student.objects.filter(legacy_sid__in=entity_data.sids))
+            group.teachers.set(Teacher.objects.filter(legacy_tid__in=entity_data.tids))
+            group.coordinators.set(Coordinator.objects.filter(legacy_cid__in=entity_data.cids))
             self._add_language_and_level(
                 group, entity_data.language_level, entity_data.teacher_language
             )
@@ -224,6 +224,7 @@ if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
     groups = load_csv_data(args.input_csv)
+    Group.objects.all().delete()
     populator = GroupsPopulator(
         groups[1:],
         COLUMN_TO_ID,

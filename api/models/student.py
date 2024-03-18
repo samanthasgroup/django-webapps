@@ -26,6 +26,7 @@ class StudentQuerySet(models.QuerySet["Student"]):
 class Student(Person):
     """Model for a student."""
 
+    legacy_sid = models.IntegerField(null=True, help_text="Student id from the old database")
     age_range = models.ForeignKey(
         AgeRange,
         on_delete=models.PROTECT,
@@ -78,6 +79,9 @@ class Student(Person):
     objects = StudentQuerySet.as_manager()
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["legacy_sid"], name="legacy_sid"),
+        ]
         indexes = [
             models.Index(fields=("project_status",), name="student_pr_status_idx"),
             models.Index(fields=("situational_status",), name="student_si_status_idx"),

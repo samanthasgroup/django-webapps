@@ -37,6 +37,7 @@ class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
 class Coordinator(Person):
     """Model for a coordinator."""
 
+    legacy_cid = models.IntegerField(null=True, help_text="Coordinator id from the old database")
     additional_skills_comment = models.CharField(
         max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
         blank=True,
@@ -75,6 +76,9 @@ class Coordinator(Person):
     objects = CoordinatorQuerySet.as_manager()
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["legacy_cid"], name="legacy_cid"),
+        ]
         indexes = [
             models.Index(fields=("project_status",), name="coordinator_pr_status_idx"),
             models.Index(fields=("situational_status",), name="coordinator_si_status_idx"),

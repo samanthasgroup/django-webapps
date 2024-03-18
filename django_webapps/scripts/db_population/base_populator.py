@@ -133,7 +133,6 @@ class BasePopulatorFromCsv(ABC):
             return None
         try:
             return PersonalInfo.objects.create(
-                legacy_id=int(entity_data.id),
                 first_name=entity_data.first_name,
                 last_name=entity_data.last_name,
                 telegram_username=entity_data.telegram_username,
