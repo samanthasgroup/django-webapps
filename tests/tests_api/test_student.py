@@ -126,6 +126,7 @@ def test_student_retrieve(api_client, availability_slots):
             "age_to": student.age_range.age_to,
             "type": student.age_range.type,
         },
+        "legacy_sid": student.legacy_sid,
         "teaching_languages_and_levels": languages_and_levels,
         "availability_slots": availability_slots,
         "comment": student.comment,
