@@ -18,7 +18,7 @@ from api.models.choices.status.situational import TeacherSituationalStatus  # no
 from api.models.teacher import Teacher  # noqa: E402
 from django_webapps.scripts.db_population.base_populator import (  # noqa: E402
     BasePersonEntityData,
-    BasePersonPopulatorFromCsv,
+    BasePopulatorFromCsv,
     CsvData,
 )
 from django_webapps.scripts.db_population.parsers import (  # noqa: E402
@@ -80,7 +80,7 @@ class TeacherData(BasePersonEntityData):
     situational_status: TeacherSituationalStatus | None = None
 
 
-class TeacherPopulator(BasePersonPopulatorFromCsv):
+class TeacherPopulator(BasePopulatorFromCsv):
     id_name: str = "tid"
     entity_name: str = "teacher"
 
@@ -164,7 +164,15 @@ class TeacherPopulator(BasePersonPopulatorFromCsv):
             personal_info = self._create_personal_info(entity_data)
             if personal_info is None:
                 raise ValueError("Unable to create mandatory data")
+
+            if Teacher.objects.filter(legacy_tid=entity_data.id).count():
+                logger.warning(
+                    f"Teacher with {self.id_name} {entity_data.id} was already migrated"
+                )
+                return
+
             teacher = Teacher.objects.create(
+                legacy_tid=entity_data.id,
                 project_status=entity_data.project_status,
                 has_prior_teaching_experience=entity_data.has_prior_teaching_experience,
                 peer_support_can_give_feedback=entity_data.peer_support_can_give_feedback,
@@ -190,6 +198,7 @@ class TeacherPopulator(BasePersonPopulatorFromCsv):
                 self._create_language_and_levels(entity_data.teaching_languages_and_levels)
             )
             teacher.save()
+            self._update_metadata(teacher.personal_info.id, entity_data.id, entity_data.first_name)
             logger.info(
                 f"Teacher migrated, old id: {entity_data.id}, new id: {teacher.personal_info.id}"
             )
@@ -203,6 +212,9 @@ class TeacherPopulator(BasePersonPopulatorFromCsv):
         if is_teaching_children:
             return AgeRange.objects.all()
         return AgeRange.objects.filter(age_from__gte=17)
+
+    def _update_metadata(self, new_id: int, old_id: int, name: str) -> None:
+        self._metadata[self.entity_name].append({"new_id": new_id, "old_id": old_id, "name": name})
 
 
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ from api.models.choices.status.project import CoordinatorProjectStatus  # noqa: 
 from api.models.coordinator import Coordinator  # noqa: E402
 from django_webapps.scripts.db_population.base_populator import (  # noqa: E402
     BasePersonEntityData,
-    BasePersonPopulatorFromCsv,
+    BasePopulatorFromCsv,
     CsvData,
 )
 from django_webapps.scripts.db_population.parsers import common_parsers  # noqa: E402
@@ -47,7 +47,7 @@ class CoordinatorData(BasePersonEntityData):
     status_since: datetime.datetime = timezone.now()
 
 
-class CoordinatorPopulator(BasePersonPopulatorFromCsv):
+class CoordinatorPopulator(BasePopulatorFromCsv):
     id_name: str = "cid"
     entity_name: str = "coordinator"
 
@@ -81,7 +81,14 @@ class CoordinatorPopulator(BasePersonPopulatorFromCsv):
             personal_info = self._create_personal_info(entity_data)
             if personal_info is None:
                 return
+            if Coordinator.objects.filter(legacy_cid=entity_data.id).count():
+                logger.warning(
+                    f"Coordinator with {self.id_name} {entity_data.id} was already migrated"
+                )
+                return
+
             coordinator = Coordinator.objects.create(
+                legacy_cid=entity_data.id,
                 project_status=entity_data.project_status,
                 personal_info=personal_info,
                 is_admin=entity_data.is_admin,
@@ -90,12 +97,18 @@ class CoordinatorPopulator(BasePersonPopulatorFromCsv):
                 comment=self._create_comment(),
             )
             coord_id = coordinator.personal_info.id
+            self._update_metadata(
+                coordinator.personal_info.id, entity_data.id, entity_data.first_name
+            )
             logger.info(f"Coordinator migrated, old id: {entity_data.id}, new id: {coord_id}")
         except (IntegrityError, TransactionManagementError) as e:
             logger.warning(
                 f"Coordinator with {self.id_name} {entity_data.id} can not be parsed, see above"
             )
             logger.debug(e)
+
+    def _update_metadata(self, new_id: int, old_id: int, name: str) -> None:
+        self._metadata[self.entity_name].append({"new_id": new_id, "old_id": old_id, "name": name})
 
 
 if __name__ == "__main__":

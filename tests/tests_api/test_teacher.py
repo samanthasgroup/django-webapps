@@ -171,6 +171,7 @@ def test_teacher_retrieve(api_client, availability_slots):
     assert response_json == {
         "personal_info": teacher.personal_info.id,
         "student_age_ranges": age_ranges,
+        "legacy_tid": teacher.legacy_tid,
         "teaching_languages_and_levels": languages_and_levels,
         "availability_slots": availability_slots,
         "comment": teacher.comment,

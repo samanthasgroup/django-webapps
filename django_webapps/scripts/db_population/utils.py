@@ -1,6 +1,8 @@
 import argparse
 import csv
+import json
 import logging
+from typing import Any
 
 
 def get_logger(file_name: str, level: int = logging.INFO) -> logging.Logger:
@@ -12,7 +14,7 @@ def get_logger(file_name: str, level: int = logging.INFO) -> logging.Logger:
     return logger
 
 
-def get_args() -> argparse.Namespace:
+def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input_csv",
@@ -28,9 +30,19 @@ def get_args() -> argparse.Namespace:
         help="dry mode, prevent from inserting data into the database",
         default=False,
     )
+    return parser
+
+
+def get_args() -> argparse.Namespace:
+    parser = get_parser()
     return parser.parse_args()
 
 
 def load_csv_data(path_to_csv_file: str) -> list[list[str]]:
     with open(path_to_csv_file, newline="") as csvfile:  # noqa: PTH123
         return list(csv.reader(csvfile))
+
+
+def load_json_data(path_to_csv_file: str) -> dict[Any, Any]:
+    with open(path_to_csv_file, newline="", encoding="UTF-8") as jsonfile:  # noqa: PTH123
+        return json.load(jsonfile)

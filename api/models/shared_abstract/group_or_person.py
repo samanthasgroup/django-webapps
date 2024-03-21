@@ -9,6 +9,7 @@ from api.models.choices.communication_language_mode import CommunicationLanguage
 class GroupOrPerson(models.Model):
     """Model holding attributes that are common for every person and group."""
 
+    legacy_id = models.IntegerField(null=True)
     communication_language_mode = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=CommunicationLanguageMode.choices,

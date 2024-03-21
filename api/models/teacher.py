@@ -29,6 +29,7 @@ class TeacherQuerySet(models.QuerySet["Teacher"]):
 class Teacher(TeacherCommon):
     """Model for an adult teacher that can teach groups."""
 
+    legacy_tid = models.IntegerField(null=True, help_text="Teacher id from the old database")
     availability_slots = models.ManyToManyField(DayAndTimeSlot)
 
     has_prior_teaching_experience = models.BooleanField(
@@ -106,6 +107,9 @@ class Teacher(TeacherCommon):
     objects = TeacherQuerySet.as_manager()
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["legacy_tid"], name="legacy_tid"),
+        ]
         indexes = [
             models.Index(fields=("project_status",), name="teacher_pr_status_idx"),
             models.Index(fields=("situational_status",), name="teacher_si_status_idx"),
