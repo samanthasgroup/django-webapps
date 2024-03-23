@@ -15,6 +15,7 @@ from django_stubs_ext import QuerySetAny  # noqa: E402
 from api.models.age_range import AgeRange  # noqa: E402
 from api.models.choices.status.project import TeacherProjectStatus  # noqa: E402
 from api.models.choices.status.situational import TeacherSituationalStatus  # noqa: E402
+from api.models.personal_info import PersonalInfo  # noqa: E402
 from api.models.teacher import Teacher  # noqa: E402
 from django_webapps.scripts.db_population.base_populator import (  # noqa: E402
     BasePersonEntityData,
@@ -161,7 +162,7 @@ class TeacherPopulator(BasePopulatorFromCsv):
     @transaction.atomic
     def _create_entity(self, entity_data: TeacherData) -> None:
         try:
-            personal_info = self._create_personal_info(entity_data)
+            personal_info = self._create_or_get_personal_info(entity_data)
             if personal_info is None:
                 raise ValueError("Unable to create mandatory data")
 
@@ -215,6 +216,17 @@ class TeacherPopulator(BasePopulatorFromCsv):
 
     def _update_metadata(self, new_id: int, old_id: int, name: str) -> None:
         self._metadata[self.entity_name].append({"new_id": new_id, "old_id": old_id, "name": name})
+
+    def _create_or_get_personal_info(self, entity_data: TeacherData) -> None | PersonalInfo:
+        already_existing_one = PersonalInfo.objects.filter(
+            first_name=entity_data.first_name,
+            last_name=entity_data.last_name,
+            email=entity_data.email,
+        ).first()
+        if already_existing_one:
+            logger.info("Personal info already exists")
+            return already_existing_one
+        return super()._create_personal_info(entity_data)
 
 
 if __name__ == "__main__":

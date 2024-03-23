@@ -1,0 +1,10 @@
+The scripts should be run in the following order: 
+
+- populate_coordinators.py with coordinators database exported in CSV
+- populate_teachers.py with teacher database (CSV)
+- populate_students.py with students databse (CSV)
+- populate_groups.py with groups database (CSV)
+
+To run all the scripts: 
+
+> sh populate_all.sh coord_base.csv teacher_base.csv student_base.csv group_base.csv
