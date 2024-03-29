@@ -4,6 +4,7 @@ import re
 import phonenumbers
 import pytz
 from email_validator import EmailNotValidError, validate_email
+from geopy.exc import GeocoderUnavailable
 from geopy.geocoders import Nominatim
 from timezonefinder import TimezoneFinder
 
@@ -13,19 +14,21 @@ MIN_NAME_LENGTH = 2
 
 
 def _city_to_timezone(city_name: str) -> str | None:
-    geolocator = Nominatim(user_agent="city-to-timezone")
-    coords = geolocator.geocode(city_name)
+    try:
+        geolocator = Nominatim(user_agent="city-to-timezone")
+        coords = geolocator.geocode(city_name)
+    except GeocoderUnavailable:
+        return None
     tf = TimezoneFinder()
     if coords:
         return tf.timezone_at(lng=coords.longitude, lat=coords.latitude)
-
     return None
 
 
 def parse_timezone(tz_str: str) -> datetime.tzinfo | None:
     tz_name = None
     offset = None
-    regex_right = re.compile(r"((UTC|GMT)([\+|\-]\d*))")
+    regex_right = re.compile(r"((UTC|GMT|GM)([\+|\-]\d*))")
     regex_left = re.compile(r"(([\+|\-]\d*)(UTC|GMT))")
     tz_str = tz_str.replace(" ", "").upper()
 
