@@ -1,0 +1,28 @@
+{% load i18n %}
+
+{% if action_form %}
+  <div class="actions">
+    {% for field in action_form reversed %}
+      {% if field %}
+        <div class="action-field">{{ field.label }} {{ field }}</div>
+      {% endif %}
+    {% endfor %}
+
+    <div class="button-action">
+      <button type="submit" class="button small" title="{% trans "Run the selected action" %}" name="index" value="{{ action_index|default:0 }}">
+          {% trans "Apply selected action" %}
+      </button>
+    </div>
+  </div>
+  <style>
+    .actions {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .action-field {
+       margin-bottom: 5px;
+    }
+
+  </style>
+{% endif %}

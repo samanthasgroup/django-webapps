@@ -53,8 +53,21 @@ class BaseCoordinatorGroupInline(
     max_num = 0
 
 
+class NameGroupChoiceField(forms.ModelChoiceField):
+
+    def label_from_instance(self, obj: Any) -> str:
+        coordinators = ",".join([str(c) for c in obj.coordinators.all()]).rstrip().strip()
+        return (
+            f"Group {obj.pk}, {obj.language_and_level} (coords: {obj.coordinators.count()}, "
+            f"coordinators: {coordinators})"
+        )
+
+
 class GroupActionForm(ActionForm):
-    group = forms.ModelChoiceField(queryset=Group.objects.all(), required=False)
+    group = NameGroupChoiceField(
+        queryset=Group.objects.all(),
+        required=False,
+    )
 
 
 class CoordinatorActiveGroupsInline(BaseCoordinatorGroupInline):
