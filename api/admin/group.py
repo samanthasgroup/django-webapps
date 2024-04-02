@@ -60,8 +60,8 @@ class GroupAdmin(VersionAdmin):
         "get_start_date",
         "get_end_date",
         "get_schedule",
-        "project_status",
-        "situational_status",
+        "get_project_status",
+        "get_situational_status",
         "get_status_since",
         "staff_only",
     )
@@ -142,7 +142,7 @@ class GroupAdmin(VersionAdmin):
         ]
         return mark_safe(" ".join(links))
 
-    @admin.display(description="Number of Students")
+    @admin.display(description=format_html("Number Of<br>Students"))
     def students_count(self, group: models.Group) -> int:
         return group.students.count()
 
@@ -169,3 +169,11 @@ class GroupAdmin(VersionAdmin):
         if getattr(group, "is_for_staff_only"):
             return format_html('<img src="{}" alt="icon"/>', "/static/admin/img/icon-yes.svg")
         return ""
+
+    @admin.display(description=format_html("Project<br>status"))
+    def get_project_status(self, group: models.Group) -> str:
+        return group.project_status.replace("_", " ")
+
+    @admin.display(description=format_html("Situational<br>Status"))
+    def get_situational_status(self, group: models.Group) -> str:
+        return group.situational_status.replace("_", " ")
