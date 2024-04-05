@@ -89,7 +89,7 @@ class PersonalInfo(GroupOrPerson):
         )
 
     def __str__(self) -> str:
-        return f"{self.pk}: {self.full_name}"
+        return f"{self.pk} {self.full_name}"
 
     @property
     def full_name(self) -> str:
