@@ -1006,13 +1006,13 @@ files = [
 
 [[package]]
 name = "phonenumbers"
-version = "8.13.33"
+version = "8.13.34"
 description = "Python version of Google's common library for parsing, formatting, storing and validating international phone numbers."
 optional = false
 python-versions = "*"
 files = [
-    {file = "phonenumbers-8.13.33-py2.py3-none-any.whl", hash = "sha256:f2d653268ece55a4f3752d9cda4be6f7465f298e6d028d522aedda13cf057201"},
-    {file = "phonenumbers-8.13.33.tar.gz", hash = "sha256:991f2619f0593b36b674c345af47944ec4bae526b353cf53d707e662087be63b"},
+    {file = "phonenumbers-8.13.34-py2.py3-none-any.whl", hash = "sha256:bc0bb5d3bab29e28549194f6bf57cb3ca03c3dd84238af12674fe24031631bda"},
+    {file = "phonenumbers-8.13.34.tar.gz", hash = "sha256:7c2676be07b7d0f74411e275e0660380a0ec3ee0d359f070d719424bd2c5f62e"},
 ]
 
 [[package]]
@@ -1698,4 +1698,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "cc96b6831a96dca0cebc6a8695d99a1d3b2aa37b65aea766a1dace6792851909"
+content-hash = "9834ea70ae60a136274e19a27b9ed10d4dd1b374e025b7d203792a89c6aca26c"
