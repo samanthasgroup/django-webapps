@@ -120,8 +120,8 @@ class Group(GroupCommon):
         coordinator_names = ",".join(c.personal_info.full_name for c in self.coordinators.all())
         teacher_names = ",".join(t.personal_info.full_name for t in self.teachers.all())
         return (
-            f"Group {self.pk}, {self.language_and_level} (coordinators: {coordinator_names}, "
-            f"teachers: {teacher_names}, {self.students.count()} students.)"
+            f"{self.pk}: {self.language_and_level}, coord(s) {coordinator_names}, "
+            f"teacher(s) {teacher_names}, {self.students.count()} students"
         )
 
     def _teachers_group_count_annotation(self) -> QuerySet[Teacher]:
