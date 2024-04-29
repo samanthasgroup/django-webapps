@@ -51,4 +51,4 @@ class LanguageAndLevel(models.Model):
         verbose_name_plural = "Languages with levels"
 
     def __str__(self) -> str:
-        return f"{self.language} - {self.level}"
+        return f"{self.language} {self.level}"
