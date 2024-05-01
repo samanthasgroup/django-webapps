@@ -15,7 +15,7 @@ class StudentCreateProcessor(StudentActionProcessor):
         self._create_log_events()
 
     def _set_statuses(self) -> None:
-        return super()._set_statuses()
+        pass
 
     def _create_log_events(self) -> None:
         StudentLogEvent.objects.create(student=self.student, type=StudentLogEventType.REGISTERED)
