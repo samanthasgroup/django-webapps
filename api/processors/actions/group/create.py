@@ -36,7 +36,7 @@ class GroupCreateProcessor(GroupActionProcessor):
         )
 
     def _set_coordinators_status(self) -> None:
-        return super()._set_coordinators_status()
+        pass
 
     def _set_teachers_status(self) -> None:
         self.group.teachers.all().filter_active().update(  # type: ignore[attr-defined]
