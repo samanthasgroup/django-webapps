@@ -32,7 +32,7 @@ class GroupDiscardProcessor(GroupActionProcessor):
         self.group.delete()
 
     def _set_group_status(self) -> None:
-        super()._set_group_status()
+        pass
 
     def _set_coordinators_status(self) -> None:
         StatusSetter.update_statuses_of_active_coordinators(self.timestamp)
