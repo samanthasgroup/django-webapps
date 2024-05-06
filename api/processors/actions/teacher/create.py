@@ -15,7 +15,7 @@ class TeacherCreateProcessor(TeacherActionProcessor):
         self._create_log_events()
 
     def _set_statuses(self) -> None:
-        return super()._set_statuses()
+        pass
 
     def _create_log_events(self) -> None:
         TeacherLogEvent.objects.create(teacher=self.teacher, type=TeacherLogEventType.REGISTERED)
