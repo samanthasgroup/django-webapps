@@ -52,7 +52,7 @@ djangorestframework = "3.14.0"
 drf-spectacular = "^0.27.2"
 django-filter = "^24.2"
 # this one definitely needs to be in main dependencies, django will break withouth its monkeypatch:
-django-stubs-ext = "^4.2.7"
+django-stubs-ext = "^5.0.0"
 django-reversion = "^5.0.12"
 email-validator = "^2.1.1"
 geopy = "^2.4.1"
