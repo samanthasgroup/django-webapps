@@ -157,14 +157,6 @@ class CoordinatorAdmin(VersionAdmin):
     list_display_links = (
         "get_personal_info_id",
         "get_personal_info_full_name",
-        "get_additional_skills_comment",
-        "get_project_status",
-        "get_situational_status",
-        "get_status_since",
-        "active_groups_count",
-        "get_communication_language_mode",
-        "mentor",
-        "get_comment",
     )
 
     class Media:
