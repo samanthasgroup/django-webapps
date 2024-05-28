@@ -154,6 +154,11 @@ class CoordinatorAdmin(VersionAdmin):
     ]
     action_form = GroupActionForm
 
+    list_display_links = (
+        "get_personal_info_id",
+        "get_personal_info_full_name",
+    )
+
     class Media:
         js = ("admin/js/sticky-scroll-bar.js",)
 
