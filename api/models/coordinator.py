@@ -65,12 +65,17 @@ class Coordinator(Person):
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=CoordinatorProjectStatus.choices,
         verbose_name="status in project",
-        help_text="status of this student with regard to project as a whole",
+        help_text="status of this coordinator with regard to project as a whole",
     )
     situational_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=CoordinatorSituationalStatus.choices,
         blank=True,
+    )
+    role_comment = models.CharField(
+        max_length=DEFAULT_CHAR_FIELD_MAX_LEN,
+        blank=True,
+        help_text="phrase describing the role of coordinator in project",
     )
 
     objects = CoordinatorQuerySet.as_manager()
