@@ -50,6 +50,7 @@ class CommonDashboardTeacherSerializer(serializers.ModelSerializer[Teacher]):
         model = Teacher
         fields: tuple[str, ...] = (
             "id",
+            "legacy_tid",
             "first_name",
             "last_name",
             "project_status",
