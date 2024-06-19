@@ -503,7 +503,7 @@ class TestDashboardGroupDiscard:
         coordinators_group_count = [
             coordinator.groups.count() - 1 for coordinator in group_coordinators
         ]
-        discard_reason = GroupDiscardReason.NOT_ENOUGH_STUDENTS.value
+        discard_reason = GroupDiscardReason.NOT_ENOUGH_STUDENTS
         response = api_client.delete(
             f"{base_path}/{pending_group.id}/discard/?discard_reason={discard_reason}"
         )
