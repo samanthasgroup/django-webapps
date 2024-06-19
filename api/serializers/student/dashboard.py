@@ -31,6 +31,7 @@ class CommonDashboardStudentSerializer(serializers.ModelSerializer[Student]):
         model = Student
         fields: tuple[str, ...] = (
             "id",
+            "legacy_sid",
             "first_name",
             "last_name",
             "comment",
