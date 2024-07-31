@@ -421,19 +421,19 @@ django = ">=3.2"
 
 [[package]]
 name = "django-stubs"
-version = "5.0.1"
+version = "5.0.2"
 description = "Mypy stubs for Django"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django_stubs-5.0.1-py3-none-any.whl", hash = "sha256:ed206de1d926a0da9328b2584aa07c344ca8c6431b698f41568e0675a94dc0f8"},
-    {file = "django_stubs-5.0.1.tar.gz", hash = "sha256:ff26cc45b900174dd787c1486f710cf850ad2c143b86386a9b23dc027721d608"},
+    {file = "django_stubs-5.0.2-py3-none-any.whl", hash = "sha256:cb0c506cb5c54c64612e4a2ee8d6b913c6178560ec168009fe847c09747c304b"},
+    {file = "django_stubs-5.0.2.tar.gz", hash = "sha256:236bc5606e5607cb968f92b648471f9edaa461a774bc013bf9e6bff8730f6bdf"},
 ]
 
 [package.dependencies]
 asgiref = "*"
 django = "*"
-django-stubs-ext = ">=5.0.0"
+django-stubs-ext = ">=5.0.2"
 tomli = {version = "*", markers = "python_version < \"3.11\""}
 types-PyYAML = "*"
 typing-extensions = ">=4.11.0"
@@ -1689,4 +1689,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "6a17d2e71a803b4d23d03242f3e57f6e44d7ed4ad08df5ac181a0ea6693b934f"
+content-hash = "6beb27a6008afe7a397ec0e5202aaa158eeb626433c4d427fd936e7cb07f47fe"
