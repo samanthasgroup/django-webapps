@@ -162,45 +162,48 @@ class CoordinatorAdmin(VersionAdmin):
     class Media:
         js = ("admin/js/sticky-scroll-bar.js",)
 
-    @admin.display(description="ID")
+    @admin.display(description="ID", ordering="personal_info__id")
     def get_personal_info_id(self, coordinator: Coordinator) -> int:
         return coordinator.personal_info.id
 
-    @admin.display(description="Full name")
+    @admin.display(description="Full name", ordering="personal_info__first_name")
     def get_personal_info_full_name(self, coordinator: Coordinator) -> str:
         return coordinator.personal_info.full_name
 
-    @admin.display(description="Valid")
+    @admin.display(description="Valid", ordering="is_validated")
     def get_is_validated(self, coordinator: Coordinator) -> str:
         if getattr(coordinator, "is_validated"):
             return format_html('<img src="{}" alt="icon"/>', "/static/admin/img/icon-yes.svg")
         return ""
 
-    @admin.display(description="Admin")
+    @admin.display(description="Admin", ordering="is_admin")
     def get_is_admin(self, coordinator: Coordinator) -> str:
         if getattr(coordinator, "is_admin"):
             return format_html('<img src="{}" alt="icon"/>', "/static/admin/img/icon-yes.svg")
         return ""
 
-    @admin.display(description=format_html("Project<br>status"))
+    @admin.display(description=format_html("Project<br>status"), ordering="project_status")
     def get_project_status(self, coordinator: Coordinator) -> str:
         return coordinator.project_status.replace("_", " ")
 
-    @admin.display(description=format_html("Situational<br>Status"))
+    @admin.display(description=format_html("Situational<br>Status"), ordering="situational_status")
     def get_situational_status(self, coordinator: Coordinator) -> str:
         return coordinator.situational_status.replace("_", " ")
 
-    @admin.display(description=format_html("Status<br>last changed"))
+    @admin.display(description=format_html("Status<br>last changed"), ordering="status_since")
     def get_status_since(self, coordinator: Coordinator) -> str:
         date_str = coordinator.status_since.strftime("%Y-%m-%d")
         time_str = coordinator.status_since.strftime("%H:%M")
         return format_html("{} <br> {}", date_str, time_str)
 
-    @admin.display(description="Skills")
+    @admin.display(description="Skills", ordering="additional_skills_comment")
     def get_additional_skills_comment(self, coordinator: Coordinator) -> str:
         return coordinator.additional_skills_comment
 
-    @admin.display(description=format_html("Communication<br>language(s)"))
+    @admin.display(
+        description=format_html("Communication<br>language(s)"),
+        ordering="personal_info__communication_language_mode",
+    )
     def get_communication_language_mode(self, coordinator: Coordinator) -> str:
         return coordinator.personal_info.communication_language_mode
 
