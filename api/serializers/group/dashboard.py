@@ -16,6 +16,7 @@ class CommonDashboardGroupSerializer(serializers.ModelSerializer[Group]):
         model = Group
         fields: tuple[str, ...] = (
             "id",
+            "legacy_gid",
             "communication_language_mode",
             "monday",
             "tuesday",

@@ -203,6 +203,7 @@ def test_dashboard_student_retrieve(api_client, faker, availability_slots):
     ]
     assert response_json == {
         "id": student.personal_info.id,
+        "legacy_sid": student.legacy_sid,
         "first_name": student.personal_info.first_name,
         "last_name": student.personal_info.last_name,
         "age_range": f"{student.age_range.age_from}-{student.age_range.age_to}",
@@ -794,6 +795,7 @@ class TestDashboardActiveStudentsWithNoGroups:
         assert response.json() == [
             {
                 "id": student.personal_info.id,
+                "legacy_sid": student.legacy_sid,
                 "first_name": student.personal_info.first_name,
                 "last_name": student.personal_info.last_name,
                 "age_range": f"{student.age_range.age_from}-{student.age_range.age_to}",

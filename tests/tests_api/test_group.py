@@ -46,6 +46,7 @@ def test_dashboard_group_list(api_client, availability_slots):
     assert response.json() == [
         {
             "id": group.pk,
+            "legacy_gid": group.legacy_gid,
             "communication_language_mode": group.communication_language_mode,
             "monday": str(group.monday),
             "tuesday": str(group.tuesday),
@@ -96,6 +97,7 @@ def test_dashboard_group_retrieve(api_client, availability_slots):
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {
         "id": group.pk,
+        "legacy_gid": group.legacy_gid,
         "communication_language_mode": group.communication_language_mode,
         "monday": str(group.monday),
         "tuesday": str(group.tuesday),
