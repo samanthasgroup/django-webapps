@@ -101,6 +101,7 @@ class CoordinatorForm(forms.ModelForm):  # type: ignore
             "is_admin",
             "personal_info",
             "additional_skills_comment",
+            "role_comment",
             "project_status",
             "situational_status",
             "status_since",
@@ -123,6 +124,7 @@ class CoordinatorAdmin(VersionAdmin):
         "get_communication_language_mode",
         "mentor",
         "get_comment",
+        "get_role_comment",
     )
 
     ordering = ["personal_info_id"]
@@ -145,6 +147,7 @@ class CoordinatorAdmin(VersionAdmin):
         "mentor__personal_info__last_name",
         "additional_skills_comment",
         "comment",
+        "role_comment",
     )
     readonly_fields = ("active_groups_count",)
     inlines = [
@@ -216,6 +219,10 @@ class CoordinatorAdmin(VersionAdmin):
             'pre-line;">{}</div>',
             comment,
         )
+
+    @admin.display(description="Role", ordering="role_comment")
+    def get_role_comment(self, coordinator: Coordinator) -> str:
+        return coordinator.role_comment
 
     def get_queryset(self, _: HttpRequest) -> QuerySet[models.Coordinator]:
         return models.Coordinator.objects.annotate_with_group_count().prefetch_related("groups")
