@@ -1541,19 +1541,23 @@ doc = ["sphinx"]
 
 [[package]]
 name = "timezonefinder"
-version = "6.5.0"
+version = "6.5.2"
 description = "python package for finding the timezone of any point on earth (coordinates) offline"
 optional = false
-python-versions = ">=3.8,<4"
+python-versions = "<4,>=3.8"
 files = [
-    {file = "timezonefinder-6.5.0-cp38-cp38-manylinux_2_35_x86_64.whl", hash = "sha256:3c70e1ea468ecac11272aa0a727450fd7cf43039ae2a2c62f7900a0a42efb6d6"},
-    {file = "timezonefinder-6.5.0.tar.gz", hash = "sha256:7afdb1516927e7766deb6da80c8bd66734a44ba3d898038fe73aef1e9cd39bb0"},
+    {file = "timezonefinder-6.5.2-cp310-cp310-manylinux_2_17_x86_64.manylinux_2_5_x86_64.manylinux1_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ea7ca91f25d988d69efeae020ed828534ed01f6687646a50e464d82da4704b30"},
+    {file = "timezonefinder-6.5.2-cp311-cp311-manylinux_2_17_x86_64.manylinux_2_5_x86_64.manylinux1_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c4a3bca9933ea165380d54b336227def58e62682968437cd44223a065ecff7e9"},
+    {file = "timezonefinder-6.5.2-cp312-cp312-manylinux_2_17_x86_64.manylinux_2_5_x86_64.manylinux1_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2ac4ef31d379c7ba54710462857bea36a9630ea23550ffb15550322e6988efbd"},
+    {file = "timezonefinder-6.5.2-cp38-cp38-manylinux_2_17_x86_64.manylinux_2_5_x86_64.manylinux1_x86_64.manylinux2014_x86_64.whl", hash = "sha256:524ab145a2f4ce5101e52308868ecd9da0cdcc2cb3024c13356616b41a685fd6"},
+    {file = "timezonefinder-6.5.2-cp39-cp39-manylinux_2_17_x86_64.manylinux_2_5_x86_64.manylinux1_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b93927a4996a5c01f0628eb6858c61b2a7f9f49e02c07bed2a95e96a8dc1b65e"},
+    {file = "timezonefinder-6.5.2.tar.gz", hash = "sha256:3279e67d5b1b9a54d1a16f3bd4234169f14e2b90c0f58ed37bcfa7303645d610"},
 ]
 
 [package.dependencies]
 cffi = ">=1.15.1,<2"
 h3 = ">=3.7.6,<4"
-numpy = {version = ">=1.23,<2", markers = "python_version >= \"3.9\""}
+numpy = {version = ">=1.23,<3", markers = "python_version >= \"3.9\""}
 setuptools = ">=65.5"
 
 [package.extras]
@@ -1689,4 +1693,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "b773cbb8bf4b5f059a0f5284c981408b2b3dda9640b15c8a5c8fa62fe273d17b"
+content-hash = "20bfb81e31e4c66cd2a66ed711056509e9e8e863e55c5f61d852d9302aefc64e"
