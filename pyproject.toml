@@ -62,7 +62,7 @@ tqdm = "^4.66.4"
 phonenumbers = "^8.13.42"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.4.2"
+black = "^24.8.0"
 ruff = "^0.5.5"
 pre-commit = "^3.8.0"
 icecream = "^2.1.3"
