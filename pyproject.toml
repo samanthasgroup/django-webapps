@@ -43,7 +43,7 @@ packages = [{include = "django_webapps"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-django = "^5.0"
+django = "^5.1"
 gunicorn = "^22.0.0"
 django-phonenumber-field = {extras = ["phonenumberslite"], version = "^8.0.0"}
 django-extensions = "^3.2.3"
