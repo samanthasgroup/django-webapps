@@ -5,7 +5,9 @@ from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
+from rest_framework.serializers import ValidationError as RestValidationError
 
+from api.exceptions import ConflictError
 from api.filters import PersonalInfoFilter
 from api.filters.personal_info import DashboardPersonalInfoFilter
 from api.models import PersonalInfo
@@ -45,9 +47,24 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
         Checks if a personal info exists.
         """
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        return Response(status.HTTP_200_OK)
+        try:
+            serializer.is_valid(raise_exception=True)
+        # ошибка при валидации полей модели
+        except RestValidationError as e:
+            error_detail = e.detail
+            if (
+                isinstance(error_detail, dict)
+                and "non_field_errors" in error_detail
+                and any(error_detail["non_field_errors"])
+            ):
+                return Response(
+                    {"detail": "Personal info already exists"}, status=status.HTTP_409_CONFLICT
+                )
+            raise  # Если ошибка не связана с уникальностью, пробрасываем дальше
+        # кастомная ошибка при дубилровании записи
+        except ConflictError as e:
+            return Response({"detail": str(e)}, status=status.HTTP_409_CONFLICT)
+        return Response({"detail": "Personal info does not exist"}, status=status.HTTP_200_OK)
 
     def get_serializer_class(self) -> type[BaseSerializer[PersonalInfo]]:
         if self.action == "check_existence":

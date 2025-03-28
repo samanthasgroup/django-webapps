@@ -128,7 +128,7 @@ def test_personal_info_check_existence_returns_409_with_existing_info(api_client
         },
     )
     assert response.status_code == status.HTTP_409_CONFLICT
-    assert response.json() == {"detail": "Object with this data already exists."}
+    assert response.json() == {"detail": "Personal info already exists"}
 
 
 @pytest.mark.parametrize(
