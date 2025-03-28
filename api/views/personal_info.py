@@ -62,9 +62,11 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
                 )
             raise  # Если ошибка не связана с уникальностью, пробрасываем дальше
         # кастомная ошибка при дубилровании записи
-        except ConflictError as e:
-            return Response({"detail": str(e)}, status=status.HTTP_409_CONFLICT)
-        return Response({"detail": "Personal info does not exist"}, status=status.HTTP_200_OK)
+        except ConflictError:
+            return Response(
+                {"detail": "Personal info already exists"}, status=status.HTTP_409_CONFLICT
+            )
+        return Response(status=status.HTTP_200_OK)
 
     def get_serializer_class(self) -> type[BaseSerializer[PersonalInfo]]:
         if self.action == "check_existence":
