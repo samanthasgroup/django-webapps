@@ -1,4 +1,4 @@
-from collections.abc import Callable
+import json
 from typing import Any
 
 import reversion
@@ -7,7 +7,7 @@ from django.contrib import admin, messages
 from django.contrib.admin import ModelAdmin, SimpleListFilter
 from django.contrib.admin.helpers import ActionForm
 from django.db.models import QuerySet
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponseRedirect
 from django.utils.html import format_html
 from reversion.admin import VersionAdmin
 
@@ -155,7 +155,7 @@ class CoordinatorAdmin(VersionAdmin):
         CoordinatorFormerGroupsInline,
         CoordinatorLogEventsInline,
     ]
-    action_form = GroupActionForm
+    # action_form = GroupActionForm
 
     list_display_links = (
         "get_personal_info_id",
@@ -232,56 +232,125 @@ class CoordinatorAdmin(VersionAdmin):
 
     active_groups_count.admin_order_field = "group_count"  # type: ignore[attr-defined]
 
-    def _make_create_log_event_action(
-        self, log_event_type: CoordinatorLogEventType
-    ) -> Callable[..., None]:
-        def action(
-            _: admin.ModelAdmin[models.Coordinator],
-            request: HttpRequest,
-            queryset: QuerySet[models.Coordinator],
-        ) -> None:
-            group_from_request = request.POST["group"]
+    def get_form(
+        self, request: HttpRequest, obj: Coordinator | None = None, **kwargs: Any
+    ) -> forms.ModelForm[Coordinator]:
+        return super().get_form(request, obj, **kwargs)
 
-            if log_event_type in COORDINATOR_LOG_EVENTS_REQUIRE_GROUP:
-                if not group_from_request:
-                    self.message_user(
-                        request, "You should choose group for this action.", messages.ERROR
-                    )
-                    return
-            elif group_from_request:
-                self.message_user(
-                    request,
-                    "You should not choose group for this action.",
-                    messages.ERROR,
+    def change_view(  # noqa: PLR0911
+        self,
+        request: HttpRequest,
+        object_id: str,
+        form_url: str = "",
+        extra_context: dict[str, Any] | None = None,
+    ) -> Any:
+        # Получаем контекст от родительского метода или создаем пустой словарь
+        extra_context = extra_context or {}
+
+        # Добавляем данные для наших выпадающих списков в контекст шаблона
+        # Преобразуем Enum в словарь для удобства в шаблоне
+        extra_context["log_event_type_choices"] = {
+            event_type.value: event_type.label for event_type in CoordinatorLogEventType
+        }
+        extra_context["all_groups"] = (
+            Group.objects.select_related("language_and_level")
+            .prefetch_related("coordinators")
+            .all()
+        )
+
+        # Передаем список типов, требующих группу, в формате JSON для JavaScript
+        types_req_group_list = [t.value for t in COORDINATOR_LOG_EVENTS_REQUIRE_GROUP]
+        extra_context["log_event_types_require_group_json"] = json.dumps(types_req_group_list)
+
+        # --- Обработка НАШЕЙ кастомной отправки ---
+        if request.method == "POST" and "_create_log_event" in request.POST:
+            # Получаем координатора, к которому относится страница
+            coordinator = self.get_object(request, object_id)
+            if coordinator is None:
+                # Обработка случая, если объект не найден (маловероятно, но возможно)
+                self.message_user(request, "Coordinator not found.", messages.ERROR)
+                return HttpResponseRedirect(request.path)  # Перезагружаем страницу
+
+            # Извлекаем данные из POST
+            log_event_type_str = request.POST.get("_log_event_type")
+            group_id_str = request.POST.get("_log_event_group")
+            group = None
+            log_event_type = None
+
+            # Валидация типа события
+            if not log_event_type_str:
+                self.message_user(request, "Event Type is required.", messages.ERROR)
+                # Остаемся на той же странице, чтобы пользователь исправил
+                return super().change_view(
+                    request, object_id, form_url, extra_context=extra_context
                 )
-                return
 
-            for coordinator in queryset:
+            try:
+                # Пытаемся найти Enum по значению
+                log_event_type = CoordinatorLogEventType(log_event_type_str)
+            except ValueError:
+                self.message_user(
+                    request, f"Invalid Event Type: {log_event_type_str}.", messages.ERROR
+                )
+                return super().change_view(
+                    request, object_id, form_url, extra_context=extra_context
+                )
+
+            # Валидация группы (как было в action)
+            requires_group = log_event_type in COORDINATOR_LOG_EVENTS_REQUIRE_GROUP
+            group_provided = bool(group_id_str)
+
+            if requires_group and not group_provided:
+                self.message_user(
+                    request, "You must choose a group for this event type.", messages.ERROR
+                )
+                return super().change_view(
+                    request, object_id, form_url, extra_context=extra_context
+                )
+            if not requires_group and group_provided:
+                self.message_user(
+                    request, "You should not choose a group for this event type.", messages.ERROR
+                )
+                return super().change_view(
+                    request, object_id, form_url, extra_context=extra_context
+                )
+            if requires_group and group_provided:
+                try:
+                    assert group_id_str is not None
+                    group = Group.objects.get(pk=int(group_id_str))
+                except (ValueError, Group.DoesNotExist):
+                    self.message_user(request, "Invalid Group selected.", messages.ERROR)
+                    return super().change_view(
+                        request, object_id, form_url, extra_context=extra_context
+                    )
+
+            # --- Если все проверки пройдены ---
+            try:
                 with reversion.create_revision():
                     reversion.set_user(request.user)
-                    reversion.set_comment(f"Created log event {log_event_type}")
+                    reversion.set_comment(
+                        f"Created log event {log_event_type} via admin change form"
+                    )
                     CoordinatorAdminLogEventCreator.create(
                         coordinator=coordinator,
                         log_event_type=log_event_type,
-                        group=(
-                            Group.objects.get(pk=group_from_request)
-                            if group_from_request
-                            else None
-                        ),
+                        group=group,
                     )
 
-        return action
+                event_name = (
+                    log_event_type.label
+                    if hasattr(log_event_type, "label")
+                    else log_event_type.value
+                )
+                success_msg = f"Log event '{event_name}' created successfully."
 
-    def get_actions(
-        self, request: HttpRequest
-    ) -> dict[str, tuple[Callable[..., str], str, str] | None]:
-        actions = super().get_actions(request)
-        for log_event_type in list(CoordinatorLogEventType):
-            actions[f"create_log_event_{log_event_type}"] = (
-                self._make_create_log_event_action(log_event_type),
-                f"create_log_event_{log_event_type}",
-                # TODO: maybe some more human-readable description?
-                f"Create log event: {log_event_type}",
-            )
+                self.message_user(request, success_msg, messages.SUCCESS)
 
-        return actions
+            except Exception as e:
+                # Ловим возможные ошибки при создании лога
+                self.message_user(request, f"Error creating log event: {e}", messages.ERROR)
+
+            return HttpResponseRedirect(request.path)
+
+        # --- Если это не наша отправка, вызываем стандартное поведение ---
+        return super().change_view(request, object_id, form_url, extra_context=extra_context)
