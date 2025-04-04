@@ -84,16 +84,16 @@ asyncio_mode = "auto"
 [tool.ruff]
 line-length = 99
 exclude = ["api/migrations"]
-per-file-ignores = {"__init__.py" = ["F401"]}
+lint.per-file-ignores = {"__init__.py" = ["F401"]}
 # Pyflakes and pycodestyle Error (included by default without explicit "select"),
 # I = isort, N = pep8-naming, PL = pylint, UP = pyupgrade
 # A = flake8-builtins, DJ = flake8-django C4 = flake8-comprehensions, DTZ = flake8-datetimez,
 # ISC = flake8-implicit-str-concat, T20 = flake8-print, RET = flake8-return, SIM = flake8-simplify,
 # ARG = flake8-unused-arguments, PTH = flake8-use-pathlib
-select = ["E", "F", "I", "N", "PL", "UP", "A", "DJ", "C4", "DTZ", "ISC", "T20", "RET", "SIM", "ARG", "PTH"]
+lint.select = ["E", "F", "I", "N", "PL", "UP", "A", "DJ", "C4", "DTZ", "ISC", "T20", "RET", "SIM", "ARG", "PTH"]
 # can add ERA (eradicate) later in here ^ for deleting commented out code
 # Ignore: A003 (class attribute `id`/`type` is shadowing a python builtin) because class attributes don't really shadow Python builtins
-ignore = ["A003"]
+lint.ignore = ["A003"]
 
 # Assume Python 3.10.
 target-version = "py310"
