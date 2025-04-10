@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class TimeSlot(models.Model):
@@ -35,7 +36,7 @@ class DayAndTimeSlot(models.Model):
         SUNDAY = 6
 
     day_of_week_index = models.PositiveSmallIntegerField(
-        choices=DayOfWeek.choices, verbose_name="day of the week"
+        choices=DayOfWeek.choices, verbose_name=_("day of the week")
     )
     time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
 

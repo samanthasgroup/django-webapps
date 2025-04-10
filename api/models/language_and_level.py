@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from api.models.auxil.constants import LanguageLevelId
 
@@ -13,7 +14,7 @@ and their position in the enumeration as keys."""
 class Language(models.Model):
     """Model for languages that students learn and teachers teach."""
 
-    id = models.CharField(max_length=2, primary_key=True, verbose_name="locale")
+    id = models.CharField(max_length=2, primary_key=True, verbose_name=_("locale"))
     name = models.CharField(max_length=50)
 
     def __str__(self) -> str:

@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from api.models.auxil.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 from api.models.language_and_level import LanguageAndLevel
@@ -14,13 +15,13 @@ class TeacherCommon(Person):
     can_host_speaking_club = models.BooleanField(default=False)
     has_hosted_speaking_club = models.BooleanField(default=False)
     is_validated = models.BooleanField(
-        help_text="Has an initial validation interview been conducted with this teacher?"
+        help_text=_("Has an initial validation interview been conducted with this teacher?")
     )
     non_teaching_help_provided_comment = models.CharField(
         max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
         blank=True,
-        verbose_name="comment on additional non-teaching skills",
-        help_text=(
+        verbose_name=_("comment on additional non-teaching skills"),
+        help_text=_(
             "For adult teacher: other ways in which the applicant could help the students beside "
             "listed ones. For teacher under 18: applicant's free-text comment on how they can "
             "help our students apart from hosting speaking clubs."

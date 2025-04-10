@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Count, Q, QuerySet
+from django.utils.translation import gettext_lazy as _
 
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.choices.status import GroupProjectStatus, GroupSituationalStatus
@@ -24,8 +25,8 @@ class GroupCommon(GroupOrPerson):
         Coordinator,
         blank=True,
         related_name="%(class)ss_former",
-        verbose_name="Former coordinators",
-        help_text=(
+        verbose_name=_("Former coordinators"),
+        help_text=_(
             "Lists coordinators that once worked with this group and/or the coordinator(s) of "
             "this group when it finished classes or was aborted."
         ),
@@ -34,8 +35,8 @@ class GroupCommon(GroupOrPerson):
         Student,
         blank=True,
         related_name="%(class)ss_former",
-        verbose_name="Former students",
-        help_text=(
+        verbose_name=_("Former students"),
+        help_text=_(
             "Lists students that once worked with this group and/or all students of this group "
             "when it finished classes or was aborted."
         ),
@@ -44,8 +45,8 @@ class GroupCommon(GroupOrPerson):
         Teacher,
         blank=True,
         related_name="%(class)ss_former",
-        verbose_name="Former teachers",
-        help_text=(
+        verbose_name=_("Former teachers"),
+        help_text=_(
             "Lists teachers that once worked with this group, and/or the teacher(s) of this group "
             "when it finished classes or was aborted."
         ),
@@ -77,7 +78,7 @@ class Group(GroupCommon):
         blank=True,
     )
     status_since = models.DateTimeField(
-        help_text="date and time of last change of project-level or situational status"
+        help_text=_("date and time of last change of project-level or situational status")
     )
     start_date = models.DateField(null=True, blank=True)
     # this field could be useful for overview, but can be filled automatically when
@@ -138,7 +139,7 @@ class SpeakingClub(GroupCommon):
     """Model for a speaking club (a group without any changing status or fixed schedule)."""
 
     is_for_children = models.BooleanField(
-        verbose_name="Is this a speaking club for children?", default=False
+        verbose_name=_("Is this a speaking club for children?"), default=False
     )
     # a speaking club has no fixed level, so putting language only
     language = models.ForeignKey(Language, on_delete=models.PROTECT)
