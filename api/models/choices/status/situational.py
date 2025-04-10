@@ -3,6 +3,7 @@
 import typing
 
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from api.models.auxil.constants import STUDENT_CLASS_MISS_LIMIT
 
@@ -10,12 +11,12 @@ from api.models.auxil.constants import STUDENT_CLASS_MISS_LIMIT
 class CoordinatorSituationalStatus(models.TextChoices):
     """Enumeration of possible transient statuses of a coordinator."""
 
-    ONBOARDING = "onboarding", "In onboarding"
+    ONBOARDING = "onboarding", _("In onboarding")
     STALE = (
         "onboarding_stale",
-        "Has been in onboarding for too long without taking a group",
+        _("Has been in onboarding for too long without taking a group"),
     )
-    NO_RESPONSE = "no_response", "Not responding"
+    NO_RESPONSE = "no_response", _("Not responding")
 
 
 class GroupSituationalStatus(models.TextChoices):
@@ -23,35 +24,35 @@ class GroupSituationalStatus(models.TextChoices):
 
     ATTENTION_REQUIRED = (
         "attention",
-        "Some sort of problem: needs substitute teacher, change of coordinator etc.",
+        _("Some sort of problem: needs substitute teacher, change of coordinator etc."),
     )
 
 
 class StudentSituationalStatus(models.TextChoices):
     """Enumeration of possible transient statuses of a student."""
 
-    GROUP_OFFERED = "group_offered", "Was offered a group, has not responded yet"
-    AWAITING_START = "awaiting_start", "Group confirmed, awaiting start of classes"
+    GROUP_OFFERED = "group_offered", _("Was offered a group, has not responded yet")
+    AWAITING_START = "awaiting_start", _("Group confirmed, awaiting start of classes")
     NOT_ATTENDING = (
         "not_attending",
-        f"Missed {STUDENT_CLASS_MISS_LIMIT} classes in a row without letting the teacher know",
+        _("Missed {miss_limit} classes in a row without letting the teacher know").format(
+            miss_limit=STUDENT_CLASS_MISS_LIMIT
+        ),
     )
-    NEEDS_TRANSFER = "needs_transfer", "Needs transfer to another group"
-    NO_RESPONSE = "no_response", "Not responding"
+    NEEDS_TRANSFER = "needs_transfer", _("Needs transfer to another group")
+    NO_RESPONSE = "no_response", _("Not responding")
 
 
 class TeacherSituationalStatus(models.TextChoices):
     """Enumeration of possible transient statuses of a young or adult teacher."""
 
-    # Young teachers may not need all of these, but it doesn't make any sense
-    # to create a separate class
-    GROUP_OFFERED = "group_offered", "Was offered a group, has not responded yet"
-    AWAITING_START = "awaiting_start", "Group confirmed, awaiting start of classes"
+    GROUP_OFFERED = "group_offered", _("Was offered a group, has not responded yet")
+    AWAITING_START = "awaiting_start", _("Group confirmed, awaiting start of classes")
     NEEDS_SUBSTITUTION = (
         "needs_substitution",
-        "Needs a break in teaching the group, substitute teacher needed",
+        _("Needs a break in teaching the group, substitute teacher needed"),
     )
-    NO_RESPONSE = "no_response", "Not responding"
+    NO_RESPONSE = "no_response", _("Not responding")
 
 
 SituationalStatus = (

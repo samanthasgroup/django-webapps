@@ -1,6 +1,7 @@
 """Abstract models that are shared between several modules."""
 
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.personal_info import PersonalInfo
@@ -26,7 +27,7 @@ class Person(models.Model):
     # This field is not just as a shortcut for log event timestamps: not all statuses may have
     # corresponding ...LogEvent objects.
     status_since = models.DateTimeField(
-        help_text="date and time of last change of project-level or situational status"
+        help_text=_("date and time of last change of project-level or situational status")
     )
 
     # TODO last contacted, last responded, scheduled date of next contact?

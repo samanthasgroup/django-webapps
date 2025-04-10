@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from api.models.age_range import AgeRange
 from api.models.auxil.constants import DEFAULT_CHAR_FIELD_MAX_LEN
@@ -13,8 +14,10 @@ class EnrollmentTest(models.Model):
     age_ranges = models.ManyToManyField(
         AgeRange,
         blank=True,
-        help_text="age ranges for which this test was designed. "
-        "Leave blank for the test to be shown to all ages.",
+        help_text=_(
+            "age ranges for which this test was designed. "
+            "Leave blank for the test to be shown to all ages."
+        ),
     )
     language = models.ForeignKey(Language, on_delete=models.CASCADE)
 
