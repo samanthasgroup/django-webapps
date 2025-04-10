@@ -1,0 +1,718 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-10 11:46+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: api/models/age_range.py:19
+msgid "End of age range (inclusive)"
+msgstr ""
+
+#: api/models/age_range.py:23
+msgid "who/what is this range designed for"
+msgstr ""
+
+#: api/models/choices/age_range_type.py:6
+msgid "for students to select their age"
+msgstr ""
+
+#: api/models/choices/age_range_type.py:7
+msgid "for teacher to select desired ages of students"
+msgstr ""
+
+#: api/models/choices/age_range_type.py:8
+msgid "for matching algorithm"
+msgstr ""
+
+#: api/models/choices/communication_language_mode.py:6
+msgid "Russian only"
+msgstr ""
+
+#: api/models/choices/communication_language_mode.py:7
+msgid "Ukrainian only"
+msgstr ""
+
+#: api/models/choices/communication_language_mode.py:8
+msgid "Russian or Ukrainian"
+msgstr ""
+
+#: api/models/choices/communication_language_mode.py:9
+msgid "Only language being taught"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:6
+msgid "Applied for the role"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:7
+msgid "Joined the common group"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:8
+msgid "Joined the onboarding group"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:11
+msgid "Took a new group (not transferred from another coordinator)"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:13
+msgid "The group started classes"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:16
+msgid "Requested that the group be transferred to a different coordinator"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:20
+msgid "Transfer canceled (declined or the coordinator changed their mind)"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:22
+msgid "Transfer of group to another coordinator completed"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:23
+msgid "Received group from another coordinator"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:24
+#: api/models/choices/log_event_type.py:105
+#: api/models/choices/log_event_type.py:142
+#: api/models/choices/log_event_type.py:153
+msgid "Gone on leave"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:25
+#: api/models/choices/log_event_type.py:106
+#: api/models/choices/log_event_type.py:143
+#: api/models/choices/log_event_type.py:154
+msgid "Returned from leave"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:26
+#: api/models/choices/log_event_type.py:100
+#: api/models/choices/log_event_type.py:129
+#: api/models/choices/status/project.py:67
+msgid "Left the project prematurely"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:29
+#: api/models/choices/log_event_type.py:132
+msgid "Finished working and announced that they are leaving the project"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:33
+#: api/models/choices/log_event_type.py:136
+msgid "Finished working and announced that they are staying in the project"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:35
+#: api/models/choices/log_event_type.py:101
+#: api/models/choices/log_event_type.py:138
+#: api/models/choices/log_event_type.py:151
+msgid "Expelled from the project"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:36
+#: api/models/choices/log_event_type.py:139
+#: api/models/choices/log_event_type.py:152
+msgid "Access to corporate resources revoked"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:37
+#: api/models/choices/log_event_type.py:103
+#: api/models/choices/log_event_type.py:140
+msgid "Group finished prematurely"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:38
+msgid "Group studies are finished"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:41
+msgid "Added student to a group that was already studying"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:58
+msgid "Formed (automatically or by coordinator)"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:59
+msgid "Confirmed"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:60
+msgid "Started classes"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:61
+#: api/models/choices/status/project.py:50
+msgid "Finished prematurely"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:62
+msgid "Finished successfully"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:65
+msgid "Coordinator requested transfer of group to another coordinator"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:69
+msgid "Student requested transfer to another group"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:73
+msgid "Teacher requested to be substituted with another teacher"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:78
+#: api/models/choices/log_event_type.py:110
+#: api/models/choices/log_event_type.py:147
+msgid "Completed registration"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:79
+msgid "Registration complete, waiting for a group"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:80
+#: api/models/choices/log_event_type.py:115
+#: api/models/choices/status/situational.py:34
+#: api/models/choices/status/situational.py:49
+msgid "Was offered a group, has not responded yet"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:81
+#: api/models/choices/log_event_type.py:116
+msgid "Was offered a group and accepted it"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:82
+#: api/models/choices/log_event_type.py:118
+msgid "Was offered a group but declined it"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:85
+#: api/models/choices/log_event_type.py:121
+msgid ""
+"Tentative group was discarded for reasons other than the person's own "
+"decision"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:87
+#: api/models/choices/log_event_type.py:123
+#: api/models/choices/status/project.py:48
+#: api/models/choices/status/situational.py:35
+#: api/models/choices/status/situational.py:50
+msgid "Group confirmed, awaiting start of classes"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:88
+msgid "Started studying in a group"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:91
+msgid "Missed a class but let the teacher know in advance"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:95
+msgid "Missed a class without letting the teacher know in advance"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:97
+#: api/models/choices/log_event_type.py:126
+msgid "Requested transfer"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:98
+#: api/models/choices/log_event_type.py:127
+msgid "Transferred"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:99
+#: api/models/choices/log_event_type.py:128
+msgid "Transfer canceled"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:102
+#: api/models/choices/status/project.py:68
+msgid "Completed the course and left the project"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:104
+#: api/models/choices/log_event_type.py:141
+msgid "Group finished successfully"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:113
+msgid "Registration and validation complete, started waiting for a group"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:117
+#: api/models/choices/log_event_type.py:148
+msgid "Validated in a face-to-face interview"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:124
+msgid "Started teaching a group"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:125
+#: api/models/choices/log_event_type.py:149
+msgid "Hosted a speaking club session"
+msgstr ""
+
+#: api/models/choices/log_event_type.py:150
+msgid "Left the project"
+msgstr ""
+
+#: api/models/choices/non_teaching_help_type.py:8
+msgid "CV and cover letter (write or edit)"
+msgstr ""
+
+#: api/models/choices/non_teaching_help_type.py:9
+msgid "CV and cover letter (proofread)"
+msgstr ""
+
+#: api/models/choices/non_teaching_help_type.py:10
+msgid "Mock interview"
+msgstr ""
+
+#: api/models/choices/non_teaching_help_type.py:11
+msgid "Job search"
+msgstr ""
+
+#: api/models/choices/non_teaching_help_type.py:12
+msgid "Career strategy"
+msgstr ""
+
+#: api/models/choices/non_teaching_help_type.py:13
+msgid "LinkedIn profile"
+msgstr ""
+
+#: api/models/choices/non_teaching_help_type.py:14
+msgid "Career switch"
+msgstr ""
+
+#: api/models/choices/non_teaching_help_type.py:15
+msgid "Portfolio for creative industries"
+msgstr ""
+
+#: api/models/choices/non_teaching_help_type.py:16
+msgid "Entering a university abroad"
+msgstr ""
+
+#: api/models/choices/non_teaching_help_type.py:17
+msgid "Translation of documents"
+msgstr ""
+
+#: api/models/choices/registration_telegram_bot_language.py:6
+msgid "English"
+msgstr ""
+
+#: api/models/choices/registration_telegram_bot_language.py:7
+msgid "Russian"
+msgstr ""
+
+#: api/models/choices/registration_telegram_bot_language.py:8
+msgid "Ukrainian"
+msgstr ""
+
+#: api/models/choices/status/project.py:12
+msgid "Completed registration, but not in working status yet"
+msgstr ""
+
+#: api/models/choices/status/project.py:16
+msgid "Working, but not yet reached the required minimum amount of groups "
+msgstr ""
+
+#: api/models/choices/status/project.py:20
+msgid "Working, required amount of groups reached"
+msgstr ""
+
+#: api/models/choices/status/project.py:25
+#: api/models/choices/status/project.py:66
+#: api/models/choices/status/project.py:77
+msgid "On leave"
+msgstr ""
+
+#: api/models/choices/status/project.py:28
+#: api/models/choices/status/project.py:80
+msgid "Announced that they cannot participate in the project"
+msgstr ""
+
+#: api/models/choices/status/project.py:30
+msgid "Finished coordinating but remains in the project"
+msgstr ""
+
+#: api/models/choices/status/project.py:31
+msgid "Finished coordinating and left the project"
+msgstr ""
+
+#: api/models/choices/status/project.py:32
+#: api/models/choices/status/project.py:85
+msgid "All access revoked, accounts closed"
+msgstr ""
+
+#: api/models/choices/status/project.py:33
+#: api/models/choices/status/project.py:69
+#: api/models/choices/status/project.py:84
+msgid "Banned from the project"
+msgstr ""
+
+#: api/models/choices/status/project.py:47
+msgid "Pending"
+msgstr ""
+
+#: api/models/choices/status/project.py:49
+msgid "Working, everything is OK"
+msgstr ""
+
+#: api/models/choices/status/project.py:51
+msgid "Finished (completed the course)"
+msgstr ""
+
+#: api/models/choices/status/project.py:60
+msgid ""
+"Requires oral interview to determine language levelbefore getting "
+"'no_group_yet' status"
+msgstr ""
+
+#: api/models/choices/status/project.py:64
+msgid "Not studying, waiting for a group"
+msgstr ""
+
+#: api/models/choices/status/project.py:65
+msgid "Studying in a group"
+msgstr ""
+
+#: api/models/choices/status/project.py:75
+msgid "Not working, waiting for a group"
+msgstr ""
+
+#: api/models/choices/status/project.py:76
+msgid "Working"
+msgstr ""
+
+#: api/models/choices/status/project.py:82
+msgid "Finished teaching and left the project"
+msgstr ""
+
+#: api/models/choices/status/project.py:83
+msgid "Finished teaching but remains in the project"
+msgstr ""
+
+#: api/models/choices/status/situational.py:14
+msgid "In onboarding"
+msgstr ""
+
+#: api/models/choices/status/situational.py:17
+msgid "Has been in onboarding for too long without taking a group"
+msgstr ""
+
+#: api/models/choices/status/situational.py:19
+#: api/models/choices/status/situational.py:43
+#: api/models/choices/status/situational.py:55
+msgid "Not responding"
+msgstr ""
+
+#: api/models/choices/status/situational.py:27
+msgid ""
+"Some sort of problem: needs substitute teacher, change of coordinator etc."
+msgstr ""
+
+#: api/models/choices/status/situational.py:38
+#, python-brace-format
+msgid "Missed {miss_limit} classes in a row without letting the teacher know"
+msgstr ""
+
+#: api/models/choices/status/situational.py:42
+msgid "Needs transfer to another group"
+msgstr ""
+
+#: api/models/choices/status/situational.py:53
+msgid "Needs a break in teaching the group, substitute teacher needed"
+msgstr ""
+
+#: api/models/coordinator.py:45
+msgid "comment on additional skills"
+msgstr ""
+
+#: api/models/coordinator.py:50
+msgid ""
+"This field has nothing to do with accessing Django admin site. It marks "
+"coordinators that have special rights over ordinary coordinators."
+msgstr ""
+
+#: api/models/coordinator.py:55 api/models/shared_abstract/teacher_common.py:18
+msgid "Has an initial validation interview been conducted with this teacher?"
+msgstr ""
+
+#: api/models/coordinator.py:63
+msgid "mentor of this coordinator. One coordinator can have many interns"
+msgstr ""
+
+#: api/models/coordinator.py:68 api/models/student.py:70
+#: api/models/teacher.py:87 api/models/teacher_under_18.py:15
+msgid "status in project"
+msgstr ""
+
+#: api/models/coordinator.py:69
+msgid "status of this coordinator with regard to project as a whole"
+msgstr ""
+
+#: api/models/coordinator.py:79
+msgid "phrase describing the role of coordinator in project"
+msgstr ""
+
+#: api/models/day_and_time_slot.py:39
+msgid "day of the week"
+msgstr ""
+
+#: api/models/enrollment_test.py:18
+msgid ""
+"age ranges for which this test was designed. Leave blank for the test to be "
+"shown to all ages."
+msgstr ""
+
+#: api/models/group.py:28
+msgid "Former coordinators"
+msgstr ""
+
+#: api/models/group.py:30
+msgid ""
+"Lists coordinators that once worked with this group and/or the "
+"coordinator(s) of this group when it finished classes or was aborted."
+msgstr ""
+
+#: api/models/group.py:38
+msgid "Former students"
+msgstr ""
+
+#: api/models/group.py:40
+msgid ""
+"Lists students that once worked with this group and/or all students of this "
+"group when it finished classes or was aborted."
+msgstr ""
+
+#: api/models/group.py:48
+msgid "Former teachers"
+msgstr ""
+
+#: api/models/group.py:50
+msgid ""
+"Lists teachers that once worked with this group, and/or the teacher(s) of "
+"this group when it finished classes or was aborted."
+msgstr ""
+
+#: api/models/group.py:81 api/models/shared_abstract/person.py:30
+msgid "date and time of last change of project-level or situational status"
+msgstr ""
+
+#: api/models/group.py:142
+msgid "Is this a speaking club for children?"
+msgstr ""
+
+#: api/models/language_and_level.py:17
+msgid "locale"
+msgstr ""
+
+#: api/models/personal_info.py:29
+msgid "autogenerated unique identifier"
+msgstr ""
+
+#: api/models/personal_info.py:37
+msgid "Telegram username"
+msgstr ""
+
+#: api/models/personal_info.py:42
+msgid "Difference between person's local time zone and UTC"
+msgstr ""
+
+#: api/models/personal_info.py:47
+msgid "source of info about SSG"
+msgstr ""
+
+#: api/models/personal_info.py:48
+msgid "how did they learn about Samantha Smith's Group?"
+msgstr ""
+
+#: api/models/personal_info.py:58
+msgid ""
+"Language in which the person wishes to communicate with the bot (is chosen "
+"by the person at first contact)"
+msgstr ""
+
+#: api/models/shared_abstract/group_or_person.py:16
+msgid "Language(s) the students and teachers can speak in class"
+msgstr ""
+
+#: api/models/shared_abstract/teacher_common.py:23
+msgid "comment on additional non-teaching skills"
+msgstr ""
+
+#: api/models/shared_abstract/teacher_common.py:25
+msgid ""
+"For adult teacher: other ways in which the applicant could help the students "
+"beside listed ones. For teacher under 18: applicant's free-text comment on "
+"how they can help our students apart from hosting speaking clubs."
+msgstr ""
+
+#: api/models/student.py:30
+msgid "Student id from the old database"
+msgstr ""
+
+#: api/models/student.py:35
+msgid ""
+"We do not ask students for their exact age. They choose an age range when "
+"registering with us."
+msgstr ""
+
+#: api/models/student.py:47
+msgid "children of this student that are also studying at SSG"
+msgstr ""
+
+#: api/models/student.py:51
+msgid "Speaking club status"
+msgstr ""
+
+#: api/models/student.py:52
+msgid "Is the student a member of a speaking club at the moment?"
+msgstr ""
+
+#: api/models/student.py:58
+msgid "Types of non-teaching help this student requires"
+msgstr ""
+
+#: api/models/student.py:64
+msgid "JSON received from SmallTalk API"
+msgstr ""
+
+#: api/models/student.py:71 api/models/teacher.py:88
+#: api/models/teacher_under_18.py:16
+msgid "status of this student with regard to project as a whole"
+msgstr ""
+
+#: api/models/teacher.py:39
+msgid ""
+"has the applicant already worked as a teacher before applying at Samantha "
+"Smith's Group?"
+msgstr ""
+
+#: api/models/teacher.py:47
+msgid "Types of non-teaching help this teacher can provide to students"
+msgstr ""
+
+#: api/models/teacher.py:56
+msgid "peer support: can check syllabus"
+msgstr ""
+
+#: api/models/teacher.py:60
+msgid "peer support: can host individual or group mentoring sessions"
+msgstr ""
+
+#: api/models/teacher.py:63
+msgid "peer support: can give feedback"
+msgstr ""
+
+#: api/models/teacher.py:67
+msgid "peer support: can help with children's groups"
+msgstr ""
+
+#: api/models/teacher.py:70
+msgid "peer support: can provide teaching materials"
+msgstr ""
+
+#: api/models/teacher.py:74
+msgid "peer support: can invite other teachers to their class"
+msgstr ""
+
+#: api/models/teacher.py:78
+msgid "peer support: can work in tandem with a less experienced teacher"
+msgstr ""
+
+#: api/models/teacher.py:82
+msgid "number of groups the teacher can teach simultaneously"
+msgstr ""
+
+#: api/models/teacher.py:98
+msgid ""
+"age ranges of students that the teacher is willing to teach. The 'from's and "
+"'to's of these ranges are wider than those the students choose for "
+"themselves."
+msgstr ""
+
+#: api/models/teacher.py:105
+msgid ""
+"number of times per week the teacher can have classes with each group. This "
+"column will be ignored if the teacher currently doesn't want to teach any "
+"groups (in which case the column 'simultaneous groups' will have value 0). "
+"The value of frequency column does NOT have to be 0 in this case. Maybe the "
+"teacher will start (or return to) group studies and the frequency column "
+"will become relevant."
+msgstr ""
+
+#: api/models/teacher_under_18.py:29
+msgid "Teachers under 18 years of age"
+msgstr ""
+
+#: api/templates/admin/api/coordinator/change_form.html:18
+msgid "Home"
+msgstr ""
+
+#: api/templates/admin/api/coordinator/change_form.html:21
+#, python-format
+msgid "Add %(name)s"
+msgstr ""
+
+#: api/templates/admin/api/coordinator/change_form.html:43
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: api/templates/admin/api/coordinator/change_form.html:59
+msgid "Create Log Event"
+msgstr ""
+
+#: api/templates/admin/api/coordinator/change_form.html:62
+msgid "Event Type"
+msgstr ""
+
+#: api/templates/admin/api/coordinator/change_form.html:74
+msgid "Group"
+msgstr ""
+
+#: api/templates/admin/api/coordinator/change_form.html:83
+msgid "Select a group if required by the event type."
+msgstr ""
+
+#: api/templates/admin/api/coordinator/change_form.html:88
+msgid "Create Event"
+msgstr ""
+
+#: templates/admin/actions.html:12
+msgid "Run the selected action"
+msgstr ""
+
+#: templates/admin/actions.html:13
+msgid "Apply selected action"
+msgstr ""
