@@ -20,6 +20,9 @@ dependencies = [
     "pytz>=2024.1,<2026.0",
     "tqdm<5.0.0,>=4.66.4",
     "phonenumbers>=8.13.42,<10.0.0",
+    "celery>=5.5.0",
+    "redis>=5.2.1",
+    "django-celery-beat>=2.7.0",
 ]
 name = "django-webapps"
 version = "0.1.0"
