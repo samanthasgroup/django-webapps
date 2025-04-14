@@ -27,6 +27,7 @@ repos:
             - "drf-spectacular"
             - "django-filter"
             - "django-reversion"
+            - "celery"
         args:
             - --no-incremental
 -   repo: https://github.com/astral-sh/ruff-pre-commit
