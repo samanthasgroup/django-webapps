@@ -66,7 +66,7 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
             return Response(
                 {"detail": "Personal info already exists"}, status=status.HTTP_409_CONFLICT
             )
-        return Response(status=status.HTTP_200_OK)
+        return Response({"exists": False}, status=status.HTTP_200_OK)
 
     def get_serializer_class(self) -> type[BaseSerializer[PersonalInfo]]:
         if self.action == "check_existence":
