@@ -42,6 +42,24 @@ class StaffOnlyFilter(admin.SimpleListFilter):
         return queryset
 
 
+class CoordinatorFilter(admin.SimpleListFilter):
+    title = "Coordinator"
+    parameter_name = "coordinator"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: ModelAdmin[Any]  # noqa: ARG002
+    ) -> list[tuple[int, str]]:
+        coordinators = models.Coordinator.objects.all()
+        return [(c.pk, str(c)) for c in coordinators]
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Any]  # noqa: ARG002
+    ) -> QuerySet[Any]:
+        if self.value():
+            return queryset.filter(coordinators__pk=self.value())
+        return queryset
+
+
 class GroupAdminForm(forms.ModelForm):  # type: ignore
     class Meta:
         model = models.Group
@@ -86,6 +104,7 @@ class GroupAdmin(VersionAdmin):
         StaffOnlyFilter,
         "project_status",
         "situational_status",
+        CoordinatorFilter,
     )
 
     search_fields = (
