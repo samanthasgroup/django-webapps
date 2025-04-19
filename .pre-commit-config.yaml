@@ -29,6 +29,8 @@ repos:
             - "django-reversion"
             - "celery"
             - "django-celery-beat"
+            - "django-select2"
+            - "django-redis"
         args:
             - --no-incremental
 -   repo: https://github.com/astral-sh/ruff-pre-commit
