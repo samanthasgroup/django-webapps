@@ -257,6 +257,18 @@ wheels = [
 ]
 
 [[package]]
+name = "django-appconf"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/61/a9/dcf95ff3fa0620b6818fc02276fbbb8926e7f286039b6d015e56e8b7af39/django-appconf-1.1.0.tar.gz", hash = "sha256:9fcead372f82a0f21ee189434e7ae9c007cbb29af1118c18251720f3d06243e4", size = 15986 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/62/9e/f3a899991e4aaae4b69c1aa187ba4a32e34742475c91eb13010ee7fbe9db/django_appconf-1.1.0-py3-none-any.whl", hash = "sha256:7abd5a163ff57557f216e84d3ce9dac36c37ffce1ab9a044d3d53b7c943dd10f", size = 6389 },
+]
+
+[[package]]
 name = "django-celery-beat"
 version = "2.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -330,6 +342,19 @@ phonenumberslite = [
 ]
 
 [[package]]
+name = "django-redis"
+version = "5.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "redis" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/83/9d/2272742fdd9d0a9f0b28cd995b0539430c9467a2192e4de2cea9ea6ad38c/django-redis-5.4.0.tar.gz", hash = "sha256:6a02abaa34b0fea8bf9b707d2c363ab6adc7409950b2db93602e6cb292818c42", size = 52567 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b7/f1/63caad7c9222c26a62082f4f777de26389233b7574629996098bf6d25a4d/django_redis-5.4.0-py3-none-any.whl", hash = "sha256:ebc88df7da810732e2af9987f7f426c96204bf89319df4c6da6ca9a2942edd5b", size = 31119 },
+]
+
+[[package]]
 name = "django-reversion"
 version = "5.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -339,6 +364,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/d8/aa/d7e9d98b23041b24d2b35cefcbbfa51e6e557e8e58c1c1bddabdb0baf13f/django_reversion-5.1.0.tar.gz", hash = "sha256:3309821e5b6fceedcce6b6975f1a9c7fab6ae7c7d0e1276a90e345946fa0dcb8", size = 73178 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/5a/84/898fec51294e6764ab5fdde5db079ca89d528cef039c05447ca41d6f4c74/django_reversion-5.1.0-py3-none-any.whl", hash = "sha256:084d4f117d9e2b4e8dfdfaad83ebb34410a03eed6071c96089e6811fdea82ad3", size = 84857 },
+]
+
+[[package]]
+name = "django-select2"
+version = "8.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "django-appconf" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d0/fd/415a9a1c78b65f7025c63e57ae73889c077edc250c7ca2227668a50fbba4/django_select2-8.4.0.tar.gz", hash = "sha256:25eb56a6c024750898ea45cb90d24164c42b85c4673f5052612ce39042d81151", size = 13314 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5c/67/8f736d81932b0773eaada10d6c1ba37c8f0f078cf9ad808266cdcbf75d27/django_select2-8.4.0-py3-none-any.whl", hash = "sha256:769429f4300db9a24d029e2e2f90fceb825eef6c012d772af90d12a318fb2438", size = 15462 },
 ]
 
 [[package]]
@@ -394,7 +432,9 @@ dependencies = [
     { name = "django-extensions" },
     { name = "django-filter" },
     { name = "django-phonenumber-field", extra = ["phonenumberslite"] },
+    { name = "django-redis" },
     { name = "django-reversion" },
+    { name = "django-select2" },
     { name = "django-stubs-ext" },
     { name = "djangorestframework" },
     { name = "drf-spectacular" },
@@ -436,7 +476,9 @@ requires-dist = [
     { name = "django-extensions", specifier = ">=3.2.3,<5.0.0" },
     { name = "django-filter", specifier = ">=24.2,<26.0" },
     { name = "django-phonenumber-field", extras = ["phonenumberslite"], specifier = ">=8.0.0,<9.0.0" },
+    { name = "django-redis", specifier = ">=5.4.0" },
     { name = "django-reversion", specifier = ">=5.0.12,<6.0.0" },
+    { name = "django-select2", specifier = ">=8.4.0" },
     { name = "django-stubs-ext", specifier = ">=5.0.2,<6.0.0" },
     { name = "djangorestframework", specifier = "==3.16.0" },
     { name = "drf-spectacular", specifier = ">=0.27.2,<1.0.0" },

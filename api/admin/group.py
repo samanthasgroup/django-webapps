@@ -8,9 +8,20 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from django_select2.forms import ModelSelect2MultipleWidget
 from reversion.admin import VersionAdmin
 
 from api import models
+
+
+class StudentSelect2Widget(ModelSelect2MultipleWidget):
+    model = models.Student
+    search_fields = [
+        "personal_info__first_name__icontains",
+        "personal_info__last_name__icontains",
+        "personal_info__email__icontains",
+        "personal_info__pk__iexact",
+    ]
 
 
 class StaffOnlyFilter(admin.SimpleListFilter):
@@ -47,6 +58,9 @@ class GroupAdminForm(forms.ModelForm):  # type: ignore
             "status_since",
             "is_for_staff_only",
         )
+        widgets = {
+            "students": StudentSelect2Widget,
+        }
 
 
 class GroupAdmin(VersionAdmin):
@@ -82,6 +96,7 @@ class GroupAdmin(VersionAdmin):
     )
 
     class Media:
+        css = {"all": ("css/select2-darkmode.css",)}
         js = ("admin/js/sticky-scroll-bar.js",)
 
     def get_search_results(
