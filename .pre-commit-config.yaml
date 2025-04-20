@@ -31,6 +31,8 @@ repos:
             - "django-celery-beat"
             - "django-select2"
             - "django-redis"
+            - "python-dotenv"
+            - "psycopg2-binary"
         args:
             - --no-incremental
 -   repo: https://github.com/astral-sh/ruff-pre-commit

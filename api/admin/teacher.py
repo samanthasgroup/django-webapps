@@ -18,6 +18,12 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "has_groups_display",
     )
 
+    search_fields: tuple[str, ...] = (
+        "personal_info__pk",
+        "personal_info__first_name__icontains",
+        "personal_info__last_name__icontains",
+    )
+
     def get_queryset(self, request: HttpRequest) -> QuerySet[Teacher]:
         return super().get_queryset(request)
 
