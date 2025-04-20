@@ -7,10 +7,10 @@ from .coordinator import CoordinatorAdmin
 from .group import GroupAdmin
 from .personal_info import PersonalInfoAdmin
 from .student import StudentAdmin
+from .teacher import TeacherAdmin
 
 admin.site.register(models.Coordinator, CoordinatorAdmin)
 admin.site.register(models.PersonalInfo, PersonalInfoAdmin)
-admin.site.register(models.Student, StudentAdmin)
 admin.site.register(models.Group, GroupAdmin)
 
 
@@ -20,7 +20,6 @@ for model in (
     models.EnrollmentTestQuestionOption,
     models.EnrollmentTestResult,
     models.SpeakingClub,
-    models.Teacher,
     models.TeacherUnder18,
     models.Language,
     models.LanguageAndLevel,
