@@ -25,6 +25,7 @@ dependencies = [
     "django-celery-beat>=2.7.0",
     "django-select2>=8.4.0",
     "django-redis>=5.4.0",
+    "python-dotenv>=1.1.0",
 ]
 name = "django-webapps"
 version = "0.1.0"
