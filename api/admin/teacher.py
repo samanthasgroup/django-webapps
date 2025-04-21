@@ -12,10 +12,11 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "pk",
         "get_full_name",
         "project_status",
-        "situational_status",
-        "has_prior_teaching_experience",
-        "can_take_more_groups_display",
         "has_groups_display",
+        "can_host_speaking_club",
+        "teaching_languages_and_levels_display",
+        "availability_slots_display",
+        "non_teaching_help_provided_display",
     )
 
     search_fields: tuple[str, ...] = (
@@ -38,3 +39,15 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
     @admin.display(boolean=True, description=_("Has groups"))
     def has_groups_display(self, obj: Teacher) -> bool:
         return obj.has_groups
+
+    @admin.display(description=_("Teaching languages"))
+    def teaching_languages_and_levels_display(self, obj: Teacher) -> str:
+        return ", ".join([str(lang) for lang in obj.teaching_languages_and_levels.all()])
+
+    @admin.display(description=_("Availability slots"))
+    def availability_slots_display(self, obj: Teacher) -> str:
+        return "\n ".join([str(slot) for slot in obj.availability_slots.all()])
+
+    @admin.display(description=_("Non-teaching help provided"))
+    def non_teaching_help_provided_display(self, obj: Teacher) -> str:
+        return ", ".join([str(help_prov) for help_prov in obj.non_teaching_help_provided.all()])

@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 
 from api import models
@@ -44,19 +45,22 @@ class StudentAdmin(VersionAdmin):
         "pk",
         "get_full_name",
         "project_status",
-        "situational_status",
         "age_range",
-        "can_read_in_english",
         "is_member_of_speaking_club",
         "has_groups_display",
+        "teaching_languages_and_levels_display",
     )
 
+    list_filter = ("teaching_languages_and_levels",)
+
     search_fields = (
-        "pk",
+        "personal_info__pk",
         "personal_info__first_name",
         "personal_info__last_name",
         "personal_info__email",
     )
+
+    # change_list_template = "admin/api/students/change_list.html"
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Student]:
         return super().get_queryset(request).prefetch_related("groups", "children")
@@ -65,9 +69,13 @@ class StudentAdmin(VersionAdmin):
     def get_full_name(self, obj: Student) -> str:
         return f"{obj.personal_info.first_name} {obj.personal_info.last_name}"
 
-    @admin.display(boolean=True, description="Has Groups")
+    @admin.display(boolean=True, description=_("Has Groups"))
     def has_groups_display(self, obj: Student) -> bool:
         return obj.has_groups
+
+    @admin.display(description="Teaching languages")
+    def teaching_languages_and_levels_display(self, obj: Student) -> str:
+        return ", ".join([str(lang) for lang in obj.teaching_languages_and_levels.all()])
 
     def enrollment_tests_summary(self, obj: Student) -> str:
         result = ""
