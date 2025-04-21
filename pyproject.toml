@@ -86,6 +86,8 @@ django_settings_module = "api.settings"
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "django_webapps.settings"
 asyncio_mode = "auto"
+# short output to checke github actions output
+addopts = "-ra -v --tb=short"
 
 [tool.ruff]
 line-length = 99
