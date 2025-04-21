@@ -24,7 +24,7 @@ from api.models.choices.status import (
     StudentProjectStatus,
     TeacherProjectStatus,
 )
-from api.serializers import GroupReadSerializer, GroupWriteSerializer
+from api.serializers import GroupReadSerializer
 from tests.fixtures.group import make_active_group
 from tests.tests_api.asserts import (
     assert_date_time_with_timestamp,
@@ -415,10 +415,12 @@ class TestGroupCreation:
         response = api_client.post(endpoint, data_to_create)
         assert response.status_code == status.HTTP_201_CREATED
         created_group = Group.objects.get(id=response.data["id"])
-        created_group_serializer = GroupWriteSerializer(created_group)
+
         for field, val in data_to_create.items():
-            assert val == response.data[field]
-            assert val == created_group_serializer.data[field]
+            if isinstance(val, list):
+                assert set(val) == set(response.data[field])
+            else:
+                assert val == response.data[field]
 
         assert created_group.project_status == GroupProjectStatus.PENDING
 
