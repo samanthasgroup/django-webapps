@@ -6,19 +6,19 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-10 11:46+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2025-04-20 14:12+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"X-Generator: Poedit 3.6\n"
 
 #: api/models/age_range.py:19
 msgid "End of age range (inclusive)"
@@ -42,27 +42,27 @@ msgstr ""
 
 #: api/models/choices/communication_language_mode.py:6
 msgid "Russian only"
-msgstr ""
+msgstr "Только русский"
 
 #: api/models/choices/communication_language_mode.py:7
 msgid "Ukrainian only"
-msgstr ""
+msgstr "Только украинский"
 
 #: api/models/choices/communication_language_mode.py:8
 msgid "Russian or Ukrainian"
-msgstr ""
+msgstr "Русский или украинский"
 
 #: api/models/choices/communication_language_mode.py:9
 msgid "Only language being taught"
-msgstr ""
+msgstr "Только изучаемый язык"
 
 #: api/models/choices/log_event_type.py:6
 msgid "Applied for the role"
-msgstr ""
+msgstr "Подал:а заявку"
 
 #: api/models/choices/log_event_type.py:7
 msgid "Joined the common group"
-msgstr ""
+msgstr "Вступил:а в координаторскую"
 
 #: api/models/choices/log_event_type.py:8
 msgid "Joined the onboarding group"
@@ -70,15 +70,15 @@ msgstr ""
 
 #: api/models/choices/log_event_type.py:11
 msgid "Took a new group (not transferred from another coordinator)"
-msgstr ""
+msgstr "Собрал:а группу"
 
 #: api/models/choices/log_event_type.py:13
 msgid "The group started classes"
-msgstr ""
+msgstr "Группа начала заниматься"
 
 #: api/models/choices/log_event_type.py:16
 msgid "Requested that the group be transferred to a different coordinator"
-msgstr ""
+msgstr "Запросил:а передачу группы другому координатору"
 
 #: api/models/choices/log_event_type.py:20
 msgid "Transfer canceled (declined or the coordinator changed their mind)"
@@ -86,94 +86,94 @@ msgstr ""
 
 #: api/models/choices/log_event_type.py:22
 msgid "Transfer of group to another coordinator completed"
-msgstr ""
+msgstr "Передача группы другому координатору завершена"
 
 #: api/models/choices/log_event_type.py:23
 msgid "Received group from another coordinator"
-msgstr ""
+msgstr "Принял:а группу от другого координатора"
 
 #: api/models/choices/log_event_type.py:24
 #: api/models/choices/log_event_type.py:105
 #: api/models/choices/log_event_type.py:142
 #: api/models/choices/log_event_type.py:153
 msgid "Gone on leave"
-msgstr ""
+msgstr "В отпуске"
 
 #: api/models/choices/log_event_type.py:25
 #: api/models/choices/log_event_type.py:106
 #: api/models/choices/log_event_type.py:143
 #: api/models/choices/log_event_type.py:154
 msgid "Returned from leave"
-msgstr ""
+msgstr "Вернул:ась из отпуска"
 
 #: api/models/choices/log_event_type.py:26
 #: api/models/choices/log_event_type.py:100
 #: api/models/choices/log_event_type.py:129
 #: api/models/choices/status/project.py:67
 msgid "Left the project prematurely"
-msgstr ""
+msgstr "Выш:ла из проекта"
 
 #: api/models/choices/log_event_type.py:29
 #: api/models/choices/log_event_type.py:132
 msgid "Finished working and announced that they are leaving the project"
-msgstr ""
+msgstr "Завершил:а вести группы, выходит из проекта"
 
 #: api/models/choices/log_event_type.py:33
 #: api/models/choices/log_event_type.py:136
 msgid "Finished working and announced that they are staying in the project"
-msgstr ""
+msgstr "Завершил:а вести группы, остается в проекте"
 
 #: api/models/choices/log_event_type.py:35
 #: api/models/choices/log_event_type.py:101
 #: api/models/choices/log_event_type.py:138
 #: api/models/choices/log_event_type.py:151
 msgid "Expelled from the project"
-msgstr ""
+msgstr "Исключен:а из проекта"
 
 #: api/models/choices/log_event_type.py:36
 #: api/models/choices/log_event_type.py:139
 #: api/models/choices/log_event_type.py:152
 msgid "Access to corporate resources revoked"
-msgstr ""
+msgstr "Все доступы отозваны"
 
 #: api/models/choices/log_event_type.py:37
 #: api/models/choices/log_event_type.py:103
 #: api/models/choices/log_event_type.py:140
 msgid "Group finished prematurely"
-msgstr ""
+msgstr "Группа занималась меньше 4 месяцев"
 
 #: api/models/choices/log_event_type.py:38
 msgid "Group studies are finished"
-msgstr ""
+msgstr "Группа завершила занятия"
 
 #: api/models/choices/log_event_type.py:41
 msgid "Added student to a group that was already studying"
-msgstr ""
+msgstr "Добавили студент:ку в работающую группу"
 
 #: api/models/choices/log_event_type.py:58
 msgid "Formed (automatically or by coordinator)"
-msgstr ""
+msgstr "Группа сформирована"
 
 #: api/models/choices/log_event_type.py:59
 msgid "Confirmed"
-msgstr ""
+msgstr "Группа подтверждена"
 
 #: api/models/choices/log_event_type.py:60
 msgid "Started classes"
-msgstr ""
+msgstr "Занятия начались"
 
 #: api/models/choices/log_event_type.py:61
 #: api/models/choices/status/project.py:50
 msgid "Finished prematurely"
-msgstr ""
+msgstr "Группа занималась меньше 4 месяцев"
 
 #: api/models/choices/log_event_type.py:62
 msgid "Finished successfully"
-msgstr ""
+msgstr "Группа занималась 4 месяца или больше"
 
 #: api/models/choices/log_event_type.py:65
 msgid "Coordinator requested transfer of group to another coordinator"
-msgstr ""
+msgstr "Координатор запросил:а передачу группы другому координатору"
 
 #: api/models/choices/log_event_type.py:69
 msgid "Student requested transfer to another group"
@@ -187,28 +187,28 @@ msgstr ""
 #: api/models/choices/log_event_type.py:110
 #: api/models/choices/log_event_type.py:147
 msgid "Completed registration"
-msgstr ""
+msgstr "Прош:ла регистрацию"
 
 #: api/models/choices/log_event_type.py:79
 msgid "Registration complete, waiting for a group"
-msgstr ""
+msgstr "Прош:а регистрацию, ждет группу"
 
 #: api/models/choices/log_event_type.py:80
 #: api/models/choices/log_event_type.py:115
 #: api/models/choices/status/situational.py:34
 #: api/models/choices/status/situational.py:49
 msgid "Was offered a group, has not responded yet"
-msgstr ""
+msgstr "Группа предложена (ожидание ответа)"
 
 #: api/models/choices/log_event_type.py:81
 #: api/models/choices/log_event_type.py:116
 msgid "Was offered a group and accepted it"
-msgstr ""
+msgstr "Группа предложена (студент согласил:ась)"
 
 #: api/models/choices/log_event_type.py:82
 #: api/models/choices/log_event_type.py:118
 msgid "Was offered a group but declined it"
-msgstr ""
+msgstr "Группа предложена (студент отказал:ась)"
 
 #: api/models/choices/log_event_type.py:85
 #: api/models/choices/log_event_type.py:121
@@ -223,11 +223,11 @@ msgstr ""
 #: api/models/choices/status/situational.py:35
 #: api/models/choices/status/situational.py:50
 msgid "Group confirmed, awaiting start of classes"
-msgstr ""
+msgstr "Группа собрана, в ожидании начала занятий"
 
 #: api/models/choices/log_event_type.py:88
 msgid "Started studying in a group"
-msgstr ""
+msgstr "Начал:а учиться в группе"
 
 #: api/models/choices/log_event_type.py:91
 msgid "Missed a class but let the teacher know in advance"
@@ -245,138 +245,140 @@ msgstr ""
 #: api/models/choices/log_event_type.py:98
 #: api/models/choices/log_event_type.py:127
 msgid "Transferred"
-msgstr ""
+msgstr "Переведен:а"
 
 #: api/models/choices/log_event_type.py:99
 #: api/models/choices/log_event_type.py:128
 msgid "Transfer canceled"
-msgstr ""
+msgstr "Перевод прерван"
 
 #: api/models/choices/log_event_type.py:102
 #: api/models/choices/status/project.py:68
 msgid "Completed the course and left the project"
-msgstr ""
+msgstr "Закончил:а курс и обучение в проекте"
 
 #: api/models/choices/log_event_type.py:104
 #: api/models/choices/log_event_type.py:141
 msgid "Group finished successfully"
-msgstr ""
+msgstr "Группа закончила занятия"
 
 #: api/models/choices/log_event_type.py:113
+#, fuzzy
 msgid "Registration and validation complete, started waiting for a group"
-msgstr ""
+msgstr "Прош:ла регистрацию и валидацию, ждет группу"
 
 #: api/models/choices/log_event_type.py:117
 #: api/models/choices/log_event_type.py:148
 msgid "Validated in a face-to-face interview"
-msgstr ""
+msgstr "Прош:ла валидацию очно"
 
 #: api/models/choices/log_event_type.py:124
 msgid "Started teaching a group"
-msgstr ""
+msgstr "Начал:а преподавать в группе"
 
 #: api/models/choices/log_event_type.py:125
 #: api/models/choices/log_event_type.py:149
 msgid "Hosted a speaking club session"
-msgstr ""
+msgstr "Провел:а разговорный клуб"
 
 #: api/models/choices/log_event_type.py:150
 msgid "Left the project"
-msgstr ""
+msgstr "Выш:ла из проекта"
 
 #: api/models/choices/non_teaching_help_type.py:8
 msgid "CV and cover letter (write or edit)"
-msgstr ""
+msgstr "Написание CV и сопроводительного"
 
 #: api/models/choices/non_teaching_help_type.py:9
 msgid "CV and cover letter (proofread)"
-msgstr ""
+msgstr "Вычитка CV и сопроводительного"
 
 #: api/models/choices/non_teaching_help_type.py:10
 msgid "Mock interview"
-msgstr ""
+msgstr "Тренировка собеседования"
 
 #: api/models/choices/non_teaching_help_type.py:11
 msgid "Job search"
-msgstr ""
+msgstr "Поиска работы"
 
 #: api/models/choices/non_teaching_help_type.py:12
 msgid "Career strategy"
-msgstr ""
+msgstr "Карьерная стратегия"
 
 #: api/models/choices/non_teaching_help_type.py:13
 msgid "LinkedIn profile"
-msgstr ""
+msgstr "Профиль на LinkedIn"
 
 #: api/models/choices/non_teaching_help_type.py:14
 msgid "Career switch"
-msgstr ""
+msgstr "Смена профессии"
 
 #: api/models/choices/non_teaching_help_type.py:15
 msgid "Portfolio for creative industries"
-msgstr ""
+msgstr "Творческое портфолио"
 
 #: api/models/choices/non_teaching_help_type.py:16
 msgid "Entering a university abroad"
-msgstr ""
+msgstr "Поступление в зарубежный вуз"
 
 #: api/models/choices/non_teaching_help_type.py:17
 msgid "Translation of documents"
-msgstr ""
+msgstr "Перевод документов"
 
 #: api/models/choices/registration_telegram_bot_language.py:6
 msgid "English"
-msgstr ""
+msgstr "Английский"
 
 #: api/models/choices/registration_telegram_bot_language.py:7
 msgid "Russian"
-msgstr ""
+msgstr "Русский"
 
 #: api/models/choices/registration_telegram_bot_language.py:8
 msgid "Ukrainian"
-msgstr ""
+msgstr "Украинский"
 
 #: api/models/choices/status/project.py:12
 msgid "Completed registration, but not in working status yet"
-msgstr ""
+msgstr "Прошл:а регистрацию, еще не начал:а координировать"
 
 #: api/models/choices/status/project.py:16
+#, fuzzy
 msgid "Working, but not yet reached the required minimum amount of groups "
-msgstr ""
+msgstr "Координирует, не достиг:ла минимума групп"
 
 #: api/models/choices/status/project.py:20
 msgid "Working, required amount of groups reached"
-msgstr ""
+msgstr "Координирует, минимум групп набран"
 
 #: api/models/choices/status/project.py:25
 #: api/models/choices/status/project.py:66
 #: api/models/choices/status/project.py:77
 msgid "On leave"
-msgstr ""
+msgstr "В отпуске"
 
 #: api/models/choices/status/project.py:28
 #: api/models/choices/status/project.py:80
 msgid "Announced that they cannot participate in the project"
-msgstr ""
+msgstr "Не сможет участвовать в проекте"
 
 #: api/models/choices/status/project.py:30
 msgid "Finished coordinating but remains in the project"
-msgstr ""
+msgstr "Закончил:а координировать, остается в проекте"
 
 #: api/models/choices/status/project.py:31
 msgid "Finished coordinating and left the project"
-msgstr ""
+msgstr "Закончил:а координировать, выш:ла из проекта"
 
 #: api/models/choices/status/project.py:32
 #: api/models/choices/status/project.py:85
 msgid "All access revoked, accounts closed"
-msgstr ""
+msgstr "Доступы отозваны, аккаунты закрыты"
 
 #: api/models/choices/status/project.py:33
 #: api/models/choices/status/project.py:69
 #: api/models/choices/status/project.py:84
 msgid "Banned from the project"
-msgstr ""
+msgstr "Исключен:а из проекта"
 
 #: api/models/choices/status/project.py:47
 msgid "Pending"
@@ -384,11 +386,11 @@ msgstr ""
 
 #: api/models/choices/status/project.py:49
 msgid "Working, everything is OK"
-msgstr ""
+msgstr "Группа работает"
 
 #: api/models/choices/status/project.py:51
 msgid "Finished (completed the course)"
-msgstr ""
+msgstr "Группа завершила курс"
 
 #: api/models/choices/status/project.py:60
 msgid ""
@@ -398,46 +400,46 @@ msgstr ""
 
 #: api/models/choices/status/project.py:64
 msgid "Not studying, waiting for a group"
-msgstr ""
+msgstr "Ждет группу"
 
 #: api/models/choices/status/project.py:65
 msgid "Studying in a group"
-msgstr ""
+msgstr "Учится в группе"
 
 #: api/models/choices/status/project.py:75
 msgid "Not working, waiting for a group"
-msgstr ""
+msgstr "Не преподает, ждет группу"
 
 #: api/models/choices/status/project.py:76
 msgid "Working"
-msgstr ""
+msgstr "Преподает"
 
 #: api/models/choices/status/project.py:82
 msgid "Finished teaching and left the project"
-msgstr ""
+msgstr "Закончил:а преподавать, выш:ла из проекта"
 
 #: api/models/choices/status/project.py:83
 msgid "Finished teaching but remains in the project"
-msgstr ""
+msgstr "Закончил:а преподавать, остается в проекте"
 
 #: api/models/choices/status/situational.py:14
 msgid "In onboarding"
-msgstr ""
+msgstr "Проходит онбординг"
 
 #: api/models/choices/status/situational.py:17
 msgid "Has been in onboarding for too long without taking a group"
-msgstr ""
+msgstr "Долго в онбординге без набора группы"
 
 #: api/models/choices/status/situational.py:19
 #: api/models/choices/status/situational.py:43
 #: api/models/choices/status/situational.py:55
 msgid "Not responding"
-msgstr ""
+msgstr "Не отвечает"
 
 #: api/models/choices/status/situational.py:27
 msgid ""
 "Some sort of problem: needs substitute teacher, change of coordinator etc."
-msgstr ""
+msgstr "Проблема: нужна замена учителя или координатора и т.д."
 
 #: api/models/choices/status/situational.py:38
 #, python-brace-format
@@ -446,15 +448,15 @@ msgstr ""
 
 #: api/models/choices/status/situational.py:42
 msgid "Needs transfer to another group"
-msgstr ""
+msgstr "Нужен перевод в другую группу"
 
 #: api/models/choices/status/situational.py:53
 msgid "Needs a break in teaching the group, substitute teacher needed"
-msgstr ""
+msgstr "Берет перерыв, группе нужна замена"
 
 #: api/models/coordinator.py:45
 msgid "comment on additional skills"
-msgstr ""
+msgstr "Дополнительные навыки"
 
 #: api/models/coordinator.py:50
 msgid ""
@@ -473,7 +475,7 @@ msgstr ""
 #: api/models/coordinator.py:68 api/models/student.py:70
 #: api/models/teacher.py:87 api/models/teacher_under_18.py:15
 msgid "status in project"
-msgstr ""
+msgstr "Статус в проекте"
 
 #: api/models/coordinator.py:69
 msgid "status of this coordinator with regard to project as a whole"
@@ -485,7 +487,7 @@ msgstr ""
 
 #: api/models/day_and_time_slot.py:39
 msgid "day of the week"
-msgstr ""
+msgstr "День недели"
 
 #: api/models/enrollment_test.py:18
 msgid ""
@@ -495,7 +497,7 @@ msgstr ""
 
 #: api/models/group.py:28
 msgid "Former coordinators"
-msgstr ""
+msgstr "Бывшие координаторы"
 
 #: api/models/group.py:30
 msgid ""
@@ -505,7 +507,7 @@ msgstr ""
 
 #: api/models/group.py:38
 msgid "Former students"
-msgstr ""
+msgstr "Бывшие студенты"
 
 #: api/models/group.py:40
 msgid ""
@@ -515,7 +517,7 @@ msgstr ""
 
 #: api/models/group.py:48
 msgid "Former teachers"
-msgstr ""
+msgstr "Бывшие учителя"
 
 #: api/models/group.py:50
 msgid ""
@@ -541,7 +543,7 @@ msgstr ""
 
 #: api/models/personal_info.py:37
 msgid "Telegram username"
-msgstr ""
+msgstr "Ник в Телеграм"
 
 #: api/models/personal_info.py:42
 msgid "Difference between person's local time zone and UTC"
@@ -553,7 +555,7 @@ msgstr ""
 
 #: api/models/personal_info.py:48
 msgid "how did they learn about Samantha Smith's Group?"
-msgstr ""
+msgstr "Откуда услышали о Samantha Smith’s Group"
 
 #: api/models/personal_info.py:58
 msgid ""
@@ -563,11 +565,11 @@ msgstr ""
 
 #: api/models/shared_abstract/group_or_person.py:16
 msgid "Language(s) the students and teachers can speak in class"
-msgstr ""
+msgstr "Языки общения в группе (не изучения!)"
 
 #: api/models/shared_abstract/teacher_common.py:23
 msgid "comment on additional non-teaching skills"
-msgstr ""
+msgstr "Дополнительные навыки, не связанные с преподаванием"
 
 #: api/models/shared_abstract/teacher_common.py:25
 msgid ""
@@ -578,7 +580,7 @@ msgstr ""
 
 #: api/models/student.py:30
 msgid "Student id from the old database"
-msgstr ""
+msgstr "ID студента из старой базы"
 
 #: api/models/student.py:35
 msgid ""
@@ -592,15 +594,15 @@ msgstr ""
 
 #: api/models/student.py:51
 msgid "Speaking club status"
-msgstr ""
+msgstr "Статус разговорного клуба"
 
 #: api/models/student.py:52
 msgid "Is the student a member of a speaking club at the moment?"
-msgstr ""
+msgstr "Ходит ли студент:ка в разговорный клуб?"
 
 #: api/models/student.py:58
 msgid "Types of non-teaching help this student requires"
-msgstr ""
+msgstr "Помощь, которая нужна студенту"
 
 #: api/models/student.py:64
 msgid "JSON received from SmallTalk API"
@@ -623,35 +625,35 @@ msgstr ""
 
 #: api/models/teacher.py:56
 msgid "peer support: can check syllabus"
-msgstr ""
+msgstr "Метод. поддержка: проверка программы"
 
 #: api/models/teacher.py:60
 msgid "peer support: can host individual or group mentoring sessions"
-msgstr ""
+msgstr "Метод. поддержка: консультирование индивидуально или в группе"
 
 #: api/models/teacher.py:63
 msgid "peer support: can give feedback"
-msgstr ""
+msgstr "Метод. поддержка: обратная связь по уроку"
 
 #: api/models/teacher.py:67
 msgid "peer support: can help with children's groups"
-msgstr ""
+msgstr "Метод. поддержка: помощь с детскими группами"
 
 #: api/models/teacher.py:70
 msgid "peer support: can provide teaching materials"
-msgstr ""
+msgstr "Метод. поддержка: помощь с материалами"
 
 #: api/models/teacher.py:74
 msgid "peer support: can invite other teachers to their class"
-msgstr ""
+msgstr "Метод. поддержка: могу пригласить к себе на урок"
 
 #: api/models/teacher.py:78
 msgid "peer support: can work in tandem with a less experienced teacher"
-msgstr ""
+msgstr "Метод. поддержка: работа в тандеме с менее опытным преподавателем"
 
 #: api/models/teacher.py:82
 msgid "number of groups the teacher can teach simultaneously"
-msgstr ""
+msgstr "Максимальное кол-во групп одновременно"
 
 #: api/models/teacher.py:98
 msgid ""
@@ -672,11 +674,11 @@ msgstr ""
 
 #: api/models/teacher_under_18.py:29
 msgid "Teachers under 18 years of age"
-msgstr ""
+msgstr "Преподаватели младше 18 лет"
 
 #: api/templates/admin/api/coordinator/change_form.html:18
 msgid "Home"
-msgstr ""
+msgstr "На главную страницу"
 
 #: api/templates/admin/api/coordinator/change_form.html:21
 #, python-format
@@ -688,18 +690,19 @@ msgid "Please correct the error below."
 msgid_plural "Please correct the errors below."
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
 
 #: api/templates/admin/api/coordinator/change_form.html:59
 msgid "Create Log Event"
-msgstr ""
+msgstr "Создать событие журнала"
 
 #: api/templates/admin/api/coordinator/change_form.html:62
 msgid "Event Type"
-msgstr ""
+msgstr "Тип события"
 
 #: api/templates/admin/api/coordinator/change_form.html:74
 msgid "Group"
-msgstr ""
+msgstr "Группа"
 
 #: api/templates/admin/api/coordinator/change_form.html:83
 msgid "Select a group if required by the event type."
@@ -707,7 +710,7 @@ msgstr ""
 
 #: api/templates/admin/api/coordinator/change_form.html:88
 msgid "Create Event"
-msgstr ""
+msgstr "Создать событие"
 
 #: templates/admin/actions.html:12
 msgid "Run the selected action"
