@@ -11,19 +11,19 @@ Can be found at `/docs/swagger` or `/docs/redoc` after deployment (or when runni
 
 ## For developers
 
-1. Clone this repository
-2. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
-3. Run `uv sync` in the project directory to [install dependencies](https://docs.astral.sh/uv/reference/cli/#uv-sync)
-4. Copy [the sample settings file](django_webapps/settings_sample.py) to `settings.py`. For local development, you don't need to make any changes to the contents of the file.
-5. Install pre-commit hooks: `uv run pre-commit install`. They will run on files being committed. `black` and `isort` will fix the issues automatically. To check all code, run `uv run pre-commit run -a`.
-6. Create database migrations: `uv run manage.py makemigrations api`
-7. Apply database migrations: `uv run manage.py migrate`
-8. Collect static content: `uv run manage.py collectstatic`
-9. Create a superuser for admin interface: `uv run manage.py createsuperuser`
-10. Run the server locally: `uv run manage.py runserver`
-11. Whenever you register a model with django-reversion, run `uv run manage.py createinitialrevisions`.
-12. Run tests: `uv run pytest` (or `make test`)
-
+1. Clone this repository  
+2. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)  
+3. Run `uv sync` in the project directory to [install dependencies](https://docs.astral.sh/uv/reference/cli/#uv-sync)  
+4. Copy [the sample settings file](django_webapps/settings_sample.py) to `settings.py`. For local development, you don't need to make any changes to the contents of the file.  
+5. Install pre-commit hooks: `uv run pre-commit install`. They will run on files being committed. `black` and `isort` will fix the issues automatically. To check all code, run `uv run pre-commit run -a`.  
+6. **Start the required services (PostgreSQL and Redis) using Docker Compose: `docker-compose up -d`**  
+7. Create database migrations: `uv run manage.py makemigrations api`  
+8. Apply database migrations: `uv run manage.py migrate`  
+9. Collect static content: `uv run manage.py collectstatic`  
+10. Create a superuser for admin interface: `uv run manage.py createsuperuser`  
+11. Run the server locally: `uv run manage.py runserver`  
+12. Whenever you register a model with django-reversion, run `uv run manage.py createinitialrevisions`.  
+13. Run tests: `uv run pytest` (or `make test`)  
 Note that in development mode (if you don't change the settings) you will be working with an SQLite database. Since some models contain [`JSONField`](https://docs.djangoproject.com/en/4.1/ref/models/fields/#django.db.models.JSONField)s, it is required that your SQLite installation supports JSON. To check if it does, follow the instructions [here](https://code.djangoproject.com/wiki/JSON1Extension).
 
 The main page is the admin page, as no user-facing web interface is planned yet.

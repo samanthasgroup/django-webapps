@@ -1,0 +1,29 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    <li>
+      <a href="javascript:void(0);" id="toggle-filters" class="addlink">
+        Показать/Скрыть фильтры
+      </a>
+    </li>
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script type="text/javascript">
+      window.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('toggle-filters').addEventListener('click', function () {
+          const header = document.getElementById('changelist-filter-header');
+          const extra = document.getElementById('changelist-filter-extra-actions');
+          const details = document.querySelector('details[data-filter-title="teaching languages and levels"]');
+
+          [header, extra, details].forEach(el => {
+            if (el) {
+              el.style.display = (el.style.display === 'none') ? '' : 'none';
+            }
+          });
+        });
+      });
+    </script>
+{% endblock %}

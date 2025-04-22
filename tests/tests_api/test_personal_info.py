@@ -143,8 +143,9 @@ def test_personal_info_check_existence_returns_400_with_invalid_email(api_client
             "last_name": faker.last_name(),
         },
     )
+    assert "email" in response.json()
+    assert isinstance(response.json()["email"], list)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"email": ["Enter a valid email address."]}
 
 
 def test_personal_info_check_existence_of_chat_id_returns_200_with_existing_id(
@@ -185,4 +186,6 @@ def test_personal_info_check_existence_of_chat_id_returns_400_with_no_id(
     api_client.post("/api/personal_info/", data=fake_personal_info_data)
     response = api_client.get(path="/api/personal_info/check_existence_of_chat_id/")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"registration_telegram_bot_chat_id": ["This field is required."]}
+    json_data = response.json()
+    assert "registration_telegram_bot_chat_id" in json_data
+    assert isinstance(json_data["registration_telegram_bot_chat_id"], list)

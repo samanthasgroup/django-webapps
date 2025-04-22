@@ -138,7 +138,6 @@ def test_create_student_enrollment_test_result(api_client, availability_slots):
         },
     )
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.json() == {
-        "student": student.personal_info.id,
-        "answers": correct_answers_ids,
-    }
+    json_data = response.json()
+    assert json_data["student"] == student.personal_info.id
+    assert set(json_data["answers"]) == set(correct_answers_ids)

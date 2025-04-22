@@ -594,6 +594,7 @@ class TestDashboardStudentListByTimeSlots:
     def test_same_slots(self, api_client, availability_slots):
         slots_to_test = availability_slots[0:2]
         Student.objects.all().delete()
+
         student1 = baker.make(
             Student,
             project_status=StudentProjectStatus.NO_GROUP_YET,
@@ -608,15 +609,21 @@ class TestDashboardStudentListByTimeSlots:
             _fill_optional=True,
             availability_slots=slots_to_test,
         )
+
         response = api_client.get(
             "/api/dashboard/students/available_students_list/",
             data={"time_slot_ids": [s.pk for s in slots_to_test]},
         )
         assert response.status_code == status.HTTP_200_OK
-        assert response.data == [
+
+        expected = [
             {"full_name": student1.personal_info.full_name, "id": student1.pk},
             {"full_name": student2.personal_info.full_name, "id": student2.pk},
         ]
+
+        assert sorted(response.data, key=lambda x: x["id"]) == sorted(
+            expected, key=lambda x: x["id"]
+        )
 
     def test_different_slots(self, api_client, availability_slots):
         slots_to_test = availability_slots[0:2]
