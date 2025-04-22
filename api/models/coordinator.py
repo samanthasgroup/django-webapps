@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Count
+from django.utils.translation import gettext_lazy as _
 
 from api.models.auxil.constants import (
     DEFAULT_CHAR_FIELD_MAX_LEN,
@@ -41,17 +42,17 @@ class Coordinator(Person):
     additional_skills_comment = models.CharField(
         max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
         blank=True,
-        verbose_name="comment on additional skills",
+        verbose_name=_("comment on additional skills"),
     )
     is_admin = models.BooleanField(
         default=False,
-        help_text=(
+        help_text=_(
             "This field has nothing to do with accessing Django admin site. It marks coordinators "
             "that have special rights over ordinary coordinators."
         ),
     )
     is_validated = models.BooleanField(
-        help_text="Has an initial validation interview been conducted with this teacher?"
+        help_text=_("Has an initial validation interview been conducted with this teacher?")
     )
     mentor = models.ForeignKey(
         "self",
@@ -59,13 +60,13 @@ class Coordinator(Person):
         null=True,
         blank=True,
         related_name="interns",
-        help_text="mentor of this coordinator. One coordinator can have many interns",
+        help_text=_("mentor of this coordinator. One coordinator can have many interns"),
     )
     project_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=CoordinatorProjectStatus.choices,
-        verbose_name="status in project",
-        help_text="status of this coordinator with regard to project as a whole",
+        verbose_name=_("status in project"),
+        help_text=_("status of this coordinator with regard to project as a whole"),
     )
     situational_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
@@ -75,7 +76,7 @@ class Coordinator(Person):
     role_comment = models.CharField(
         max_length=DEFAULT_CHAR_FIELD_MAX_LEN,
         blank=True,
-        help_text="phrase describing the role of coordinator in project",
+        help_text=_("phrase describing the role of coordinator in project"),
     )
 
     objects = CoordinatorQuerySet.as_manager()

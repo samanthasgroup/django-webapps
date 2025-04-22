@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.choices.status import TeacherProjectStatus, TeacherSituationalStatus
@@ -11,8 +12,8 @@ class TeacherUnder18(TeacherCommon):
     project_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=TeacherProjectStatus.choices,
-        verbose_name="status in project",
-        help_text="status of this student with regard to project as a whole",
+        verbose_name=_("status in project"),
+        help_text=_("status of this student with regard to project as a whole"),
     )
     situational_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
@@ -25,4 +26,4 @@ class TeacherUnder18(TeacherCommon):
             models.Index(fields=("project_status",), name="teacher_under_18_pr_status_idx"),
             models.Index(fields=("situational_status",), name="teacher_under_18_si_status_idx"),
         ]
-        verbose_name_plural = "Teachers under 18 years of age"
+        verbose_name_plural = _("Teachers under 18 years of age")
