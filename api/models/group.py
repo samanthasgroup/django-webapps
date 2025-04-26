@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.db.models import Count, Q, QuerySet
 from django.utils.translation import gettext_lazy as _
@@ -115,6 +116,13 @@ class Group(GroupCommon):
     friday = models.TimeField(null=True, blank=True, verbose_name=_("Friday"))
     saturday = models.TimeField(null=True, blank=True, verbose_name=_("Saturday"))
     sunday = models.TimeField(null=True, blank=True, verbose_name=_("Sunday"))
+
+    alerts = GenericRelation(
+        "alerts.Alert",
+        content_type_field="content_type",
+        object_id_field="object_id",
+        related_query_name="group",
+    )
 
     class Meta:
         verbose_name = _("group")
