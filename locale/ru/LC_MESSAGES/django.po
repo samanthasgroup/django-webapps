@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-10 11:46+0000\n"
+"POT-Creation-Date: 2025-04-27 08:43+0000\n"
 "PO-Revision-Date: 2025-04-20 14:12+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -19,6 +19,38 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "X-Generator: Poedit 3.6\n"
+
+#: api/admin/student.py:72
+#, fuzzy
+#| msgid "Group"
+msgid "Has Groups"
+msgstr "Группа"
+
+#: api/admin/teacher.py:31
+msgid "Full name"
+msgstr "Полное Имя"
+
+#: api/admin/teacher.py:35
+#, fuzzy
+#| msgid "Joined the common group"
+msgid "Can take more groups"
+msgstr "Вступил:а в координаторскую"
+
+#: api/admin/teacher.py:39
+msgid "Has groups"
+msgstr "Имеет группы"
+
+#: api/admin/teacher.py:43
+msgid "Teaching languages"
+msgstr ""
+
+#: api/admin/teacher.py:47
+msgid "Availability slots"
+msgstr ""
+
+#: api/admin/teacher.py:51
+msgid "Non-teaching help provided"
+msgstr ""
 
 #: api/models/age_range.py:19
 msgid "End of age range (inclusive)"

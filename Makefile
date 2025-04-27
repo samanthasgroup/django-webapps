@@ -67,3 +67,13 @@ celery-up:
 	@echo "Starting Celery workers and beat..."
 	uv run celery -A celery_config worker --loglevel=info & \
 	uv run celery -A celery_config beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+
+
+
+# Create and compile translations
+trans-create:
+	uv run manage.py makemessages -l ru
+
+trans-comp:
+	uv run manage.py compilemessages 
+
