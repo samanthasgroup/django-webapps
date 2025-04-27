@@ -3,47 +3,129 @@
 
 # django-webapps
 
-Backend for the database, implemented in Django
+Backend for the database, implemented in Django.
 
 ## API Documentation
 
-Can be found at `/docs/swagger` or `/docs/redoc` after deployment (or when running locally).
+Available at:
 
-## For developers
+- `/docs/swagger`
+- `/docs/redoc`
 
-1. Clone this repository  
-2. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)  
-3. Run `uv sync` in the project directory to [install dependencies](https://docs.astral.sh/uv/reference/cli/#uv-sync)  
-4. Copy [the sample settings file](django_webapps/settings_sample.py) to `settings.py`. For local development, you don't need to make any changes to the contents of the file.  
-5. Install pre-commit hooks: `uv run pre-commit install`. They will run on files being committed. `black` and `isort` will fix the issues automatically. To check all code, run `uv run pre-commit run -a`.  
-6. **Start the required services (PostgreSQL and Redis) using Docker Compose: `docker-compose up -d`**  
-7. Create database migrations: `uv run manage.py makemigrations api`  
-8. Apply database migrations: `uv run manage.py migrate`  
-9. Collect static content: `uv run manage.py collectstatic`  
-10. Create a superuser for admin interface: `uv run manage.py createsuperuser`  
-11. Run the server locally: `uv run manage.py runserver`  
-12. Whenever you register a model with django-reversion, run `uv run manage.py createinitialrevisions`.  
-13. Run tests: `uv run pytest` (or `make test`)  
-Note that in development mode (if you don't change the settings) you will be working with an SQLite database. Since some models contain [`JSONField`](https://docs.djangoproject.com/en/4.1/ref/models/fields/#django.db.models.JSONField)s, it is required that your SQLite installation supports JSON. To check if it does, follow the instructions [here](https://code.djangoproject.com/wiki/JSON1Extension).
+(after deployment or when running locally).
 
-The main page is the admin page, as no user-facing web interface is planned yet.
+---
 
-That's it for developing locally. To set up a remote server during development, see e.g. [this tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-22-04).
+## For Developers
 
-### Side notes
+### Setup
 
-If pre-commit hooks produce strange errors that definitely shouldn't be there, re-installing pre-commit could help:
+1. Clone this repository.
+
+2. Install [uv](https://docs.astral.sh/uv/getting-started/installation/).
+
+3. Install dependencies:
+
+    ```bash
+    uv sync
+    ```
+
+4. Copy the environment file and configure it:
+
+    ```bash
+    cp .env.sample .env
+    ```
+
+5. Install pre-commit hooks:
+
+    ```bash
+    uv run pre-commit install
+    ```
+
+    Hooks will automatically run on commit.  
+    `black` and `isort` will fix code formatting issues.
+
+    To check all code manually:
+
+    ```bash
+    uv run pre-commit run -a
+    ```
+
+6. Start required services (PostgreSQL and Redis) using Docker Compose:
+
+    ```bash
+    docker-compose up -d
+    ```
+
+7. Create database migrations:
+
+    ```bash
+    uv run manage.py makemigrations api
+    ```
+
+8. Apply database migrations:
+
+    ```bash
+    uv run manage.py migrate
+    ```
+
+9. Collect static files:
+
+    ```bash
+    uv run manage.py collectstatic
+    ```
+
+10. Create a superuser for the admin interface:
+
+    ```bash
+    uv run manage.py createsuperuser
+    ```
+
+11. Run the server locally:
+
+    ```bash
+    uv run manage.py runserver
+    ```
+
+12. After registering a model with django-reversion, generate initial revisions:
+
+    ```bash
+    uv run manage.py createinitialrevisions
+    ```
+
+13. Run tests:
+
+    ```bash
+    uv run pytest
+    ```
+
+    Or:
+
+    ```bash
+    make test
+    ```
+
+---
+
+### Notes
+
+- By default, in development, an **SQLite** database is used.
+- Some models use [`JSONField`](https://docs.djangoproject.com/en/4.1/ref/models/fields/#django.db.models.JSONField), so your SQLite installation must support JSON.
+- To check JSON support, see [this guide](https://code.djangoproject.com/wiki/JSON1Extension).
+
+The main page is the Django admin page.  
+No user-facing web interface is planned yet.
+
+To set up a remote server for development, you can follow [this tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-22-04).
+
+---
+
+### Troubleshooting pre-commit
+
+If pre-commit hooks behave strangely, try:
 
 ```bash
 pre-commit clean
 pre-commit uninstall
 pre-commit install
 pre-commit run
-```
-
-### Licenses of 3rd-party packages
-
-_DoubleScroll_ is dual-licensed under the MIT and GPL licenses:
-
-* <http://www.opensource.org/licenses/mit-license.php>
-* <http://www.gnu.org/licenses/gpl.html>
