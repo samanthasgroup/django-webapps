@@ -1,4 +1,5 @@
 import pytz
+from dateutil import parser
 from model_bakery import baker, seq
 from rest_framework import status
 
@@ -56,15 +57,25 @@ def test_teacher_under_18_retrieve(api_client):
     ]
 
     response = api_client.get(f"/api/teachers_under_18/{teacher_under_18.personal_info.id}/")
+    response_json = response.json()
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {
+    if "status_since" in response_json:
+        response_json["status_since"] = (
+            parser.isoparse(response_json["status_since"])
+            .astimezone(pytz.utc)
+            .isoformat()
+            .replace("+00:00", "Z")
+        )
+    assert response_json == {
         "personal_info": teacher_under_18.personal_info.id,
         "comment": teacher_under_18.comment,
         "can_host_speaking_club": teacher_under_18.can_host_speaking_club,
         "teaching_languages_and_levels": languages_and_levels,
         "project_status": teacher_under_18.project_status,
         "situational_status": teacher_under_18.situational_status,
-        "status_since": teacher_under_18.status_since.isoformat().replace("+00:00", "Z"),
+        "status_since": teacher_under_18.status_since.astimezone(pytz.utc)
+        .isoformat()
+        .replace("+00:00", "Z"),
         "has_hosted_speaking_club": teacher_under_18.has_hosted_speaking_club,
         "is_validated": teacher_under_18.is_validated,
         "non_teaching_help_provided_comment": teacher_under_18.non_teaching_help_provided_comment,
