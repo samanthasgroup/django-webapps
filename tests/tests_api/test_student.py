@@ -2,6 +2,7 @@ import datetime
 
 import pytest
 import pytz
+from dateutil import parser
 from model_bakery import baker, seq
 from rest_framework import status
 
@@ -118,6 +119,13 @@ def test_student_retrieve(api_client, availability_slots):
         }
         for slot in student.availability_slots.all()
     ]
+    if "status_since" in response_json:
+        response_json["status_since"] = (
+            parser.isoparse(response_json["status_since"])
+            .astimezone(pytz.utc)
+            .isoformat()
+            .replace("+00:00", "Z")
+        )
     assert response_json == {
         "personal_info": student.personal_info.id,
         "age_range": {

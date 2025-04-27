@@ -16,7 +16,7 @@ def test_coordinator_create(api_client, faker, timestamp):
     data = {
         "personal_info": personal_info.pk,
         "comment": faker.text(),
-        "status_since": faker.date_time(tzinfo=pytz.utc),
+        "status_since": faker.date_time(tzinfo=pytz.timezone("Europe/Berlin")),
         "additional_skills_comment": faker.text(),
         "is_admin": faker.pybool(),
         "is_validated": faker.pybool(),

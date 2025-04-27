@@ -2,6 +2,7 @@ import datetime
 
 import pytest
 import pytz
+from dateutil import parser
 from model_bakery import baker, seq
 from rest_framework import status
 
@@ -65,7 +66,7 @@ def test_teacher_create(api_client, faker, timestamp):
         "can_host_speaking_club": faker.pybool(),
         "project_status": TeacherProjectStatus.NO_GROUP_YET.value,
         "situational_status": "",
-        "status_since": faker.date_time(tzinfo=pytz.utc),
+        "status_since": faker.date_time(tzinfo=pytz.timezone("Europe/Berlin")),
         "has_hosted_speaking_club": faker.pybool(),
         "is_validated": faker.pybool(),
         "non_teaching_help_provided": non_teaching_help_ids,
@@ -168,6 +169,13 @@ def test_teacher_retrieve(api_client, availability_slots):
         }
         for item in teacher.non_teaching_help_provided.all()
     ]
+    if "status_since" in response_json:
+        response_json["status_since"] = (
+            parser.isoparse(response_json["status_since"])
+            .astimezone(pytz.utc)
+            .isoformat()
+            .replace("+00:00", "Z")
+        )
     assert response_json == {
         "personal_info": teacher.personal_info.id,
         "student_age_ranges": age_ranges,

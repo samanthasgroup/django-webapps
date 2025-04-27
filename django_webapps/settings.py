@@ -1,4 +1,3 @@
-# COPY THIS FILE TO SETTINGS.PY AND FILL IN DETAILS, DELETE THIS LINE
 import os
 from pathlib import Path
 
@@ -7,25 +6,18 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
+SECRET_KEY = os.getenv("SECRET_KEY", "local-default-secret-key")
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-0295@@7_o^7w5#qe@2a!lrby7+#)5^gv&#-h9b4#*9gj2&s2e="
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS: list[str] = []
-
-# Application definition
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split(",")
 
 INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "celery_config",
+    # "alerts",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -39,6 +31,7 @@ INSTALLED_APPS = [
     "django_filters",
     "reversion",
     "django_celery_beat",
+    "django_select2",
 ]
 
 MIDDLEWARE = [
@@ -56,7 +49,7 @@ ROOT_URLCONF = "django_webapps.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR, "templates/"],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -74,51 +67,32 @@ WSGI_APPLICATION = "django_webapps.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("DB_PORT"),
+        "NAME": os.getenv("DB_NAME", "django"),
+        "USER": os.getenv("DB_USER", "django"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "password"),
+        "HOST": os.getenv("DB_HOST", "localhost"),
+        "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
+LANGUAGE_CODE = "ru"
 
-LANGUAGE_CODE = "en-us"
-
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Berlin"
 
 USE_I18N = True
-
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
+LOCALE_PATHS = [BASE_DIR / "locale"]
 
 STATIC_URL = "static/"
-STATIC_ROOT = "static/"
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+STATIC_ROOT = BASE_DIR / "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -135,45 +109,36 @@ SPECTACULAR_SETTINGS = {
     },
 }
 
-# The following is needed to be able to use annotations
-# like "viewsets.ReadOnlyModelViewSet[Teacher]" for mypy to be happy.
-
-#  If you import something from rest_framework before REST_FRAMEWORK setting,
-#  this setting will be ignored.
 from rest_framework import viewsets  # noqa
 
 django_stubs_ext.monkeypatch(
     extra_classes=[viewsets.ModelViewSet, viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet]
 )
 
-
 BAKER_CUSTOM_CLASS = "django_webapps.custom_baker.CallableM2MBaker"
 
-
-CELERY_BROKER_URL = "redis://localhost:6379/0"
-CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
-CELERY_TIMEZONE = "Europe/Berlin"
-
+CELERY_TIMEZONE = os.getenv("CELERY_TIMEZONE", "Europe/Berlin")
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://localhost:6379/1",
+        "LOCATION": os.getenv("REDIS_CACHE_DEFAULT", "redis://localhost:6379/1"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
     },
     "select2": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://localhost:6379/2",
+        "LOCATION": os.getenv("REDIS_CACHE_SELECT2", "redis://localhost:6379/2"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
     },
 }
 
-# Tell select2 which cache configuration to use:
 SELECT2_CACHE_BACKEND = "select2"

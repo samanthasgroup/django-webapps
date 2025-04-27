@@ -131,8 +131,6 @@ dmypy.json
 # Pycharm
 .idea
 
-/django_webapps/settings.py
-
 /static/
 
 .vscode/
