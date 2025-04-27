@@ -17,7 +17,7 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split(",")
 INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "celery_config",
-    "alerts",
+    # "alerts",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
