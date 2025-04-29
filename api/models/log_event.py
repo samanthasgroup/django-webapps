@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.choices.log_event_type import (
@@ -29,8 +30,8 @@ class LogEvent(models.Model):
     organized by the school.
     """
 
-    comment = models.TextField()
-    date_time = models.DateTimeField(default=timezone.now)
+    comment = models.TextField(verbose_name=_("comment"))
+    date_time = models.DateTimeField(default=timezone.now, verbose_name=_("date and time"))
 
     class Meta:
         abstract = True
@@ -43,42 +44,49 @@ class LogEvent(models.Model):
 class CoordinatorLogEvent(LogEvent):
     """Model for a log event concerning a coordinator."""
 
-    coordinator = models.ForeignKey(Coordinator, related_name="log", on_delete=models.CASCADE)
+    coordinator = models.ForeignKey(
+        Coordinator, related_name="log", on_delete=models.CASCADE, verbose_name=_("coordinator")
+    )
     group = models.ForeignKey(
         Group,
         null=True,
         blank=True,
         related_name="coordinator_log_events",
         on_delete=models.CASCADE,
+        verbose_name=_("group"),
     )
     type = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=CoordinatorLogEventType.choices,
+        verbose_name=_("event type"),
     )
 
     class Meta:
+        verbose_name = _("coordinator log event")
+        verbose_name_plural = _("coordinator log events")
+
         indexes = [
             models.Index(fields=("coordinator_id",), name="coordinator_id_idx"),
             models.Index(fields=("type",), name="coordinator_log_event_type_idx"),
         ]
 
     def __str__(self) -> str:
-        return (
-            f"{self.date_as_str}: coordinator {self.coordinator.personal_info.full_name} "
-            f"{self.get_type_display()}"
-        )
+        return f"{self.date_as_str}: coordinator {self.coordinator.personal_info.full_name} {self.get_type_display()}"
 
 
 class GroupLogEvent(LogEvent):
     """Model for a log event concerning a group."""
 
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name=_("group"))
     type = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=GroupLogEventType.choices,
+        verbose_name=_("event type"),
     )
 
     class Meta:
+        verbose_name = _("group log event")
+        verbose_name_plural = _("group log events")
         indexes = [
             models.Index(fields=("group_id",), name="group_id_idx"),
             models.Index(fields=("type",), name="group_log_event_type_idx"),
@@ -97,6 +105,7 @@ class StudentLogEvent(LogEvent):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="student_log_events_from_this_group",
+        verbose_name=_("from group"),
     )
     to_group = models.ForeignKey(
         Group,
@@ -104,23 +113,27 @@ class StudentLogEvent(LogEvent):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="student_log_events_to_this_group",
+        verbose_name=_("to group"),
     )
-    student = models.ForeignKey(Student, related_name="log", on_delete=models.CASCADE)
+    student = models.ForeignKey(
+        Student, related_name="log", on_delete=models.CASCADE, verbose_name=_("student")
+    )
     type = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=StudentLogEventType.choices
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=StudentLogEventType.choices,
+        verbose_name=_("event type"),
     )
 
     class Meta:
+        verbose_name = _("student log event")
+        verbose_name_plural = _("student log events")
         indexes = [
             models.Index(fields=("student_id",), name="student_id_idx"),
             models.Index(fields=("type",), name="student_log_event_type_idx"),
         ]
 
     def __str__(self) -> str:
-        return (
-            f"{self.date_as_str}: student {self.student.personal_info.full_name} "
-            f"{self.get_type_display()}"
-        )
+        return f"{self.date_as_str}: student {self.student.personal_info.full_name} {self.get_type_display()}"
 
 
 class TeacherLogEvent(LogEvent):
@@ -132,6 +145,7 @@ class TeacherLogEvent(LogEvent):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="teacher_log_events_from_this_group",
+        verbose_name=_("from group"),
     )
     to_group = models.ForeignKey(
         Group,
@@ -139,43 +153,51 @@ class TeacherLogEvent(LogEvent):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="teacher_log_events_to_this_group",
+        verbose_name=_("to group"),
     )
-    teacher = models.ForeignKey(Teacher, related_name="log", on_delete=models.CASCADE)
+    teacher = models.ForeignKey(
+        Teacher, related_name="log", on_delete=models.CASCADE, verbose_name=_("teacher")
+    )
     type = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=TeacherLogEventType.choices,
+        verbose_name=_("event type"),
     )
 
     class Meta:
+        verbose_name = _("teacher log event")
+        verbose_name_plural = _("teacher log events")
         indexes = [
             models.Index(fields=("teacher_id",), name="young_teacher_id_idx"),
             models.Index(fields=("type",), name="young_teach_log_event_type_idx"),
         ]
 
     def __str__(self) -> str:
-        return (
-            f"{self.date_as_str}: teacher {self.teacher.personal_info.full_name} "
-            f"{self.get_type_display()}"
-        )
+        return f"{self.date_as_str}: teacher {self.teacher.personal_info.full_name} {self.get_type_display()}"
 
 
 class TeacherUnder18LogEvent(LogEvent):
     """Model for a log event concerning a young teacher."""
 
-    teacher = models.ForeignKey(TeacherUnder18, related_name="log", on_delete=models.CASCADE)
+    teacher = models.ForeignKey(
+        TeacherUnder18,
+        related_name="log",
+        on_delete=models.CASCADE,
+        verbose_name=_("teacher under 18"),
+    )
     type = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=TeacherUnder18LogEventType.choices,
+        verbose_name=_("event type"),
     )
 
     class Meta:
+        verbose_name = _("teacher under 18 log event")
+        verbose_name_plural = _("teacher under 18 log events")
         indexes = [
             models.Index(fields=("teacher_id",), name="teacher_id_idx"),
             models.Index(fields=("type",), name="teacher_log_event_type_idx"),
         ]
 
     def __str__(self) -> str:
-        return (
-            f"{self.date_as_str}: young teacher {self.teacher.personal_info.full_name} "
-            f"{self.get_type_display()}"
-        )
+        return f"{self.date_as_str}: young teacher {self.teacher.personal_info.full_name} {self.get_type_display()}"

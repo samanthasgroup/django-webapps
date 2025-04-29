@@ -19,9 +19,11 @@ class TeacherUnder18(TeacherCommon):
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=TeacherSituationalStatus.choices,
         blank=True,
+        verbose_name=_("situational status"),
     )
 
     class Meta:
+        verbose_name = _("teacher under 18")
         indexes = [
             models.Index(fields=("project_status",), name="teacher_under_18_pr_status_idx"),
             models.Index(fields=("situational_status",), name="teacher_under_18_si_status_idx"),

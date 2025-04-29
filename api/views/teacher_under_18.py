@@ -5,9 +5,7 @@ from api.serializers import TeacherUnder18ReadSerializer, TeacherUnder18WriteSer
 from api.views.mixins import ReadWriteSerializersMixin
 
 
-class TeacherUnder18ViewSet(  # type: ignore
-    ReadWriteSerializersMixin, viewsets.ModelViewSet[TeacherUnder18]
-):
+class TeacherUnder18ViewSet(ReadWriteSerializersMixin, viewsets.ModelViewSet[TeacherUnder18]):  # type: ignore
     """TeacherUnder18 viewset."""
 
     lookup_field = "personal_info_id"

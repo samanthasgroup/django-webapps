@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from api.models.auxil.constants import DEFAULT_CHAR_FIELD_MAX_LEN
 from api.models.choices.non_teaching_help_type import NonTeachingHelpType
@@ -12,9 +13,19 @@ class NonTeachingHelp(models.Model):
     """
 
     id = models.CharField(
-        max_length=20, primary_key=True, choices=NonTeachingHelpType.choices
-    )  # for easier connection with bot
-    name = models.CharField(max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True)
+        max_length=20,
+        primary_key=True,
+        choices=NonTeachingHelpType.choices,
+        verbose_name=_("help type id"),
+    )
+
+    name = models.CharField(
+        max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True, verbose_name=_("name")
+    )
+
+    class Meta:
+        verbose_name = _("non-teaching help")
+        verbose_name_plural = _("non-teaching helps")
 
     def __str__(self) -> str:
         return self.name

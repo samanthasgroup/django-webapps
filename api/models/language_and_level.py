@@ -15,7 +15,11 @@ class Language(models.Model):
     """Model for languages that students learn and teachers teach."""
 
     id = models.CharField(max_length=2, primary_key=True, verbose_name=_("locale"))
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, verbose_name=_("name"))
+
+    class Meta:
+        verbose_name = _("language")
+        verbose_name_plural = _("languages")
 
     def __str__(self) -> str:
         return self.name
@@ -28,7 +32,11 @@ class LanguageLevel(models.Model):
     # has a many-to-many relationship to LanguageLevel, which requires a table.
 
     # no need for auto-incrementing ID here as level is only 2 chars long
-    id = models.CharField(max_length=2, primary_key=True)
+    id = models.CharField(max_length=2, primary_key=True, verbose_name=_("level id"))
+
+    class Meta:
+        verbose_name = _("language level")
+        verbose_name_plural = _("language levels")
 
     def __str__(self) -> str:
         return self.id
@@ -45,11 +53,12 @@ class LanguageAndLevel(models.Model):
     each at different level(s).
     """
 
-    language = models.ForeignKey(Language, on_delete=models.CASCADE)
-    level = models.ForeignKey(LanguageLevel, on_delete=models.CASCADE)
+    language = models.ForeignKey(Language, on_delete=models.CASCADE, verbose_name=_("language"))
+    level = models.ForeignKey(LanguageLevel, on_delete=models.CASCADE, verbose_name=_("level"))
 
     class Meta:
-        verbose_name_plural = "Languages with levels"
+        verbose_name = _("language with level")
+        verbose_name_plural = _("languages with levels")
 
     def __str__(self) -> str:
         return f"{self.language} {self.level}"

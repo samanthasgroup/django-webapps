@@ -15,12 +15,13 @@ class AgeRange(models.Model):
     age ranges must match the boundaries of the smaller ones.
     """
 
-    age_from = models.PositiveSmallIntegerField()
+    age_from = models.PositiveSmallIntegerField(verbose_name=_("Start of age range"))
     age_to = models.PositiveSmallIntegerField(verbose_name=_("End of age range (inclusive)"))
     type = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=AgeRangeType.choices,
-        help_text=_("who/what is this range designed for"),
+        verbose_name=_("Type of age range"),
+        help_text=_("Who or what is this range designed for"),
     )
 
     class Meta:

@@ -57,8 +57,7 @@ class StudentProjectStatus(models.TextChoices):
     NEEDS_INTERVIEW_TO_DETERMINE_LEVEL = (
         "needs_interview_to_determine_level",
         _(
-            "Requires oral interview to determine language level"
-            "before getting 'no_group_yet' status"
+            "Requires oral interview to determine language levelbefore getting 'no_group_yet' status"
         ),
     )
     NO_GROUP_YET = "no_group_yet", _("Not studying, waiting for a group")

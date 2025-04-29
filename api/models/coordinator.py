@@ -38,13 +38,18 @@ class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
 class Coordinator(Person):
     """Model for a coordinator."""
 
-    legacy_cid = models.IntegerField(null=True, help_text="Coordinator id from the old database")
+    legacy_cid = models.IntegerField(
+        verbose_name=_("Legacy Coordinator ID"),
+        null=True,
+        help_text=_("Coordinator ID from the old database"),
+    )
     additional_skills_comment = models.CharField(
-        max_length=DEFAULT_CHAR_FIELD_MAX_LEN,  # prefer this to TextField for a better search
+        max_length=DEFAULT_CHAR_FIELD_MAX_LEN,
         blank=True,
-        verbose_name=_("comment on additional skills"),
+        verbose_name=_("Comment on additional skills"),
     )
     is_admin = models.BooleanField(
+        verbose_name=_("Is admin (special rights)"),
         default=False,
         help_text=_(
             "This field has nothing to do with accessing Django admin site. It marks coordinators "
@@ -52,7 +57,8 @@ class Coordinator(Person):
         ),
     )
     is_validated = models.BooleanField(
-        help_text=_("Has an initial validation interview been conducted with this teacher?")
+        verbose_name=_("Validated"),
+        help_text=_("Has an initial validation interview been conducted with this teacher?"),
     )
     mentor = models.ForeignKey(
         "self",
@@ -60,23 +66,26 @@ class Coordinator(Person):
         null=True,
         blank=True,
         related_name="interns",
-        help_text=_("mentor of this coordinator. One coordinator can have many interns"),
+        verbose_name=_("Mentor"),
+        help_text=_("Mentor of this coordinator. One coordinator can have many interns."),
     )
     project_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=CoordinatorProjectStatus.choices,
-        verbose_name=_("status in project"),
-        help_text=_("status of this coordinator with regard to project as a whole"),
+        verbose_name=_("Status in project"),
+        help_text=_("Status of this coordinator with regard to project as a whole"),
     )
     situational_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=CoordinatorSituationalStatus.choices,
         blank=True,
+        verbose_name=_("Situational status"),
     )
     role_comment = models.CharField(
         max_length=DEFAULT_CHAR_FIELD_MAX_LEN,
         blank=True,
-        help_text=_("phrase describing the role of coordinator in project"),
+        verbose_name=_("Role comment"),
+        help_text=_("Phrase describing the role of coordinator in project"),
     )
 
     objects = CoordinatorQuerySet.as_manager()
@@ -89,6 +98,8 @@ class Coordinator(Person):
             models.Index(fields=("project_status",), name="coordinator_pr_status_idx"),
             models.Index(fields=("situational_status",), name="coordinator_si_status_idx"),
         ]
+        verbose_name = _("Coordinator")
+        verbose_name_plural = _("Coordinators")
 
     @property
     def has_enough_groups(self) -> bool:

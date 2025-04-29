@@ -117,8 +117,8 @@ class DashboardTeacherViewSet(
         },
     )
     @action(detail=True, methods=["post"])
-    def expelled(  # noqa: ARG002
-        self, request: Request, personal_info_id: int  # noqa: ARG002
+    def expelled(
+        self, request: Request, personal_info_id: int  # noqa: ARG002  # noqa: ARG002
     ) -> Response:
         teacher = self.get_object()
         TeacherProcessor.expelled(teacher)
@@ -161,7 +161,7 @@ class DashboardTeacherViewSet(
         },
     )
     @action(detail=True, methods=["post"])
-    def finished_and_leaving(  # noqa: ARG002
+    def finished_and_leaving(
         self, request: Request, personal_info_id: int  # noqa: ARG002
     ) -> Response:
         teacher = self.get_object()

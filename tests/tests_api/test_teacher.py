@@ -454,9 +454,9 @@ class TestDashboardTeacherReturnedFromLeave:
             "/api/teachers/",
         ],
     )
-    def test_with_group(  # noqa: PLR0913
+    def test_with_group(
         self, api_client, availability_slots, timestamp, active_group, endpoint
-    ):
+    ):  # noqa: PLR0913
         teacher = baker.make(
             Teacher,
             make_m2m=True,
