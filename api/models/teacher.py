@@ -30,15 +30,20 @@ class TeacherQuerySet(models.QuerySet["Teacher"]):
 class Teacher(TeacherCommon):
     """Model for an adult teacher that can teach groups."""
 
-    legacy_tid = models.IntegerField(null=True, help_text="Teacher id from the old database")
-    availability_slots = models.ManyToManyField(DayAndTimeSlot)
-
+    legacy_tid = models.IntegerField(
+        null=True,
+        help_text=_("Teacher id from the old database"),
+        verbose_name=_("legacy teacher id"),
+    )
+    availability_slots = models.ManyToManyField(
+        DayAndTimeSlot, verbose_name=_("availability slots")
+    )
     has_prior_teaching_experience = models.BooleanField(
         default=False,
         help_text=_(
-            "has the applicant already worked as a teacher before applying at Samantha "
-            "Smith's Group?"
+            "Has the applicant already worked as a teacher before applying at Samantha Smith's Group?"
         ),
+        verbose_name=_("prior teaching experience"),
     )
     non_teaching_help_provided = models.ManyToManyField(
         NonTeachingHelp,
@@ -79,7 +84,9 @@ class Teacher(TeacherCommon):
     )
 
     simultaneous_groups = models.PositiveSmallIntegerField(
-        default=1, help_text=_("number of groups the teacher can teach simultaneously")
+        default=1,
+        help_text=_("Number of groups the teacher can teach simultaneously"),
+        verbose_name=_("simultaneous groups"),
     )
     project_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
@@ -91,28 +98,33 @@ class Teacher(TeacherCommon):
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=TeacherSituationalStatus.choices,
         blank=True,
+        verbose_name=_("situational status"),
     )
     student_age_ranges = models.ManyToManyField(
         AgeRange,
         help_text=_(
-            "age ranges of students that the teacher is willing to teach. "
+            "Age ranges of students that the teacher is willing to teach. "
             "The 'from's and 'to's of these ranges are wider than those the students choose "
             "for themselves."
         ),
+        verbose_name=_("student age ranges"),
     )
     weekly_frequency_per_group = models.PositiveSmallIntegerField(
         help_text=_(
-            "number of times per week the teacher can have classes with each group. "
+            "Number of times per week the teacher can have classes with each group. "
             "This column will be ignored if the teacher currently doesn't want to teach any "
             "groups (in which case the column 'simultaneous groups' will have value 0). The "
             "value of frequency column does NOT have to be 0 in this case. Maybe the teacher will "
             "start (or return to) group studies and the frequency column will become relevant."
-        )
+        ),
+        verbose_name=_("weekly frequency per group"),
     )
 
     objects = TeacherQuerySet.as_manager()
 
     class Meta:
+        verbose_name = _("teacher")
+        verbose_name_plural = _("teachers")
         constraints = [
             models.UniqueConstraint(fields=["legacy_tid"], name="legacy_tid"),
         ]

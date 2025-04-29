@@ -139,9 +139,7 @@ class DashboardStudentViewSet(
         },
     )
     @action(detail=True, methods=["post"])
-    def expelled(  # noqa: ARG002
-        self, request: Request, personal_info_id: int  # noqa: ARG002
-    ) -> Response:
+    def expelled(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
         student = self.get_object()
         StudentProcessor.expelled(student)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -235,7 +233,7 @@ class DashboardStudentViewSet(
         },
     )
     @action(detail=True, methods=["post"])
-    def offer_join_group(  # noqa: ARG002
+    def offer_join_group(
         self, request: Request, personal_info_id: int  # noqa: ARG002
     ) -> Response:
         student = self.get_object()
@@ -259,7 +257,7 @@ class DashboardStudentViewSet(
         },
     )
     @action(detail=True, methods=["post"])
-    def put_in_waiting_queue(  # noqa: ARG002
+    def put_in_waiting_queue(
         self, request: Request, personal_info_id: int  # noqa: ARG002
     ) -> Response:
         student = self.get_object()

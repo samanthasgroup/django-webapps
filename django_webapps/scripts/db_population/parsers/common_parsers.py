@@ -201,10 +201,11 @@ def parse_availability_slots(
     re_result = re.search(regex_till, slot_str)
     if re_result:
         re_groups = re_result.groups()
-        if re_groups[0] in ["с", "после", "from"]:
-            range_to_fit = (int(re_groups[1]), 21)
-        else:
-            range_to_fit = (5, int(re_groups[1]))
+        range_to_fit = (
+            (int(re_groups[1]), 21)
+            if re_groups[0] in ["с", "после", "from"]
+            else (5, int(re_groups[1]))
+        )
         result.extend(find_best_fits(range_to_fit))
     if len(result) > 0:
         return result

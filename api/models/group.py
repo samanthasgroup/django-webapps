@@ -17,10 +17,16 @@ class GroupCommon(GroupOrPerson):
     """Abstract model for attributes shared by regular groups and speaking clubs."""
 
     # %(class)ss will produce "groups" for Group and "speakingclubs" for SpeakingClub
-    coordinators = models.ManyToManyField(Coordinator, related_name="%(class)ss")
-    students = models.ManyToManyField(Student, related_name="%(class)ss")
-    teachers = models.ManyToManyField(Teacher, related_name="%(class)ss")
-    comment = models.TextField(blank=True)
+    coordinators = models.ManyToManyField(
+        Coordinator, related_name="%(class)ss", verbose_name=_("coordinators")
+    )
+    students = models.ManyToManyField(
+        Student, related_name="%(class)ss", verbose_name=_("students")
+    )
+    teachers = models.ManyToManyField(
+        Teacher, related_name="%(class)ss", verbose_name=_("teachers")
+    )
+    comment = models.TextField(blank=True, verbose_name=_("comment"))
     coordinators_former = models.ManyToManyField(
         Coordinator,
         blank=True,
@@ -54,7 +60,9 @@ class GroupCommon(GroupOrPerson):
 
     # group chat created manually by the coordinator/teacher
     # null=True due to unqiue constraint and we can not use empty string in this case
-    telegram_chat_url = models.URLField(blank=True, null=True)  # noqa: DJ001
+    telegram_chat_url = models.URLField(  # noqa: DJ001
+        blank=True, null=True, verbose_name=_("telegram chat URL")
+    )
 
     class Meta:
         abstract = True
@@ -64,38 +72,53 @@ class GroupCommon(GroupOrPerson):
 class Group(GroupCommon):
     """Model for a regular language group."""
 
-    legacy_gid = models.IntegerField(null=True, help_text="Group id from the old database")
-    availability_slots_for_auto_matching = models.ManyToManyField(DayAndTimeSlot)
-    is_for_staff_only = models.BooleanField(default=False)
-    language_and_level = models.ForeignKey(LanguageAndLevel, on_delete=models.PROTECT)
-    lesson_duration_in_minutes = models.PositiveSmallIntegerField()
+    legacy_gid = models.IntegerField(
+        null=True, help_text=_("Group id from the old database"), verbose_name=_("legacy group id")
+    )
+    availability_slots_for_auto_matching = models.ManyToManyField(
+        DayAndTimeSlot, verbose_name=_("availability slots for auto-matching")
+    )
+    is_for_staff_only = models.BooleanField(default=False, verbose_name=_("is for staff only"))
+    language_and_level = models.ForeignKey(
+        LanguageAndLevel, on_delete=models.PROTECT, verbose_name=_("language and level")
+    )
+    lesson_duration_in_minutes = models.PositiveSmallIntegerField(
+        verbose_name=_("lesson duration (minutes)")
+    )
     project_status = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, choices=GroupProjectStatus.choices
+        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
+        choices=GroupProjectStatus.choices,
+        verbose_name=_("project status"),
     )
     situational_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=GroupSituationalStatus.choices,
         blank=True,
+        verbose_name=_("situational status"),
     )
     status_since = models.DateTimeField(
-        help_text=_("date and time of last change of project-level or situational status")
+        help_text=_("date and time of last change of project-level or situational status"),
+        verbose_name=_("status since"),
     )
-    start_date = models.DateField(null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True, verbose_name=_("start date"))
+
     # this field could be useful for overview, but can be filled automatically when
     # a corresponding log event is created:
-    end_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True, verbose_name=_("end date"))
 
     # some research showed that it's better to store the schedule not in a single text field
     # with some pre-defined syntax, but in 7 columns, one per day of the week
-    monday = models.TimeField(null=True, blank=True)
-    tuesday = models.TimeField(null=True, blank=True)
-    wednesday = models.TimeField(null=True, blank=True)
-    thursday = models.TimeField(null=True, blank=True)
-    friday = models.TimeField(null=True, blank=True)
-    saturday = models.TimeField(null=True, blank=True)
-    sunday = models.TimeField(null=True, blank=True)
+    monday = models.TimeField(null=True, blank=True, verbose_name=_("Monday"))
+    tuesday = models.TimeField(null=True, blank=True, verbose_name=_("Tuesday"))
+    wednesday = models.TimeField(null=True, blank=True, verbose_name=_("Wednesday"))
+    thursday = models.TimeField(null=True, blank=True, verbose_name=_("Thursday"))
+    friday = models.TimeField(null=True, blank=True, verbose_name=_("Friday"))
+    saturday = models.TimeField(null=True, blank=True, verbose_name=_("Saturday"))
+    sunday = models.TimeField(null=True, blank=True, verbose_name=_("Sunday"))
 
     class Meta:
+        verbose_name = _("group")
+        verbose_name_plural = _("groups")
         constraints = [
             models.UniqueConstraint(fields=["legacy_gid"], name="legacy_gid"),
             models.UniqueConstraint(fields=["telegram_chat_url"], name="telegram_chat_url"),
@@ -142,9 +165,13 @@ class SpeakingClub(GroupCommon):
         verbose_name=_("Is this a speaking club for children?"), default=False
     )
     # a speaking club has no fixed level, so putting language only
-    language = models.ForeignKey(Language, on_delete=models.PROTECT)
+    language = models.ForeignKey(Language, on_delete=models.PROTECT, verbose_name=_("language"))
     # in addition to regular teachers, a speaking club can have young teachers
-    teachers_under_18 = models.ManyToManyField(TeacherUnder18)
+    teachers_under_18 = models.ManyToManyField(TeacherUnder18, verbose_name=_("teachers under 18"))
+
+    class Meta:
+        verbose_name = _("speaking club")
+        verbose_name_plural = _("speaking clubs")
 
     def __str__(self) -> str:
         category = "children" if self.is_for_children else "adults"

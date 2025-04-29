@@ -27,23 +27,32 @@ class StudentQuerySet(models.QuerySet["Student"]):
 class Student(Person):
     """Model for a student."""
 
-    legacy_sid = models.IntegerField(null=True, help_text=_("Student id from the old database"))
+    legacy_sid = models.IntegerField(
+        null=True,
+        help_text=_("Student id from the old database"),
+        verbose_name=_("legacy student id"),
+    )
     age_range = models.ForeignKey(
         AgeRange,
         on_delete=models.PROTECT,
         help_text=_(
-            "We do not ask students for their exact age. "
-            "They choose an age range when registering with us."
+            "We do not ask students for their exact age. They choose an age range when registering with us."
         ),
+        verbose_name=_("age range"),
     )
-    availability_slots = models.ManyToManyField(DayAndTimeSlot)
+    availability_slots = models.ManyToManyField(
+        DayAndTimeSlot, verbose_name=_("availability slots")
+    )
     # irrelevant if student doesn't want to learn English, hence optional
-    can_read_in_english = models.BooleanField(null=True, blank=True)
+    can_read_in_english = models.BooleanField(
+        null=True, blank=True, verbose_name=_("can read in English")
+    )
     children = models.ManyToManyField(
         "self",
         blank=True,
         symmetrical=False,
         related_name="parents",
+        verbose_name=_("children"),
         help_text=_("children of this student that are also studying at SSG"),
     )
     is_member_of_speaking_club = models.BooleanField(
@@ -61,9 +70,11 @@ class Student(Person):
     # JSONField because this will come from external API, so it's good to be protected from changes
     # Just a reminder: the written test is a model with ForeignKey to Student, no field needed here
     smalltalk_test_result = models.JSONField(
-        null=True, blank=True, help_text=_("JSON received from SmallTalk API")
+        null=True,
+        blank=True,
+        verbose_name=_("SmallTalk test result"),
+        help_text=_("JSON received from SmallTalk API"),
     )
-
     project_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=StudentProjectStatus.choices,
@@ -74,14 +85,19 @@ class Student(Person):
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=StudentSituationalStatus.choices,
         blank=True,
+        verbose_name=_("situational status"),
     )
 
     # The general rule is that one student can only learn one language,
     # but we don't want to limit this in the database.
-    teaching_languages_and_levels = models.ManyToManyField(LanguageAndLevel)
+    teaching_languages_and_levels = models.ManyToManyField(
+        LanguageAndLevel, verbose_name=_("teaching languages and levels")
+    )
     objects = StudentQuerySet.as_manager()
 
     class Meta:
+        verbose_name = _("student")
+        verbose_name_plural = _("students")
         constraints = [
             models.UniqueConstraint(fields=["legacy_sid"], name="legacy_sid"),
         ]

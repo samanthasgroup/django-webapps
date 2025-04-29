@@ -90,7 +90,7 @@ asyncio_mode = "auto"
 addopts = "-ra -v --tb=short"
 
 [tool.ruff]
-line-length = 99
+line-length = 120
 exclude = ["api/migrations"]
 lint.per-file-ignores = {"__init__.py" = ["F401"]}
 # Pyflakes and pycodestyle Error (included by default without explicit "select"),
