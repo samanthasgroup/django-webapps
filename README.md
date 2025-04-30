@@ -109,10 +109,6 @@ Available at:
 
 ### Notes
 
-- By default, in development, an **SQLite** database is used.
-- Some models use [`JSONField`](https://docs.djangoproject.com/en/4.1/ref/models/fields/#django.db.models.JSONField), so your SQLite installation must support JSON.
-- To check JSON support, see [this guide](https://code.djangoproject.com/wiki/JSON1Extension).
-
 The main page is the Django admin page.  
 No user-facing web interface is planned yet.
 
