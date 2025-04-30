@@ -5,7 +5,6 @@ from django.utils.translation import gettext_lazy as _
 class CoordinatorLogEventType(models.TextChoices):
     APPLIED = "applied", _("Applied for the role")
     JOINED = "joined", _("Joined the common group")
-    STARTED_ONBOARDING = "onboarding_start", _("Joined the onboarding group")
     TOOK_NEW_GROUP = (
         "took_new_group",
         _("Took a new group (not transferred from another coordinator)"),

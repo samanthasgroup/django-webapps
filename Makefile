@@ -1,3 +1,6 @@
+start:
+	uv run manage.py runserver
+
 test:
 	uv run pytest
 
@@ -6,7 +9,7 @@ lint:
 
 makemigrations:
 	uv run manage.py makemigrations
-	$(MAKE) generate-erd
+	# $(MAKE) generate-erd
 
 migrate:
 	uv run manage.py migrate
@@ -53,7 +56,6 @@ generate-erd:
 	rm erd_core.dot
 
 
-
 # Celery worker
 celery:
 	# uv run celery -A django_webapps worker --loglevel=info
@@ -67,7 +69,6 @@ celery-up:
 	@echo "Starting Celery workers and beat..."
 	uv run celery -A celery_config worker --loglevel=info & \
 	uv run celery -A celery_config beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
-
 
 
 # Create and compile translations

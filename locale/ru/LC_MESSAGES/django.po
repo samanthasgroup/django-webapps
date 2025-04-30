@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-29 12:31+0200\n"
+"POT-Creation-Date: 2025-04-30 15:25+0200\n"
 "PO-Revision-Date: 2025-04-20 14:12+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -103,10 +103,6 @@ msgstr "Подал:а заявку"
 #: api/models/choices/log_event_type.py:7
 msgid "Joined the common group"
 msgstr "Вступил:а в координаторскую"
-
-#: api/models/choices/log_event_type.py:8
-msgid "Joined the onboarding group"
-msgstr ""
 
 #: api/models/choices/log_event_type.py:11
 msgid "Took a new group (not transferred from another coordinator)"

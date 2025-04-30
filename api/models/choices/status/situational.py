@@ -11,7 +11,6 @@ from api.models.auxil.constants import STUDENT_CLASS_MISS_LIMIT
 class CoordinatorSituationalStatus(models.TextChoices):
     """Enumeration of possible transient statuses of a coordinator."""
 
-    ONBOARDING = "onboarding", _("In onboarding")
     STALE = (
         "onboarding_stale",
         _("Has been in onboarding for too long without taking a group"),

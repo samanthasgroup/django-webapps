@@ -16,7 +16,7 @@ from api.models.choices.log_event_type import (
     StudentLogEventType,
     TeacherLogEventType,
 )
-from api.models.choices.status import CoordinatorProjectStatus, CoordinatorSituationalStatus
+from api.models.choices.status import CoordinatorProjectStatus
 from api.models.choices.status.situational import CoordinatorSituationalStatusOrEmpty
 
 
@@ -98,11 +98,6 @@ class CoordinatorAdminLogEventCreator:
         match event_type:
             case CoordinatorLogEventType.APPLIED | CoordinatorLogEventType.JOINED:
                 return CoordinatorProjectStatus.PENDING, ""
-            case CoordinatorLogEventType.STARTED_ONBOARDING:
-                return (
-                    CoordinatorProjectStatus.WORKING_BELOW_THRESHOLD,
-                    CoordinatorSituationalStatus.ONBOARDING,
-                )
             case CoordinatorLogEventType.GONE_ON_LEAVE:
                 return CoordinatorProjectStatus.ON_LEAVE, ""
             case CoordinatorLogEventType.LEFT_PREMATURELY:
