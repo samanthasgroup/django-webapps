@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.db.models import Count
 from django.utils.translation import gettext_lazy as _
@@ -94,6 +95,13 @@ class Student(Person):
         LanguageAndLevel, verbose_name=_("teaching languages and levels")
     )
     objects = StudentQuerySet.as_manager()
+
+    alerts = GenericRelation(
+        "alerts.Alert",
+        content_type_field="content_type",
+        object_id_field="object_id",
+        related_query_name="student",
+    )
 
     class Meta:
         verbose_name = _("student")

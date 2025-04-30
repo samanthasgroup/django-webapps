@@ -6,11 +6,15 @@ from django import forms
 from django.contrib import admin, messages
 from django.contrib.admin import ModelAdmin, SimpleListFilter
 from django.contrib.admin.helpers import ActionForm
-from django.db.models import QuerySet
+from django.contrib.contenttypes.admin import GenericTabularInline
+from django.db.models import Count, QuerySet
 from django.http import HttpRequest, HttpResponseRedirect
+from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 
+from alerts.models import Alert
 from api import models
 from api.models import Coordinator, Group
 from api.models.choices.log_event_type import (
@@ -18,6 +22,50 @@ from api.models.choices.log_event_type import (
     CoordinatorLogEventType,
 )
 from api.processors.auxil.log_event_creator import CoordinatorAdminLogEventCreator
+
+DETAILS_PREVIEW_LENGTH: int = 30
+
+
+class AlertInline(GenericTabularInline):
+    """Inline admin for Alerts on a related object page."""
+
+    model = Alert  # Указываем модель Alert
+    fields = (
+        "alert_type",
+        "created_at",
+        "is_resolved",
+        "resolved_at",
+        "details_link",
+    )
+    readonly_fields = ("alert_type", "created_at", "resolved_at", "details_link")
+    extra = 0
+    ordering = (
+        "-is_resolved",
+        "-created_at",
+    )  # Сначала активные, потом новые
+    ct_field = "content_type"  # Имя поля ContentType в Alert
+    ct_fk_field = "object_id"  # Имя поля ID объекта в Alert
+
+    # Опционально: ссылка на страницу деталей алерта
+
+    @admin.display(description="Details")
+    def details_link(self, obj: Alert) -> str:
+        if not obj.pk:
+            return "-"
+        link: str = reverse(
+            f"admin:{obj._meta.app_label}_{obj._meta.model_name}_change", args=[obj.pk]
+        )
+        details_preview: str = (
+            (obj.details[:DETAILS_PREVIEW_LENGTH] + "...")
+            if len(obj.details) > DETAILS_PREVIEW_LENGTH
+            else obj.details
+        )
+        return format_html('<a href="{}">{}</a>', link, details_preview or "View/Edit")
+
+    # Показываем только активные, если нужно
+    # def get_queryset(self, request):
+    #    qs = super().get_queryset(request)
+    #    return qs.filter(is_resolved=False)
 
 
 class AdminStatusFilter(SimpleListFilter):
@@ -125,6 +173,7 @@ class CoordinatorAdmin(VersionAdmin):
         "mentor",
         "get_comment",
         "get_role_comment",
+        "display_active_alerts_count",
     )
 
     ordering = ["personal_info_id"]
@@ -136,6 +185,8 @@ class CoordinatorAdmin(VersionAdmin):
         "situational_status",
         "personal_info__communication_language_mode",
         "mentor",
+        ("alerts__is_resolved", admin.BooleanFieldListFilter),
+        ("alerts__alert_type", admin.AllValuesFieldListFilter),
     )
 
     search_fields = (
@@ -154,6 +205,7 @@ class CoordinatorAdmin(VersionAdmin):
         CoordinatorActiveGroupsInline,
         CoordinatorFormerGroupsInline,
         CoordinatorLogEventsInline,
+        AlertInline,
     ]
     # action_form = GroupActionForm
 
@@ -224,8 +276,23 @@ class CoordinatorAdmin(VersionAdmin):
     def get_role_comment(self, coordinator: Coordinator) -> str:
         return coordinator.role_comment
 
-    def get_queryset(self, _: HttpRequest) -> QuerySet[models.Coordinator]:
-        return models.Coordinator.objects.annotate_with_group_count().prefetch_related("groups")
+    @admin.display(description=_("Active Alerts"), ordering="alerts__created_at")
+    def display_active_alerts_count(self, obj: Coordinator) -> int | str:
+        """Displays the count of active alerts."""
+        count: int = obj.alerts.filter(is_resolved=False).count()
+        return count if count > 0 else "-"
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Coordinator]:
+        # Оптимизация 1: аннотация с количеством групп
+        # Оптимизация 2: предзагрузка групп
+        # Оптимизация 3: предзагрузка алертов (если нужно)
+        return (
+            super()
+            .get_queryset(request)
+            .annotate(group_count=Count("groups"))
+            .prefetch_related("groups")
+            # .prefetch_related('alerts')
+        )
 
     def active_groups_count(self, obj: models.Coordinator) -> int:
         return obj.groups.count()
