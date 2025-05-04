@@ -1,15 +1,20 @@
 from __future__ import annotations
 
+from typing import Any
+
 from django import forms
 from django.contrib import admin
-from django.db.models import QuerySet
+from django.db.models import Count, Q, QuerySet
 from django.http import HttpRequest
+from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 
 from api import models
+from api.admin.auxil.mixin import CoordinatorRestrictedAdminMixin
 from api.models import Student
+from api.models.coordinator import Coordinator
 
 
 class StudentAdminForm(forms.ModelForm[models.Student]):
@@ -32,7 +37,7 @@ class StudentAdminForm(forms.ModelForm[models.Student]):
 
 
 @admin.register(Student)
-class StudentAdmin(VersionAdmin):
+class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
     form = StudentAdminForm
 
     readonly_fields = (
@@ -49,6 +54,7 @@ class StudentAdmin(VersionAdmin):
         "is_member_of_speaking_club",
         "has_groups_display",
         "teaching_languages_and_levels_display",
+        "coordinators_display",
     )
 
     list_filter = ("teaching_languages_and_levels",)
@@ -63,7 +69,12 @@ class StudentAdmin(VersionAdmin):
     # change_list_template = "admin/api/students/change_list.html"
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Student]:
-        return super().get_queryset(request).prefetch_related("groups", "children")
+
+        return (
+            super()
+            .get_queryset(request)
+            .prefetch_related("groups", "children", "groups__coordinators__personal_info")
+        )
 
     @admin.display(description="Full Name")
     def get_full_name(self, obj: Student) -> str:
@@ -76,6 +87,20 @@ class StudentAdmin(VersionAdmin):
     @admin.display(description="Teaching languages")
     def teaching_languages_and_levels_display(self, obj: Student) -> str:
         return ", ".join([str(lang) for lang in obj.teaching_languages_and_levels.all()])
+
+    @admin.display(description=_("Coordinators"))
+    def coordinators_display(self, obj: Student) -> str | None:
+        coordinators = Coordinator.objects.filter(groups__in=obj.groups.all()).distinct()
+        if not coordinators:
+            return str(_("No coordinators"))
+
+        links = []
+        for coordinator in coordinators:
+            url = reverse("admin:api_coordinator_change", args=[coordinator.pk])
+            full_name = coordinator.personal_info.full_name
+            links.append(format_html('<a href="{}">{}</a>', url, full_name))
+
+        return format_html(", ".join(links))
 
     def enrollment_tests_summary(self, obj: Student) -> str:
         result = ""
@@ -101,3 +126,8 @@ class StudentAdmin(VersionAdmin):
                 result += f"{answer.question}, answer: <b>{answer}</b>, <br>"
             result += "<br><br>"
         return format_html(result)
+
+    def filter_for_coordinator(self, qs: QuerySet[Any], coordinator: Coordinator) -> QuerySet[Any]:
+        """Filter students: only from groups of coordinator or without groups."""
+        qs = qs.annotate(group_count=Count("groups"))
+        return qs.filter(Q(groups__coordinators=coordinator) | Q(group_count=0)).distinct()

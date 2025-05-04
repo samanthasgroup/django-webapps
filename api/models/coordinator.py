@@ -1,6 +1,7 @@
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count, OneToOneField
 from django.utils.translation import gettext_lazy as _
 
 from api.models.auxil.constants import (
@@ -94,6 +95,7 @@ class Coordinator(Person):
         object_id_field="object_id",
         related_query_name="coordinator",
     )
+    user = OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
 
     objects = CoordinatorQuerySet.as_manager()
 

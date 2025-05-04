@@ -8,6 +8,7 @@ from .group import GroupAdmin
 from .personal_info import PersonalInfoAdmin
 from .student import StudentAdmin
 from .teacher import TeacherAdmin
+from .user import CustomUserAdmin
 
 admin.site.register(models.Coordinator, CoordinatorAdmin)
 admin.site.register(models.PersonalInfo, PersonalInfoAdmin)

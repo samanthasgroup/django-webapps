@@ -1,9 +1,12 @@
 from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.urls import reverse
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from api.models import Teacher
+from api.models.coordinator import Coordinator
 
 
 @admin.register(Teacher)
@@ -15,8 +18,9 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "has_groups_display",
         "can_host_speaking_club",
         "teaching_languages_and_levels_display",
-        "availability_slots_display",
+        # "availability_slots_display",
         "non_teaching_help_provided_display",
+        "coordinators_display",
     )
 
     search_fields: tuple[str, ...] = (
@@ -26,7 +30,9 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
     )
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Teacher]:
-        return super().get_queryset(request)
+        # return super().get_queryset(request)
+        queryset = super().get_queryset(request)
+        return queryset.prefetch_related("groups__coordinators__personal_info")
 
     @admin.display(description=_("Full name"))
     def get_full_name(self, obj: Teacher) -> str:
@@ -51,3 +57,17 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
     @admin.display(description=_("Non-teaching help provided"))
     def non_teaching_help_provided_display(self, obj: Teacher) -> str:
         return ", ".join([str(help_prov) for help_prov in obj.non_teaching_help_provided.all()])
+
+    @admin.display(description=_("Coordinators"))
+    def coordinators_display(self, obj: Teacher) -> str:
+        coordinators = Coordinator.objects.filter(groups__in=obj.groups.all()).distinct()
+        if not coordinators:
+            return str(_("No coordinators"))
+
+        links = []
+        for coordinator in coordinators:
+            url = reverse("admin:api_coordinator_change", args=[coordinator.pk])
+            full_name = coordinator.personal_info.full_name
+            links.append(format_html('<a href="{}">{}</a>', url, full_name))
+
+        return format_html(", ".join(links))

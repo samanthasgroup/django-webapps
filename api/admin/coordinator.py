@@ -145,6 +145,7 @@ class CoordinatorForm(forms.ModelForm):  # type: ignore
     class Meta:
         model = models.Coordinator
         fields = (
+            "user",
             "is_validated",
             "is_admin",
             "personal_info",

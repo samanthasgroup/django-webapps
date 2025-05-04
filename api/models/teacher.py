@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from api.models.age_range import AgeRange
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
 from api.models.choices.status import TeacherProjectStatus, TeacherSituationalStatus
+from api.models.coordinator import Coordinator
 from api.models.day_and_time_slot import DayAndTimeSlot
 from api.models.non_teaching_help import NonTeachingHelp
 from api.models.shared_abstract.teacher_common import TeacherCommon
@@ -149,3 +150,9 @@ class Teacher(TeacherCommon):
     @property
     def has_groups(self) -> bool:
         return self.groups.exists()
+
+    @property
+    def group_coordinators(self) -> str:
+        """Returns names of coordinators associated with teacher's groups."""
+        coordinators = Coordinator.objects.filter(groups__in=self.groups.all()).distinct()
+        return ", ".join(coordinator.personal_info.full_name for coordinator in coordinators)
