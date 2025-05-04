@@ -12,6 +12,8 @@ from django_select2.forms import ModelSelect2MultipleWidget
 from reversion.admin import VersionAdmin
 
 from api import models
+from api.admin.auxil.mixin import CoordinatorRestrictedAdminMixin
+from api.models import Coordinator
 
 
 class StudentSelect2Widget(ModelSelect2MultipleWidget):
@@ -47,20 +49,18 @@ class CoordinatorFilter(admin.SimpleListFilter):
     parameter_name = "coordinator"
 
     def lookups(
-        self, request: HttpRequest, model_admin: ModelAdmin[Any]  # noqa: ARG002
+        self, _request: HttpRequest, _model_admin: ModelAdmin[Any]
     ) -> list[tuple[int, str]]:
         coordinators = models.Coordinator.objects.all()
         return [(c.pk, str(c)) for c in coordinators]
 
-    def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Any]  # noqa: ARG002
-    ) -> QuerySet[Any]:
+    def queryset(self, _request: HttpRequest, queryset: QuerySet[Any]) -> QuerySet[Any]:
         if self.value():
             return queryset.filter(coordinators__pk=self.value())
         return queryset
 
 
-class GroupAdminForm(forms.ModelForm):  # type: ignore
+class GroupAdminForm(forms.ModelForm[Any]):
     class Meta:
         model = models.Group
         fields = (
@@ -81,7 +81,7 @@ class GroupAdminForm(forms.ModelForm):  # type: ignore
         }
 
 
-class GroupAdmin(VersionAdmin):
+class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
     form = GroupAdminForm
     list_display = (
         "id",
@@ -97,16 +97,13 @@ class GroupAdmin(VersionAdmin):
         "get_status_since",
         "staff_only",
     )
-
     ordering = ["id"]
-
     list_filter = (
         StaffOnlyFilter,
         "project_status",
         "situational_status",
         CoordinatorFilter,
     )
-
     search_fields = (
         "coordinators__personal_info__first_name",
         "coordinators__personal_info__last_name",
@@ -127,6 +124,10 @@ class GroupAdmin(VersionAdmin):
                 coordinators__personal_info__id=search_term
             ) | self.model.objects.filter(teachers__personal_info__id=search_term)
         return queryset, use_distinct
+
+    def filter_for_coordinator(self, qs: QuerySet[Any], coordinator: Coordinator) -> QuerySet[Any]:
+        """Фильтрует группы только для текущего координатора."""
+        return qs.filter(coordinators=coordinator)
 
     @admin.display(description="Start Date")
     def get_start_date(self, group: models.Group) -> str:
@@ -156,7 +157,7 @@ class GroupAdmin(VersionAdmin):
     def coordinators_list(self, group: models.Group) -> str:
         links = [
             format_html(
-                '<a style="white-space: nowrap;" href="{}">{}\n</a>',
+                '<a style="white-space: nowrap;" href="{}">{}</a>',
                 reverse("admin:api_coordinator_change", args=(coordinator.pk,)),
                 coordinator,
             )
@@ -168,7 +169,7 @@ class GroupAdmin(VersionAdmin):
     def teachers_list(self, group: models.Group) -> str:
         links = [
             format_html(
-                '<a style="white-space: nowrap;" href="{}">{}\n</a>',
+                '<a style="white-space: nowrap;" href="{}">{}</a>',
                 reverse("admin:api_teacher_change", args=(teacher.pk,)),
                 teacher,
             )
@@ -192,7 +193,7 @@ class GroupAdmin(VersionAdmin):
             ("sunday", "Su"),
         )
         schedule = [
-            f"{short_name} {getattr(group, day).strftime('%H:%M')}"
+            f"{short_name} {getattr(group, day).strftime('%H:%M')}"
             for day, short_name in days
             if getattr(group, day)
         ]

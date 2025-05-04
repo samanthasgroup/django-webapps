@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from typing import Any
+
 from django import forms
 from django.contrib import admin
-from django.db.models import QuerySet
+from django.db.models import Count, Q, QuerySet
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.html import format_html
@@ -10,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 
 from api import models
+from api.admin.auxil.mixin import CoordinatorRestrictedAdminMixin
 from api.models import Student
 from api.models.coordinator import Coordinator
 
@@ -34,7 +37,7 @@ class StudentAdminForm(forms.ModelForm[models.Student]):
 
 
 @admin.register(Student)
-class StudentAdmin(VersionAdmin):
+class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
     form = StudentAdminForm
 
     readonly_fields = (
@@ -123,3 +126,8 @@ class StudentAdmin(VersionAdmin):
                 result += f"{answer.question}, answer: <b>{answer}</b>, <br>"
             result += "<br><br>"
         return format_html(result)
+
+    def filter_for_coordinator(self, qs: QuerySet[Any], coordinator: Coordinator) -> QuerySet[Any]:
+        """Filter students: only from groups of coordinator or without groups."""
+        qs = qs.annotate(group_count=Count("groups"))
+        return qs.filter(Q(groups__coordinators=coordinator) | Q(group_count=0)).distinct()
