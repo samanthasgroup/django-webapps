@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.auth.models import Group, Permission
 from django.core.management.base import BaseCommand
 from django.db.models import Q
@@ -6,7 +8,7 @@ from django.db.models import Q
 class Command(BaseCommand):
     help = "Initialize groups and permissions"
 
-    def handle(self) -> None:
+    def handle(self, *args: Any, **options: Any) -> None:  # noqa: ARG002
         groups_config = {
             "Админ": {
                 "api": [
