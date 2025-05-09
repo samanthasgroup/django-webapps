@@ -26,6 +26,26 @@ class StudentSelect2Widget(ModelSelect2MultipleWidget):
     ]
 
 
+class TeachersSelect2Widget(ModelSelect2MultipleWidget):
+    model = models.Teacher
+    search_fields = [
+        "personal_info__first_name__icontains",
+        "personal_info__last_name__icontains",
+        "personal_info__email__icontains",
+        "personal_info__pk__iexact",
+    ]
+
+
+class CoordinatorsSelect2Widget(ModelSelect2MultipleWidget):
+    model = models.Coordinator
+    search_fields = [
+        "personal_info__first_name__icontains",
+        "personal_info__last_name__icontains",
+        "personal_info__email__icontains",
+        "personal_info__pk__iexact",
+    ]
+
+
 class StaffOnlyFilter(admin.SimpleListFilter):
     title = "is for staff only"
     parameter_name = "staff"
@@ -78,6 +98,8 @@ class GroupAdminForm(forms.ModelForm[Any]):
         )
         widgets = {
             "students": StudentSelect2Widget,
+            "teachers": TeachersSelect2Widget,
+            "coordinators": CoordinatorsSelect2Widget,
         }
 
 
