@@ -15,35 +15,27 @@ from api import models
 from api.admin.auxil.mixin import CoordinatorRestrictedAdminMixin
 from api.models import Coordinator
 
+COMMON_SEARCH_FIELDS = [
+    "personal_info__first_name__icontains",
+    "personal_info__last_name__icontains",
+    "personal_info__email__icontains",
+    "personal_info__pk__iexact",
+]
+
 
 class StudentSelect2Widget(ModelSelect2MultipleWidget):
     model = models.Student
-    search_fields = [
-        "personal_info__first_name__icontains",
-        "personal_info__last_name__icontains",
-        "personal_info__email__icontains",
-        "personal_info__pk__iexact",
-    ]
+    search_fields = COMMON_SEARCH_FIELDS
 
 
 class TeachersSelect2Widget(ModelSelect2MultipleWidget):
     model = models.Teacher
-    search_fields = [
-        "personal_info__first_name__icontains",
-        "personal_info__last_name__icontains",
-        "personal_info__email__icontains",
-        "personal_info__pk__iexact",
-    ]
+    search_fields = COMMON_SEARCH_FIELDS
 
 
 class CoordinatorsSelect2Widget(ModelSelect2MultipleWidget):
     model = models.Coordinator
-    search_fields = [
-        "personal_info__first_name__icontains",
-        "personal_info__last_name__icontains",
-        "personal_info__email__icontains",
-        "personal_info__pk__iexact",
-    ]
+    search_fields = COMMON_SEARCH_FIELDS
 
 
 class StaffOnlyFilter(admin.SimpleListFilter):
