@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-12 11:30+0200\n"
+"POT-Creation-Date: 2025-05-12 14:10+0200\n"
 "PO-Revision-Date: 2025-05-11 21:20+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -66,7 +66,55 @@ msgstr "Алерт"
 msgid "Alerts"
 msgstr "Алерты"
 
-#: api/admin/coordinator.py:280
+#: api/admin/coordinator.py:121
+msgid "Active groups"
+msgstr "Активные группы"
+
+#: api/admin/coordinator.py:126
+msgid "Former groups"
+msgstr "Прошлые группы"
+
+#: api/admin/coordinator.py:226 api/admin/teacher.py:37
+msgid "Full name"
+msgstr "Полное Имя"
+
+#: api/admin/coordinator.py:230
+msgid "Valid"
+msgstr "Валидирован:а"
+
+#: api/admin/coordinator.py:236
+msgid "Admin"
+msgstr "Админ"
+
+#: api/admin/coordinator.py:242 api/admin/group.py:223
+msgid "Project<br>status"
+msgstr "Статус в проекте"
+
+#: api/admin/coordinator.py:247 api/admin/group.py:227
+msgid "Situational<br>Status"
+msgstr "Временный статус"
+
+#: api/admin/coordinator.py:252
+msgid "Status<br>last changed"
+msgstr "Последняя<br>смена статуса"
+
+#: api/admin/coordinator.py:258
+msgid "Skills"
+msgstr "Навыки"
+
+#: api/admin/coordinator.py:263
+msgid "Communication<br>language(s)"
+msgstr "Язык(и)<br>общения"
+
+#: api/admin/coordinator.py:269
+msgid "Comment"
+msgstr "Комментарий"
+
+#: api/admin/coordinator.py:279
+msgid "Role"
+msgstr "Роль"
+
+#: api/admin/coordinator.py:283
 msgid "Active Alerts"
 msgstr "Активные алерты"
 
@@ -97,19 +145,15 @@ msgstr "Количество студентов"
 
 #: api/admin/group.py:199
 msgid "Schedule"
-msgstr ""
+msgstr "Расписание"
 
 #: api/admin/group.py:217
 msgid "For Staff"
 msgstr "Для стафа"
 
-#: api/admin/group.py:223
-msgid "Project<br>status"
-msgstr "Статус в проекте"
-
-#: api/admin/group.py:227
-msgid "Situational<br>Status"
-msgstr "Временный статус"
+#: api/admin/student.py:79
+msgid "Full Name"
+msgstr "Полное Имя"
 
 #: api/admin/student.py:79
 msgid "Full Name"
@@ -127,9 +171,28 @@ msgstr "Язки преподавания"
 msgid "No coordinators"
 msgstr "Нет координатора"
 
-#: api/admin/teacher.py:37
-msgid "Full name"
-msgstr "Полное Имя"
+#: api/admin/student.py:105 api/admin/student.py:126
+msgid "Enrollment test summary"
+msgstr "Входные тесты"
+
+#: api/admin/student.py:116
+#, python-format
+msgid ""
+"Test #%(idx)d, Total questions: %(total)d, Total answers: %(answers)d, "
+"Correct answers: %(correct)d\n"
+msgstr ""
+"Тест №%(idx)d, Всего вопросов: %(total)d, Дано ответов: %(answers)d, "
+"Правильных ответов: %(correct)d\n"
+
+#: api/admin/student.py:130
+#, python-format
+msgid "Test #%d"
+msgstr "Тест #%d"
+
+#: api/admin/student.py:135
+#, python-format
+msgid "answer: <b>%s</b>"
+msgstr "ответ: <b>%s</b>"
 
 #: api/admin/teacher.py:41
 msgid "Can take more groups"
@@ -157,7 +220,7 @@ msgstr "Возраст до (включительно)"
 
 #: api/models/age_range.py:23
 msgid "Type of age range"
-msgstr ""
+msgstr "Тип возрастной группы"
 
 #: api/models/age_range.py:24
 msgid "Who or what is this range designed for"
@@ -605,7 +668,7 @@ msgstr "Является ли координатор админом"
 msgid "Validated"
 msgstr "Прошл:а вводную встречу"
 
-#: api/models/coordinator.py:63 api/models/shared_abstract/teacher_common.py:21
+#: api/models/coordinator.py:63 api/models/shared_abstract/teacher_common.py:23
 msgid "Has an initial validation interview been conducted with this teacher?"
 msgstr "Проведена ли вводная встреча?"
 

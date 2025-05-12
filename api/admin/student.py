@@ -102,6 +102,7 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
 
         return format_html(", ".join(links))
 
+    @admin.display(description=_("Enrollment test summary"))
     def enrollment_tests_summary(self, obj: Student) -> str:
         result = ""
         for idx, test_result in enumerate(obj.enrollment_test_results.all(), start=1):
@@ -111,19 +112,28 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
             question = first_answer.question
             if not question:
                 continue
-            result += (
-                f"Test #{idx}, Total questions: {question.enrollment_test.questions.count()}, "
-                f"Total answers: {test_result.answers.count()}, "
-                f"Correct answers: {test_result.correct_answers_count}\n"
-            )
+            result += _(
+                "Test #%(idx)d, Total questions: %(total)d, Total answers: %(answers)d, "
+                "Correct answers: %(correct)d\n"
+            ) % {
+                "idx": idx,
+                "total": question.enrollment_test.questions.count(),
+                "answers": test_result.answers.count(),
+                "correct": test_result.correct_answers_count,
+            }
         return result
 
+    @admin.display(description=_("Enrollment test summary"))
     def enrollment_tests_result_answers(self, obj: Student) -> str:
         result = ""
         for idx, test_result in enumerate(obj.enrollment_test_results.all(), start=1):
-            result += f"<b>Test #{idx}</b><br>"
+            result += format_html("<b>{}</b><br>", _("Test #%d") % idx)
             for answer in test_result.answers.all():
-                result += f"{answer.question}, answer: <b>{answer}</b>, <br>"
+                result += format_html(
+                    "{}: {}<br>",
+                    answer.question,
+                    _("answer: <b>%s</b>") % answer,
+                )
             result += "<br><br>"
         return format_html(result)
 

@@ -11,6 +11,7 @@ from django.db.models import Count, QuerySet
 from django.http import HttpRequest, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 
@@ -29,7 +30,7 @@ DETAILS_PREVIEW_LENGTH: int = 30
 class AlertInline(GenericTabularInline):
     """Inline admin for Alerts on a related object page."""
 
-    model = Alert  # Указываем модель Alert
+    model = Alert
     fields = (
         "alert_type",
         "created_at",
@@ -117,12 +118,12 @@ class GroupActionForm(ActionForm):
 
 class CoordinatorActiveGroupsInline(BaseCoordinatorGroupInline):
     model = models.Group.coordinators.through
-    verbose_name_plural = "Active groups"
+    verbose_name_plural = _("Active groups")
 
 
 class CoordinatorFormerGroupsInline(BaseCoordinatorGroupInline):
     model = models.Group.coordinators_former.through
-    verbose_name_plural = "Former groups"
+    verbose_name_plural = _("Former groups")
 
 
 class CoordinatorLogEventsInline(
@@ -222,48 +223,50 @@ class CoordinatorAdmin(VersionAdmin):
     def get_personal_info_id(self, coordinator: Coordinator) -> int:
         return coordinator.personal_info.id
 
-    @admin.display(description="Full name", ordering="personal_info__first_name")
+    @admin.display(description=_("Full name"), ordering="personal_info__first_name")
     def get_personal_info_full_name(self, coordinator: Coordinator) -> str:
         return coordinator.personal_info.full_name
 
-    @admin.display(description="Valid", ordering="is_validated")
+    @admin.display(description=_("Valid"), ordering="is_validated")
     def get_is_validated(self, coordinator: Coordinator) -> str:
         if getattr(coordinator, "is_validated"):
             return format_html('<img src="{}" alt="icon"/>', "/static/admin/img/icon-yes.svg")
         return ""
 
-    @admin.display(description="Admin", ordering="is_admin")
+    @admin.display(description=_("Admin"), ordering="is_admin")
     def get_is_admin(self, coordinator: Coordinator) -> str:
         if getattr(coordinator, "is_admin"):
             return format_html('<img src="{}" alt="icon"/>', "/static/admin/img/icon-yes.svg")
         return ""
 
-    @admin.display(description=format_html("Project<br>status"), ordering="project_status")
+    @admin.display(description=mark_safe(_("Project<br>status")), ordering="project_status")
     def get_project_status(self, coordinator: Coordinator) -> str:
         return coordinator.project_status.replace("_", " ")
 
-    @admin.display(description=format_html("Situational<br>Status"), ordering="situational_status")
+    @admin.display(
+        description=mark_safe(_("Situational<br>Status")), ordering="situational_status"
+    )
     def get_situational_status(self, coordinator: Coordinator) -> str:
         return coordinator.situational_status.replace("_", " ")
 
-    @admin.display(description=format_html("Status<br>last changed"), ordering="status_since")
+    @admin.display(description=mark_safe(_("Status<br>last changed")), ordering="status_since")
     def get_status_since(self, coordinator: Coordinator) -> str:
         date_str = coordinator.status_since.strftime("%Y-%m-%d")
         time_str = coordinator.status_since.strftime("%H:%M")
         return format_html("{} <br> {}", date_str, time_str)
 
-    @admin.display(description="Skills", ordering="additional_skills_comment")
+    @admin.display(description=_("Skills"), ordering="additional_skills_comment")
     def get_additional_skills_comment(self, coordinator: Coordinator) -> str:
         return coordinator.additional_skills_comment
 
     @admin.display(
-        description=format_html("Communication<br>language(s)"),
+        description=mark_safe(_("Communication<br>language(s)")),
         ordering="personal_info__communication_language_mode",
     )
     def get_communication_language_mode(self, coordinator: Coordinator) -> str:
         return coordinator.personal_info.communication_language_mode
 
-    @admin.display(description="Comment")
+    @admin.display(description=_("Comment"))
     def get_comment(self, coordinator: Coordinator) -> str:
         comment = coordinator.comment
         return format_html(
@@ -273,7 +276,7 @@ class CoordinatorAdmin(VersionAdmin):
             comment,
         )
 
-    @admin.display(description="Role", ordering="role_comment")
+    @admin.display(description=_("Role"), ordering="role_comment")
     def get_role_comment(self, coordinator: Coordinator) -> str:
         return coordinator.role_comment
 
