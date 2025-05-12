@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-02 11:44+0200\n"
-"PO-Revision-Date: 2025-04-20 14:12+0300\n"
+"POT-Creation-Date: 2025-05-12 08:40+0200\n"
+"PO-Revision-Date: 2025-05-11 21:20+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -25,8 +25,6 @@ msgid "Mark selected alerts as resolved"
 msgstr ""
 
 #: alerts/models.py:18
-#, fuzzy
-#| msgid "Event Type"
 msgid "Alert Type"
 msgstr "Алерт"
 
@@ -37,22 +35,20 @@ msgid ""
 msgstr "Тип алерта"
 
 #: alerts/models.py:23
-#, fuzzy
-#| msgid "Create Event"
 msgid "Created At"
-msgstr ""
+msgstr "Время создания"
 
 #: alerts/models.py:25
 msgid "Resolved At"
-msgstr ""
+msgstr "Время решения"
 
 #: alerts/models.py:27
 msgid "Is Resolved"
-msgstr ""
+msgstr "Решен"
 
 #: alerts/models.py:28
 msgid "Details"
-msgstr ""
+msgstr "Комментарий"
 
 #: alerts/models.py:35
 msgid "Related Model Type"
@@ -70,39 +66,44 @@ msgstr "Алерт"
 msgid "Alerts"
 msgstr "Алерты"
 
-#: api/admin/coordinator.py:279
+#: api/admin/coordinator.py:280
 msgid "Active Alerts"
 msgstr "Активные алерты"
 
-#: api/admin/student.py:72
-#, fuzzy
-#| msgid "Group"
+#: api/admin/student.py:83
 msgid "Has Groups"
 msgstr "Группа"
 
-#: api/admin/teacher.py:31
+#: api/admin/student.py:91 api/admin/teacher.py:61
+#: api/models/coordinator.py:111
+msgid "Coordinators"
+msgstr "Координаторы"
+
+#: api/admin/student.py:95 api/admin/teacher.py:65
+msgid "No coordinators"
+msgstr "Нет координатора"
+
+#: api/admin/teacher.py:37
 msgid "Full name"
 msgstr "Полное Имя"
 
-#: api/admin/teacher.py:35
-#, fuzzy
-#| msgid "Joined the common group"
+#: api/admin/teacher.py:41
 msgid "Can take more groups"
-msgstr "Вступил:а в координаторскую"
+msgstr "Может взять еще группы"
 
-#: api/admin/teacher.py:39
+#: api/admin/teacher.py:45
 msgid "Has groups"
 msgstr "Группа"
 
-#: api/admin/teacher.py:43
+#: api/admin/teacher.py:49
 msgid "Teaching languages"
 msgstr "Язки преподавания"
 
-#: api/admin/teacher.py:47
+#: api/admin/teacher.py:53
 msgid "Availability slots"
 msgstr "Время занятий"
 
-#: api/admin/teacher.py:51
+#: api/admin/teacher.py:57
 msgid "Non-teaching help provided"
 msgstr "Другие виды помощи"
 
@@ -112,7 +113,7 @@ msgstr "Возраст от"
 
 #: api/models/age_range.py:19
 msgid "End of age range (inclusive)"
-msgstr "возрато до (включительно)"
+msgstr "Возраст до (включительно)"
 
 #: api/models/age_range.py:23
 msgid "Type of age range"
@@ -340,7 +341,7 @@ msgstr "Переведен:а"
 #: api/models/choices/log_event_type.py:98
 #: api/models/choices/log_event_type.py:127
 msgid "Transfer canceled"
-msgstr "Перевод прерван"
+msgstr "Перевод не состоялся"
 
 #: api/models/choices/log_event_type.py:101
 #: api/models/choices/status/project.py:67
@@ -353,7 +354,6 @@ msgid "Group finished successfully"
 msgstr "Группа закончила занятия"
 
 #: api/models/choices/log_event_type.py:112
-#, fuzzy
 msgid "Registration and validation complete, started waiting for a group"
 msgstr "Прош:ла регистрацию и валидацию, ждет группу"
 
@@ -389,7 +389,7 @@ msgstr "Тренировка собеседования"
 
 #: api/models/choices/non_teaching_help_type.py:11
 msgid "Job search"
-msgstr "Поиска работы"
+msgstr "Поиск работы"
 
 #: api/models/choices/non_teaching_help_type.py:12
 msgid "Career strategy"
@@ -432,9 +432,8 @@ msgid "Completed registration, but not in working status yet"
 msgstr "Прошл:а регистрацию, еще не начал:а координировать"
 
 #: api/models/choices/status/project.py:16
-#, fuzzy
 msgid "Working, but not yet reached the required minimum amount of groups "
-msgstr "Координирует, не достиг:ла минимума групп"
+msgstr "Координирует, минимум групп не набран"
 
 #: api/models/choices/status/project.py:20
 msgid "Working, required amount of groups reached"
@@ -540,85 +539,68 @@ msgstr "Нужен перевод в другую группу"
 msgid "Needs a break in teaching the group, substitute teacher needed"
 msgstr "Берет перерыв, группе нужна замена"
 
-#: api/models/coordinator.py:43
-#, fuzzy
-#| msgid "Former coordinators"
+#: api/models/coordinator.py:44
 msgid "Legacy Coordinator ID"
 msgstr "CID координатора из старой базы"
 
-#: api/models/coordinator.py:45
-#, fuzzy
-#| msgid "Student id from the old database"
+#: api/models/coordinator.py:46
 msgid "Coordinator ID from the old database"
-msgstr "SID студента из старой базы"
+msgstr "SID координатора из старой базы"
 
-#: api/models/coordinator.py:50
-#, fuzzy
-#| msgid "comment on additional skills"
+#: api/models/coordinator.py:51
 msgid "Comment on additional skills"
 msgstr "Дополнительные навыки"
 
-#: api/models/coordinator.py:53
+#: api/models/coordinator.py:54
 msgid "Is admin (special rights)"
 msgstr "Админ"
 
-#: api/models/coordinator.py:56
+#: api/models/coordinator.py:57
 msgid ""
 "This field has nothing to do with accessing Django admin site. It marks "
 "coordinators that have special rights over ordinary coordinators."
-msgstr ""
+msgstr "Является ли координатор админом"
 
-#: api/models/coordinator.py:61
+#: api/models/coordinator.py:62
 msgid "Validated"
 msgstr "Прошл:а вводную встречу"
 
-#: api/models/coordinator.py:62 api/models/shared_abstract/teacher_common.py:18
+#: api/models/coordinator.py:63 api/models/shared_abstract/teacher_common.py:18
 msgid "Has an initial validation interview been conducted with this teacher?"
 msgstr "Проведена ли вводная встреча?"
 
-#: api/models/coordinator.py:70
+#: api/models/coordinator.py:71
 msgid "Mentor"
 msgstr "Куратор"
 
-#: api/models/coordinator.py:71
+#: api/models/coordinator.py:72
 msgid "Mentor of this coordinator. One coordinator can have many interns."
-msgstr "Куратор координатора. У одного куратора может быть несколько координаторов"
+msgstr ""
+"Куратор координатора. Один куратор может курировать несколько координаторов"
 
-#: api/models/coordinator.py:76
-#, fuzzy
-#| msgid "status in project"
+#: api/models/coordinator.py:77
 msgid "Status in project"
 msgstr "Статус в проекте"
 
-#: api/models/coordinator.py:77
+#: api/models/coordinator.py:78
 msgid "Status of this coordinator with regard to project as a whole"
 msgstr "Статус координатора в проекте"
 
-#: api/models/coordinator.py:83
-#, fuzzy
-#| msgid "Speaking club status"
+#: api/models/coordinator.py:84
 msgid "Situational status"
 msgstr "Временный статус"
 
-#: api/models/coordinator.py:88
+#: api/models/coordinator.py:89
 msgid "Role comment"
 msgstr "Дополнительные роли"
 
-#: api/models/coordinator.py:89
+#: api/models/coordinator.py:90
 msgid "Phrase describing the role of coordinator in project"
 msgstr "Опишите дополнительную роль координатора в проекте (если применимо)"
 
-#: api/models/coordinator.py:108
-#, fuzzy
-#| msgid "Former coordinators"
+#: api/models/coordinator.py:110
 msgid "Coordinator"
-msgstr "Координаторы"
-
-#: api/models/coordinator.py:109
-#, fuzzy
-#| msgid "Former coordinators"
-msgid "Coordinators"
-msgstr "БКоординаторы"
+msgstr "Координатор"
 
 #: api/models/day_and_time_slot.py:14
 msgid "from UTC hour"
@@ -684,7 +666,9 @@ msgstr "возрастные диапазоны"
 msgid ""
 "age ranges for which this test was designed. Leave blank for the test to be "
 "shown to all ages."
-msgstr "Для какого возраста этот тест. Не заполняйте, если этот тест для всех возрастов"
+msgstr ""
+"Для какого возраста этот тест. Оставьте пустым, если этот тест для всех "
+"возрастов"
 
 #: api/models/enrollment_test.py:22 api/models/group.py:176
 #: api/models/language_and_level.py:21 api/models/language_and_level.py:56
@@ -732,9 +716,7 @@ msgid "enrollment test question options"
 msgstr "варианты ответа в тесте"
 
 #: api/models/enrollment_test.py:97 api/models/log_event.py:119
-#: api/models/student.py:107
-#, fuzzy
-#| msgid "Former students"
+#: api/models/student.py:108
 msgid "student"
 msgstr "студент"
 
@@ -751,20 +733,14 @@ msgid "enrollment test results"
 msgstr "результаты входного тестирования"
 
 #: api/models/group.py:22
-#, fuzzy
-#| msgid "Former coordinators"
 msgid "coordinators"
 msgstr "координаторы"
 
-#: api/models/group.py:25 api/models/student.py:108
-#, fuzzy
-#| msgid "Former students"
+#: api/models/group.py:25 api/models/student.py:109
 msgid "students"
 msgstr "студенты"
 
-#: api/models/group.py:28 api/models/teacher.py:135
-#, fuzzy
-#| msgid "Former teachers"
+#: api/models/group.py:28 api/models/teacher.py:136
 msgid "teachers"
 msgstr "учителя"
 
@@ -781,7 +757,7 @@ msgstr "Бывшие координаторы"
 msgid ""
 "Lists coordinators that once worked with this group and/or the "
 "coordinator(s) of this group when it finished classes or was aborted."
-msgstr "Список всех координаторов, которые когда-либо работали с группой"
+msgstr "Список всех координаторов, которые работали с группой"
 
 #: api/models/group.py:45
 msgid "Former students"
@@ -791,7 +767,7 @@ msgstr "Бывшие студенты"
 msgid ""
 "Lists students that once worked with this group and/or all students of this "
 "group when it finished classes or was aborted."
-msgstr "Список всех учеников, которые когда-либо обучались в группе"
+msgstr "Список всех учеников, которые обучались в группе"
 
 #: api/models/group.py:55
 msgid "Former teachers"
@@ -801,17 +777,15 @@ msgstr "Бывшие учителя"
 msgid ""
 "Lists teachers that once worked with this group, and/or the teacher(s) of "
 "this group when it finished classes or was aborted."
-msgstr "Список учителей, которые когда-либо преподавали в группе"
+msgstr "Список учителей, которые преподавали в группе"
 
 #: api/models/group.py:65
 msgid "telegram chat URL"
 msgstr "ссылка на чат в Телеграм"
 
 #: api/models/group.py:77
-#, fuzzy
-#| msgid "Student id from the old database"
 msgid "Group id from the old database"
-msgstr "ID студента из старой базы"
+msgstr "SID группы из старой базы"
 
 #: api/models/group.py:77
 msgid "legacy group id"
@@ -823,7 +797,7 @@ msgstr ""
 
 #: api/models/group.py:82
 msgid "is for staff only"
-msgstr "для волонтеров"
+msgstr "Группа для волонтеров"
 
 #: api/models/group.py:84
 msgid "language and level"
@@ -838,7 +812,7 @@ msgid "project status"
 msgstr "статус в проекте"
 
 #: api/models/group.py:98 api/models/shared_abstract/person.py:29
-#: api/models/student.py:89 api/models/teacher.py:102
+#: api/models/student.py:90 api/models/teacher.py:103
 #: api/models/teacher_under_18.py:22
 msgid "situational status"
 msgstr "временный статус"
@@ -848,10 +822,8 @@ msgid "date and time of last change of project-level or situational status"
 msgstr "время изменения статуса в проекте или временного статуса"
 
 #: api/models/group.py:102 api/models/shared_abstract/person.py:35
-#, fuzzy
-#| msgid "status in project"
 msgid "status since"
-msgstr "статус в проекте"
+msgstr "статус с"
 
 #: api/models/group.py:104
 msgid "start date"
@@ -863,14 +835,10 @@ msgstr "дата окончания занятий"
 
 #: api/models/group.py:128 api/models/log_event.py:56
 #: api/models/log_event.py:80
-#, fuzzy
-#| msgid "Group"
 msgid "group"
 msgstr "группа"
 
 #: api/models/group.py:129
-#, fuzzy
-#| msgid "Has groups"
 msgid "groups"
 msgstr "группы"
 
@@ -879,20 +847,14 @@ msgid "Is this a speaking club for children?"
 msgstr "Разговорный клуб для детей?"
 
 #: api/models/group.py:178
-#, fuzzy
-#| msgid "Teachers under 18 years of age"
 msgid "teachers under 18"
 msgstr "Преподаватели младше 18 лет"
 
 #: api/models/group.py:181
-#, fuzzy
-#| msgid "Speaking club status"
 msgid "speaking club"
 msgstr "разговорный клуб"
 
 #: api/models/group.py:182
-#, fuzzy
-#| msgid "Speaking club status"
 msgid "speaking clubs"
 msgstr "разговорные клубы"
 
@@ -901,8 +863,6 @@ msgid "locale"
 msgstr ""
 
 #: api/models/language_and_level.py:18 api/models/non_teaching_help.py:23
-#, fuzzy
-#| msgid "Full name"
 msgid "name"
 msgstr "имя"
 
@@ -939,16 +899,12 @@ msgid "date and time"
 msgstr "дата и время"
 
 #: api/models/log_event.py:48
-#, fuzzy
-#| msgid "Former coordinators"
 msgid "coordinator"
 msgstr "координатор"
 
 #: api/models/log_event.py:61 api/models/log_event.py:84
 #: api/models/log_event.py:124 api/models/log_event.py:164
 #: api/models/log_event.py:191
-#, fuzzy
-#| msgid "Event Type"
 msgid "event type"
 msgstr "название события"
 
@@ -958,7 +914,7 @@ msgstr "событие координатора"
 
 #: api/models/log_event.py:66
 msgid "coordinator log events"
-msgstr "итория событий координатора"
+msgstr "история событий координатора"
 
 #: api/models/log_event.py:88
 msgid "group log event"
@@ -969,20 +925,14 @@ msgid "group log events"
 msgstr "история событий группы"
 
 #: api/models/log_event.py:108 api/models/log_event.py:148
-#, fuzzy
-#| msgid "Has groups"
 msgid "from group"
 msgstr "из группы"
 
 #: api/models/log_event.py:116 api/models/log_event.py:156
-#, fuzzy
-#| msgid "Has groups"
 msgid "to group"
 msgstr "в группу"
 
 #: api/models/log_event.py:128
-#, fuzzy
-#| msgid "Create Log Event"
 msgid "student log event"
 msgstr "событие студента"
 
@@ -990,39 +940,27 @@ msgstr "событие студента"
 msgid "student log events"
 msgstr "история событий студента"
 
-#: api/models/log_event.py:159 api/models/teacher.py:134
-#, fuzzy
-#| msgid "Former teachers"
+#: api/models/log_event.py:159 api/models/teacher.py:135
 msgid "teacher"
 msgstr "учитель"
 
 #: api/models/log_event.py:168
-#, fuzzy
-#| msgid "Create Log Event"
 msgid "teacher log event"
 msgstr "события учителя"
 
 #: api/models/log_event.py:169
-#, fuzzy
-#| msgid "Create Log Event"
 msgid "teacher log events"
 msgstr "история событий учителя"
 
 #: api/models/log_event.py:186 api/models/teacher_under_18.py:26
-#, fuzzy
-#| msgid "Teachers under 18 years of age"
 msgid "teacher under 18"
 msgstr "учитель младше 18 лет"
 
 #: api/models/log_event.py:195
-#, fuzzy
-#| msgid "Teachers under 18 years of age"
 msgid "teacher under 18 log event"
 msgstr "события учителя"
 
 #: api/models/log_event.py:196
-#, fuzzy
-#| msgid "Teachers under 18 years of age"
 msgid "teacher under 18 log events"
 msgstr "учитель младше 18 лет"
 
@@ -1047,8 +985,6 @@ msgid "Date and time added"
 msgstr "Время добавления"
 
 #: api/models/personal_info.py:35
-#, fuzzy
-#| msgid "Full name"
 msgid "First name"
 msgstr "Имя"
 
@@ -1077,8 +1013,6 @@ msgid "Source of information about SSG"
 msgstr "Источник информации о Саманте"
 
 #: api/models/personal_info.py:50
-#, fuzzy
-#| msgid "how did they learn about Samantha Smith's Group?"
 msgid "How did they learn about Samantha Smith's Group?"
 msgstr "Как узнали о Samantha Smith’s Group"
 
@@ -1094,7 +1028,7 @@ msgstr "Предпочтительный язык общения с ботом"
 msgid ""
 "Language in which the person wishes to communicate with the bot (is chosen "
 "by the person at first contact)"
-msgstr "Язык, на котором человек выбирает для общения с ботом при первом контакте"
+msgstr "Язык, который человек выбирает для общения с ботом при первом контакте"
 
 #: api/models/personal_info.py:66
 msgid "Chatwoot conversation ID"
@@ -1121,152 +1055,154 @@ msgid ""
 "For adult teacher: other ways in which the applicant could help the students "
 "beside listed ones. For teacher under 18: applicant's free-text comment on "
 "how they can help our students apart from hosting speaking clubs."
-msgstr "Для учителей старше 18 лет: какие виды помощи может оказывать еще? Для учителей младше 18 лет: что могут делать еще кроме ведения разговорных клубов?"
+msgstr ""
+"Для учителей старше 18 лет: какие виды помощи может оказывать еще? Для "
+"учителей младше 18 лет: что могут делать еще кроме ведения разговорных "
+"клубов?"
 
-#: api/models/student.py:33
+#: api/models/student.py:34
 msgid "Student id from the old database"
 msgstr "SID студента из старой базы"
 
-#: api/models/student.py:34
+#: api/models/student.py:35
 msgid "legacy student id"
-msgstr "SID из старой базы"
+msgstr "SID студента из старой базы"
 
-#: api/models/student.py:40
+#: api/models/student.py:41
 msgid ""
 "We do not ask students for their exact age. They choose an age range when "
 "registering with us."
-msgstr "Мы не спрашиваем студентов точный возраст. Студенты выбирают возрастной диапазон во время регистрации в боте."
+msgstr ""
+"Мы не спрашиваем студентов точный возраст. Студенты выбирают возрастной "
+"диапазон во время регистрации в боте."
 
-#: api/models/student.py:42
+#: api/models/student.py:43
 msgid "age range"
 msgstr "возрастной диапазон"
 
-#: api/models/student.py:45 api/models/teacher.py:40
+#: api/models/student.py:46 api/models/teacher.py:41
 msgid "availability slots"
 msgstr "возможное время занятий"
 
-#: api/models/student.py:49
+#: api/models/student.py:50
 msgid "can read in English"
 msgstr "может читать на английском"
 
-#: api/models/student.py:56
+#: api/models/student.py:57
 msgid "children"
 msgstr "дети"
 
-#: api/models/student.py:57
+#: api/models/student.py:58
 msgid "children of this student that are also studying at SSG"
-msgstr "дети студента, которые также учатся в Саманте"
-
-#: api/models/student.py:61
-msgid "Speaking club status"
-msgstr "Статус разговорного клуба"
+msgstr "Дети студента, которые также учатся в Саманте"
 
 #: api/models/student.py:62
+msgid "Speaking club status"
+msgstr "Разговорный клуб"
+
+#: api/models/student.py:63
 msgid "Is the student a member of a speaking club at the moment?"
 msgstr "Ходит ли студент в разговорный клуб?"
 
-#: api/models/student.py:68
+#: api/models/student.py:69
 msgid "Types of non-teaching help this student requires"
 msgstr "Какая помощь нужна студенту"
 
-#: api/models/student.py:76
+#: api/models/student.py:77
 msgid "SmallTalk test result"
 msgstr "Результаты теста SmallTalk"
 
-#: api/models/student.py:77
+#: api/models/student.py:78
 msgid "JSON received from SmallTalk API"
 msgstr ""
 
-#: api/models/student.py:82 api/models/teacher.py:95
+#: api/models/student.py:83 api/models/teacher.py:96
 #: api/models/teacher_under_18.py:15
 msgid "status in project"
 msgstr "cтатус в проекте"
 
-#: api/models/student.py:83 api/models/teacher.py:96
+#: api/models/student.py:84 api/models/teacher.py:97
 #: api/models/teacher_under_18.py:16
 msgid "status of this student with regard to project as a whole"
 msgstr "статус студента в проекте"
 
-#: api/models/student.py:95
+#: api/models/student.py:96
 msgid "teaching languages and levels"
 msgstr "языки и уровни"
 
-#: api/models/teacher.py:36
-#, fuzzy
-#| msgid "Student id from the old database"
-msgid "Teacher id from the old database"
-msgstr " SID студента из старой базы"
-
 #: api/models/teacher.py:37
+msgid "Teacher id from the old database"
+msgstr "SID учителя из старой базы"
+
+#: api/models/teacher.py:38
 msgid "legacy teacher id"
 msgstr "TID учителя из старой базы"
 
-#: api/models/teacher.py:45
+#: api/models/teacher.py:46
 msgid ""
 "Has the applicant already worked as a teacher before applying at Samantha "
 "Smith's Group?"
-msgstr "Был ли у учителя опыт предодавания до Саманты?"
+msgstr "У учителя есть опыт преподавания до Саманты?"
 
-#: api/models/teacher.py:47
+#: api/models/teacher.py:48
 msgid "prior teaching experience"
 msgstr "опыт преподавания"
 
-#: api/models/teacher.py:53
+#: api/models/teacher.py:54
 msgid "Types of non-teaching help this teacher can provide to students"
 msgstr "Другие виды помощи студентам"
 
-#: api/models/teacher.py:62
+#: api/models/teacher.py:63
 msgid "peer support: can check syllabus"
 msgstr "Метод. поддержка: могу проверить программу"
 
-#: api/models/teacher.py:66
+#: api/models/teacher.py:67
 msgid "peer support: can host individual or group mentoring sessions"
 msgstr "Метод. поддержка: могу дать консультацию индивидуально или в группе"
 
-#: api/models/teacher.py:69
+#: api/models/teacher.py:70
 msgid "peer support: can give feedback"
 msgstr "Метод. поддержка: могу дать обратную связь по уроку"
 
-#: api/models/teacher.py:73
+#: api/models/teacher.py:74
 msgid "peer support: can help with children's groups"
 msgstr "Метод. поддержка: могу помочь с детскими группами"
 
-#: api/models/teacher.py:76
+#: api/models/teacher.py:77
 msgid "peer support: can provide teaching materials"
 msgstr "Метод. поддержка: могу помочь с материалами"
 
-#: api/models/teacher.py:80
+#: api/models/teacher.py:81
 msgid "peer support: can invite other teachers to their class"
 msgstr "Метод. поддержка: могу пригласить к себе на урок"
 
-#: api/models/teacher.py:84
+#: api/models/teacher.py:85
 msgid "peer support: can work in tandem with a less experienced teacher"
-msgstr "Метод. поддержка: могу работать в тандеме с менее опытным преподавателем"
+msgstr ""
+"Метод. поддержка: могу работать в тандеме с менее опытным преподавателем"
 
-#: api/models/teacher.py:89
-#, fuzzy
-#| msgid "number of groups the teacher can teach simultaneously"
+#: api/models/teacher.py:90
 msgid "Number of groups the teacher can teach simultaneously"
 msgstr "Максимальное кол-во групп одновременно"
 
-#: api/models/teacher.py:90
-#, fuzzy
-#| msgid "Has groups"
+#: api/models/teacher.py:91
 msgid "simultaneous groups"
-msgstr "Группа"
+msgstr "Кол-во групп"
 
-#: api/models/teacher.py:107
+#: api/models/teacher.py:108
 msgid ""
 "Age ranges of students that the teacher is willing to teach. The 'from's and "
 "'to's of these ranges are wider than those the students choose for "
 "themselves."
-msgstr "Возраст учеников, которые учитель готов:а брать. Эти возрастные диапазоны шире, чем тем, которые выбирают ученики при регистрации через бота."
+msgstr ""
+"Возраст учеников, которые учитель готов:а брать. Эти возрастные диапазоны "
+"шире, чем тем, которые выбирают ученики при регистрации через бота."
 
-#: api/models/teacher.py:111
+#: api/models/teacher.py:112
 msgid "student age ranges"
 msgstr "возрастной диапазон учеников"
 
-#: api/models/teacher.py:115
+#: api/models/teacher.py:116
 msgid ""
 "Number of times per week the teacher can have classes with each group. This "
 "column will be ignored if the teacher currently doesn't want to teach any "
@@ -1275,10 +1211,12 @@ msgid ""
 "teacher will start (or return to) group studies and the frequency column "
 "will become relevant."
 msgstr ""
+"Количество занятий в неделю с каждой группой. Поле может оставаться пустым, "
+"если учитель пока не ведет группы."
 
-#: api/models/teacher.py:121
+#: api/models/teacher.py:122
 msgid "weekly frequency per group"
-msgstr "кол-во занятий в неделю с одной группой"
+msgstr "кол-во занятий в неделю с группой"
 
 #: api/models/teacher_under_18.py:31
 msgid "Teachers under 18 years of age"
@@ -1291,14 +1229,14 @@ msgstr "На главную страницу"
 #: api/templates/admin/api/coordinator/change_form.html:21
 #, python-format
 msgid "Add %(name)s"
-msgstr "Добавить %(name)s"
+msgstr "Добавить %(name)"
 
 #: api/templates/admin/api/coordinator/change_form.html:43
 msgid "Please correct the error below."
 msgid_plural "Please correct the errors below."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Исправьте ошибку ниже"
+msgstr[1] "Исправьте ошибку ниже"
+msgstr[2] "Исправьте ошибку ниже"
 
 #: api/templates/admin/api/coordinator/change_form.html:59
 msgid "Create Log Event"
