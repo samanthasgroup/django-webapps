@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-12 08:40+0200\n"
+"POT-Creation-Date: 2025-05-12 09:01+0200\n"
 "PO-Revision-Date: 2025-05-11 21:20+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -70,14 +70,50 @@ msgstr "Алерты"
 msgid "Active Alerts"
 msgstr "Активные алерты"
 
-#: api/admin/student.py:83
-msgid "Has Groups"
-msgstr "Группа"
+#: api/admin/group.py:147
+msgid "Start Date"
+msgstr "дата начала занятий"
 
-#: api/admin/student.py:91 api/admin/teacher.py:61
+#: api/admin/group.py:156
+msgid "End Date"
+msgstr ""
+
+#: api/admin/group.py:164
+msgid "Status Since"
+msgstr "Статус с"
+
+#: api/admin/group.py:171 api/admin/student.py:91 api/admin/teacher.py:61
 #: api/models/coordinator.py:111
 msgid "Coordinators"
 msgstr "Координаторы"
+
+#: api/admin/group.py:183
+msgid "Teachers"
+msgstr "Учителя"
+
+#: api/admin/group.py:195
+msgid "Number Of<br>Students"
+msgstr "Количество студентов"
+
+#: api/admin/group.py:199
+msgid "Schedule"
+msgstr ""
+
+#: api/admin/group.py:217
+msgid "For Staff"
+msgstr ""
+
+#: api/admin/group.py:223
+msgid "Project<br>status"
+msgstr "Статус в проекте"
+
+#: api/admin/group.py:227
+msgid "Situational<br>Status"
+msgstr "Временный статус"
+
+#: api/admin/student.py:83
+msgid "Has Groups"
+msgstr "Группа"
 
 #: api/admin/student.py:95 api/admin/teacher.py:65
 msgid "No coordinators"
