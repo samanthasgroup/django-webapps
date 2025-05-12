@@ -76,7 +76,7 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
             .prefetch_related("groups", "children", "groups__coordinators__personal_info")
         )
 
-    @admin.display(description="Full Name")
+    @admin.display(description=_("Full Name"))
     def get_full_name(self, obj: Student) -> str:
         return f"{obj.personal_info.first_name} {obj.personal_info.last_name}"
 
@@ -84,7 +84,7 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
     def has_groups_display(self, obj: Student) -> bool:
         return obj.has_groups
 
-    @admin.display(description="Teaching languages")
+    @admin.display(description=_("Teaching languages"))
     def teaching_languages_and_levels_display(self, obj: Student) -> str:
         return ", ".join([str(lang) for lang in obj.teaching_languages_and_levels.all()])
 

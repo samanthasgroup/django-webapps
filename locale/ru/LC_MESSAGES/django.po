@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-12 09:01+0200\n"
+"POT-Creation-Date: 2025-05-12 11:30+0200\n"
 "PO-Revision-Date: 2025-05-11 21:20+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -76,7 +76,7 @@ msgstr "дата начала занятий"
 
 #: api/admin/group.py:156
 msgid "End Date"
-msgstr ""
+msgstr "Дата окончания"
 
 #: api/admin/group.py:164
 msgid "Status Since"
@@ -101,7 +101,7 @@ msgstr ""
 
 #: api/admin/group.py:217
 msgid "For Staff"
-msgstr ""
+msgstr "Для стафа"
 
 #: api/admin/group.py:223
 msgid "Project<br>status"
@@ -111,9 +111,17 @@ msgstr "Статус в проекте"
 msgid "Situational<br>Status"
 msgstr "Временный статус"
 
+#: api/admin/student.py:79
+msgid "Full Name"
+msgstr "Полное Имя"
+
 #: api/admin/student.py:83
 msgid "Has Groups"
 msgstr "Группа"
+
+#: api/admin/student.py:87 api/admin/teacher.py:49
+msgid "Teaching languages"
+msgstr "Язки преподавания"
 
 #: api/admin/student.py:95 api/admin/teacher.py:65
 msgid "No coordinators"
@@ -130,10 +138,6 @@ msgstr "Может взять еще группы"
 #: api/admin/teacher.py:45
 msgid "Has groups"
 msgstr "Группа"
-
-#: api/admin/teacher.py:49
-msgid "Teaching languages"
-msgstr "Язки преподавания"
 
 #: api/admin/teacher.py:53
 msgid "Availability slots"
@@ -601,7 +605,7 @@ msgstr "Является ли координатор админом"
 msgid "Validated"
 msgstr "Прошл:а вводную встречу"
 
-#: api/models/coordinator.py:63 api/models/shared_abstract/teacher_common.py:18
+#: api/models/coordinator.py:63 api/models/shared_abstract/teacher_common.py:21
 msgid "Has an initial validation interview been conducted with this teacher?"
 msgstr "Проведена ли вводная встреча?"
 
@@ -1082,11 +1086,19 @@ msgstr "Языки общения в группе (не изучения)"
 msgid "personal info"
 msgstr "персональные данные"
 
-#: api/models/shared_abstract/teacher_common.py:23
+#: api/models/shared_abstract/teacher_common.py:16
+msgid "Can host speaking club"
+msgstr "Может вести разговорный клуб"
+
+#: api/models/shared_abstract/teacher_common.py:20
+msgid "Is validated"
+msgstr "Валидирован"
+
+#: api/models/shared_abstract/teacher_common.py:26
 msgid "comment on additional non-teaching skills"
 msgstr "Дополнительные навыки, не связанные с преподаванием"
 
-#: api/models/shared_abstract/teacher_common.py:25
+#: api/models/shared_abstract/teacher_common.py:28
 msgid ""
 "For adult teacher: other ways in which the applicant could help the students "
 "beside listed ones. For teacher under 18: applicant's free-text comment on "
