@@ -155,10 +155,6 @@ msgstr "Для стафа"
 msgid "Full Name"
 msgstr "Полное Имя"
 
-#: api/admin/student.py:79
-msgid "Full Name"
-msgstr "Полное Имя"
-
 #: api/admin/student.py:83
 msgid "Has Groups"
 msgstr "Группа"
