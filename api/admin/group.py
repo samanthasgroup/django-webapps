@@ -8,6 +8,7 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 from django_select2.forms import ModelSelect2MultipleWidget
 from reversion.admin import VersionAdmin
 
@@ -143,7 +144,7 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         """Фильтрует группы только для текущего координатора."""
         return qs.filter(coordinators=coordinator)
 
-    @admin.display(description="Start Date")
+    @admin.display(description=_("Start Date"))
     def get_start_date(self, group: models.Group) -> str:
         if group.start_date is not None:
             return format_html(
@@ -152,7 +153,7 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
             )
         return ""
 
-    @admin.display(description="End Date")
+    @admin.display(description=_("End Date"))
     def get_end_date(self, group: models.Group) -> str:
         if group.end_date is not None:
             return format_html(
@@ -160,14 +161,14 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
             )
         return ""
 
-    @admin.display(description="Status Since")
+    @admin.display(description=_("Status Since"))
     def get_status_since(self, group: models.Group) -> str:
         return format_html(
             "<span style='white-space: nowrap;'>{}</span>",
             group.status_since.strftime("%d-%m-%Y %H:%M"),
         )
 
-    @admin.display(description="Coordinators")
+    @admin.display(description=_("Coordinators"))
     def coordinators_list(self, group: models.Group) -> str:
         links = [
             format_html(
@@ -179,7 +180,7 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         ]
         return mark_safe(" ".join(links))
 
-    @admin.display(description="Teachers")
+    @admin.display(description=_("Teachers"))
     def teachers_list(self, group: models.Group) -> str:
         links = [
             format_html(
@@ -191,11 +192,11 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         ]
         return mark_safe(" ".join(links))
 
-    @admin.display(description=format_html("Number Of<br>Students"))
+    @admin.display(description=mark_safe(_("Number Of<br>Students")))
     def students_count(self, group: models.Group) -> int:
         return group.students.count()
 
-    @admin.display(description="Schedule")
+    @admin.display(description=_("Schedule"))
     def get_schedule(self, group: models.Group) -> str:
         days = (
             ("monday", "Mo"),
@@ -213,16 +214,16 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         ]
         return mark_safe(",<br>".join(schedule))
 
-    @admin.display(description="For Staff")
+    @admin.display(description=_("For Staff"))
     def staff_only(self, group: models.Group) -> str:
         if getattr(group, "is_for_staff_only"):
             return format_html('<img src="{}" alt="icon"/>', "/static/admin/img/icon-yes.svg")
         return ""
 
-    @admin.display(description=format_html("Project<br>status"))
+    @admin.display(description=mark_safe(_("Project<br>status")))
     def get_project_status(self, group: models.Group) -> str:
         return group.project_status.replace("_", " ")
 
-    @admin.display(description=format_html("Situational<br>Status"))
+    @admin.display(description=mark_safe(_("Situational<br>Status")))
     def get_situational_status(self, group: models.Group) -> str:
         return group.situational_status.replace("_", " ")
