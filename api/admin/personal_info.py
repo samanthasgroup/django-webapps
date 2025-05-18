@@ -17,7 +17,6 @@ class PersonalInfoAdminForm(forms.ModelForm[models.PersonalInfo]):
             "telegram_username",
             "utc_timedelta",
             "registration_telegram_bot_language",
-            "chatwoot_conversation_id",
             "information_source",
         )
 
@@ -37,3 +36,17 @@ class PersonalInfoAdminForm(forms.ModelForm[models.PersonalInfo]):
 
 class PersonalInfoAdmin(VersionAdmin):
     form = PersonalInfoAdminForm
+
+    list_display = (
+        "first_name",
+        "last_name",
+        "email",
+        "telegram_username",
+        "registration_telegram_bot_language",
+    )
+
+    search_fields = (
+        "first_name",
+        "last_name",
+        "email",
+    )
