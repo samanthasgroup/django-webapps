@@ -1,31 +1,61 @@
 import datetime
+import logging
 import re
+import time
 
 import phonenumbers
 import pytz
 from email_validator import EmailNotValidError, validate_email
-from geopy.exc import GeocoderUnavailable
+from geopy.exc import GeocoderServiceError, GeocoderUnavailable
 from geopy.geocoders import Nominatim
 from timezonefinder import TimezoneFinder
 
 from api.models.auxil.constants import TIME_SLOTS, LanguageLevelId
 
+logger = logging.getLogger(__name__)
+
 MIN_NAME_LENGTH = 2
 
 
+_city_timezone_cache: dict[str, str | None] = {}
+
+
 def _city_to_timezone(city_name: str) -> str | None:
+    logger.debug(f"Attempting to geocode city: '{city_name}'")
+
+    # potentially unsafe city name
+    if not re.match(r"^[a-zA-Z\s-]+$", city_name, re.IGNORECASE):
+        logger.warning(f"Skipping invalid city name: '{city_name}'")
+        return None
+
     try:
         geolocator = Nominatim(user_agent="city-to-timezone")
+        time.sleep(1)
         coords = geolocator.geocode(city_name)
-    except GeocoderUnavailable:
+    except GeocoderUnavailable as e:
+        logger.error(f"Geocoder unavailable for city: '{city_name}', error: {e}")
         return None
+    except GeocoderServiceError as e:
+        logger.error(f"Geocoder service error for city: '{city_name}', error: {e}")
+        return None
+    except Exception as e:
+        logger.error(f"Unexpected error for city: '{city_name}', error: {e}")
+        return None
+
     tf = TimezoneFinder()
     if coords:
-        return tf.timezone_at(lng=coords.longitude, lat=coords.latitude)
+        tz_name = tf.timezone_at(lng=coords.longitude, lat=coords.latitude)
+        if tz_name:
+            logger.debug(f"Found timezone '{tz_name}' for city: '{city_name}'")
+            return tz_name
+        logger.warning(f"No timezone found for city: '{city_name}'")
+    else:
+        logger.warning(f"No coordinates found for city: '{city_name}'")
     return None
 
 
 def parse_timezone(tz_str: str) -> datetime.tzinfo | None:
+    logger.debug(f"Parsing timezone string: '{tz_str}'")
     tz_name = None
     offset = None
     regex_right = re.compile(r"((UTC|GMT|GM)([\+|\-]\d*))")
@@ -36,8 +66,10 @@ def parse_timezone(tz_str: str) -> datetime.tzinfo | None:
     match_result_left = re.search(regex_left, tz_str)
     if match_result_right is not None:
         offset, tz_name = match_result_right.groups()[2], match_result_right.groups()[1]
+        logger.debug(f"Matched UTC/GMT format: offset={offset}, tz_name={tz_name}")
     elif match_result_left is not None:
         offset, tz_name = match_result_left.groups()[1], match_result_left.groups()[2]
+        logger.debug(f"Matched UTC/GMT format: offset={offset}, tz_name={tz_name}")
 
     if offset is None:  # TODO refactor this
         if "CEST" in tz_str or "CENTRALEUROPEANSUMMERTIME" in tz_str:
@@ -52,15 +84,21 @@ def parse_timezone(tz_str: str) -> datetime.tzinfo | None:
             offset, tz_name = 0, "UTC"
         if "GMT" in tz_str or "GREENWICHMEANTIME" in tz_str:
             offset, tz_name = 0, "GMT"
+        if offset is not None:
+            logger.debug(f"Matched predefined timezone: offset={offset}, tz_name={tz_name}")
 
     if offset is not None and tz_name is not None:
         offset = int(offset)
         sign = -1 if offset < 0 else 1
         return datetime.timezone(sign * datetime.timedelta(hours=abs(offset)), name=tz_name)
 
+    logger.debug(f"Attempting to parse timezone from city: {tz_str}")
     tz_name = _city_to_timezone(tz_str)
     if tz_name is not None:
-        return pytz.timezone(tz_name)
+        result = pytz.timezone(tz_name)
+        logger.debug(f"Timezone from city: {result}")
+        return result
+    logger.warning(f"Failed to parse timezone: '{tz_str}'")
     return None
 
 

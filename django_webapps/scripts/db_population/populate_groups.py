@@ -90,7 +90,7 @@ class GroupsPopulator(BasePopulatorFromCsv):
 
     def _get_entity_data(self) -> GroupsData | None:
         if self._current_entity is None:
-            raise TypeError("Value of current teacher can not be None")
+            raise TypeError("Value of current group can not be None")
         gid = self._parse_cell("gid", common_parsers.find_digit)
         if gid is None:
             return None
@@ -224,9 +224,10 @@ if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
     groups = load_csv_data(args.input_csv)
-    Group.objects.all().delete()
+    # Group.objects.all().delete()
     populator = GroupsPopulator(
-        groups[1:],
+        # groups[1:],
+        groups,
         COLUMN_TO_ID,
         dry=args.dry,
         logger=logger,
