@@ -137,3 +137,5 @@ dmypy.json
 
 /django_webapps/scripts/db_population/*.csv
 /django_webapps/scripts/db_population/*.json
+
+.DS_Store
