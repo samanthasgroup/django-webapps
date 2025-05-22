@@ -20,15 +20,12 @@ from api.models.group import Group  # noqa: E402
 from api.models.language_and_level import LanguageAndLevel  # noqa: E402
 from api.models.student import Student  # noqa: E402
 from api.models.teacher import Teacher  # noqa: E402
-from django_webapps.scripts.db_population.base_populator import (  # noqa: E402
+from devtools.scripts.db_population.base_populator import (  # noqa: E402
     BasePopulatorFromCsv,
     CsvData,
 )
-from django_webapps.scripts.db_population.parsers import (  # noqa: E402;
-    common_parsers,
-    group_parsers,
-)
-from django_webapps.scripts.db_population.utils import (  # noqa: E402;
+from devtools.scripts.db_population.parsers import common_parsers, group_parsers  # noqa: E402
+from devtools.scripts.db_population.utils import (  # noqa: E402
     get_logger,
     get_parser,
     load_csv_data,

@@ -13,7 +13,7 @@ from tqdm import tqdm
 from api.models.day_and_time_slot import DayAndTimeSlot
 from api.models.language_and_level import LanguageAndLevel
 from api.models.personal_info import PersonalInfo
-from django_webapps.scripts.db_population.parsers import common_parsers
+from devtools.scripts.db_population.parsers import common_parsers
 
 CsvData = list[list[str]]
 ParseCellReturnType = TypeVar("ParseCellReturnType")

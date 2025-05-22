@@ -15,20 +15,13 @@ from api.models.age_range import AgeRange  # noqa: E402
 from api.models.choices.status.project import StudentProjectStatus  # noqa: E402
 from api.models.choices.status.situational import StudentSituationalStatus  # noqa: E402
 from api.models.student import Student  # noqa: E402
-from django_webapps.scripts.db_population.base_populator import (  # noqa: E402
+from devtools.scripts.db_population.base_populator import (  # noqa: E402
     BasePersonEntityData,
     BasePopulatorFromCsv,
     CsvData,
 )
-from django_webapps.scripts.db_population.parsers import (  # noqa: E402
-    common_parsers,
-    student_parsers,
-)
-from django_webapps.scripts.db_population.utils import (  # noqa: E402
-    get_args,
-    get_logger,
-    load_csv_data,
-)
+from devtools.scripts.db_population.parsers import common_parsers, student_parsers  # noqa: E402
+from devtools.scripts.db_population.utils import get_args, get_logger, load_csv_data  # noqa: E402
 
 logger = get_logger("students.log")
 MIN_SID_WITH_NO_RESPONSE = 1300

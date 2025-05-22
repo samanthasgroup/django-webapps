@@ -17,20 +17,13 @@ from api.models.choices.status.project import TeacherProjectStatus  # noqa: E402
 from api.models.choices.status.situational import TeacherSituationalStatus  # noqa: E402
 from api.models.personal_info import PersonalInfo  # noqa: E402
 from api.models.teacher import Teacher  # noqa: E402
-from django_webapps.scripts.db_population.base_populator import (  # noqa: E402
+from devtools.scripts.db_population.base_populator import (  # noqa: E402
     BasePersonEntityData,
     BasePopulatorFromCsv,
     CsvData,
 )
-from django_webapps.scripts.db_population.parsers import (  # noqa: E402
-    common_parsers,
-    teacher_parsers,
-)
-from django_webapps.scripts.db_population.utils import (  # noqa: E402
-    get_args,
-    get_logger,
-    load_csv_data,
-)
+from devtools.scripts.db_population.parsers import common_parsers, teacher_parsers  # noqa: E402
+from devtools.scripts.db_population.utils import get_args, get_logger, load_csv_data  # noqa: E402
 
 logger = get_logger("teachers.log")
 MIN_TID_WITH_NO_RESPONSE = 1300
