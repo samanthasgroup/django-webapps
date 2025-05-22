@@ -135,7 +135,7 @@ dmypy.json
 
 .vscode/
 
-/django_webapps/scripts/db_population/*.csv
-/django_webapps/scripts/db_population/*.json
+/devtools/scripts/db_population/*.json
+/devtools/scripts/db_population/csv
 
 .DS_Store
