@@ -79,14 +79,29 @@ class BasePopulatorFromCsv(ABC):
     def _pre_process_data(self, csv_data: CsvData) -> CsvData:
         self.header[0] = self.id_name
 
-        def to_digit(entity: str) -> int:
-            result = common_parsers.find_digit(entity[self._column_to_id[self.id_name]])
-            if result:
-                return result
-            return 0
+        def to_digit(entity: list[str]) -> int:
+            try:
+                result = common_parsers.find_digit(entity[self._column_to_id[self.id_name]])
+                if result:
+                    return result
+                return 0
+            except IndexError:
+                self._logger.error(
+                    f"Row too short for entity {entity}, expected at least \
+                    {self._column_to_id[self.id_name] + 1} columns"
+                )
+                return 0
 
-        csv_data.sort(key=lambda entity: to_digit(entity[self._column_to_id[self.id_name]]))
-        return csv_data
+        filtered_csv_data = [
+            entity for entity in csv_data if len(entity) > self._column_to_id[self.id_name]
+        ]
+        if len(filtered_csv_data) < len(csv_data):
+            self._logger.warning(
+                f"Filtered out {len(csv_data) - len(filtered_csv_data)} rows due to insufficient columns"
+            )
+
+        filtered_csv_data.sort(key=lambda entity: to_digit(entity))
+        return filtered_csv_data
 
     @abstractmethod
     def _get_entity_data(self) -> Any | None:
@@ -131,8 +146,19 @@ class BasePopulatorFromCsv(ABC):
             or entity_data.email is None
         ):
             return None
+
         try:
-            return PersonalInfo.objects.create(
+            # Логируем входные данные
+            self._logger.debug(
+                f"{self._current_entity_id}: Creating PersonalInfo with "
+                f"first_name={entity_data.first_name!r}, "
+                f"last_name={entity_data.last_name!r}, "
+                f"telegram_username={entity_data.telegram_username!r}, "
+                f"email={entity_data.email!r}, "
+                f"utc_timedelta={entity_data.utc_timedelta!r}, "
+                f"phone={entity_data.phone_number!r}"
+            )
+            obj = PersonalInfo.objects.create(
                 first_name=entity_data.first_name,
                 last_name=entity_data.last_name,
                 telegram_username=entity_data.telegram_username,
@@ -140,10 +166,21 @@ class BasePopulatorFromCsv(ABC):
                 utc_timedelta=entity_data.utc_timedelta,
                 phone=entity_data.phone_number,
             )
-        except IntegrityError as _:
+            self._logger.info(f"{self._current_entity_id}: Created PersonalInfo id={obj.id}")
+            return obj
+
+        except IntegrityError:
             self._logger.warning(
-                f"{self._current_entity_id}: {self.entity_name} might be a duplicate"
+                f"{self._current_entity_id}: {self.entity_name} duplicate or integrity error",
+                exc_info=True,
             )
+
+        except Exception as e:
+            self._logger.error(
+                f"{self._current_entity_id}: Failed to create {self.entity_name}: {e}",
+                exc_info=True,
+            )
+
         return None
 
     def _create_language_and_levels(

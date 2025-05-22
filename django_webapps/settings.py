@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "celery_config",
     "alerts",
+    "devtools",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
