@@ -32,7 +32,9 @@ class TeacherCommon(Person):
             "help our students apart from hosting speaking clubs."
         ),
     )
-    teaching_languages_and_levels = models.ManyToManyField(LanguageAndLevel)
+    teaching_languages_and_levels = models.ManyToManyField(
+        LanguageAndLevel, verbose_name=_("Teaching languages and levels")
+    )
 
     class Meta:
         abstract = True
