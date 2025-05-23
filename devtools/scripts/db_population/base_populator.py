@@ -76,7 +76,10 @@ class BasePopulatorFromCsv(ABC):
         self._save_metadata()
 
     @abstractmethod
-    def _pre_process_data(self, csv_data: CsvData) -> CsvData:
+    def _pre_process_data(self, csv_data: CsvData, reverse: bool = False) -> CsvData:
+        """
+        reverse parameter is used to sort the data in descending order
+        """
         self.header[0] = self.id_name
 
         def to_digit(entity: list[str]) -> int:
@@ -100,7 +103,7 @@ class BasePopulatorFromCsv(ABC):
                 f"Filtered out {len(csv_data) - len(filtered_csv_data)} rows due to insufficient columns"
             )
 
-        filtered_csv_data.sort(key=lambda entity: to_digit(entity))
+        filtered_csv_data.sort(key=lambda entity: to_digit(entity), reverse=reverse)
         return filtered_csv_data
 
     @abstractmethod

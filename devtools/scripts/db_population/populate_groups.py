@@ -82,8 +82,8 @@ class GroupsPopulator(BasePopulatorFromCsv):
     id_name: str = "gid"
     entity_name: str = "group"
 
-    def _pre_process_data(self, csv_data: CsvData) -> CsvData:
-        return super()._pre_process_data(csv_data)
+    def _pre_process_data(self, csv_data: CsvData, reverse: bool = False) -> CsvData:
+        return super()._pre_process_data(csv_data, reverse)
 
     def _get_entity_data(self) -> GroupsData | None:
         if self._current_entity is None:

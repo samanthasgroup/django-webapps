@@ -78,8 +78,8 @@ class TeacherPopulator(BasePopulatorFromCsv):
     id_name: str = "tid"
     entity_name: str = "teacher"
 
-    def _pre_process_data(self, csv_data: CsvData) -> CsvData:
-        return super()._pre_process_data(csv_data)
+    def _pre_process_data(self, csv_data: CsvData, reverse: bool = False) -> CsvData:
+        return super()._pre_process_data(csv_data, reverse)
 
     def _get_entity_data(self) -> TeacherData | None:
         if self._current_entity is None:

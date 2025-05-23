@@ -47,11 +47,11 @@ class CoordinatorPopulator(BasePopulatorFromCsv):
     id_name: str = "cid"
     entity_name: str = "coordinator"
 
-    def _pre_process_data(self, csv_data: CsvData) -> CsvData:
+    def _pre_process_data(self, csv_data: CsvData, reverse: bool = False) -> CsvData:
         self.header[1] = "name"
         self.header[4] = "timezone"
         csv_data = csv_data[2:]
-        return super()._pre_process_data(csv_data)
+        return super()._pre_process_data(csv_data, reverse)
 
     def _get_entity_data(self) -> CoordinatorData | None:
         if self._current_entity is None:
