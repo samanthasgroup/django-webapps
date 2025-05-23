@@ -298,6 +298,7 @@ class CoordinatorAdmin(VersionAdmin):
             # .prefetch_related('alerts')
         )
 
+    @admin.display(description=_("Active groups count"))
     def active_groups_count(self, obj: models.Coordinator) -> int:
         return obj.groups.count()
 
