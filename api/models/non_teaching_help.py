@@ -28,4 +28,5 @@ class NonTeachingHelp(models.Model):
         verbose_name_plural = _("non-teaching helps")
 
     def __str__(self) -> str:
-        return self.name
+        choices_dict = dict(NonTeachingHelpType.choices)
+        return str(choices_dict.get(self.id, self.id))

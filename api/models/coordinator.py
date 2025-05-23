@@ -95,7 +95,9 @@ class Coordinator(Person):
         object_id_field="object_id",
         related_query_name="coordinator",
     )
-    user = OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    user = OneToOneField(
+        User, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_("Django user")
+    )
 
     objects = CoordinatorQuerySet.as_manager()
 
