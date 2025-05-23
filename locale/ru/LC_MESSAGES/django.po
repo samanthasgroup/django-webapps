@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-23 13:19+0200\n"
+"POT-Creation-Date: 2025-05-23 13:43+0200\n"
 "PO-Revision-Date: 2025-05-11 21:20+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1178,6 +1178,10 @@ msgstr ""
 "Для учителей старше 18 лет: какие виды помощи может оказывать еще? Для "
 "учителей младше 18 лет: что могут делать еще кроме ведения разговорных "
 "клубов?"
+
+#: api/models/shared_abstract/teacher_common.py:36
+msgid "Teaching languages and levels"
+msgstr "Языки и уровни"
 
 #: api/models/student.py:34
 msgid "Student id from the old database"
