@@ -24,7 +24,7 @@ jobs:
           port: ${{ secrets.SSH_PORT_STAGE }}       
           key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}  
           script: |
-            /opt/deploy/scripts/deploy_script.sh stage
+            /opt/deploy/scripts/deploy_django.sh stage
             exit_code=$?
             if [ $exit_code -eq 0 ]; then
               echo "Deployment to staging succeeded"
@@ -48,7 +48,7 @@ jobs:
           username: deployer                         
           key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }} 
           script: |
-            /opt/deploy/scripts/deploy_script.sh prod
+            /opt/deploy/scripts/deploy_django.sh prod
             exit_code=$?
             if [ $exit_code -eq 0 ]; then
               echo "Deployment to production succeeded"
