@@ -1,4 +1,7 @@
+from typing import Any, cast
+
 from django.contrib import admin
+from django.contrib.admin import SimpleListFilter
 from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.urls import reverse
@@ -6,7 +9,33 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from api.models import Teacher
-from api.models.coordinator import Coordinator
+from api.models.teacher import TeacherQuerySet
+
+
+class HasGroupsFilter(SimpleListFilter):
+    title = _("has groups")
+    parameter_name = "has_groups"
+
+    def lookups(
+        self,
+        request: HttpRequest,  # noqa: ARG002
+        model_admin: admin.ModelAdmin[Any],  # noqa: ARG002
+    ) -> list[tuple[str, str]]:
+        return [
+            ("yes", str(_("Yes"))),
+            ("no", str(_("No"))),
+        ]
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Teacher]  # noqa: ARG002
+    ) -> TeacherQuerySet:
+        teacher_queryset = cast(TeacherQuerySet, queryset)
+
+        if self.value() == "yes":
+            return teacher_queryset.filter_has_groups()
+        if self.value() == "no":
+            return teacher_queryset.filter_has_no_groups()
+        return teacher_queryset
 
 
 @admin.register(Teacher)
@@ -18,9 +47,17 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "has_groups_display",
         "can_host_speaking_club",
         "teaching_languages_and_levels_display",
-        # "availability_slots_display",
+        "availability_slots_display",
         "non_teaching_help_provided_display",
         "coordinators_display",
+    )
+
+    list_filter = (
+        "project_status",
+        HasGroupsFilter,
+        "groups",
+        "groups__coordinators",
+        "availability_slots",
     )
 
     search_fields: tuple[str, ...] = (
@@ -29,18 +66,25 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "personal_info__last_name__icontains",
     )
 
-    def get_queryset(self, request: HttpRequest) -> QuerySet[Teacher]:
-        # return super().get_queryset(request)
-        queryset = super().get_queryset(request)
-        return queryset.prefetch_related("groups__coordinators__personal_info")
+    def get_queryset(self, request: HttpRequest) -> TeacherQuerySet:
+        queryset_from_super = super().get_queryset(request)
+
+        teacher_queryset = cast(TeacherQuerySet, queryset_from_super)
+
+        return teacher_queryset.prefetch_related(
+            "personal_info",
+            "teaching_languages_and_levels",
+            "availability_slots",
+            "non_teaching_help_provided",
+            "groups__coordinators__personal_info",
+            "groups",
+        )
 
     @admin.display(description=_("Full name"))
     def get_full_name(self, obj: Teacher) -> str:
-        return f"{obj.personal_info.first_name} {obj.personal_info.last_name}"
-
-    @admin.display(boolean=True, description=_("Can take more groups"))
-    def can_take_more_groups_display(self, obj: Teacher) -> bool:
-        return obj.can_take_more_groups
+        if hasattr(obj, "personal_info") and obj.personal_info:
+            return f"{obj.personal_info.first_name} {obj.personal_info.last_name}"
+        return str(_("N/A"))
 
     @admin.display(boolean=True, description=_("Has groups"))
     def has_groups_display(self, obj: Teacher) -> bool:
@@ -60,14 +104,23 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
 
     @admin.display(description=_("Coordinators"))
     def coordinators_display(self, obj: Teacher) -> str:
-        coordinators = Coordinator.objects.filter(groups__in=obj.groups.all()).distinct()
-        if not coordinators:
+        unique_coordinators = {}
+        for group in obj.groups.all():
+            for coordinator in group.coordinators.all():
+                if coordinator.pk not in unique_coordinators:
+                    unique_coordinators[coordinator.pk] = coordinator
+
+        if not unique_coordinators:
             return str(_("No coordinators"))
 
         links = []
-        for coordinator in coordinators:
+        for coordinator in unique_coordinators.values():
             url = reverse("admin:api_coordinator_change", args=[coordinator.pk])
             full_name = coordinator.personal_info.full_name
             links.append(format_html('<a href="{}">{}</a>', url, full_name))
 
         return format_html(", ".join(links))
+
+    @admin.display(boolean=True, description=_("Can take more groups"))
+    def can_take_more_groups_display(self, obj: Teacher) -> bool:
+        return obj.can_take_more_groups
