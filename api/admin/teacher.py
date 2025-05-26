@@ -6,6 +6,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from api.models import Coordinator, PersonalInfo, Teacher
@@ -116,7 +117,17 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
 
     @admin.display(description=_("Availability slots"))
     def availability_slots_display(self, obj: Teacher) -> str:
-        return "\n ".join([str(slot) for slot in obj.availability_slots.all()])
+        slots = obj.availability_slots.select_related("time_slot").order_by(
+            "day_of_week_index", "time_slot__from_utc_hour"
+        )
+        grouped: dict[str, list[str]] = {}
+        for slot in slots:
+            day = slot.get_day_of_week_index_display()
+            start = slot.time_slot.from_utc_hour.strftime("%H:%M")
+            end = slot.time_slot.to_utc_hour.strftime("%H:%M")
+            grouped.setdefault(day, []).append(f"{start}–{end}")
+        lines = [f"{day}: {', '.join(times)}" for day, times in grouped.items()]
+        return mark_safe("<br>".join(lines))
 
     @admin.display(description=_("Non-teaching help provided"))
     def non_teaching_help_provided_display(self, obj: Teacher) -> str:
