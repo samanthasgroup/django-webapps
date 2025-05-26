@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
-from api.models import Teacher
+from api.models import Coordinator, PersonalInfo, Teacher
 from api.models.teacher import TeacherQuerySet
 
 
@@ -38,6 +38,26 @@ class HasGroupsFilter(SimpleListFilter):
         return teacher_queryset
 
 
+class CoordinatorFilter(admin.SimpleListFilter):
+    title = _("координатор")
+    parameter_name = "coordinator"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Any]  # noqa: ARG002
+    ) -> list[tuple[str, str]]:
+        qs = Coordinator.objects.select_related("personal_info").order_by(
+            "personal_info__last_name", "personal_info__first_name"
+        )
+        return [(c.pk, c.personal_info.full_name) for c in qs]
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[PersonalInfo]  # noqa: ARG002
+    ) -> QuerySet[PersonalInfo]:
+        if self.value():
+            return queryset.filter(groups__coordinators__pk=self.value())
+        return queryset
+
+
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin[Teacher]):
     list_display: tuple[str, ...] = (
@@ -56,7 +76,7 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "project_status",
         HasGroupsFilter,
         "groups",
-        "groups__coordinators",
+        CoordinatorFilter,
         "availability_slots",
     )
 
