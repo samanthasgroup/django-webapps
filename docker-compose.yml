@@ -13,6 +13,9 @@ services:
     volumes:
       - .:/code
       - static_volume:/code/static
+    depends_on:
+      - postgres
+      - redis
 
   nginx:
     image: nginx:alpine
@@ -58,8 +61,6 @@ services:
       - .:/code
     depends_on:
       - web
-      - redis
-      - postgres
 
   celery_beat:
     build:  .
@@ -73,8 +74,6 @@ services:
       - .:/code
     depends_on:
       - web
-      - redis
-      - postgres
 
 
 volumes:
