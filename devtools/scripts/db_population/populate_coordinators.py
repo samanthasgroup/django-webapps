@@ -13,17 +13,13 @@ from django.utils import timezone  # noqa: E402
 
 from api.models.choices.status.project import CoordinatorProjectStatus  # noqa: E402
 from api.models.coordinator import Coordinator  # noqa: E402
-from django_webapps.scripts.db_population.base_populator import (  # noqa: E402
+from devtools.scripts.db_population.base_populator import (  # noqa: E402
     BasePersonEntityData,
     BasePopulatorFromCsv,
     CsvData,
 )
-from django_webapps.scripts.db_population.parsers import common_parsers  # noqa: E402
-from django_webapps.scripts.db_population.utils import (  # noqa: E402
-    get_args,
-    get_logger,
-    load_csv_data,
-)
+from devtools.scripts.db_population.parsers import common_parsers  # noqa: E402
+from devtools.scripts.db_population.utils import get_args, get_logger, load_csv_data  # noqa: E402
 
 logger = get_logger("coordinators.log")
 LIST_OF_ADMINS_IDS = [1, 22, 39, 42, 225, 238, 208]
@@ -51,11 +47,11 @@ class CoordinatorPopulator(BasePopulatorFromCsv):
     id_name: str = "cid"
     entity_name: str = "coordinator"
 
-    def _pre_process_data(self, csv_data: CsvData) -> CsvData:
+    def _pre_process_data(self, csv_data: CsvData, reverse: bool = False) -> CsvData:
         self.header[1] = "name"
         self.header[4] = "timezone"
         csv_data = csv_data[2:]
-        return super()._pre_process_data(csv_data)
+        return super()._pre_process_data(csv_data, reverse)
 
     def _get_entity_data(self) -> CoordinatorData | None:
         if self._current_entity is None:
@@ -77,14 +73,23 @@ class CoordinatorPopulator(BasePopulatorFromCsv):
 
     @transaction.atomic
     def _create_entity(self, entity_data: CoordinatorData) -> None:
+        logger.debug(
+            f"-> Начинаем миграцию координатора: legacy_id={entity_data.id}, "
+            f"name={entity_data.first_name!r}, email={entity_data.email!r}"
+        )
         try:
             personal_info = self._create_personal_info(entity_data)
+            logger.debug(f"   personal_info создано: {personal_info!r}")
+
             if personal_info is None:
+                logger.warning(f"   personal_info пустое, пропускаем legacy_id={entity_data.id}")
                 return
-            if Coordinator.objects.filter(legacy_cid=entity_data.id).count():
-                logger.warning(
-                    f"Coordinator with {self.id_name} {entity_data.id} was already migrated"
-                )
+            exists = Coordinator.objects.filter(legacy_cid=entity_data.id).exists()
+            logger.debug(
+                f"   проверка существования в БД (legacy_cid={entity_data.id}) -> {exists}"
+            )
+            if exists:
+                logger.warning(f"   уже мигрирован, пропускаем legacy_id={entity_data.id}")
                 return
 
             coordinator = Coordinator.objects.create(
@@ -96,6 +101,7 @@ class CoordinatorPopulator(BasePopulatorFromCsv):
                 status_since=entity_data.status_since,
                 comment=self._create_comment(),
             )
+            logger.debug(f"   Coordinator.objects.create -> {coordinator!r}")
             coord_id = coordinator.personal_info.id
             self._update_metadata(
                 coordinator.personal_info.id, entity_data.id, entity_data.first_name
@@ -106,6 +112,7 @@ class CoordinatorPopulator(BasePopulatorFromCsv):
                 f"Coordinator with {self.id_name} {entity_data.id} can not be parsed, see above"
             )
             logger.debug(e)
+            logger.error(f"Ошибка при миграции legacy_id={entity_data.id}: {e!r}", exc_info=True)
 
     def _update_metadata(self, new_id: int, old_id: int, name: str) -> None:
         self._metadata[self.entity_name].append({"new_id": new_id, "old_id": old_id, "name": name})
@@ -115,4 +122,8 @@ if __name__ == "__main__":
     args = get_args()
     teachers = load_csv_data(args.input_csv)
     populator = CoordinatorPopulator(teachers, COLUMN_TO_ID, dry=args.dry, logger=logger)
+    logger.debug(
+        f"Запуск популятора (dry-run={args.dry}) с {len(teachers)} строками из {args.input_csv}"
+    )
     populator.run()
+    logger.info("=== Миграция координаторов завершена ===")

@@ -134,3 +134,8 @@ dmypy.json
 /static/
 
 .vscode/
+
+/devtools/scripts/db_population/*.json
+/devtools/scripts/db_population/csv
+
+.DS_Store

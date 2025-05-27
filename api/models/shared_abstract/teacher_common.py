@@ -16,7 +16,7 @@ class TeacherCommon(Person):
         verbose_name=_("Can host speaking club"), default=False
     )
     has_hosted_speaking_club = models.BooleanField(
-        default=False, verbose_name=_("Has hosted speaking club")
+        verbose_name=_("Has hosted speaking club"), default=False
     )
     is_validated = models.BooleanField(
         verbose_name=_("Is validated"),
@@ -32,7 +32,9 @@ class TeacherCommon(Person):
             "help our students apart from hosting speaking clubs."
         ),
     )
-    teaching_languages_and_levels = models.ManyToManyField(LanguageAndLevel)
+    teaching_languages_and_levels = models.ManyToManyField(
+        LanguageAndLevel, verbose_name=_("Teaching languages and levels")
+    )
 
     class Meta:
         abstract = True

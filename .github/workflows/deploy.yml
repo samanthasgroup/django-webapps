@@ -1,0 +1,54 @@
+name: Deploy Django App
+
+on:
+  push:
+    branches:
+      - master  
+      - stage   
+  workflow_dispatch: 
+
+jobs:
+  deploy_staging:
+    if: github.ref == 'refs/heads/stage' || (github.event_name == 'workflow_dispatch' && github.ref_name == 'stage')
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    environment: 
+      name: staging
+    
+    steps:
+      - name: Deploy to Staging Server
+        uses: appleboy/ssh-action@v1.0.3 
+        with:
+          host: ${{ secrets.SSH_HOST_STAGE }}         
+          username: deployer                         
+          port: ${{ secrets.SSH_PORT_STAGE }}       
+          key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          script: |
+            cd /srv/sam_stage/django-webapps
+            git pull origin stage
+            docker compose -f docker-compose.yml up -d --build
+  
+
+  deploy_production:
+    if: github.ref == 'refs/heads/master' || (github.event_name == 'workflow_dispatch' && github.ref_name == 'master')
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+
+    steps:
+      - name: Deploy to Production Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST_PROD }}          
+          username: deployer                         
+          key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }} 
+          script: |
+            /opt/deploy/scripts/deploy_django.sh prod
+            exit_code=$?
+            if [ $exit_code -eq 0 ]; then
+              echo "Deployment to production succeeded"
+            else
+              echo "Deployment to production failed"
+              exit $exit_code
+            fi

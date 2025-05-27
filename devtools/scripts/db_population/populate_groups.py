@@ -20,15 +20,12 @@ from api.models.group import Group  # noqa: E402
 from api.models.language_and_level import LanguageAndLevel  # noqa: E402
 from api.models.student import Student  # noqa: E402
 from api.models.teacher import Teacher  # noqa: E402
-from django_webapps.scripts.db_population.base_populator import (  # noqa: E402
+from devtools.scripts.db_population.base_populator import (  # noqa: E402
     BasePopulatorFromCsv,
     CsvData,
 )
-from django_webapps.scripts.db_population.parsers import (  # noqa: E402;
-    common_parsers,
-    group_parsers,
-)
-from django_webapps.scripts.db_population.utils import (  # noqa: E402;
+from devtools.scripts.db_population.parsers import common_parsers, group_parsers  # noqa: E402
+from devtools.scripts.db_population.utils import (  # noqa: E402
     get_logger,
     get_parser,
     load_csv_data,
@@ -85,12 +82,12 @@ class GroupsPopulator(BasePopulatorFromCsv):
     id_name: str = "gid"
     entity_name: str = "group"
 
-    def _pre_process_data(self, csv_data: CsvData) -> CsvData:
-        return super()._pre_process_data(csv_data)
+    def _pre_process_data(self, csv_data: CsvData, reverse: bool = False) -> CsvData:
+        return super()._pre_process_data(csv_data, reverse)
 
     def _get_entity_data(self) -> GroupsData | None:
         if self._current_entity is None:
-            raise TypeError("Value of current teacher can not be None")
+            raise TypeError("Value of current group can not be None")
         gid = self._parse_cell("gid", common_parsers.find_digit)
         if gid is None:
             return None
@@ -224,9 +221,10 @@ if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
     groups = load_csv_data(args.input_csv)
-    Group.objects.all().delete()
+    # Group.objects.all().delete()
     populator = GroupsPopulator(
-        groups[1:],
+        # groups[1:],
+        groups,
         COLUMN_TO_ID,
         dry=args.dry,
         logger=logger,

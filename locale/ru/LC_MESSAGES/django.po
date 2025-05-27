@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-12 14:10+0200\n"
+"POT-Creation-Date: 2025-05-23 13:43+0200\n"
 "PO-Revision-Date: 2025-05-11 21:20+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -118,6 +118,10 @@ msgstr "Роль"
 msgid "Active Alerts"
 msgstr "Активные алерты"
 
+#: api/admin/coordinator.py:301
+msgid "Active groups count"
+msgstr "Активные группы"
+
 #: api/admin/group.py:147
 msgid "Start Date"
 msgstr "дата начала занятий"
@@ -131,7 +135,7 @@ msgid "Status Since"
 msgstr "Статус с"
 
 #: api/admin/group.py:171 api/admin/student.py:91 api/admin/teacher.py:61
-#: api/models/coordinator.py:111
+#: api/models/coordinator.py:113
 msgid "Coordinators"
 msgstr "Координаторы"
 
@@ -697,7 +701,11 @@ msgstr "Дополнительные роли"
 msgid "Phrase describing the role of coordinator in project"
 msgstr "Опишите дополнительную роль координатора в проекте (если применимо)"
 
-#: api/models/coordinator.py:110
+#: api/models/coordinator.py:99
+msgid "Django user"
+msgstr "Пользователь Django"
+
+#: api/models/coordinator.py:112
 msgid "Coordinator"
 msgstr "Координатор"
 
@@ -1149,15 +1157,19 @@ msgstr "персональные данные"
 msgid "Can host speaking club"
 msgstr "Может вести разговорный клуб"
 
-#: api/models/shared_abstract/teacher_common.py:20
+#: api/models/shared_abstract/teacher_common.py:19
+msgid "Has hosted speaking club"
+msgstr "Вел:а разговорный клуб"
+
+#: api/models/shared_abstract/teacher_common.py:22
 msgid "Is validated"
 msgstr "Валидирован"
 
-#: api/models/shared_abstract/teacher_common.py:26
+#: api/models/shared_abstract/teacher_common.py:28
 msgid "comment on additional non-teaching skills"
 msgstr "Дополнительные навыки, не связанные с преподаванием"
 
-#: api/models/shared_abstract/teacher_common.py:28
+#: api/models/shared_abstract/teacher_common.py:30
 msgid ""
 "For adult teacher: other ways in which the applicant could help the students "
 "beside listed ones. For teacher under 18: applicant's free-text comment on "
@@ -1166,6 +1178,10 @@ msgstr ""
 "Для учителей старше 18 лет: какие виды помощи может оказывать еще? Для "
 "учителей младше 18 лет: что могут делать еще кроме ведения разговорных "
 "клубов?"
+
+#: api/models/shared_abstract/teacher_common.py:36
+msgid "Teaching languages and levels"
+msgstr "Языки и уровни"
 
 #: api/models/student.py:34
 msgid "Student id from the old database"
