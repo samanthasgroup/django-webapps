@@ -6,6 +6,13 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /code
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        gettext \
+        gcc \
+        libpq-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 RUN pip install --upgrade pip && pip install uv
 
 COPY pyproject.toml uv.lock ./
