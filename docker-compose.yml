@@ -32,7 +32,7 @@ services:
     image: redis:latest
     container_name: redis_broker
     ports:
-      - "6379:6379"
+      - "6379"
     restart: always
     volumes:
       - redis-data:/data
@@ -47,7 +47,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5432"
 
   celery_worker:
     build: .
