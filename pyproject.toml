@@ -30,7 +30,6 @@ dependencies = [
 name = "django-webapps"
 version = "0.1.0"
 description = ""
-readme = "README.md"
 
 [dependency-groups]
 dev = [
