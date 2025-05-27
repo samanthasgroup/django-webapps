@@ -49,3 +49,5 @@ services:
 
 volumes:
   redis-data:
+  postgres-data:
+  static_volume:
