@@ -29,7 +29,7 @@ services:
     image: redis:latest
     container_name: redis_broker
     ports:
-      - "127.0.0.1:6379:6379"
+      - "6379:6379"
     restart: always
     volumes:
       - redis-data:/data
@@ -44,7 +44,37 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "127.0.0.1:5432:5432"
+      - "5432:5432"
+
+  celery_worker:
+    build: .
+    command: >
+      sh -c "
+        uv run celery -A django_webapps worker --loglevel=info
+      "
+    env_file:
+      - .env
+    volumes:
+      - .:/code
+    depends_on:
+      - web
+      - redis
+      - postgres
+
+  celery_beat:
+    build:  .
+    command: >
+      sh -c "
+        uv run celery -A django_webapps beat --loglevel=info
+      "
+    env_file:
+      - .env
+    volumes:
+      - .:/code
+    depends_on:
+      - web
+      - redis
+      - postgres
 
 
 volumes:
