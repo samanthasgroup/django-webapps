@@ -36,19 +36,12 @@ class Command(BaseCommand):
         parser.add_argument(
             "--details", type=str, default="", help="Optional descriptive text for the alert."
         )
-        # Можно добавить флаг --force, если нужно разрешить дубликаты для тестов
-        # parser.add_argument(
-        #     '--force',
-        #     action='store_true',
-        #     help='Create the alert even if an identical active alert exists.'
-        # )
 
     def handle(self, **options: Any) -> None:
         model_spec = options["model_spec"]
         object_id = options["object_id"]
         alert_type = options["alert_type"]
         details = options["details"]
-        # force_creation = options['force'] # Если добавили флаг --force
 
         # 1. Найти ContentType по строке 'app_label.ModelName'
         try:
@@ -100,14 +93,12 @@ class Command(BaseCommand):
             raise CommandError(f"{target_model.__name__} with ID {object_id} not found: {e}")
 
         # 3. Проверить, существует ли уже идентичный активный алерт
-        # (если не используется флаг --force)
-        # if not force_creation: # Раскомментировать, если добавлен --force
         existing_alert = Alert.objects.filter(
             content_type=content_type,
             object_id=object_id,
             alert_type=alert_type,
             is_resolved=False,
-        ).first()  # Используем first(), чтобы получить объект, если он есть
+        ).first()
 
         if existing_alert:
             self.stdout.write(
@@ -125,7 +116,6 @@ class Command(BaseCommand):
                 object_id=object_id,
                 alert_type=alert_type,
                 details=details,
-                # is_resolved=False # По умолчанию False
             )
             self.stdout.write(
                 self.style.SUCCESS(
@@ -134,5 +124,4 @@ class Command(BaseCommand):
                 )
             )
         except Exception as e:
-            # Обработка других возможных ошибок при создании
             raise CommandError(f"Failed to create alert: {e}")

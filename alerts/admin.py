@@ -16,7 +16,8 @@ from .models import Alert
 class AlertAdmin(admin.ModelAdmin[Alert]):
     list_display = (
         "pk",
-        "alert_type",
+        # "alert_type",
+        "alert_type_badge",
         "content_object_link",
         "related_model_type",
         "created_at",
@@ -54,7 +55,7 @@ class AlertAdmin(admin.ModelAdmin[Alert]):
         ),
     )
 
-    @admin.display(description="Related Object")
+    @admin.display(description=_("Related Object"))
     def content_object_link(self, obj: Alert) -> str:
         """Создает ссылку на админку связанного объекта, если возможно."""
         content_object = obj.content_object
@@ -71,7 +72,7 @@ class AlertAdmin(admin.ModelAdmin[Alert]):
 
     content_object_link.admin_order_field = "object_id"  # type: ignore[attr-defined]
 
-    @admin.display(description="Model Type")
+    @admin.display(description=_("Model Type"))
     def related_model_type(self, obj: Alert) -> str:
         return obj.content_type.name.capitalize()
 
@@ -85,7 +86,7 @@ class AlertAdmin(admin.ModelAdmin[Alert]):
             updated_count += 1
         self.message_user(request, _(f"{updated_count} alerts marked as resolved."))
 
-    @admin.display(description="Type")
+    @admin.display(description=_("Type"))
     def alert_type_badge(self, obj: Alert) -> SafeString:
         style = AlertConfig.STYLES.get(obj.alert_type, "")
         label = (
