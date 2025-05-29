@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-23 13:43+0200\n"
+"POT-Creation-Date: 2025-05-29 20:15+0200\n"
 "PO-Revision-Date: 2025-05-11 21:20+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -20,9 +20,21 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "X-Generator: Poedit 3.6\n"
 
-#: alerts/admin.py:77
+#: alerts/admin.py:58
+msgid "Related Object"
+msgstr "Связанный объект"
+
+#: alerts/admin.py:75
+msgid "Model Type"
+msgstr "Модель"
+
+#: alerts/admin.py:81
 msgid "Mark selected alerts as resolved"
-msgstr ""
+msgstr "Пометить выбранные алерты как решенные"
+
+#: alerts/admin.py:89
+msgid "Type"
+msgstr "Тип"
 
 #: alerts/models.py:18
 msgid "Alert Type"
@@ -74,7 +86,7 @@ msgstr "Активные группы"
 msgid "Former groups"
 msgstr "Прошлые группы"
 
-#: api/admin/coordinator.py:226 api/admin/teacher.py:37
+#: api/admin/coordinator.py:226 api/admin/teacher.py:104
 msgid "Full name"
 msgstr "Полное Имя"
 
@@ -134,7 +146,7 @@ msgstr "Дата окончания"
 msgid "Status Since"
 msgstr "Статус с"
 
-#: api/admin/group.py:171 api/admin/student.py:91 api/admin/teacher.py:61
+#: api/admin/group.py:171 api/admin/student.py:91 api/admin/teacher.py:136
 #: api/models/coordinator.py:113
 msgid "Coordinators"
 msgstr "Координаторы"
@@ -163,11 +175,11 @@ msgstr "Полное Имя"
 msgid "Has Groups"
 msgstr "Группа"
 
-#: api/admin/student.py:87 api/admin/teacher.py:49
+#: api/admin/student.py:87 api/admin/teacher.py:114
 msgid "Teaching languages"
 msgstr "Язки преподавания"
 
-#: api/admin/student.py:95 api/admin/teacher.py:65
+#: api/admin/student.py:95 api/admin/teacher.py:145
 msgid "No coordinators"
 msgstr "Нет координатора"
 
@@ -194,21 +206,41 @@ msgstr "Тест #%d"
 msgid "answer: <b>%s</b>"
 msgstr "ответ: <b>%s</b>"
 
-#: api/admin/teacher.py:41
-msgid "Can take more groups"
-msgstr "Может взять еще группы"
+#: api/admin/teacher.py:17
+msgid "has groups"
+msgstr "имеет группы"
 
-#: api/admin/teacher.py:45
+#: api/admin/teacher.py:26
+msgid "Yes"
+msgstr ""
+
+#: api/admin/teacher.py:27
+msgid "No"
+msgstr ""
+
+#: api/admin/teacher.py:43
+msgid "координатор"
+msgstr ""
+
+#: api/admin/teacher.py:108
+msgid "N/A"
+msgstr ""
+
+#: api/admin/teacher.py:110
 msgid "Has groups"
 msgstr "Группа"
 
-#: api/admin/teacher.py:53
+#: api/admin/teacher.py:118
 msgid "Availability slots"
 msgstr "Время занятий"
 
-#: api/admin/teacher.py:57
+#: api/admin/teacher.py:132
 msgid "Non-teaching help provided"
 msgstr "Другие виды помощи"
+
+#: api/admin/teacher.py:155
+msgid "Can take more groups"
+msgstr "Может взять еще группы"
 
 #: api/models/age_range.py:18
 msgid "Start of age range"
@@ -1352,7 +1384,7 @@ msgstr "На главную страницу"
 #: api/templates/admin/api/coordinator/change_form.html:21
 #, python-format
 msgid "Add %(name)s"
-msgstr "Добавить %(name)"
+msgstr "Добавить %(name)s"
 
 #: api/templates/admin/api/coordinator/change_form.html:43
 msgid "Please correct the error below."
