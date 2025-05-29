@@ -443,6 +443,7 @@ dependencies = [
     { name = "gunicorn" },
     { name = "phonenumbers" },
     { name = "psycopg2-binary" },
+    { name = "pytest-mock" },
     { name = "python-dotenv" },
     { name = "pytz" },
     { name = "redis" },
@@ -488,6 +489,7 @@ requires-dist = [
     { name = "gunicorn", specifier = ">=22.0.0,<24.0.0" },
     { name = "phonenumbers", specifier = ">=8.13.42,<10.0.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.9,<3.0.0" },
+    { name = "pytest-mock", specifier = ">=3.14.1" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
     { name = "pytz", specifier = ">=2024.1,<2026.0" },
     { name = "redis", specifier = ">=5.2.1" },
@@ -1008,6 +1010,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/a5/10/a096573b4b896f18a8390d9dafaffc054c1f613c60bf838300732e538890/pytest_django-4.10.0.tar.gz", hash = "sha256:1091b20ea1491fd04a310fc9aaff4c01b4e8450e3b157687625e16a6b5f3a366", size = 84710 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/58/4c/a4fe18205926216e1aebe1f125cba5bce444f91b6e4de4f49fa87e322775/pytest_django-4.10.0-py3-none-any.whl", hash = "sha256:57c74ef3aa9d89cae5a5d73fbb69a720a62673ade7ff13b9491872409a3f5918", size = 23975 },
+]
+
+[[package]]
+name = "pytest-mock"
+version = "3.14.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/71/28/67172c96ba684058a4d24ffe144d64783d2a270d0af0d9e792737bddc75c/pytest_mock-3.14.1.tar.gz", hash = "sha256:159e9edac4c451ce77a5cdb9fc5d1100708d2dd4ba3c3df572f14097351af80e", size = 33241 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b2/05/77b60e520511c53d1c1ca75f1930c7dd8e971d0c4379b7f4b3f9644685ba/pytest_mock-3.14.1-py3-none-any.whl", hash = "sha256:178aefcd11307d874b4cd3100344e7e2d888d9791a6a1d9bfe90fbc1b74fd1d0", size = 9923 },
 ]
 
 [[package]]

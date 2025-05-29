@@ -26,6 +26,7 @@ dependencies = [
     "django-select2>=8.4.0",
     "django-redis>=5.4.0",
     "python-dotenv>=1.1.0",
+    "pytest-mock>=3.14.1",
 ]
 name = "django-webapps"
 version = "0.1.0"

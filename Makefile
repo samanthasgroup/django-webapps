@@ -56,12 +56,9 @@ generate-erd:
 	rm erd_core.dot
 
 
-# Celery worker
 celery:
-	# uv run celery -A django_webapps worker --loglevel=info
 	uv run celery -A celery_config worker --loglevel=info
 
-# Celery beat
 celery-beat:
 	uv run celery -A celery_config beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
 

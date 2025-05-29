@@ -37,7 +37,7 @@ class Command(BaseCommand):
             help="Run the task synchronously in the current process (for debugging, ignores Celery worker).",
         )
 
-    def handle(self, **options: Any) -> None:
+    def handle(self, *_args: Any, **options: Any) -> None:
         task_name = options["task_name"]
         args_json = options.get("args", "[]")
         kwargs_json = options.get("kwargs", "{}")

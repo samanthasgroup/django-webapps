@@ -4,7 +4,10 @@ from django.contrib import admin
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import SafeString
 from django.utils.translation import gettext_lazy as _
+
+from alerts.config import AlertConfig
 
 from .models import Alert
 
@@ -81,3 +84,15 @@ class AlertAdmin(admin.ModelAdmin[Alert]):
             alert.resolve()
             updated_count += 1
         self.message_user(request, _(f"{updated_count} alerts marked as resolved."))
+
+    @admin.display(description="Type")
+    def alert_type_badge(self, obj: Alert) -> SafeString:
+        style = AlertConfig.STYLES.get(obj.alert_type, "")
+        label = (
+            obj.get_alert_type_display()
+            if hasattr(obj, "get_alert_type_display")
+            else obj.alert_type
+        )
+        return format_html(
+            '<span style="padding:2px 6px; border-radius:4px; {}">{}</span>', style, label
+        )
