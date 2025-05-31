@@ -40,7 +40,7 @@ class CoordinatorsSelect2Widget(ModelSelect2MultipleWidget):
 
 
 class StaffOnlyFilter(admin.SimpleListFilter):
-    title = "is for staff only"
+    title = _("is for staff only")
     parameter_name = "staff"
 
     def lookups(
@@ -58,7 +58,7 @@ class StaffOnlyFilter(admin.SimpleListFilter):
 
 
 class CoordinatorFilter(admin.SimpleListFilter):
-    title = "Coordinator"
+    title = _("Coordinator")
     parameter_name = "coordinator"
 
     def lookups(
@@ -70,6 +70,43 @@ class CoordinatorFilter(admin.SimpleListFilter):
     def queryset(self, _request: HttpRequest, queryset: QuerySet[Any]) -> QuerySet[Any]:
         if self.value():
             return queryset.filter(coordinators__pk=self.value())
+        return queryset
+
+
+class ScheduleFilter(admin.SimpleListFilter):
+    title = _("Schedule")
+    parameter_name = "schedule"
+
+    DAYS = [
+        ("monday", _("Понедельник")),
+        ("tuesday", _("Вторник")),
+        ("wednesday", _("Среда")),
+        ("thursday", _("Четверг")),
+        ("friday", _("Пятница")),
+        ("saturday", _("Суббота")),
+        ("sunday", _("Воскресенье")),
+    ]
+
+    def lookups(self, request: HttpRequest, model_admin: ModelAdmin[Any]) -> list[tuple[str, str]]:
+        result = []
+        qs = model_admin.get_queryset(request)
+        for field_name, verbose_day in self.DAYS:
+            day_qs = qs.filter(**{f"{field_name}__isnull": False}).order_by(field_name)
+            times = day_qs.values_list(field_name, flat=True).distinct()
+            for time in times:
+                value = f"{field_name}:{time.isoformat()}"
+                label = f"{verbose_day}, {time.strftime('%H:%M')}"
+                result.append((value, label))
+        return result
+
+    def queryset(self, _request: HttpRequest, queryset: QuerySet[Any]) -> QuerySet[Any]:
+        value = str(self.value())
+        if value:
+            try:
+                field_name, time_str = value.split(":", 1)
+            except ValueError:
+                return queryset
+            return queryset.filter(**{field_name: time_str})
         return queryset
 
 
@@ -118,6 +155,7 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "project_status",
         "situational_status",
         CoordinatorFilter,
+        ScheduleFilter,
     )
     search_fields = (
         "coordinators__personal_info__first_name",
@@ -199,13 +237,13 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
     @admin.display(description=_("Schedule"))
     def get_schedule(self, group: models.Group) -> str:
         days = (
-            ("monday", "Mo"),
-            ("tuesday", "Tu"),
-            ("wednesday", "We"),
-            ("thursday", "Th"),
-            ("friday", "Fr"),
-            ("saturday", "Sa"),
-            ("sunday", "Su"),
+            ("monday", _("Mo")),
+            ("tuesday", _("Tu")),
+            ("wednesday", _("We")),
+            ("thursday", _("Th")),
+            ("friday", _("Fr")),
+            ("saturday", _("Sa")),
+            ("sunday", _("Su")),
         )
         schedule = [
             f"{short_name} {getattr(group, day).strftime('%H:%M')}"
