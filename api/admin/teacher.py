@@ -68,7 +68,7 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "has_groups_display",
         "can_host_speaking_club",
         "teaching_languages_and_levels_display",
-        "availability_slots_display",
+        # "availability_slots_display",
         "non_teaching_help_provided_display",
         "coordinators_display",
     )
@@ -78,7 +78,7 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         HasGroupsFilter,
         "groups",
         CoordinatorFilter,
-        "availability_slots",
+        # "availability_slots",
     )
 
     search_fields: tuple[str, ...] = (
