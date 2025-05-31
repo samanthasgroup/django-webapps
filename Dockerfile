@@ -18,6 +18,6 @@ RUN pip install --upgrade pip && pip install uv
 
 COPY pyproject.toml uv.lock ./
 
-RUN uv sync
+RUN uv sync --frozen
 
 COPY . .
