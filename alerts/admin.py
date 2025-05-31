@@ -4,7 +4,10 @@ from django.contrib import admin
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import SafeString
 from django.utils.translation import gettext_lazy as _
+
+from alerts.config import AlertConfig
 
 from .models import Alert
 
@@ -13,7 +16,8 @@ from .models import Alert
 class AlertAdmin(admin.ModelAdmin[Alert]):
     list_display = (
         "pk",
-        "alert_type",
+        # "alert_type",
+        "alert_type_badge",
         "content_object_link",
         "related_model_type",
         "created_at",
@@ -51,7 +55,7 @@ class AlertAdmin(admin.ModelAdmin[Alert]):
         ),
     )
 
-    @admin.display(description="Related Object")
+    @admin.display(description=_("Related Object"))
     def content_object_link(self, obj: Alert) -> str:
         """Создает ссылку на админку связанного объекта, если возможно."""
         content_object = obj.content_object
@@ -68,7 +72,7 @@ class AlertAdmin(admin.ModelAdmin[Alert]):
 
     content_object_link.admin_order_field = "object_id"  # type: ignore[attr-defined]
 
-    @admin.display(description="Model Type")
+    @admin.display(description=_("Model Type"))
     def related_model_type(self, obj: Alert) -> str:
         return obj.content_type.name.capitalize()
 
@@ -81,3 +85,15 @@ class AlertAdmin(admin.ModelAdmin[Alert]):
             alert.resolve()
             updated_count += 1
         self.message_user(request, _(f"{updated_count} alerts marked as resolved."))
+
+    @admin.display(description=_("Type"))
+    def alert_type_badge(self, obj: Alert) -> SafeString:
+        style = AlertConfig.STYLES.get(obj.alert_type, "")
+        label = (
+            obj.get_alert_type_display()
+            if hasattr(obj, "get_alert_type_display")
+            else obj.alert_type
+        )
+        return format_html(
+            '<span style="padding:2px 6px; border-radius:4px; {}">{}</span>', style, label
+        )

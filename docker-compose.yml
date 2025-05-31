@@ -16,6 +16,8 @@ services:
     depends_on:
       - postgres
       - redis
+    networks:
+        - shared-net
 
   nginx:
     image: nginx:alpine
@@ -27,6 +29,8 @@ services:
     restart: always
     depends_on:
       - web
+    networks:
+        - shared-net
 
   redis:
     image: redis:latest
@@ -34,6 +38,8 @@ services:
     restart: always
     volumes:
       - redis-data:/data
+    networks:
+        - shared-net
 
   postgres:
     image: postgres:14
@@ -44,6 +50,8 @@ services:
       POSTGRES_PASSWORD: pass
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    networks:
+        - shared-net
 
   celery_worker:
     build: .
@@ -57,6 +65,8 @@ services:
       - .:/code
     depends_on:
       - web
+    networks:
+        - shared-net
 
   celery_beat:
     build:  .
@@ -70,9 +80,34 @@ services:
       - .:/code
     depends_on:
       - web
+    networks:
+        - shared-net
+
+  bot:
+    build: ../samanthas-telegram-bot
+    command: >
+      sh -c "
+        uv run python bot/main.py
+      "
+    env_file:
+      - ../samanthas-telegram-bot/.env
+    volumes:
+      - ../samanthas-telegram-bot:/bot
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - shared-net
+    profiles:
+      - bot
 
 
 volumes:
   redis-data:
   postgres-data:
   static_volume:
+
+
+networks:
+  shared-net:
+    driver: bridge
