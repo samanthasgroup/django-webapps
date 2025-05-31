@@ -1,6 +1,12 @@
 start:
 	uv run manage.py runserver
 
+updev:
+	docker compose -f compose.dev.yml up -d 
+
+down:
+	docker compose down
+
 test:
 	uv run pytest
 
