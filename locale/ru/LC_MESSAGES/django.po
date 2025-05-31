@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-29 20:15+0200\n"
+"POT-Creation-Date: 2025-05-31 15:49+0200\n"
 "PO-Revision-Date: 2025-05-11 21:20+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -98,11 +98,11 @@ msgstr "Валидирован:а"
 msgid "Admin"
 msgstr "Админ"
 
-#: api/admin/coordinator.py:242 api/admin/group.py:223
+#: api/admin/coordinator.py:242 api/admin/group.py:261
 msgid "Project<br>status"
 msgstr "Статус в проекте"
 
-#: api/admin/coordinator.py:247 api/admin/group.py:227
+#: api/admin/coordinator.py:247 api/admin/group.py:265
 msgid "Situational<br>Status"
 msgstr "Временный статус"
 
@@ -134,36 +134,100 @@ msgstr "Активные алерты"
 msgid "Active groups count"
 msgstr "Активные группы"
 
-#: api/admin/group.py:147
+#: api/admin/group.py:43 api/models/group.py:82
+msgid "is for staff only"
+msgstr "Группа для волонтеров"
+
+#: api/admin/group.py:61 api/models/coordinator.py:112
+msgid "Coordinator"
+msgstr "Координатор"
+
+#: api/admin/group.py:77 api/admin/group.py:237
+msgid "Schedule"
+msgstr "Расписание"
+
+#: api/admin/group.py:81
+msgid "Понедельник"
+msgstr ""
+
+#: api/admin/group.py:82
+msgid "Вторник"
+msgstr ""
+
+#: api/admin/group.py:83
+msgid "Среда"
+msgstr ""
+
+#: api/admin/group.py:84
+msgid "Четверг"
+msgstr ""
+
+#: api/admin/group.py:85
+msgid "Пятница"
+msgstr ""
+
+#: api/admin/group.py:86
+msgid "Суббота"
+msgstr ""
+
+#: api/admin/group.py:87
+msgid "Воскресенье"
+msgstr ""
+
+#: api/admin/group.py:185
 msgid "Start Date"
 msgstr "дата начала занятий"
 
-#: api/admin/group.py:156
+#: api/admin/group.py:194
 msgid "End Date"
 msgstr "Дата окончания"
 
-#: api/admin/group.py:164
+#: api/admin/group.py:202
 msgid "Status Since"
 msgstr "Статус с"
 
-#: api/admin/group.py:171 api/admin/student.py:91 api/admin/teacher.py:136
+#: api/admin/group.py:209 api/admin/student.py:91 api/admin/teacher.py:136
 #: api/models/coordinator.py:113
 msgid "Coordinators"
 msgstr "Координаторы"
 
-#: api/admin/group.py:183
+#: api/admin/group.py:221
 msgid "Teachers"
 msgstr "Учителя"
 
-#: api/admin/group.py:195
+#: api/admin/group.py:233
 msgid "Number Of<br>Students"
 msgstr "Количество студентов"
 
-#: api/admin/group.py:199
-msgid "Schedule"
-msgstr "Расписание"
+#: api/admin/group.py:240
+msgid "Mo"
+msgstr "Пн"
 
-#: api/admin/group.py:217
+#: api/admin/group.py:241
+msgid "Tu"
+msgstr "Вт"
+
+#: api/admin/group.py:242
+msgid "We"
+msgstr "Ср"
+
+#: api/admin/group.py:243
+msgid "Th"
+msgstr "Чт"
+
+#: api/admin/group.py:244
+msgid "Fr"
+msgstr "Пт"
+
+#: api/admin/group.py:245
+msgid "Sa"
+msgstr "Сб"
+
+#: api/admin/group.py:246
+msgid "Su"
+msgstr "Вс"
+
+#: api/admin/group.py:255
 msgid "For Staff"
 msgstr "Для стафа"
 
@@ -737,10 +801,6 @@ msgstr "Опишите дополнительную роль координат�
 msgid "Django user"
 msgstr "Пользователь Django"
 
-#: api/models/coordinator.py:112
-msgid "Coordinator"
-msgstr "Координатор"
-
 #: api/models/day_and_time_slot.py:14
 msgid "from UTC hour"
 msgstr "С (UTC)"
@@ -934,10 +994,6 @@ msgstr "GID группы из старой базы"
 msgid "availability slots for auto-matching"
 msgstr ""
 
-#: api/models/group.py:82
-msgid "is for staff only"
-msgstr "Группа для волонтеров"
-
 #: api/models/group.py:84
 msgid "language and level"
 msgstr "язык и уровень"
@@ -948,13 +1004,13 @@ msgstr "продолжительность занятий в минутах"
 
 #: api/models/group.py:92 api/models/shared_abstract/person.py:23
 msgid "project status"
-msgstr "статус в проекте"
+msgstr "Статус в проекте"
 
 #: api/models/group.py:98 api/models/shared_abstract/person.py:29
 #: api/models/student.py:90 api/models/teacher.py:103
 #: api/models/teacher_under_18.py:22
 msgid "situational status"
-msgstr "временный статус"
+msgstr "Временный статус"
 
 #: api/models/group.py:101 api/models/shared_abstract/person.py:36
 msgid "date and time of last change of project-level or situational status"
@@ -1420,6 +1476,14 @@ msgstr "Выполнить выбранное действие"
 #: templates/admin/actions.html:13
 msgid "Apply selected action"
 msgstr "Применить выбранное дейстие"
+
+#: templates/admin/base_site.html:6
+msgid "Django site admin"
+msgstr ""
+
+#: templates/admin/base_site.html:11
+msgid "Django administration"
+msgstr ""
 
 #~ msgid "In onboarding"
 #~ msgstr "Проходит онбординг"
