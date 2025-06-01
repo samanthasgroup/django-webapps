@@ -984,11 +984,11 @@ msgstr "ссылка на чат в Телеграм"
 
 #: api/models/group.py:77
 msgid "Group id from the old database"
-msgstr "SID группы из старой базы"
+msgstr "GID"
 
 #: api/models/group.py:77
 msgid "legacy group id"
-msgstr "GID группы из старой базы"
+msgstr "GID из старой базы"
 
 #: api/models/group.py:80
 msgid "availability slots for auto-matching"
