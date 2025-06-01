@@ -65,12 +65,14 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "pk",
         "get_full_name",
         "project_status",
+        "get_personal_info_email",
+        "get_personal_info_tg",
         "has_groups_display",
         "can_host_speaking_club",
         "teaching_languages_and_levels_display",
-        # "availability_slots_display",
         "non_teaching_help_provided_display",
         "coordinators_display",
+        # "availability_slots_display",
     )
 
     list_filter = (
@@ -155,3 +157,11 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
     @admin.display(boolean=True, description=_("Can take more groups"))
     def can_take_more_groups_display(self, obj: Teacher) -> bool:
         return obj.can_take_more_groups
+
+    @admin.display(description="Email", ordering="personal_info__email")
+    def get_personal_info_email(self, coordinator: Coordinator) -> str:
+        return coordinator.personal_info.email if coordinator.personal_info else ""
+
+    @admin.display(description="Telegram", ordering="personal_info__telegram_username")
+    def get_personal_info_tg(self, coordinator: Coordinator) -> str:
+        return coordinator.personal_info.telegram_username if coordinator.personal_info else ""

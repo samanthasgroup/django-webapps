@@ -18,7 +18,7 @@ services:
     container_name: redis_broker
     restart: always
     ports:
-      - "6379:6379"   
+      - "6379:6379"
     volumes:
       - redis-data:/data
     networks:
@@ -32,6 +32,7 @@ services:
       "
     volumes:
       - .:/code
+      - /code/.venv
     env_file:
       - .env
     environment:
@@ -54,6 +55,7 @@ services:
       "
     volumes:
       - .:/code
+      - /code/.venv
     env_file:
       - .env
     environment:

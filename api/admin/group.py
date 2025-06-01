@@ -115,6 +115,7 @@ class GroupAdminForm(forms.ModelForm[Any]):
         model = models.Group
         fields = (
             "id",
+            "legacy_gid",
             "language_and_level",
             "coordinators",
             "teachers",
@@ -162,6 +163,7 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "coordinators__personal_info__last_name",
         "teachers__personal_info__first_name",
         "teachers__personal_info__last_name",
+        "legacy_gid",
     )
 
     class Media:

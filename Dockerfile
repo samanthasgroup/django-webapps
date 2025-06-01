@@ -1,9 +1,9 @@
 FROM python:3.10-slim
 
-# Set env flags
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV UV_NO_VENV=1
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
 
 WORKDIR /code
 
@@ -18,6 +18,6 @@ RUN pip install --upgrade pip && pip install uv
 
 COPY pyproject.toml uv.lock ./
 
-RUN uv sync
+RUN uv sync --frozen
 
 COPY . .

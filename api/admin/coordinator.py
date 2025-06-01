@@ -165,18 +165,20 @@ class CoordinatorAdmin(VersionAdmin):
     list_display = (
         "get_personal_info_id",
         "get_personal_info_full_name",
+        "get_personal_info_email",
+        "get_personal_info_tg",
         "get_is_validated",
-        # "get_is_admin",
-        # "get_additional_skills_comment",
         "get_project_status",
         "get_situational_status",
-        # "get_status_since",
         "active_groups_count",
         "get_communication_language_mode",
         "mentor",
-        # "get_comment",
         "get_role_comment",
         "display_active_alerts_count",
+        # "get_is_admin",
+        # "get_additional_skills_comment",
+        # "get_comment",
+        # "get_status_since",
     )
 
     ordering = ["personal_info_id"]
@@ -223,6 +225,14 @@ class CoordinatorAdmin(VersionAdmin):
     @admin.display(description="ID", ordering="personal_info__id")
     def get_personal_info_id(self, coordinator: Coordinator) -> int:
         return coordinator.personal_info.id
+
+    @admin.display(description="Email", ordering="personal_info__email")
+    def get_personal_info_email(self, coordinator: Coordinator) -> str:
+        return coordinator.personal_info.email if coordinator.personal_info else ""
+
+    @admin.display(description="Telegram", ordering="personal_info__telegram_username")
+    def get_personal_info_tg(self, coordinator: Coordinator) -> str:
+        return coordinator.personal_info.telegram_username if coordinator.personal_info else ""
 
     @admin.display(description=_("Full name"), ordering="personal_info__first_name")
     def get_personal_info_full_name(self, coordinator: Coordinator) -> str:

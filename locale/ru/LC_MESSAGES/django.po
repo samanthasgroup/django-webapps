@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-31 15:49+0200\n"
+"POT-Creation-Date: 2025-05-31 23:47+0200\n"
 "PO-Revision-Date: 2025-05-11 21:20+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -86,51 +86,51 @@ msgstr "Активные группы"
 msgid "Former groups"
 msgstr "Прошлые группы"
 
-#: api/admin/coordinator.py:226 api/admin/teacher.py:104
+#: api/admin/coordinator.py:237 api/admin/teacher.py:106
 msgid "Full name"
 msgstr "Полное Имя"
 
-#: api/admin/coordinator.py:230
+#: api/admin/coordinator.py:241
 msgid "Valid"
 msgstr "Валидирован:а"
 
-#: api/admin/coordinator.py:236
+#: api/admin/coordinator.py:247
 msgid "Admin"
 msgstr "Админ"
 
-#: api/admin/coordinator.py:242 api/admin/group.py:261
+#: api/admin/coordinator.py:253 api/admin/group.py:261
 msgid "Project<br>status"
 msgstr "Статус в проекте"
 
-#: api/admin/coordinator.py:247 api/admin/group.py:265
+#: api/admin/coordinator.py:258 api/admin/group.py:265
 msgid "Situational<br>Status"
 msgstr "Временный статус"
 
-#: api/admin/coordinator.py:252
+#: api/admin/coordinator.py:263
 msgid "Status<br>last changed"
 msgstr "Последняя<br>смена статуса"
 
-#: api/admin/coordinator.py:258
+#: api/admin/coordinator.py:269
 msgid "Skills"
 msgstr "Навыки"
 
-#: api/admin/coordinator.py:263
+#: api/admin/coordinator.py:274
 msgid "Communication<br>language(s)"
 msgstr "Язык(и)<br>общения"
 
-#: api/admin/coordinator.py:269
+#: api/admin/coordinator.py:280
 msgid "Comment"
 msgstr "Комментарий"
 
-#: api/admin/coordinator.py:279
+#: api/admin/coordinator.py:290
 msgid "Role"
 msgstr "Роль"
 
-#: api/admin/coordinator.py:283
+#: api/admin/coordinator.py:294
 msgid "Active Alerts"
 msgstr "Активные алерты"
 
-#: api/admin/coordinator.py:301
+#: api/admin/coordinator.py:312
 msgid "Active groups count"
 msgstr "Активные группы"
 
@@ -186,7 +186,7 @@ msgstr "Дата окончания"
 msgid "Status Since"
 msgstr "Статус с"
 
-#: api/admin/group.py:209 api/admin/student.py:91 api/admin/teacher.py:136
+#: api/admin/group.py:209 api/admin/student.py:91 api/admin/teacher.py:138
 #: api/models/coordinator.py:113
 msgid "Coordinators"
 msgstr "Координаторы"
@@ -239,11 +239,11 @@ msgstr "Полное Имя"
 msgid "Has Groups"
 msgstr "Группа"
 
-#: api/admin/student.py:87 api/admin/teacher.py:114
+#: api/admin/student.py:87 api/admin/teacher.py:116
 msgid "Teaching languages"
-msgstr "Язки преподавания"
+msgstr "Языки преподавания"
 
-#: api/admin/student.py:95 api/admin/teacher.py:145
+#: api/admin/student.py:95 api/admin/teacher.py:147
 msgid "No coordinators"
 msgstr "Нет координатора"
 
@@ -286,23 +286,23 @@ msgstr ""
 msgid "координатор"
 msgstr ""
 
-#: api/admin/teacher.py:108
+#: api/admin/teacher.py:110
 msgid "N/A"
 msgstr ""
 
-#: api/admin/teacher.py:110
+#: api/admin/teacher.py:112
 msgid "Has groups"
 msgstr "Группа"
 
-#: api/admin/teacher.py:118
+#: api/admin/teacher.py:120
 msgid "Availability slots"
 msgstr "Время занятий"
 
-#: api/admin/teacher.py:132
+#: api/admin/teacher.py:134
 msgid "Non-teaching help provided"
 msgstr "Другие виды помощи"
 
-#: api/admin/teacher.py:155
+#: api/admin/teacher.py:157
 msgid "Can take more groups"
 msgstr "Может взять еще группы"
 
@@ -984,11 +984,11 @@ msgstr "ссылка на чат в Телеграм"
 
 #: api/models/group.py:77
 msgid "Group id from the old database"
-msgstr "SID группы из старой базы"
+msgstr "GID"
 
 #: api/models/group.py:77
 msgid "legacy group id"
-msgstr "GID группы из старой базы"
+msgstr "GID из старой базы"
 
 #: api/models/group.py:80
 msgid "availability slots for auto-matching"

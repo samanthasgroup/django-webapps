@@ -1,1 +1,5 @@
-.pdm-build
+.venv/
+.pdm-build/
+__pycache__/
+*.pyc
+.git/
