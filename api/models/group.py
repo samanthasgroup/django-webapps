@@ -149,12 +149,14 @@ class Group(GroupCommon):
         ]
 
     def __str__(self) -> str:
-        coordinator_names = ",".join(c.personal_info.full_name for c in self.coordinators.all())
-        teacher_names = ",".join(t.personal_info.full_name for t in self.teachers.all())
-        return (
-            f"{self.pk}: {self.language_and_level}, coord(s) {coordinator_names}, "
-            f"teacher(s) {teacher_names}, {self.students.count()} students"
-        )
+        coordinator_ids = ", ".join(str(c.personal_info.pk) for c in self.coordinators.all())
+        return f"{self.pk}: {self.language_and_level}, CID: {coordinator_ids}"
+        # coordinator_names = ",".join(c.personal_info.full_name for c in self.coordinators.all())
+        # teacher_names = ",".join(t.personal_info.full_name for t in self.teachers.all())
+        # return (
+        #     f"{self.pk}: {self.language_and_level}, coord(s) {coordinator_names}, "
+        #     f"teacher(s) {teacher_names}, {self.students.count()} students"
+        # )
 
     def _teachers_group_count_annotation(self) -> QuerySet[Teacher]:
         return self.teachers.annotate(group_count=Count("groups"))
