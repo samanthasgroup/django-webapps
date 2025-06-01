@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-31 23:47+0200\n"
+"POT-Creation-Date: 2025-06-01 17:08+0200\n"
 "PO-Revision-Date: 2025-05-11 21:20+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -98,11 +98,11 @@ msgstr "Валидирован:а"
 msgid "Admin"
 msgstr "Админ"
 
-#: api/admin/coordinator.py:253 api/admin/group.py:261
+#: api/admin/coordinator.py:253 api/admin/group.py:263
 msgid "Project<br>status"
 msgstr "Статус в проекте"
 
-#: api/admin/coordinator.py:258 api/admin/group.py:265
+#: api/admin/coordinator.py:258 api/admin/group.py:267
 msgid "Situational<br>Status"
 msgstr "Временный статус"
 
@@ -142,7 +142,7 @@ msgstr "Группа для волонтеров"
 msgid "Coordinator"
 msgstr "Координатор"
 
-#: api/admin/group.py:77 api/admin/group.py:237
+#: api/admin/group.py:77 api/admin/group.py:239
 msgid "Schedule"
 msgstr "Расписание"
 
@@ -174,84 +174,84 @@ msgstr ""
 msgid "Воскресенье"
 msgstr ""
 
-#: api/admin/group.py:185
+#: api/admin/group.py:187
 msgid "Start Date"
 msgstr "дата начала занятий"
 
-#: api/admin/group.py:194
+#: api/admin/group.py:196
 msgid "End Date"
 msgstr "Дата окончания"
 
-#: api/admin/group.py:202
+#: api/admin/group.py:204
 msgid "Status Since"
 msgstr "Статус с"
 
-#: api/admin/group.py:209 api/admin/student.py:91 api/admin/teacher.py:138
+#: api/admin/group.py:211 api/admin/student.py:92 api/admin/teacher.py:138
 #: api/models/coordinator.py:113
 msgid "Coordinators"
 msgstr "Координаторы"
 
-#: api/admin/group.py:221
+#: api/admin/group.py:223
 msgid "Teachers"
 msgstr "Учителя"
 
-#: api/admin/group.py:233
+#: api/admin/group.py:235
 msgid "Number Of<br>Students"
 msgstr "Количество студентов"
 
-#: api/admin/group.py:240
+#: api/admin/group.py:242
 msgid "Mo"
 msgstr "Пн"
 
-#: api/admin/group.py:241
+#: api/admin/group.py:243
 msgid "Tu"
 msgstr "Вт"
 
-#: api/admin/group.py:242
+#: api/admin/group.py:244
 msgid "We"
 msgstr "Ср"
 
-#: api/admin/group.py:243
+#: api/admin/group.py:245
 msgid "Th"
 msgstr "Чт"
 
-#: api/admin/group.py:244
+#: api/admin/group.py:246
 msgid "Fr"
 msgstr "Пт"
 
-#: api/admin/group.py:245
+#: api/admin/group.py:247
 msgid "Sa"
 msgstr "Сб"
 
-#: api/admin/group.py:246
+#: api/admin/group.py:248
 msgid "Su"
 msgstr "Вс"
 
-#: api/admin/group.py:255
+#: api/admin/group.py:257
 msgid "For Staff"
 msgstr "Для стафа"
 
-#: api/admin/student.py:79
+#: api/admin/student.py:80
 msgid "Full Name"
 msgstr "Полное Имя"
 
-#: api/admin/student.py:83
+#: api/admin/student.py:84
 msgid "Has Groups"
 msgstr "Группа"
 
-#: api/admin/student.py:87 api/admin/teacher.py:116
+#: api/admin/student.py:88 api/admin/teacher.py:116
 msgid "Teaching languages"
 msgstr "Языки преподавания"
 
-#: api/admin/student.py:95 api/admin/teacher.py:147
+#: api/admin/student.py:96 api/admin/teacher.py:147
 msgid "No coordinators"
 msgstr "Нет координатора"
 
-#: api/admin/student.py:105 api/admin/student.py:126
+#: api/admin/student.py:106 api/admin/student.py:127
 msgid "Enrollment test summary"
 msgstr "Входные тесты"
 
-#: api/admin/student.py:116
+#: api/admin/student.py:117
 #, python-format
 msgid ""
 "Test #%(idx)d, Total questions: %(total)d, Total answers: %(answers)d, "
@@ -260,12 +260,12 @@ msgstr ""
 "Тест №%(idx)d, Всего вопросов: %(total)d, Дано ответов: %(answers)d, "
 "Правильных ответов: %(correct)d\n"
 
-#: api/admin/student.py:130
+#: api/admin/student.py:131
 #, python-format
 msgid "Test #%d"
 msgstr "Тест #%d"
 
-#: api/admin/student.py:135
+#: api/admin/student.py:136
 #, python-format
 msgid "answer: <b>%s</b>"
 msgstr "ответ: <b>%s</b>"
@@ -869,7 +869,7 @@ msgstr ""
 "Для какого возраста этот тест. Оставьте пустым, если этот тест для всех "
 "возрастов"
 
-#: api/models/enrollment_test.py:22 api/models/group.py:176
+#: api/models/enrollment_test.py:22 api/models/group.py:178
 #: api/models/language_and_level.py:21 api/models/language_and_level.py:56
 msgid "language"
 msgstr "язык"
@@ -1037,19 +1037,19 @@ msgstr "группа"
 msgid "groups"
 msgstr "группы"
 
-#: api/models/group.py:173
+#: api/models/group.py:175
 msgid "Is this a speaking club for children?"
 msgstr "Разговорный клуб для детей?"
 
-#: api/models/group.py:178
+#: api/models/group.py:180
 msgid "teachers under 18"
 msgstr "Преподаватели младше 18 лет"
 
-#: api/models/group.py:181
+#: api/models/group.py:183
 msgid "speaking club"
 msgstr "разговорный клуб"
 
-#: api/models/group.py:182
+#: api/models/group.py:184
 msgid "speaking clubs"
 msgstr "разговорные клубы"
 
@@ -1273,11 +1273,11 @@ msgstr "Языки и уровни"
 
 #: api/models/student.py:34
 msgid "Student id from the old database"
-msgstr "SID студента из старой базы"
+msgstr "SID"
 
 #: api/models/student.py:35
 msgid "legacy student id"
-msgstr "SID студента из старой базы"
+msgstr "SID из старой базы"
 
 #: api/models/student.py:41
 msgid ""

@@ -22,6 +22,7 @@ class StudentAdminForm(forms.ModelForm[models.Student]):
         model = models.Student
         fields = (
             "personal_info",
+            "legacy_sid",
             "project_status",
             "situational_status",
             "status_since",
