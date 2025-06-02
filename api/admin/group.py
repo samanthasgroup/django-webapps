@@ -166,6 +166,27 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "legacy_gid",
     )
 
+    fields = (
+        "id",
+        "legacy_gid",
+        "language_and_level",
+        "schedule_display",
+        "coordinators",
+        "teachers",
+        "students",
+        "start_date",
+        "end_date",
+        "project_status",
+        "situational_status",
+        "status_since",
+        "is_for_staff_only",
+    )
+
+    readonly_fields = (
+        "id",
+        "schedule_display",
+    )
+
     class Media:
         css = {"all": ("css/select2-darkmode.css",)}
         js = ("admin/js/sticky-scroll-bar.js",)
@@ -253,6 +274,32 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
             if getattr(group, day)
         ]
         return mark_safe(",<br>".join(schedule))
+
+    @admin.display(description=_("Schedule"))
+    def schedule_display(self, group: models.Group) -> str:
+        if not group.pk:
+            return str(_("Schedule will be available after saving the group"))
+
+        days = (
+            ("monday", _("Понедельник")),
+            ("tuesday", _("Вторник")),
+            ("wednesday", _("Среда")),
+            ("thursday", _("Четверг")),
+            ("friday", _("Пятница")),
+            ("saturday", _("Суббота")),
+            ("sunday", _("Воскресенье")),
+        )
+
+        schedule_items = []
+        for day, day_name in days:
+            time_value = getattr(group, day)
+            if time_value:
+                schedule_items.append(f"{day_name}: {time_value.strftime('%H:%M')}")
+
+        if schedule_items:
+            return format_html("<br>".join(schedule_items))
+
+        return str(_("No schedule set"))
 
     @admin.display(description=_("For Staff"))
     def staff_only(self, group: models.Group) -> str:
