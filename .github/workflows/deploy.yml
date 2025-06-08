@@ -26,7 +26,7 @@ jobs:
           script: |
             cd /srv/sam_stage/django-webapps
             git pull origin stage
-            docker compose -f docker-compose.yml up -d --build
+            docker compose -f docker-compose.yml --profile nginx up -d --build
   
 
   deploy_production:
@@ -42,13 +42,8 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST_PROD }}          
           username: deployer                         
-          key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }} 
+          key: ${{ secrets.DEPLOY_SSH_PROD_PRIVATE_KEY }}
           script: |
-            /opt/deploy/scripts/deploy_django.sh prod
-            exit_code=$?
-            if [ $exit_code -eq 0 ]; then
-              echo "Deployment to production succeeded"
-            else
-              echo "Deployment to production failed"
-              exit $exit_code
-            fi
+            cd /home/mitia/django-webapps
+            git pull origin main
+            docker compose -f docker-compose.yml up -d --build

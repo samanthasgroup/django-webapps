@@ -16,8 +16,10 @@ services:
     depends_on:
       - postgres
       - redis
+    ports:
+      - "8001:8000"
     networks:
-        - shared-net
+      - shared-net
 
   nginx:
     image: nginx:alpine
@@ -30,7 +32,9 @@ services:
     depends_on:
       - web
     networks:
-        - shared-net
+      - shared-net
+    profiles:
+      - "nginx"
 
   redis:
     image: redis:latest
@@ -39,7 +43,7 @@ services:
     volumes:
       - redis-data:/data
     networks:
-        - shared-net
+      - shared-net
 
   postgres:
     image: postgres:14
@@ -51,7 +55,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     networks:
-        - shared-net
+      - shared-net
 
   celery_worker:
     build: .
@@ -82,7 +86,7 @@ services:
     depends_on:
       - web
     networks:
-        - shared-net
+      - shared-net
 
   bot:
     build: ../samanthas-telegram-bot
