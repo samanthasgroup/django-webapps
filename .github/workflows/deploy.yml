@@ -44,6 +44,6 @@ jobs:
           username: deployer                         
           key: ${{ secrets.DEPLOY_SSH_PROD_PRIVATE_KEY }}
           script: |
-            cd /home/mitia/django-webapps
+            cd /home/mitia/django_webapps
             git pull origin main
             docker compose -f docker-compose.yml up -d --build
