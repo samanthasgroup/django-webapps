@@ -14,6 +14,10 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split(",")
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://admin.samanthasgroup.com",
+]
+
 INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "celery_config",
