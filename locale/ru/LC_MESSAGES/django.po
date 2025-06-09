@@ -116,7 +116,7 @@ msgstr "Навыки"
 
 #: api/admin/coordinator.py:274
 msgid "Communication<br>language(s)"
-msgstr "Язык(и)<br>общения"
+msgstr "Языки<br>общения"
 
 #: api/admin/coordinator.py:280
 msgid "Comment"
@@ -229,11 +229,11 @@ msgstr "Вс"
 
 #: api/admin/group.py:257
 msgid "For Staff"
-msgstr "Для стафа"
+msgstr "Группа для волонтеров"
 
 #: api/admin/student.py:80
 msgid "Full Name"
-msgstr "Полное Имя"
+msgstr "Полное имя"
 
 #: api/admin/student.py:84
 msgid "Has Groups"
@@ -241,7 +241,7 @@ msgstr "Группа"
 
 #: api/admin/student.py:88 api/admin/teacher.py:116
 msgid "Teaching languages"
-msgstr "Языки преподавания"
+msgstr "Преподаваемые языки"
 
 #: api/admin/student.py:96 api/admin/teacher.py:147
 msgid "No coordinators"
@@ -272,15 +272,15 @@ msgstr "ответ: <b>%s</b>"
 
 #: api/admin/teacher.py:17
 msgid "has groups"
-msgstr "имеет группы"
+msgstr "есть группы"
 
 #: api/admin/teacher.py:26
 msgid "Yes"
-msgstr ""
+msgstr "Да"
 
 #: api/admin/teacher.py:27
 msgid "No"
-msgstr ""
+msgstr "Нет"
 
 #: api/admin/teacher.py:43
 msgid "координатор"
@@ -344,7 +344,7 @@ msgstr "Только украинский"
 
 #: api/models/choices/communication_language_mode.py:8
 msgid "Russian or Ukrainian"
-msgstr "Русский или украинский"
+msgstr "Русский и украинский"
 
 #: api/models/choices/communication_language_mode.py:9
 msgid "Only language being taught"
@@ -559,7 +559,7 @@ msgstr "Прош:ла регистрацию и валидацию, ждет г�
 #: api/models/choices/log_event_type.py:116
 #: api/models/choices/log_event_type.py:147
 msgid "Validated in a face-to-face interview"
-msgstr "Прош:ла валидацию очно"
+msgstr "Прошл:а валидацию очно"
 
 #: api/models/choices/log_event_type.py:123
 msgid "Started teaching a group"
@@ -572,7 +572,7 @@ msgstr "Провел:а разговорный клуб"
 
 #: api/models/choices/log_event_type.py:149
 msgid "Left the project"
-msgstr "Выш:ла из проекта"
+msgstr "Вышл:а из проекта"
 
 #: api/models/choices/non_teaching_help_type.py:8
 msgid "CV and cover letter (write or edit)"
@@ -655,7 +655,7 @@ msgstr "Закончил:а координировать, остается в п
 
 #: api/models/choices/status/project.py:31
 msgid "Finished coordinating and left the project"
-msgstr "Закончил:а координировать, выш:ла из проекта"
+msgstr "Закончил:а координировать, вышл:а из проекта"
 
 #: api/models/choices/status/project.py:32
 #: api/models/choices/status/project.py:84
@@ -704,7 +704,7 @@ msgstr "Преподает"
 
 #: api/models/choices/status/project.py:81
 msgid "Finished teaching and left the project"
-msgstr "Закончил:а преподавать, выш:ла из проекта"
+msgstr "Закончил:а преподавать, вышл:а из проекта"
 
 #: api/models/choices/status/project.py:82
 msgid "Finished teaching but remains in the project"
@@ -762,7 +762,7 @@ msgstr "Является ли координатор админом"
 
 #: api/models/coordinator.py:62
 msgid "Validated"
-msgstr "Прошл:а вводную встречу"
+msgstr "Вводная встреча"
 
 #: api/models/coordinator.py:63 api/models/shared_abstract/teacher_common.py:23
 msgid "Has an initial validation interview been conducted with this teacher?"
@@ -775,7 +775,7 @@ msgstr "Куратор"
 #: api/models/coordinator.py:72
 msgid "Mentor of this coordinator. One coordinator can have many interns."
 msgstr ""
-"Куратор координатора. Один куратор может курировать несколько координаторов"
+"Куратор этого координатора"
 
 #: api/models/coordinator.py:77
 msgid "Status in project"
@@ -859,7 +859,7 @@ msgstr "Дни и время"
 
 #: api/models/enrollment_test.py:17
 msgid "age ranges"
-msgstr "возрастные диапазоны"
+msgstr "возраст учеников"
 
 #: api/models/enrollment_test.py:19
 msgid ""
@@ -950,7 +950,7 @@ msgstr "комментарий"
 
 #: api/models/group.py:35
 msgid "Former coordinators"
-msgstr "Бывшие координаторы"
+msgstr "Бывшие координаторы группы"
 
 #: api/models/group.py:37
 msgid ""
@@ -966,7 +966,7 @@ msgstr "Бывшие студенты"
 msgid ""
 "Lists students that once worked with this group and/or all students of this "
 "group when it finished classes or was aborted."
-msgstr "Список всех учеников, которые обучались в группе"
+msgstr "Список всех студентов, которые обучались в группе"
 
 #: api/models/group.py:55
 msgid "Former teachers"
@@ -984,7 +984,7 @@ msgstr "ссылка на чат в Телеграм"
 
 #: api/models/group.py:77
 msgid "Group id from the old database"
-msgstr "GID"
+msgstr "Старый GID"
 
 #: api/models/group.py:77
 msgid "legacy group id"
@@ -1000,7 +1000,7 @@ msgstr "язык и уровень"
 
 #: api/models/group.py:87
 msgid "lesson duration (minutes)"
-msgstr "продолжительность занятий в минутах"
+msgstr "продолжительность одного занятия в минутах"
 
 #: api/models/group.py:92 api/models/shared_abstract/person.py:23
 msgid "project status"
@@ -1014,7 +1014,7 @@ msgstr "Временный статус"
 
 #: api/models/group.py:101 api/models/shared_abstract/person.py:36
 msgid "date and time of last change of project-level or situational status"
-msgstr "время изменения статуса в проекте или временного статуса"
+msgstr "Время изменения статуса в проекте или временного статуса"
 
 #: api/models/group.py:102 api/models/shared_abstract/person.py:35
 msgid "status since"
@@ -1273,7 +1273,7 @@ msgstr "Языки и уровни"
 
 #: api/models/student.py:34
 msgid "Student id from the old database"
-msgstr "SID"
+msgstr "Старый SID"
 
 #: api/models/student.py:35
 msgid "legacy student id"
@@ -1289,7 +1289,7 @@ msgstr ""
 
 #: api/models/student.py:43
 msgid "age range"
-msgstr "возрастной диапазон"
+msgstr "возраст студентов"
 
 #: api/models/student.py:46 api/models/teacher.py:41
 msgid "availability slots"
@@ -1343,7 +1343,7 @@ msgstr "языки и уровни"
 
 #: api/models/teacher.py:37
 msgid "Teacher id from the old database"
-msgstr "SID учителя из старой базы"
+msgstr "Старый TID"
 
 #: api/models/teacher.py:38
 msgid "legacy teacher id"
