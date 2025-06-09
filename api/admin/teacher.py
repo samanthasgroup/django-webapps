@@ -65,14 +65,13 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "pk",
         "get_full_name",
         "project_status",
+        "coordinators_display",
         "get_personal_info_email",
         "get_personal_info_tg",
-        "has_groups_display",
+        "groups_links",
         "can_host_speaking_club",
         "teaching_languages_and_levels_display",
         "non_teaching_help_provided_display",
-        "coordinators_display",
-        # "availability_slots_display",
     )
 
     list_filter = (
@@ -80,7 +79,6 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         HasGroupsFilter,
         "groups",
         CoordinatorFilter,
-        # "availability_slots",
     )
 
     search_fields: tuple[str, ...] = (
@@ -109,9 +107,9 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
             return f"{obj.personal_info.first_name} {obj.personal_info.last_name}"
         return str(_("N/A"))
 
-    @admin.display(boolean=True, description=_("Has groups"))
-    def has_groups_display(self, obj: Teacher) -> bool:
-        return obj.has_groups
+    @admin.display(description=_("Has groups"))
+    def groups_links(self, obj: Teacher) -> str:
+        return obj.get_groups_links
 
     @admin.display(description=_("Teaching languages"))
     def teaching_languages_and_levels_display(self, obj: Teacher) -> str:

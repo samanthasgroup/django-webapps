@@ -252,13 +252,13 @@ class CoordinatorAdmin(VersionAdmin):
 
     @admin.display(description=mark_safe(_("Project<br>status")), ordering="project_status")
     def get_project_status(self, coordinator: Coordinator) -> str:
-        return coordinator.project_status.replace("_", " ")
+        return coordinator.get_project_status_display()
 
     @admin.display(
         description=mark_safe(_("Situational<br>Status")), ordering="situational_status"
     )
     def get_situational_status(self, coordinator: Coordinator) -> str:
-        return coordinator.situational_status.replace("_", " ")
+        return coordinator.get_situational_status_display()
 
     @admin.display(description=mark_safe(_("Status<br>last changed")), ordering="status_since")
     def get_status_since(self, coordinator: Coordinator) -> str:

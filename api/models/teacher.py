@@ -1,6 +1,10 @@
+import logging
+
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.db.models import Count
+from django.urls import reverse
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from api.models.age_range import AgeRange
@@ -10,6 +14,8 @@ from api.models.coordinator import Coordinator
 from api.models.day_and_time_slot import DayAndTimeSlot
 from api.models.non_teaching_help import NonTeachingHelp
 from api.models.shared_abstract.teacher_common import TeacherCommon
+
+logger = logging.getLogger(__name__)
 
 
 class TeacherQuerySet(models.QuerySet["Teacher"]):
@@ -151,6 +157,22 @@ class Teacher(TeacherCommon):
     @property
     def has_groups(self) -> bool:
         return self.groups.exists()
+
+    @property
+    def get_groups_links(self) -> str:
+        groups = self.groups.all()
+        logger.debug(f"groups: {groups}")
+
+        if not groups:
+            return str(_("No groups"))
+
+        links = []
+        for group in groups:
+            url = reverse("admin:api_group_change", args=[group.pk])
+            group_number = group.pk
+            links.append(format_html('<a href="{}">{}</a>', url, group_number))
+
+        return format_html(", ".join(links))
 
     @property
     def group_coordinators(self) -> str:
