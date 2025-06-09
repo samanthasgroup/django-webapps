@@ -30,9 +30,10 @@ class Student(Person):
     """Model for a student."""
 
     legacy_sid = models.IntegerField(
-        null=True,
         help_text=_("Student id from the old database"),
         verbose_name=_("legacy student id"),
+        null=True,
+        blank=True,
     )
     age_range = models.ForeignKey(
         AgeRange,

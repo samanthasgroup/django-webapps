@@ -74,7 +74,10 @@ class Group(GroupCommon):
     """Model for a regular language group."""
 
     legacy_gid = models.IntegerField(
-        null=True, help_text=_("Group id from the old database"), verbose_name=_("legacy group id")
+        help_text=_("Group id from the old database"),
+        verbose_name=_("legacy group id"),
+        null=True,
+        blank=True,
     )
     availability_slots_for_auto_matching = models.ManyToManyField(
         DayAndTimeSlot, verbose_name=_("availability slots for auto-matching")
