@@ -33,9 +33,10 @@ class Teacher(TeacherCommon):
     """Model for an adult teacher that can teach groups."""
 
     legacy_tid = models.IntegerField(
-        null=True,
         help_text=_("Teacher id from the old database"),
         verbose_name=_("legacy teacher id"),
+        null=True,
+        blank=True,
     )
     availability_slots = models.ManyToManyField(
         DayAndTimeSlot, verbose_name=_("availability slots")
