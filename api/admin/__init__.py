@@ -11,7 +11,6 @@ from .teacher import TeacherAdmin
 from .user import CustomUserAdmin
 
 admin.site.register(models.Coordinator, CoordinatorAdmin)
-admin.site.register(models.PersonalInfo, PersonalInfoAdmin)
 admin.site.register(models.Group, GroupAdmin)
 
 
