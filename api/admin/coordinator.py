@@ -89,12 +89,7 @@ class AdminStatusFilter(SimpleListFilter):
         return queryset
 
 
-class BaseCoordinatorGroupInline(
-    admin.TabularInline[
-        models.Group.coordinators.through | models.Group.coordinators_former.through,  # type: ignore[name-defined]  # It can't see the "through" attribute.  # noqa: E501
-        models.Coordinator,
-    ]
-):
+class BaseCoordinatorGroupInline(admin.TabularInline):  # type: ignore
     readonly_fields = ("group",)
     can_delete = False
     can_add = False
@@ -190,8 +185,8 @@ class CoordinatorAdmin(VersionAdmin):
         "situational_status",
         "personal_info__communication_language_mode",
         "mentor",
-        ("alerts__is_resolved", admin.BooleanFieldListFilter),
         ("alerts__alert_type", admin.AllValuesFieldListFilter),
+        ("alerts__is_resolved", admin.BooleanFieldListFilter),
     )
 
     search_fields = (
