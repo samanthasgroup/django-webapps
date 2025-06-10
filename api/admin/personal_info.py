@@ -1,7 +1,9 @@
 from django import forms
+from django.contrib import admin
 from reversion.admin import VersionAdmin
 
 from api import models
+from api.models.personal_info import PersonalInfo
 from api.utils import capitalize_each_word
 
 
@@ -34,6 +36,7 @@ class PersonalInfoAdminForm(forms.ModelForm[models.PersonalInfo]):
             )
 
 
+@admin.register(PersonalInfo)
 class PersonalInfoAdmin(VersionAdmin):
     form = PersonalInfoAdminForm
 

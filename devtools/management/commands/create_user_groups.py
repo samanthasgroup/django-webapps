@@ -134,6 +134,8 @@ class Command(BaseCommand):
                     "view_timeslot",
                     "view_languageandlevel",
                     "view_languagelevel",
+                    # Add personal data for creation of new students
+                    "add_personalinfo",
                 ],
             },
         }

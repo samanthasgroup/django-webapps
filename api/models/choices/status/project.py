@@ -11,21 +11,19 @@ class CoordinatorProjectStatus(models.TextChoices):
 
     PENDING = "pending", _("Completed registration, but not in working status yet")
     WORKING_BELOW_THRESHOLD = (
-        "working_threshold_not_reached",
-        _(
-            "Working, but not yet reached the required minimum amount of groups "
-            f"({CoordinatorGroupLimit.MIN})"
-        ),
+        "working_below_threshold",
+        _("Working, but not yet reached the required minimum amount of groups (%(min)d)")
+        % {"min": CoordinatorGroupLimit.MIN},
     )
     WORKING_OK = "working_ok", _("Working, required amount of groups reached")
     WORKING_LIMIT_REACHED = (
         "working_limit_reached",
-        _(f"Working, reached maximum number of groups ({CoordinatorGroupLimit.MAX})"),
+        _("Working, reached maximum number of groups (%(max)d)")
+        % {"max": CoordinatorGroupLimit.MAX},
     )
     ON_LEAVE = "on_leave", _("On leave")
-    LEFT_PREMATURELY = (
-        "left_prematurely",
-        _("Announced that they cannot participate in the project"),
+    LEFT_PREMATURELY = "left_prematurely", _(
+        "Announced that they cannot participate in the project"
     )
     FINISHED_STAYS = "finished_stays", _("Finished coordinating but remains in the project")
     FINISHED_LEFT = "finished_left", _("Finished coordinating and left the project")
