@@ -324,8 +324,8 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
 
     @admin.display(description=mark_safe(_("Project<br>status")))
     def get_project_status(self, group: models.Group) -> str:
-        return group.project_status.replace("_", " ")
+        return group.get_project_status_display()
 
     @admin.display(description=mark_safe(_("Situational<br>Status")))
     def get_situational_status(self, group: models.Group) -> str:
-        return group.situational_status.replace("_", " ")
+        return group.get_situational_status_display()
