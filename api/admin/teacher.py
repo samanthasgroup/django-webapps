@@ -62,7 +62,7 @@ class CoordinatorFilter(admin.SimpleListFilter):
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin[Teacher]):
     list_display: tuple[str, ...] = (
-        "pk",
+        "get_pk",
         "get_full_name",
         "project_status",
         "coordinators_display",
@@ -100,6 +100,10 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
             "groups__coordinators__personal_info",
             "groups",
         )
+
+    @admin.display(description=_("TID"))
+    def get_pk(self, obj: Teacher) -> str:
+        return obj.pk
 
     @admin.display(description=_("Full name"))
     def get_full_name(self, obj: Teacher) -> str:

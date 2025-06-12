@@ -217,7 +217,7 @@ class CoordinatorAdmin(VersionAdmin):
     class Media:
         js = ("admin/js/sticky-scroll-bar.js",)
 
-    @admin.display(description="ID", ordering="personal_info__id")
+    @admin.display(description="CID", ordering="personal_info__id")
     def get_personal_info_id(self, coordinator: Coordinator) -> int:
         return coordinator.personal_info.id
 

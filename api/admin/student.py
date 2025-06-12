@@ -48,12 +48,12 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
     )
 
     list_display = (
-        "pk",
+        "get_pk",
         "get_full_name",
         "project_status",
         "age_range",
         "is_member_of_speaking_club",
-        "has_groups_display",
+        "groups_links",
         "teaching_languages_and_levels_display",
         "coordinators_display",
     )
@@ -77,13 +77,17 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
             .prefetch_related("groups", "children", "groups__coordinators__personal_info")
         )
 
+    @admin.display(description=_("SID"))
+    def get_pk(self, obj: Student) -> str:
+        return f"{obj.pk}"
+
     @admin.display(description=_("Full Name"))
     def get_full_name(self, obj: Student) -> str:
         return f"{obj.personal_info.first_name} {obj.personal_info.last_name}"
 
-    @admin.display(boolean=True, description=_("Has Groups"))
-    def has_groups_display(self, obj: Student) -> bool:
-        return obj.has_groups
+    @admin.display(description=_("Has groups"))
+    def groups_links(self, obj: Student) -> str:
+        return obj.get_groups_links
 
     @admin.display(description=_("Teaching languages"))
     def teaching_languages_and_levels_display(self, obj: Student) -> str:
