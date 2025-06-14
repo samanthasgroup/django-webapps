@@ -184,7 +184,7 @@ class CoordinatorAdmin(VersionAdmin):
         "project_status",
         "situational_status",
         "personal_info__communication_language_mode",
-        "mentor",
+        ("mentor", admin.AllValuesFieldListFilter),
         ("alerts__alert_type", admin.AllValuesFieldListFilter),
         ("alerts__is_resolved", admin.BooleanFieldListFilter),
     )
