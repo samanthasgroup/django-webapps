@@ -5,7 +5,7 @@ from typing import Any
 from django import forms
 from django.contrib import admin
 from django.db.models import Count, Q, QuerySet
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
@@ -76,6 +76,34 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
             .get_queryset(request)
             .prefetch_related("groups", "children", "groups__coordinators__personal_info")
         )
+
+    def changelist_view(
+        self, request: HttpRequest, extra_context: dict[str, Any] | None = None
+    ) -> HttpResponse:
+        extra_context = extra_context or {}
+        extra_context["title"] = "База студентов"
+        return super().changelist_view(request, extra_context)
+
+    def change_view(
+        self,
+        request: HttpRequest,
+        object_id: str,
+        form_url: str = "",
+        extra_context: dict[str, Any] | None = None,
+    ) -> HttpResponse:
+        extra_context = extra_context or {}
+        if object_id:
+            obj = self.get_object(request, object_id)
+            if obj:
+                extra_context["title"] = "Редактирование студента"
+        return super().change_view(request, object_id, form_url, extra_context)
+
+    def add_view(
+        self, request: HttpRequest, form_url: str = "", extra_context: dict[str, Any] | None = None
+    ) -> HttpResponse:
+        extra_context = extra_context or {}
+        extra_context["title"] = "Добавить студента"
+        return super().add_view(request, form_url, extra_context)
 
     @admin.display(description=_("SID"))
     def get_pk(self, obj: Student) -> str:

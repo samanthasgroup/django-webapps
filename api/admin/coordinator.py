@@ -8,7 +8,7 @@ from django.contrib.admin import ModelAdmin, SimpleListFilter
 from django.contrib.admin.helpers import ActionForm
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db.models import Count, QuerySet
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -184,7 +184,7 @@ class CoordinatorAdmin(VersionAdmin):
         "project_status",
         "situational_status",
         "personal_info__communication_language_mode",
-        "mentor",
+        ("mentor", admin.AllValuesFieldListFilter),
         ("alerts__alert_type", admin.AllValuesFieldListFilter),
         ("alerts__is_resolved", admin.BooleanFieldListFilter),
     )
@@ -216,6 +216,20 @@ class CoordinatorAdmin(VersionAdmin):
 
     class Media:
         js = ("admin/js/sticky-scroll-bar.js",)
+
+    def changelist_view(
+        self, request: HttpRequest, extra_context: dict[str, Any] | None = None
+    ) -> HttpResponse:
+        extra_context = extra_context or {}
+        extra_context["title"] = "База координаторов"
+        return super().changelist_view(request, extra_context)
+
+    def add_view(
+        self, request: HttpRequest, form_url: str = "", extra_context: dict[str, Any] | None = None
+    ) -> HttpResponse:
+        extra_context = extra_context or {}
+        extra_context["title"] = "Добавить координатора"
+        return super().add_view(request, form_url, extra_context)
 
     @admin.display(description="CID", ordering="personal_info__id")
     def get_personal_info_id(self, coordinator: Coordinator) -> int:
@@ -324,6 +338,12 @@ class CoordinatorAdmin(VersionAdmin):
     ) -> Any:
         # Получаем контекст от родительского метода или создаем пустой словарь
         extra_context = extra_context or {}
+
+        # Changing title of this page here
+        if object_id:
+            obj = self.get_object(request, object_id)
+            if obj:
+                extra_context["title"] = "Редактирование координатора"
 
         # Добавляем данные для наших выпадающих списков в контекст шаблона
         # Преобразуем Enum в словарь для удобства в шаблоне

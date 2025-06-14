@@ -3,7 +3,7 @@ from typing import Any, cast
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django.db.models import QuerySet
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -87,6 +87,34 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "personal_info__last_name__icontains",
     )
 
+    def changelist_view(
+        self, request: HttpRequest, extra_context: dict[str, Any] | None = None
+    ) -> HttpResponse:
+        extra_context = extra_context or {}
+        extra_context["title"] = "База учителей"
+        return super().changelist_view(request, extra_context)
+
+    def change_view(
+        self,
+        request: HttpRequest,
+        object_id: str,
+        form_url: str = "",
+        extra_context: dict[str, Any] | None = None,
+    ) -> HttpResponse:
+        extra_context = extra_context or {}
+        if object_id:
+            obj = self.get_object(request, object_id)
+            if obj:
+                extra_context["title"] = "Редактирование учителя"
+        return super().change_view(request, object_id, form_url, extra_context)
+
+    def add_view(
+        self, request: HttpRequest, form_url: str = "", extra_context: dict[str, Any] | None = None
+    ) -> HttpResponse:
+        extra_context = extra_context or {}
+        extra_context["title"] = "Добавить учителя"
+        return super().add_view(request, form_url, extra_context)
+
     def get_queryset(self, request: HttpRequest) -> TeacherQuerySet:
         queryset_from_super = super().get_queryset(request)
 
@@ -151,8 +179,8 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         links = []
         for coordinator in unique_coordinators.values():
             url = reverse("admin:api_coordinator_change", args=[coordinator.pk])
-            full_name = coordinator.personal_info.full_name
-            links.append(format_html('<a href="{}">{}</a>', url, full_name))
+            coord_pi_pk = coordinator.personal_info.pk
+            links.append(format_html('<a href="{}">{}</a>', url, coord_pi_pk))
 
         return format_html(", ".join(links))
 

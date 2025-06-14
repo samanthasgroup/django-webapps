@@ -4,7 +4,7 @@ from django import forms
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 from django.db.models import QuerySet
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -205,6 +205,34 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
     class Media:
         css = {"all": ("css/select2-darkmode.css",)}
         js = ("admin/js/sticky-scroll-bar.js",)
+
+    def changelist_view(
+        self, request: HttpRequest, extra_context: dict[str, Any] | None = None
+    ) -> HttpResponse:
+        extra_context = extra_context or {}
+        extra_context["title"] = "База групп"
+        return super().changelist_view(request, extra_context)
+
+    def change_view(
+        self,
+        request: HttpRequest,
+        object_id: str,
+        form_url: str = "",
+        extra_context: dict[str, Any] | None = None,
+    ) -> HttpResponse:
+        extra_context = extra_context or {}
+        if object_id:
+            obj = self.get_object(request, object_id)
+            if obj:
+                extra_context["title"] = "Редактирование группы"
+        return super().change_view(request, object_id, form_url, extra_context)
+
+    def add_view(
+        self, request: HttpRequest, form_url: str = "", extra_context: dict[str, Any] | None = None
+    ) -> HttpResponse:
+        extra_context = extra_context or {}
+        extra_context["title"] = "Добавить группу"
+        return super().add_view(request, form_url, extra_context)
 
     def get_search_results(
         self, request: HttpRequest, queryset: QuerySet[Any], search_term: str
