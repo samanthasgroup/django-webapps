@@ -1,3 +1,5 @@
+from typing import Any
+
 from django import forms
 from django.contrib import admin
 from reversion.admin import VersionAdmin
@@ -22,18 +24,25 @@ class PersonalInfoAdminForm(forms.ModelForm[models.PersonalInfo]):
             "information_source",
         )
 
-    def clean(self) -> None:
-        params = {
-            param: capitalize_each_word(self.cleaned_data[param])
-            for param in ("first_name", "last_name")
-        }
-        params["email"] = self.cleaned_data["email"].lower()
+    def clean(self) -> dict[str, Any]:
+        cleaned_data = super().clean() or {}
+        first = cleaned_data.get("first_name")
+        last = cleaned_data.get("last_name")
+        email = cleaned_data.get("email")
 
-        if self.Meta.model.objects.filter(**params).exclude(pk=self.instance.pk).exists():
-            raise forms.ValidationError(
-                "User with these first name, last name and email already exists, "
-                "although they may be written in different letter cases."
-            )
+        if first and last and email:
+            params = {
+                "first_name": capitalize_each_word(first),
+                "last_name": capitalize_each_word(last),
+                "email": email.lower(),
+            }
+            if self.Meta.model.objects.filter(**params).exclude(pk=self.instance.pk).exists():
+                raise forms.ValidationError(
+                    "User with these first name, last name and email already exists, "
+                    "although they may be written in different letter cases."
+                )
+
+        return cleaned_data
 
 
 @admin.register(PersonalInfo)

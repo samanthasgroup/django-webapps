@@ -67,8 +67,6 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "personal_info__email",
     )
 
-    # change_list_template = "admin/api/students/change_list.html"
-
     def get_queryset(self, request: HttpRequest) -> QuerySet[Student]:
 
         return (
