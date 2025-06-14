@@ -179,8 +179,8 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         links = []
         for coordinator in unique_coordinators.values():
             url = reverse("admin:api_coordinator_change", args=[coordinator.pk])
-            full_name = coordinator.personal_info.full_name
-            links.append(format_html('<a href="{}">{}</a>', url, full_name))
+            coord_pi_pk = coordinator.personal_info.pk
+            links.append(format_html('<a href="{}">{}</a>', url, coord_pi_pk))
 
         return format_html(", ".join(links))
 
