@@ -4,6 +4,7 @@ from typing import Any
 
 from django import forms
 from django.contrib import admin
+from django.contrib.admin import ModelAdmin, SimpleListFilter
 from django.db.models import Count, Q, QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.urls import reverse
@@ -14,7 +15,28 @@ from reversion.admin import VersionAdmin
 from api import models
 from api.admin.auxil.mixin import CoordinatorRestrictedAdminMixin
 from api.models import Student
+from api.models.age_range import AgeRange
 from api.models.coordinator import Coordinator
+
+
+class StudentAgeRangeFilter(SimpleListFilter):
+    title = _("возраст")
+    parameter_name = "age_range"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: ModelAdmin[Student]
+    ) -> list[tuple[str, str]]:
+        qs = model_admin.get_queryset(request)
+        used_ranges = qs.values_list("age_range", flat=True).distinct()
+
+        ranges = AgeRange.objects.filter(id__in=used_ranges).order_by("age_from")
+
+        return [(str(r.id), str(r)) for r in ranges]
+
+    def queryset(self, _request: HttpRequest, queryset: QuerySet[Student]) -> QuerySet[Student]:
+        if self.value():
+            return queryset.filter(age_range=self.value())
+        return queryset
 
 
 class StudentAdminForm(forms.ModelForm[models.Student]):
@@ -58,13 +80,18 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "coordinators_display",
     )
 
-    list_filter = ("teaching_languages_and_levels",)
+    list_filter = (
+        "teaching_languages_and_levels",
+        "project_status",
+        StudentAgeRangeFilter,
+    )
 
     search_fields = (
         "personal_info__pk",
         "personal_info__first_name",
         "personal_info__last_name",
         "personal_info__email",
+        "legacy_sid",
     )
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Student]:
