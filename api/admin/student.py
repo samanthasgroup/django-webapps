@@ -91,6 +91,7 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "personal_info__first_name",
         "personal_info__last_name",
         "personal_info__email",
+        "legacy_sid",
     )
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Student]:
