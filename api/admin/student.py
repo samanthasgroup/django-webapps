@@ -10,6 +10,7 @@ from django.http import HttpRequest, HttpResponse
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+from django_select2.forms import ModelSelect2MultipleWidget
 from reversion.admin import VersionAdmin
 
 from api import models
@@ -39,6 +40,16 @@ class StudentAgeRangeFilter(SimpleListFilter):
         return queryset
 
 
+class ChildrenSelect2Widget(ModelSelect2MultipleWidget):
+    model = models.Student
+    search_fields = [
+        "children",
+        "personal_info__pk",
+        "personal_info__last_name",
+        "personal_info__first_name",
+    ]
+
+
 class StudentAdminForm(forms.ModelForm[models.Student]):
     class Meta:
         model = models.Student
@@ -57,6 +68,12 @@ class StudentAdminForm(forms.ModelForm[models.Student]):
             "comment",
             "children",
         )
+        widgets = {
+            "children": ChildrenSelect2Widget,
+        }
+
+    class Media:
+        css = {"all": ("css/select2-darkmode.css",)}
 
 
 @admin.register(Student)
