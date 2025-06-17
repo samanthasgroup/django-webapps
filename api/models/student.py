@@ -46,7 +46,9 @@ class Student(Person):
         verbose_name=_("age range"),
     )
     availability_slots = models.ManyToManyField(
-        DayAndTimeSlot, verbose_name=_("availability slots")
+        DayAndTimeSlot,
+        verbose_name=_("availability slots"),
+        blank=True,
     )
     # irrelevant if student doesn't want to learn English, hence optional
     can_read_in_english = models.BooleanField(
