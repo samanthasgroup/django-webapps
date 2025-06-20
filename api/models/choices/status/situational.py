@@ -25,6 +25,7 @@ class GroupSituationalStatus(models.TextChoices):
         "attention",
         _("Some sort of problem: needs substitute teacher, change of coordinator etc."),
     )
+    HOLIDAY = ("holiday", _("Holiday"))
 
 
 class StudentSituationalStatus(models.TextChoices):

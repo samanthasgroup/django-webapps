@@ -22,6 +22,7 @@ from api.models.choices.log_event_type import (
     COORDINATOR_LOG_EVENTS_REQUIRE_GROUP,
     CoordinatorLogEventType,
 )
+from api.models.choices.status import GroupProjectStatus
 from api.processors.auxil.log_event_creator import CoordinatorAdminLogEventCreator
 
 DETAILS_PREVIEW_LENGTH: int = 30
@@ -115,10 +116,30 @@ class CoordinatorActiveGroupsInline(BaseCoordinatorGroupInline):
     model = models.Group.coordinators.through
     verbose_name_plural = _("Active groups")
 
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
+        qs = super().get_queryset(request).select_related("group")
+        return qs.filter(
+            group__project_status__in=[
+                GroupProjectStatus.PENDING,
+                GroupProjectStatus.AWAITING_START,
+                GroupProjectStatus.WORKING,
+            ]
+        )
+
 
 class CoordinatorFormerGroupsInline(BaseCoordinatorGroupInline):
-    model = models.Group.coordinators_former.through
+    # model = models.Group.coordinators_former.through
+    model = models.Group.coordinators.through
     verbose_name_plural = _("Former groups")
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
+        qs = super().get_queryset(request).select_related("group")
+        return qs.filter(
+            group__project_status__in=[
+                GroupProjectStatus.ABORTED,
+                GroupProjectStatus.FINISHED,
+            ]
+        )
 
 
 class CoordinatorLogEventsInline(
