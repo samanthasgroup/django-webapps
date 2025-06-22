@@ -64,9 +64,8 @@ class CustomUserAdmin(UserAdmin):
         try:
             coordinator = obj.coordinator
             url = reverse("admin:api_coordinator_change", args=[coordinator.pk])
-            return format_html(
-                '<a href="{}">{}</a>', url, coordinator.personal_info.full_name or coordinator.pk
-            )
+            coordinator_show = f"{coordinator.pk} - {coordinator.personal_info.full_name}"
+            return format_html('<a href="{}">{}</a>', url, coordinator_show)
         except Coordinator.DoesNotExist:
             return "-"
 
