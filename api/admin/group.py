@@ -20,7 +20,7 @@ COMMON_SEARCH_FIELDS = [
     "personal_info__first_name__icontains",
     "personal_info__last_name__icontains",
     "personal_info__email__icontains",
-    "personal_info__pk__iexact",
+    "personal_info__email__icontains",
 ]
 
 
