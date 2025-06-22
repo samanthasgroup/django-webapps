@@ -127,10 +127,9 @@ class CoordinatorActiveGroupsInline(BaseCoordinatorGroupInline):
         )
 
 
-class CoordinatorFormerGroupsInline(BaseCoordinatorGroupInline):
-    # model = models.Group.coordinators_former.through
+class CoordinatorInactiveGroupsInline(BaseCoordinatorGroupInline):
     model = models.Group.coordinators.through
-    verbose_name_plural = _("Former groups")
+    verbose_name_plural = _("Inactive groups")
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
         qs = super().get_queryset(request).select_related("group")
@@ -140,6 +139,14 @@ class CoordinatorFormerGroupsInline(BaseCoordinatorGroupInline):
                 GroupProjectStatus.FINISHED,
             ]
         )
+
+
+class CoordinatorFormerGroupsInline(BaseCoordinatorGroupInline):
+    model = models.Group.coordinators_former.through
+    verbose_name_plural = _("Former groups")
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
+        return super().get_queryset(request).select_related("group")
 
 
 class CoordinatorLogEventsInline(
@@ -192,13 +199,8 @@ class CoordinatorAdmin(VersionAdmin):
         "mentor",
         "get_role_comment",
         "display_active_alerts_count",
-        # "get_is_admin",
-        # "get_additional_skills_comment",
-        # "get_comment",
-        # "get_status_since",
     )
 
-    # ordering = ["personal_info_id"]
     ordering = ["-pk"]
 
     list_filter = (
@@ -226,11 +228,11 @@ class CoordinatorAdmin(VersionAdmin):
     readonly_fields = ("active_groups_count",)
     inlines = [
         CoordinatorActiveGroupsInline,
+        CoordinatorInactiveGroupsInline,
         CoordinatorFormerGroupsInline,
         CoordinatorLogEventsInline,
         AlertInline,
     ]
-    # action_form = GroupActionForm
 
     list_display_links = (
         "get_personal_info_id",
