@@ -180,6 +180,7 @@ class CoordinatorAdmin(VersionAdmin):
     form = CoordinatorForm
     list_display = (
         "get_personal_info_id",
+        "pk",
         "get_personal_info_full_name",
         "get_personal_info_email",
         "get_personal_info_tg",
@@ -197,7 +198,8 @@ class CoordinatorAdmin(VersionAdmin):
         # "get_status_since",
     )
 
-    ordering = ["personal_info_id"]
+    # ordering = ["personal_info_id"]
+    ordering = ["-pk"]
 
     list_filter = (
         "is_validated",

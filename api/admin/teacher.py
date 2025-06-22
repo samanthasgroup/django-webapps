@@ -49,7 +49,7 @@ class CoordinatorFilter(admin.SimpleListFilter):
         qs = Coordinator.objects.select_related("personal_info").order_by(
             "personal_info__last_name", "personal_info__first_name"
         )
-        return [(c.pk, c.personal_info.full_name) for c in qs]
+        return [(c.pk, str(f"{c.pk} - {c.personal_info.full_name}")) for c in qs]
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[PersonalInfo]  # noqa: ARG002
