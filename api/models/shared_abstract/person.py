@@ -1,6 +1,7 @@
 """Abstract models that are shared between several modules."""
 
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from api.models.auxil.constants import DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH
@@ -34,6 +35,7 @@ class Person(models.Model):
     status_since = models.DateTimeField(
         verbose_name=_("status since"),
         help_text=_("date and time of last change of project-level or situational status"),
+        default=timezone.now,
     )
 
     # TODO last contacted, last responded, scheduled date of next contact?

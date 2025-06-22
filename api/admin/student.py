@@ -40,6 +40,31 @@ class StudentAgeRangeFilter(SimpleListFilter):
         return queryset
 
 
+class CoordinatorFilter(SimpleListFilter):
+    """List filter for coordinators with at least one group."""
+
+    title = _("coordinator")
+    parameter_name = "coordinator"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: ModelAdmin[Student]  # noqa: ARG002
+    ) -> list[tuple[str, str]]:
+        qs = (
+            Coordinator.objects.filter(groups__isnull=False)
+            .select_related("personal_info")
+            .distinct()
+            .order_by("personal_info__last_name", "personal_info__first_name")
+        )
+        return [(c.pk, f"{c.pk} - {c.personal_info.full_name}") for c in qs]
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Student]  # noqa: ARG002
+    ) -> QuerySet[Student]:
+        if self.value():
+            return queryset.filter(groups__coordinators__pk=self.value())
+        return queryset
+
+
 class ChildrenSelect2Widget(ModelSelect2MultipleWidget):
     model = models.Student
     search_fields = [
@@ -101,6 +126,7 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "teaching_languages_and_levels",
         "project_status",
         StudentAgeRangeFilter,
+        CoordinatorFilter,
     )
 
     search_fields = (

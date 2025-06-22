@@ -50,12 +50,15 @@ class PersonalInfoAdmin(VersionAdmin):
     form = PersonalInfoAdminForm
 
     list_display = (
+        "pk",
         "first_name",
         "last_name",
         "email",
         "telegram_username",
         "registration_telegram_bot_language",
     )
+
+    ordering = ["-pk"]
 
     search_fields = (
         "first_name",

@@ -172,6 +172,7 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "teachers__personal_info__first_name",
         "teachers__personal_info__last_name",
         "legacy_gid",
+        "pk",
     )
 
     fields = (

@@ -48,6 +48,7 @@ class PersonalInfo(GroupOrPerson):
     information_source = models.TextField(
         verbose_name=_("Source of information about SSG"),
         help_text=_("How did they learn about Samantha Smith's Group?"),
+        blank=True,
     )
     # Also, there is a possibility that coordinators will register with registration bot someday.
     registration_telegram_bot_chat_id = models.BigIntegerField(
