@@ -136,6 +136,8 @@ class Command(BaseCommand):
                     "view_languagelevel",
                     # Add personal data for creation of new students
                     "add_personalinfo",
+                    # View coordinators page
+                    "view_coordinator",
                 ],
             },
         }

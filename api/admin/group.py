@@ -20,7 +20,7 @@ COMMON_SEARCH_FIELDS = [
     "personal_info__first_name__icontains",
     "personal_info__last_name__icontains",
     "personal_info__email__icontains",
-    "personal_info__pk__iexact",
+    "personal_info__email__icontains",
 ]
 
 
@@ -35,6 +35,11 @@ class TeachersSelect2Widget(ModelSelect2MultipleWidget):
 
 
 class CoordinatorsSelect2Widget(ModelSelect2MultipleWidget):
+    model = models.Coordinator
+    search_fields = COMMON_SEARCH_FIELDS
+
+
+class FormerCoordinatorsSelect2Widget(ModelSelect2MultipleWidget):
     model = models.Coordinator
     search_fields = COMMON_SEARCH_FIELDS
 
@@ -126,6 +131,7 @@ class GroupAdminForm(forms.ModelForm[Any]):
             "sunday",
             "lesson_duration_in_minutes",
             "coordinators",
+            "coordinators_former",
             "teachers",
             "students",
             "start_date",
@@ -139,6 +145,7 @@ class GroupAdminForm(forms.ModelForm[Any]):
             "students": StudentSelect2Widget,
             "teachers": TeachersSelect2Widget,
             "coordinators": CoordinatorsSelect2Widget,
+            "coordinators_former": FormerCoordinatorsSelect2Widget,
         }
 
 
@@ -173,29 +180,6 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "teachers__personal_info__last_name",
         "legacy_gid",
         "pk",
-    )
-
-    fields = (
-        "id",
-        "legacy_gid",
-        "language_and_level",
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-        "sunday",
-        "lesson_duration_in_minutes",
-        "coordinators",
-        "teachers",
-        "students",
-        "start_date",
-        "end_date",
-        "project_status",
-        "situational_status",
-        "status_since",
-        "is_for_staff_only",
     )
 
     readonly_fields = (

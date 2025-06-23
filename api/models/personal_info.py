@@ -33,7 +33,7 @@ class PersonalInfo(GroupOrPerson):
         verbose_name=_("Date and time added"), auto_now_add=True
     )
     first_name = models.CharField(verbose_name=_("First name"), max_length=100)
-    last_name = models.CharField(verbose_name=_("Last name"), max_length=100)
+    last_name = models.CharField(verbose_name=_("Last name"), max_length=100, blank=True)
     # Telegram's limit is 32, but this might change
     # These are none for coordinator, but can be present for student/teacher, so keeping them here.
     telegram_username = models.CharField(

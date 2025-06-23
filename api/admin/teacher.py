@@ -85,6 +85,7 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "personal_info__pk",
         "personal_info__first_name__icontains",
         "personal_info__last_name__icontains",
+        "personal_info__telegram_username__icontains",
     )
 
     def changelist_view(

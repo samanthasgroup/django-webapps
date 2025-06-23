@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django Base Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-15 15:28+0200\n"
+"POT-Creation-Date: 2025-06-22 11:40+0200\n"
 "PO-Revision-Date: 2025-05-11 21:20+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -78,200 +78,208 @@ msgstr "Алерт"
 msgid "Alerts"
 msgstr "Алерты"
 
-#: api/admin/coordinator.py:116
+#: api/admin/coordinator.py:117
 msgid "Active groups"
 msgstr "Активные группы"
 
-#: api/admin/coordinator.py:121
+#: api/admin/coordinator.py:132
+msgid "Inactive groups"
+msgstr "Неактивные группы"
+
+#: api/admin/coordinator.py:146
 msgid "Former groups"
 msgstr "Прошлые группы"
 
-#: api/admin/coordinator.py:246 api/admin/teacher.py:136
+#: api/admin/coordinator.py:271 api/admin/teacher.py:136
 msgid "Full name"
 msgstr "Полное Имя"
 
-#: api/admin/coordinator.py:250
+#: api/admin/coordinator.py:275
 msgid "Valid"
 msgstr "Валидирован:а"
 
-#: api/admin/coordinator.py:256
+#: api/admin/coordinator.py:281
 msgid "Admin"
 msgstr "Админ"
 
-#: api/admin/coordinator.py:262 api/admin/group.py:357
+#: api/admin/coordinator.py:287 api/admin/group.py:342
 msgid "Project<br>status"
 msgstr "Статус в проекте"
 
-#: api/admin/coordinator.py:267 api/admin/group.py:361
+#: api/admin/coordinator.py:292 api/admin/group.py:346
 msgid "Situational<br>Status"
 msgstr "Временный статус"
 
-#: api/admin/coordinator.py:272
+#: api/admin/coordinator.py:297
 msgid "Status<br>last changed"
 msgstr "Последняя<br>смена статуса"
 
-#: api/admin/coordinator.py:278
+#: api/admin/coordinator.py:303
 msgid "Skills"
 msgstr "Навыки"
 
-#: api/admin/coordinator.py:283
+#: api/admin/coordinator.py:308
 msgid "Communication<br>language(s)"
 msgstr "Языки<br>общения"
 
-#: api/admin/coordinator.py:289
+#: api/admin/coordinator.py:314
 msgid "Comment"
 msgstr "Комментарий"
 
-#: api/admin/coordinator.py:299
+#: api/admin/coordinator.py:324
 msgid "Role"
 msgstr "Роль"
 
-#: api/admin/coordinator.py:303
+#: api/admin/coordinator.py:328
 msgid "Active Alerts"
 msgstr "Активные алерты"
 
-#: api/admin/coordinator.py:321
+#: api/admin/coordinator.py:346
 msgid "Active groups count"
 msgstr "Активные группы"
 
-#: api/admin/group.py:43 api/models/group.py:85
+#: api/admin/group.py:48 api/models/group.py:85
 msgid "is for staff only"
 msgstr "Группа для волонтеров"
 
-#: api/admin/group.py:61 api/models/coordinator.py:112
+#: api/admin/group.py:66 api/models/coordinator.py:112
 msgid "Coordinator"
 msgstr "Координатор"
 
-#: api/admin/group.py:77 api/admin/group.py:307 api/admin/group.py:325
+#: api/admin/group.py:82 api/admin/group.py:292 api/admin/group.py:310
 msgid "Schedule"
 msgstr "Расписание"
 
-#: api/admin/group.py:81 api/admin/group.py:331
+#: api/admin/group.py:86 api/admin/group.py:316
 msgid "Понедельник"
 msgstr ""
 
-#: api/admin/group.py:82 api/admin/group.py:332
+#: api/admin/group.py:87 api/admin/group.py:317
 msgid "Вторник"
 msgstr ""
 
-#: api/admin/group.py:83 api/admin/group.py:333
+#: api/admin/group.py:88 api/admin/group.py:318
 msgid "Среда"
 msgstr ""
 
-#: api/admin/group.py:84 api/admin/group.py:334
+#: api/admin/group.py:89 api/admin/group.py:319
 msgid "Четверг"
 msgstr ""
 
-#: api/admin/group.py:85 api/admin/group.py:335
+#: api/admin/group.py:90 api/admin/group.py:320
 msgid "Пятница"
 msgstr ""
 
-#: api/admin/group.py:86 api/admin/group.py:336
+#: api/admin/group.py:91 api/admin/group.py:321
 msgid "Суббота"
 msgstr ""
 
-#: api/admin/group.py:87 api/admin/group.py:337
+#: api/admin/group.py:92 api/admin/group.py:322
 msgid "Воскресенье"
 msgstr ""
 
-#: api/admin/group.py:251
+#: api/admin/group.py:236
 msgid "GID"
 msgstr ""
 
-#: api/admin/group.py:255
+#: api/admin/group.py:240
 msgid "Start Date"
 msgstr "дата начала занятий"
 
-#: api/admin/group.py:264
+#: api/admin/group.py:249
 msgid "End Date"
 msgstr "Дата окончания"
 
-#: api/admin/group.py:272
+#: api/admin/group.py:257
 msgid "Status Since"
 msgstr "Статус с"
 
-#: api/admin/group.py:279 api/admin/student.py:149 api/admin/teacher.py:168
+#: api/admin/group.py:264 api/admin/student.py:192 api/admin/teacher.py:168
 #: api/models/coordinator.py:113
 msgid "Coordinators"
 msgstr "Координаторы"
 
-#: api/admin/group.py:291
+#: api/admin/group.py:276
 msgid "Teachers"
 msgstr "Учителя"
 
-#: api/admin/group.py:303
+#: api/admin/group.py:288
 msgid "Number Of<br>Students"
 msgstr "Количество студентов"
 
-#: api/admin/group.py:310
+#: api/admin/group.py:295
 msgid "Mo"
 msgstr "Пн"
 
-#: api/admin/group.py:311
+#: api/admin/group.py:296
 msgid "Tu"
 msgstr "Вт"
 
-#: api/admin/group.py:312
+#: api/admin/group.py:297
 msgid "We"
 msgstr "Ср"
 
-#: api/admin/group.py:313
+#: api/admin/group.py:298
 msgid "Th"
 msgstr "Чт"
 
-#: api/admin/group.py:314
+#: api/admin/group.py:299
 msgid "Fr"
 msgstr "Пт"
 
-#: api/admin/group.py:315
+#: api/admin/group.py:300
 msgid "Sa"
 msgstr "Сб"
 
-#: api/admin/group.py:316
+#: api/admin/group.py:301
 msgid "Su"
 msgstr "Вс"
 
-#: api/admin/group.py:328
+#: api/admin/group.py:313
 msgid "Schedule will be available after saving the group"
 msgstr ""
 
-#: api/admin/group.py:349
+#: api/admin/group.py:334
 msgid "No schedule set"
 msgstr "Расписание не установлено"
 
-#: api/admin/group.py:351
+#: api/admin/group.py:336
 msgid "For Staff"
 msgstr "Группа для волонтеров"
 
-#: api/admin/student.py:23
+#: api/admin/student.py:24
 msgid "возраст"
 msgstr ""
 
-#: api/admin/student.py:133
+#: api/admin/student.py:46 api/models/log_event.py:48
+msgid "coordinator"
+msgstr "координатор"
+
+#: api/admin/student.py:176
 msgid "SID"
 msgstr ""
 
-#: api/admin/student.py:137
+#: api/admin/student.py:180
 msgid "Full Name"
 msgstr "Полное имя"
 
-#: api/admin/student.py:141 api/admin/teacher.py:142
+#: api/admin/student.py:184 api/admin/teacher.py:142
 msgid "Has groups"
 msgstr "Группа"
 
-#: api/admin/student.py:145 api/admin/teacher.py:146
+#: api/admin/student.py:188 api/admin/teacher.py:146
 msgid "Teaching languages"
 msgstr "Преподаваемые языки"
 
-#: api/admin/student.py:153 api/admin/teacher.py:177
+#: api/admin/student.py:196 api/admin/teacher.py:177
 msgid "No coordinators"
 msgstr "Нет координатора"
 
-#: api/admin/student.py:163 api/admin/student.py:184
+#: api/admin/student.py:206 api/admin/student.py:227
 msgid "Enrollment test summary"
 msgstr "Входные тесты"
 
-#: api/admin/student.py:174
+#: api/admin/student.py:217
 #, python-format
 msgid ""
 "Test #%(idx)d, Total questions: %(total)d, Total answers: %(answers)d, "
@@ -280,12 +288,12 @@ msgstr ""
 "Тест №%(idx)d, Всего вопросов: %(total)d, Дано ответов: %(answers)d, "
 "Правильных ответов: %(correct)d\n"
 
-#: api/admin/student.py:188
+#: api/admin/student.py:231
 #, python-format
 msgid "Test #%d"
 msgstr "Тест #%d"
 
-#: api/admin/student.py:193
+#: api/admin/student.py:236
 #, python-format
 msgid "answer: <b>%s</b>"
 msgstr "ответ: <b>%s</b>"
@@ -945,7 +953,7 @@ msgid "enrollment test question options"
 msgstr "варианты ответа в тесте"
 
 #: api/models/enrollment_test.py:97 api/models/log_event.py:119
-#: api/models/student.py:111
+#: api/models/student.py:113
 msgid "student"
 msgstr "студент"
 
@@ -965,7 +973,7 @@ msgstr "результаты входного тестирования"
 msgid "coordinators"
 msgstr "координаторы"
 
-#: api/models/group.py:25 api/models/student.py:112
+#: api/models/group.py:25 api/models/student.py:114
 msgid "students"
 msgstr "студенты"
 
@@ -974,7 +982,7 @@ msgid "teachers"
 msgstr "учителя"
 
 #: api/models/group.py:30 api/models/log_event.py:33
-#: api/models/shared_abstract/person.py:13
+#: api/models/shared_abstract/person.py:14
 msgid "comment"
 msgstr "комментарий"
 
@@ -1032,21 +1040,21 @@ msgstr "язык и уровень"
 msgid "lesson duration (minutes)"
 msgstr "продолжительность одного занятия в минутах"
 
-#: api/models/group.py:95 api/models/shared_abstract/person.py:23
+#: api/models/group.py:95 api/models/shared_abstract/person.py:24
 msgid "project status"
 msgstr "Статус в проекте"
 
-#: api/models/group.py:101 api/models/shared_abstract/person.py:29
-#: api/models/student.py:93 api/models/teacher.py:110
+#: api/models/group.py:101 api/models/shared_abstract/person.py:30
+#: api/models/student.py:95 api/models/teacher.py:110
 #: api/models/teacher_under_18.py:22
 msgid "situational status"
 msgstr "Временный статус"
 
-#: api/models/group.py:104 api/models/shared_abstract/person.py:36
+#: api/models/group.py:104 api/models/shared_abstract/person.py:37
 msgid "date and time of last change of project-level or situational status"
 msgstr "Время изменения статуса в проекте или временного статуса"
 
-#: api/models/group.py:105 api/models/shared_abstract/person.py:35
+#: api/models/group.py:105 api/models/shared_abstract/person.py:36
 msgid "status since"
 msgstr "статус с"
 
@@ -1122,10 +1130,6 @@ msgstr "языки и уровни"
 #: api/models/log_event.py:34
 msgid "date and time"
 msgstr "дата и время"
-
-#: api/models/log_event.py:48
-msgid "coordinator"
-msgstr "координатор"
 
 #: api/models/log_event.py:61 api/models/log_event.py:84
 #: api/models/log_event.py:124 api/models/log_event.py:164
@@ -1241,25 +1245,25 @@ msgstr "Источник информации о Саманте"
 msgid "How did they learn about Samantha Smith's Group?"
 msgstr "Как узнали о Samantha Smith’s Group"
 
-#: api/models/personal_info.py:54
+#: api/models/personal_info.py:55
 msgid "Registration Telegram bot chat ID"
 msgstr "ID чата с ботом"
 
-#: api/models/personal_info.py:57
+#: api/models/personal_info.py:58
 msgid "Preferred bot language"
 msgstr "Предпочтительный язык общения с ботом"
 
-#: api/models/personal_info.py:61
+#: api/models/personal_info.py:62
 msgid ""
 "Language in which the person wishes to communicate with the bot (is chosen "
 "by the person at first contact)"
 msgstr "Язык, который человек выбирает для общения с ботом при первом контакте"
 
-#: api/models/personal_info.py:66
+#: api/models/personal_info.py:67
 msgid "Chatwoot conversation ID"
 msgstr ""
 
-#: api/models/personal_info.py:80
+#: api/models/personal_info.py:81
 msgid "Personal info records"
 msgstr "Персональные данные"
 
@@ -1267,7 +1271,7 @@ msgstr "Персональные данные"
 msgid "Language(s) the students and teachers can speak in class"
 msgstr "Языки общения в группе (не изучения)"
 
-#: api/models/shared_abstract/person.py:19
+#: api/models/shared_abstract/person.py:20
 msgid "personal info"
 msgstr "персональные данные"
 
@@ -1321,57 +1325,57 @@ msgstr ""
 msgid "age range"
 msgstr "возраст студентов"
 
-#: api/models/student.py:49 api/models/teacher.py:48
+#: api/models/student.py:50 api/models/teacher.py:48
 msgid "availability slots"
 msgstr "возможное время занятий"
 
-#: api/models/student.py:53
+#: api/models/student.py:55
 msgid "can read in English"
 msgstr "может читать на английском"
 
-#: api/models/student.py:60
+#: api/models/student.py:62
 msgid "children"
 msgstr "дети"
 
-#: api/models/student.py:61
+#: api/models/student.py:63
 msgid "children of this student that are also studying at SSG"
 msgstr "Дети студента, которые также учатся в Саманте"
 
-#: api/models/student.py:65
+#: api/models/student.py:67
 msgid "Speaking club status"
 msgstr "Разговорный клуб"
 
-#: api/models/student.py:66
+#: api/models/student.py:68
 msgid "Is the student a member of a speaking club at the moment?"
 msgstr "Ходит ли студент в разговорный клуб?"
 
-#: api/models/student.py:72
+#: api/models/student.py:74
 msgid "Types of non-teaching help this student requires"
 msgstr "Какая помощь нужна студенту"
 
-#: api/models/student.py:80
+#: api/models/student.py:82
 msgid "SmallTalk test result"
 msgstr "Результаты теста SmallTalk"
 
-#: api/models/student.py:81
+#: api/models/student.py:83
 msgid "JSON received from SmallTalk API"
 msgstr ""
 
-#: api/models/student.py:86 api/models/teacher.py:103
+#: api/models/student.py:88 api/models/teacher.py:103
 #: api/models/teacher_under_18.py:15
 msgid "status in project"
 msgstr "cтатус в проекте"
 
-#: api/models/student.py:87 api/models/teacher.py:104
+#: api/models/student.py:89 api/models/teacher.py:104
 #: api/models/teacher_under_18.py:16
 msgid "status of this student with regard to project as a whole"
 msgstr "статус студента в проекте"
 
-#: api/models/student.py:99
+#: api/models/student.py:101
 msgid "teaching languages and levels"
 msgstr "языки и уровни"
 
-#: api/models/student.py:130 api/models/teacher.py:167
+#: api/models/student.py:132 api/models/teacher.py:167
 msgid "No groups"
 msgstr "Нет групп"
 
