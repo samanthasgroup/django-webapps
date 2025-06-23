@@ -13,6 +13,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from django_select2.forms import ModelSelect2Widget
 from reversion.admin import VersionAdmin
 
 from alerts.models import Alert
@@ -165,6 +166,16 @@ class CoordinatorLogEventsInline(
     show_change_link = True
 
 
+class PersonalInfoSelect2Widget(ModelSelect2Widget):
+    model = models.PersonalInfo
+    search_fields = [
+        "first_name__icontains",
+        "last_name__icontains",
+        "email__icontains",
+        "pk__iexact",
+    ]
+
+
 class CoordinatorForm(forms.ModelForm):  # type: ignore
     class Meta:
         model = models.Coordinator
@@ -181,6 +192,12 @@ class CoordinatorForm(forms.ModelForm):  # type: ignore
             "status_since",
             "mentor",
         )
+        widgets = {
+            "personal_info": PersonalInfoSelect2Widget,
+        }
+
+    class Media:
+        css = {"all": ("css/select2-darkmode.css",)}
 
 
 class CoordinatorAdmin(VersionAdmin):
@@ -218,6 +235,7 @@ class CoordinatorAdmin(VersionAdmin):
         "personal_info__id",
         "personal_info__first_name",
         "personal_info__last_name",
+        "personal_info__telegram_username__icontains",
         "mentor__personal_info__id",
         "mentor__personal_info__first_name",
         "mentor__personal_info__last_name",
