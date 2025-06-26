@@ -166,7 +166,7 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "get_status_since",
         "staff_only",
     )
-    ordering = ["id"]
+    ordering = ["-id"]
     list_filter = (
         StaffOnlyFilter,
         "project_status",
