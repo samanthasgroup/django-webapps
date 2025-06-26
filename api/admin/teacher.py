@@ -11,7 +11,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from api.admin.auxil.widgets import PersonalInfoSelect2Widget
-from api.models import Coordinator, PersonalInfo, Teacher
+from api.models import Coordinator, Group, PersonalInfo, Teacher
 from api.models.teacher import TeacherQuerySet
 
 
@@ -61,6 +61,16 @@ class CoordinatorFilter(admin.SimpleListFilter):
         return queryset
 
 
+class TeachersGroupInline(admin.TabularInline):  # type: ignore
+    readonly_fields = ("group",)
+    can_delete = False
+    can_add = False
+    extra = 0
+    max_num = 0
+    model = Group.teachers.through
+    verbose_name_plural = _("Active groups")
+
+
 class TeacherAdminForm(forms.ModelForm[Teacher]):
     class Meta:
         model = Teacher
@@ -103,6 +113,10 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "personal_info__last_name__icontains",
         "personal_info__telegram_username__icontains",
     )
+
+    inlines = [
+        TeachersGroupInline,
+    ]
 
     def changelist_view(
         self, request: HttpRequest, extra_context: dict[str, Any] | None = None

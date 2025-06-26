@@ -54,7 +54,7 @@ class CoordinatorFilter(SimpleListFilter):
             Coordinator.objects.filter(groups__isnull=False)
             .select_related("personal_info")
             .distinct()
-            .order_by("personal_info__last_name", "personal_info__first_name")
+            .order_by("-personal_info__pk")
         )
         return [(c.pk, f"{c.pk} - {c.personal_info.full_name}") for c in qs]
 
