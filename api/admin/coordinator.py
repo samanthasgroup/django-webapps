@@ -13,11 +13,11 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from django_select2.forms import ModelSelect2Widget
 from reversion.admin import VersionAdmin
 
 from alerts.models import Alert
 from api import models
+from api.admin.auxil.widgets import PersonalInfoSelect2Widget
 from api.models import Coordinator, Group
 from api.models.choices.log_event_type import (
     COORDINATOR_LOG_EVENTS_REQUIRE_GROUP,
@@ -72,7 +72,7 @@ class AlertInline(GenericTabularInline):
 
 
 class AdminStatusFilter(SimpleListFilter):
-    title = "admin status"
+    title = _("admin status")
     parameter_name = "is_admin"
 
     def lookups(
@@ -164,16 +164,6 @@ class CoordinatorLogEventsInline(
     extra = 0
     max_num = 0
     show_change_link = True
-
-
-class PersonalInfoSelect2Widget(ModelSelect2Widget):
-    model = models.PersonalInfo
-    search_fields = [
-        "first_name__icontains",
-        "last_name__icontains",
-        "email__icontains",
-        "pk__iexact",
-    ]
 
 
 class CoordinatorForm(forms.ModelForm):  # type: ignore

@@ -121,7 +121,6 @@ class GroupAdminForm(forms.ModelForm[Any]):
         model = models.Group
         fields = (
             "id",
-            "legacy_gid",
             "language_and_level",
             "monday",
             "tuesday",

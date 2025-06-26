@@ -1,5 +1,6 @@
 from typing import Any, cast
 
+from django import forms
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django.db.models import QuerySet
@@ -9,6 +10,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from api.admin.auxil.widgets import PersonalInfoSelect2Widget
 from api.models import Coordinator, PersonalInfo, Teacher
 from api.models.teacher import TeacherQuerySet
 
@@ -59,8 +61,22 @@ class CoordinatorFilter(admin.SimpleListFilter):
         return queryset
 
 
+class TeacherAdminForm(forms.ModelForm[Teacher]):
+    class Meta:
+        model = Teacher
+        fields = "__all__"  # noqa: DJ007
+        widgets = {
+            "personal_info": PersonalInfoSelect2Widget,
+        }
+
+    class Media:
+        css = {"all": ("css/select2-darkmode.css",)}
+
+
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin[Teacher]):
+    form = TeacherAdminForm
+
     list_display: tuple[str, ...] = (
         "get_pk",
         "get_full_name",

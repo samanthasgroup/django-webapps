@@ -15,6 +15,7 @@ from reversion.admin import VersionAdmin
 
 from api import models
 from api.admin.auxil.mixin import CoordinatorRestrictedAdminMixin
+from api.admin.auxil.widgets import PersonalInfoSelect2Widget
 from api.models import Student
 from api.models.age_range import AgeRange
 from api.models.coordinator import Coordinator
@@ -94,6 +95,7 @@ class StudentAdminForm(forms.ModelForm[models.Student]):
             "children",
         )
         widgets = {
+            "personal_info": PersonalInfoSelect2Widget,
             "children": ChildrenSelect2Widget,
         }
 
