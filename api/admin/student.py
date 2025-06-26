@@ -15,6 +15,7 @@ from reversion.admin import VersionAdmin
 
 from api import models
 from api.admin.auxil.mixin import CoordinatorRestrictedAdminMixin
+from api.admin.auxil.widgets import PersonalInfoSelect2Widget
 from api.models import Student
 from api.models.age_range import AgeRange
 from api.models.coordinator import Coordinator
@@ -53,7 +54,7 @@ class CoordinatorFilter(SimpleListFilter):
             Coordinator.objects.filter(groups__isnull=False)
             .select_related("personal_info")
             .distinct()
-            .order_by("personal_info__last_name", "personal_info__first_name")
+            .order_by("-personal_info__pk")
         )
         return [(c.pk, f"{c.pk} - {c.personal_info.full_name}") for c in qs]
 
@@ -94,6 +95,7 @@ class StudentAdminForm(forms.ModelForm[models.Student]):
             "children",
         )
         widgets = {
+            "personal_info": PersonalInfoSelect2Widget,
             "children": ChildrenSelect2Widget,
         }
 
