@@ -17,6 +17,7 @@ from api.admin.auxil.mixin import CoordinatorRestrictedAdminMixin
 from api.models import Coordinator
 
 COMMON_SEARCH_FIELDS = [
+    "personal_info__id__icontains",
     "personal_info__first_name__icontains",
     "personal_info__last_name__icontains",
     "personal_info__email__icontains",
