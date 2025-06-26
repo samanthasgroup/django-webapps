@@ -2,8 +2,8 @@ from enum import Enum, IntEnum
 
 
 class CoordinatorGroupLimit(IntEnum):
-    MIN = 5
-    MAX = 20
+    MIN = 3
+    MAX = 10
 
 
 class LanguageLevelId(str, Enum):
