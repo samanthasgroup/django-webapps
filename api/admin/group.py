@@ -1,10 +1,16 @@
+import json
 from typing import Any
+from urllib.parse import quote as urlquote
 
 from django import forms
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.admin import ModelAdmin
+from django.contrib.admin.options import IS_POPUP_VAR, TO_FIELD_VAR
+from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
+from django.contrib.admin.utils import quote
 from django.db.models import QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -346,3 +352,77 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
     @admin.display(description=mark_safe(_("Situational<br>Status")))
     def get_situational_status(self, group: models.Group) -> str:
         return group.get_situational_status_display()
+
+    def response_add(
+        self, request: HttpRequest, obj: models.Group, post_url_continue: str | None = None
+    ) -> HttpResponse:
+        """Display a custom success message with the created group ID."""
+        opts = obj._meta
+        preserved_filters = self.get_preserved_filters(request)
+        preserved_qsl = self._get_preserved_qsl(request, preserved_filters)
+        obj_url = reverse(
+            f"admin:{opts.app_label}_{opts.model_name}_change",
+            args=(quote(obj.pk),),
+            current_app=self.admin_site.name,
+        )
+        if self.has_change_permission(request, obj):
+            obj_repr: str = format_html('<a href="{}">{}</a>', urlquote(obj_url), obj)
+        else:
+            obj_repr = mark_safe(str(obj))
+        msg_dict = {"name": opts.verbose_name, "obj": obj_repr, "id": obj.pk}
+
+        if IS_POPUP_VAR in request.POST:
+            to_field = request.POST.get(TO_FIELD_VAR)
+            attr = str(to_field) if to_field else obj._meta.pk.attname  # type: ignore[union-attr]
+            value = obj.serializable_value(attr)
+            popup_response_data = json.dumps({"value": str(value), "obj": str(obj)})
+            return TemplateResponse(
+                request,
+                self.popup_response_template
+                or [
+                    f"admin/{opts.app_label}/{opts.model_name}/popup_response.html",
+                    f"admin/{opts.app_label}/popup_response.html",
+                    "admin/popup_response.html",
+                ],
+                {"popup_response_data": popup_response_data},
+            )
+        if "_continue" in request.POST or (
+            "_saveasnew" in request.POST
+            and self.save_as_continue
+            and self.has_change_permission(request, obj)
+        ):
+            msg = _("Group %(id)s was added successfully.") % msg_dict
+            if self.has_change_permission(request, obj):
+                msg += " " + _("You may edit it again below.")
+            self.message_user(request, msg, messages.SUCCESS)
+            if post_url_continue is None:
+                post_url_continue = obj_url
+            post_url_continue = add_preserved_filters(
+                {
+                    "preserved_filters": preserved_filters,
+                    "preserved_qsl": preserved_qsl,
+                    "opts": opts,
+                },
+                post_url_continue,
+            )
+            return HttpResponseRedirect(post_url_continue)
+        if "_addanother" in request.POST:
+            msg = (
+                _("Group %(id)s was added successfully. You may add another group below.")
+                % msg_dict
+            )
+            self.message_user(request, msg, messages.SUCCESS)
+            redirect_url = request.path
+            redirect_url = add_preserved_filters(
+                {
+                    "preserved_filters": preserved_filters,
+                    "preserved_qsl": preserved_qsl,
+                    "opts": opts,
+                },
+                redirect_url,
+            )
+            return HttpResponseRedirect(redirect_url)
+
+        msg = _("Group %(id)s was added successfully.") % msg_dict
+        self.message_user(request, msg, messages.SUCCESS)
+        return self.response_post_save_add(request, obj)
