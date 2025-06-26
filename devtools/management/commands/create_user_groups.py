@@ -118,6 +118,7 @@ class Command(BaseCommand):
                     "add_student",
                     "change_student",
                     "view_teacher",
+                    "add_teacher",
                     "change_teacher",
                     "view_teacherunder18",
                     "change_teacherunder18",
