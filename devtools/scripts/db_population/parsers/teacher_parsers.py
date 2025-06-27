@@ -42,7 +42,7 @@ RAW_PROJECT_STATUS_TO_PARSED: dict[
     ),
     "не вышел на связь": (
         TeacherSituationalStatus.NO_RESPONSE,
-        TeacherProjectStatus.ON_LEAVE,
+        TeacherProjectStatus.NO_GROUP_YET,
         ProjectStatusAction.NONE,
     ),
 }

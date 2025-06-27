@@ -1,0 +1,7 @@
+
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block html %}<!DOCTYPE html>
+<html lang="{% get_current_language %}"{% if LANGUAGE_BIDI %} dir="rtl"{% endif %}>
+{% endblock %}

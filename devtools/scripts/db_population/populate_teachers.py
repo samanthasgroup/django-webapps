@@ -119,7 +119,7 @@ class TeacherPopulator(BasePopulatorFromCsv):
         )
         timezone = self._parse_cell("timezone", common_parsers.parse_timezone, skip_if_empty=True)
         teacher_data.utc_timedelta = timezone.utcoffset(None) if timezone else None
-        teacher_data.situational_status = parsed_status[1]
+        teacher_data.situational_status = parsed_status[0]
         teacher_data.is_teaching_children = self._parse_cell(
             "age_ranges", teacher_parsers.parse_age_ranges, skip_if_empty=True
         )
