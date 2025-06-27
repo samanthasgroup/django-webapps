@@ -20,6 +20,7 @@ from reversion.admin import VersionAdmin
 
 from api import models
 from api.admin.auxil.mixin import CoordinatorRestrictedAdminMixin
+from api.admin.auxil.widgets import NativeTimeInput
 from api.models import Coordinator
 
 COMMON_SEARCH_FIELDS = [
@@ -152,6 +153,13 @@ class GroupAdminForm(forms.ModelForm[Any]):
             "teachers": TeachersSelect2Widget,
             "coordinators": CoordinatorsSelect2Widget,
             "coordinators_former": FormerCoordinatorsSelect2Widget,
+            "monday": NativeTimeInput,
+            "tuesday": NativeTimeInput,
+            "wednesday": NativeTimeInput,
+            "thursday": NativeTimeInput,
+            "friday": NativeTimeInput,
+            "saturday": NativeTimeInput,
+            "sunday": NativeTimeInput,
         }
 
 
