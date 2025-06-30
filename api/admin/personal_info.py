@@ -65,3 +65,6 @@ class PersonalInfoAdmin(VersionAdmin):
         "last_name",
         "email",
     )
+
+    class Media:
+        js = ("admin/js/sticky-scroll-bar.js",)

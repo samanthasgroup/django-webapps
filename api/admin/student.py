@@ -139,6 +139,9 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "legacy_sid",
     )
 
+    class Media:
+        js = ("admin/js/sticky-scroll-bar.js",)
+
     def get_queryset(self, request: HttpRequest) -> QuerySet[Student]:
 
         return (
