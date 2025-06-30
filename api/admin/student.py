@@ -139,6 +139,9 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "legacy_sid",
     )
 
+    class Media:
+        js = ("admin/js/sticky-scroll-bar.js",)
+
     def get_queryset(self, request: HttpRequest) -> QuerySet[Student]:
 
         return (
@@ -200,7 +203,7 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         links = []
         for coordinator in coordinators:
             url = reverse("admin:api_coordinator_change", args=[coordinator.pk])
-            full_name = coordinator.personal_info.full_name
+            full_name = f"{coordinator.pk} - {coordinator.personal_info.full_name}"
             links.append(format_html('<a href="{}">{}</a>', url, full_name))
 
         return format_html(", ".join(links))

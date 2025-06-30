@@ -81,6 +81,7 @@ class TeacherAdminForm(forms.ModelForm[Teacher]):
 
     class Media:
         css = {"all": ("css/select2-darkmode.css",)}
+        js = ("admin/js/sticky-scroll-bar.js",)
 
 
 @admin.register(Teacher)
