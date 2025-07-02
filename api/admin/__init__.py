@@ -6,6 +6,7 @@ from api import models
 from .coordinator import CoordinatorAdmin
 from .group import GroupAdmin
 from .personal_info import PersonalInfoAdmin
+from .role import RoleAdmin
 from .student import StudentAdmin
 from .teacher import TeacherAdmin
 from .user import CustomUserAdmin

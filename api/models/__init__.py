@@ -21,6 +21,7 @@ from .log_event import (
 )
 from .non_teaching_help import NonTeachingHelp
 from .personal_info import PersonalInfo
+from .role import Role
 from .student import Student
 from .teacher import Teacher
 from .teacher_under_18 import TeacherUnder18
@@ -49,4 +50,5 @@ __all__ = [
     "DayAndTimeSlot",
     "EnrollmentTestResult",
     "NonTeachingHelp",
+    "Role",
 ]
