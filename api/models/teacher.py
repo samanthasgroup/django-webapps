@@ -13,6 +13,7 @@ from api.models.choices.status import TeacherProjectStatus, TeacherSituationalSt
 from api.models.coordinator import Coordinator
 from api.models.day_and_time_slot import DayAndTimeSlot
 from api.models.non_teaching_help import NonTeachingHelp
+from api.models.role import Role
 from api.models.shared_abstract.teacher_common import TeacherCommon
 
 logger = logging.getLogger(__name__)
@@ -108,6 +109,9 @@ class Teacher(TeacherCommon):
         choices=TeacherSituationalStatus.choices,
         blank=True,
         verbose_name=_("situational status"),
+    )
+    roles = models.ManyToManyField(
+        Role, blank=True, related_name="teachers", verbose_name=_("roles")
     )
     student_age_ranges = models.ManyToManyField(
         AgeRange,

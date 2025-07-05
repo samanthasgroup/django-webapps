@@ -92,6 +92,7 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "get_pk",
         "get_full_name",
         "project_status",
+        "roles_display",
         "coordinators_display",
         "get_personal_info_email",
         "get_personal_info_tg",
@@ -103,6 +104,7 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
 
     list_filter = (
         "project_status",
+        "roles",
         HasGroupsFilter,
         "groups",
         CoordinatorFilter,
@@ -113,6 +115,7 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "personal_info__first_name__icontains",
         "personal_info__last_name__icontains",
         "personal_info__telegram_username__icontains",
+        "roles__name__icontains",
     )
 
     inlines = [
@@ -159,7 +162,12 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
             "non_teaching_help_provided",
             "groups__coordinators__personal_info",
             "groups",
+            "roles",
         )
+
+    @admin.display(description=_("Roles"))
+    def roles_display(self, obj: Teacher) -> str:
+        return ", ".join([str(role) for role in obj.roles.all()])
 
     @admin.display(description=_("TID"))
     def get_pk(self, obj: Teacher) -> str:

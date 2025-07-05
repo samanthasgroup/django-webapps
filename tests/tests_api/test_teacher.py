@@ -169,6 +169,7 @@ def test_teacher_retrieve(api_client, availability_slots):
         }
         for item in teacher.non_teaching_help_provided.all()
     ]
+    roles = [role.id for role in teacher.roles.all()]
     if "status_since" in response_json:
         response_json["status_since"] = (
             parser.isoparse(response_json["status_since"])
@@ -201,6 +202,7 @@ def test_teacher_retrieve(api_client, availability_slots):
         "is_validated": teacher.is_validated,
         "non_teaching_help_provided": non_teaching_help,
         "non_teaching_help_provided_comment": teacher.non_teaching_help_provided_comment,
+        "roles": roles,
     }
 
 
