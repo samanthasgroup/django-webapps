@@ -174,7 +174,9 @@ class SpeakingClub(GroupCommon):
     # a speaking club has no fixed level, so putting language only
     language = models.ForeignKey(Language, on_delete=models.PROTECT, verbose_name=_("language"))
     # in addition to regular teachers, a speaking club can have young teachers
-    teachers_under_18 = models.ManyToManyField(TeacherUnder18, verbose_name=_("teachers under 18"))
+    teachers_under_18 = models.ManyToManyField(
+        TeacherUnder18, verbose_name=_("teachers under 18"), blank=True
+    )
 
     class Meta:
         verbose_name = _("speaking club")
