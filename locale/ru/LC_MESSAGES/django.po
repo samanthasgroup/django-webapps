@@ -727,7 +727,7 @@ msgstr "Исключен:а из проекта"
 
 #: api/models/choices/status/project.py:45
 msgid "Pending"
-msgstr "Группа собрана, ожидание старта занятий"
+msgstr "Группа набирается"
 
 #: api/models/choices/status/project.py:47
 msgid "Working, everything is OK"
