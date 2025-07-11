@@ -88,6 +88,9 @@ class TeacherAdminForm(forms.ModelForm[Teacher]):
 class TeacherAdmin(admin.ModelAdmin[Teacher]):
     form = TeacherAdminForm
 
+    class Media:
+        js = ("admin/js/sticky-scroll-bar.js",)
+
     list_display: tuple[str, ...] = (
         "get_pk",
         "get_full_name",
