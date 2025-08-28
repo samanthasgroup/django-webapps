@@ -9,6 +9,7 @@ from api.models.choices.log_event_type import (
 from api.models.choices.status import (
     GroupProjectStatus,
     StudentSituationalStatus,
+    TeacherProjectStatus,
     TeacherSituationalStatus,
 )
 from api.processors.actions.group import GroupActionProcessor
@@ -36,11 +37,13 @@ class GroupCreateProcessor(GroupActionProcessor):
         )
 
     def _set_coordinators_status(self) -> None:
-        pass
+        StatusSetter.update_statuses_of_active_coordinators(self.timestamp)
 
     def _set_teachers_status(self) -> None:
         self.group.teachers.all().filter_active().update(  # type: ignore[attr-defined]
-            situational_status=TeacherSituationalStatus.GROUP_OFFERED, status_since=self.timestamp
+            project_status=TeacherProjectStatus.WORKING,
+            situational_status=TeacherSituationalStatus.GROUP_OFFERED,
+            status_since=self.timestamp,
         )
 
     def _set_students_status(self) -> None:
