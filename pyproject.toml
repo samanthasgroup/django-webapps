@@ -34,7 +34,7 @@ description = ""
 
 [dependency-groups]
 dev = [
-    "black<25.0.0,>=24.4.2",
+    "black>=24.4.2,<26.0.0",
     "ruff<1.0.0,>=0.5.5",
     "pre-commit<4.0.0,>=3.8.0",
     "icecream<3.0.0,>=2.1.3",
