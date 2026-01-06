@@ -53,13 +53,9 @@ class GroupSizeRestriction:
 
     def validate_size(self, size: int) -> None:
         if size < self.min:
-            raise ValueError(
-                f"Group candidate must respect lower group boundaries, but {size} < {self.min}"
-            )
+            raise ValueError(f"Group candidate must respect lower group boundaries, but {size} < {self.min}")
         if size > self.max:
-            raise ValueError(
-                f"Group candidate must respect upper group boundaries, but {size} > {self.max}"
-            )
+            raise ValueError(f"Group candidate must respect upper group boundaries, but {size} > {self.max}")
 
 
 @dataclass
@@ -175,9 +171,7 @@ class GroupBuilder:
         day_time_slots: Iterable[DayAndTimeSlot],
     ) -> GroupCandidate | None:
         restrictions = GroupBuilder._get_allowed_group_size(age_range)
-        communication_language = CommunicationLanguageMode(
-            teacher.personal_info.communication_language_mode
-        )
+        communication_language = CommunicationLanguageMode(teacher.personal_info.communication_language_mode)
         students = GroupBuilder._get_students(
             language_and_level=language_and_level,
             age_range=age_range,
@@ -205,7 +199,7 @@ class GroupBuilder:
         communication_language: CommunicationLanguageMode,
         day_time_slots: Iterable[DayAndTimeSlot],
         max_students_num: int,
-    ) -> Collection[Student]:
+    ) -> list[Student]:
         # TODO: handle age ranges properly (add more ranges when necessary)
         student_manager = Student.objects.filter(
             project_status=StudentProjectStatus.NO_GROUP_YET,
@@ -217,7 +211,7 @@ class GroupBuilder:
         for time_slot in day_time_slots:
             student_manager = student_manager.filter(availability_slots=time_slot)
 
-        return student_manager.order_by("status_since")[:max_students_num]
+        return list(student_manager.order_by("status_since")[:max_students_num])
 
     @staticmethod
     def _iterate_lesson_times(teacher: Teacher) -> Iterator[tuple[DayAndTimeSlot, DayAndTimeSlot]]:
@@ -226,18 +220,12 @@ class GroupBuilder:
         There should be at least one free day between lessons.
         """
         teacher_availability_slots = teacher.availability_slots.all()
-        for first_availability, second_availability in itertools.product(
-            teacher_availability_slots, repeat=2
-        ):
-            if GroupBuilder._availability_slots_have_break(
-                first_availability, second_availability
-            ):
+        for first_availability, second_availability in itertools.product(teacher_availability_slots, repeat=2):
+            if GroupBuilder._availability_slots_have_break(first_availability, second_availability):
                 yield first_availability, second_availability
 
     @staticmethod
-    def _availability_slots_have_break(
-        first_availability: DayAndTimeSlot, second_availability: DayAndTimeSlot
-    ) -> bool:
+    def _availability_slots_have_break(first_availability: DayAndTimeSlot, second_availability: DayAndTimeSlot) -> bool:
         """
         Check that second availability slot is strictly after first, but not too soon after.
         """
@@ -286,9 +274,7 @@ class GroupBuilder:
             0 if both candidates have equal priority
             1 if group2 has higher priority
         """
-        level_difference = abs(
-            group1.language_and_level.level.index - group2.language_and_level.level.index
-        )
+        level_difference = abs(group1.language_and_level.level.index - group2.language_and_level.level.index)
         time_threshold = timezone.now() - MAX_WAITING_TIME
 
         if level_difference >= LEVEL_DIFFERENCE_THRESHOLD:
@@ -301,12 +287,8 @@ class GroupBuilder:
 
         # If levels difference is 1 or less, compare based on waiting time
         # TODO: project_status_since?
-        group1_waiting_students = sum(
-            1 for student in group1.students if student.status_since >= time_threshold
-        )
-        group2_waiting_students = sum(
-            1 for student in group2.students if student.status_since >= time_threshold
-        )
+        group1_waiting_students = sum(1 for student in group1.students if student.status_since >= time_threshold)
+        group2_waiting_students = sum(1 for student in group2.students if student.status_since >= time_threshold)
         if group1_waiting_students > group2_waiting_students:
             return -1
         if group1_waiting_students < group2_waiting_students:

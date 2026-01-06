@@ -17,9 +17,7 @@ from api.serializers import (
 
 class GroupWriteSerializer(serializers.ModelSerializer[Group]):
     status_since = serializers.DateTimeField(default=timezone.now())
-    project_status = serializers.ChoiceField(
-        GroupProjectStatus, default=GroupProjectStatus.PENDING
-    )
+    project_status = serializers.ChoiceField(GroupProjectStatus, default=GroupProjectStatus.PENDING)
 
     class Meta:
         model = Group
@@ -34,9 +32,7 @@ class GroupReadSerializer(serializers.ModelSerializer[Group]):
         many=True,
         read_only=True,
     )
-    coordinators_former = coordinator.MinifiedCoordinatorSerializer(
-        many=True, read_only=True, required=False
-    )
+    coordinators_former = coordinator.MinifiedCoordinatorSerializer(many=True, read_only=True, required=False)
     students_former = MinifiedStudentSerializer(many=True, read_only=True, required=False)
     teachers_former = MinifiedTeacherSerializer(many=True, read_only=True, required=False)
 
@@ -49,9 +45,6 @@ class GroupDiscardSerializer(serializers.Serializer[Any]):
     discard_reason = serializers.ChoiceField(choices=[e.value for e in GroupDiscardReason])
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        if (
-            self.instance is not None
-            and self.instance.project_status != GroupProjectStatus.PENDING
-        ):
+        if self.instance is not None and self.instance.project_status != GroupProjectStatus.PENDING:
             raise ConflictError("Group is not in the pending state")
         return attrs

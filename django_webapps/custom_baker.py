@@ -3,7 +3,7 @@ from model_bakery.baker import Baker
 from model_bakery.recipe import related
 
 
-class CallableM2MBaker(Baker):
+class CallableM2MBaker(Baker[Model]):
     """Baker that allows callable values for m2m fields."""
 
     def _handle_m2m(self, instance: Model) -> None:

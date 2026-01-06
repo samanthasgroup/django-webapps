@@ -15,9 +15,7 @@ class EnrollmentTest(models.Model):
         AgeRange,
         blank=True,
         verbose_name=_("age ranges"),
-        help_text=_(
-            "age ranges for which this test was designed. Leave blank for the test to be shown to all ages."
-        ),
+        help_text=_("age ranges for which this test was designed. Leave blank for the test to be shown to all ages."),
     )
     language = models.ForeignKey(Language, on_delete=models.CASCADE, verbose_name=_("language"))
 
@@ -49,9 +47,7 @@ class EnrollmentTestQuestion(models.Model):
     class Meta:
         constraints = [
             # accessing foreign key directly instead of making an additional query
-            models.UniqueConstraint(
-                fields=["enrollment_test_id", "text"], name="option_unique_per_test"
-            ),
+            models.UniqueConstraint(fields=["enrollment_test_id", "text"], name="option_unique_per_test"),
         ]
         verbose_name = _("enrollment test question")
         verbose_name_plural = _("enrollment test questions")
@@ -75,9 +71,7 @@ class EnrollmentTestQuestionOption(models.Model):
     class Meta:
         constraints = [
             # accessing foreign key directly instead of making an additional query
-            models.UniqueConstraint(
-                fields=["question_id", "text"], name="option_unique_per_question"
-            )
+            models.UniqueConstraint(fields=["question_id", "text"], name="option_unique_per_question")
         ]
 
     verbose_name = _("enrollment test question option")

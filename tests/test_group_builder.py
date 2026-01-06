@@ -15,12 +15,8 @@ def group_candidate():
     age_range = AgeRange.objects.first()
     students = baker.make(Student, _fill_optional=True, make_m2m=True, _quantity=5)
     return GroupCandidate(
-        language_and_level=LanguageAndLevel.objects.filter(
-            level_id="B1", language_id="en"
-        ).first(),
-        communication_language_mode=CommunicationLanguageMode(
-            teacher.personal_info.communication_language_mode
-        ),
+        language_and_level=LanguageAndLevel.objects.filter(level_id="B1", language_id="en").first(),
+        communication_language_mode=CommunicationLanguageMode(teacher.personal_info.communication_language_mode),
         age_range=age_range,
         teacher=teacher,
         students=students,
@@ -35,9 +31,7 @@ def test_compare_priority_with_same_level(group_candidate):
 
 def test_compare_priority_with_lower_level(group_candidate):
     other_group_candidate = copy.copy(group_candidate)
-    other_group_candidate.language_and_level = LanguageAndLevel.objects.filter(
-        level_id="A1", language_id="en"
-    ).first()
+    other_group_candidate.language_and_level = LanguageAndLevel.objects.filter(level_id="A1", language_id="en").first()
     assert GroupBuilder._compare_groups_priority(group_candidate, other_group_candidate) == 1
 
 

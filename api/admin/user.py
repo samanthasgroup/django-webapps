@@ -18,9 +18,7 @@ class HasCoordinatorFilter(admin.SimpleListFilter):
     title = "Has Coordinator"
     parameter_name = "has_coordinator"
 
-    def lookups(
-        self, _request: HttpRequest, _model_admin: ModelAdmin[Any]
-    ) -> Iterable[tuple[Any, str]]:
+    def lookups(self, _request: HttpRequest, _model_admin: ModelAdmin[Any]) -> Iterable[tuple[Any, str]]:
         return (
             ("yes", "Yes"),
             ("no", "No"),

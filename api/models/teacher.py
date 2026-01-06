@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
@@ -19,7 +20,7 @@ from api.models.shared_abstract.teacher_common import TeacherCommon
 logger = logging.getLogger(__name__)
 
 
-class TeacherQuerySet(models.QuerySet["Teacher"]):
+class TeacherQuerySet(models.QuerySet[Any]):
     def annotate_with_group_count(self) -> "TeacherQuerySet":
         return self.annotate(group_count=Count("groups"))
 
@@ -45,14 +46,10 @@ class Teacher(TeacherCommon):
         null=True,
         blank=True,
     )
-    availability_slots = models.ManyToManyField(
-        DayAndTimeSlot, verbose_name=_("availability slots")
-    )
+    availability_slots = models.ManyToManyField(DayAndTimeSlot, verbose_name=_("availability slots"))
     has_prior_teaching_experience = models.BooleanField(
         default=False,
-        help_text=_(
-            "Has the applicant already worked as a teacher before applying at Samantha Smith's Group?"
-        ),
+        help_text=_("Has the applicant already worked as a teacher before applying at Samantha Smith's Group?"),
         verbose_name=_("prior teaching experience"),
     )
     non_teaching_help_provided = models.ManyToManyField(
@@ -110,9 +107,7 @@ class Teacher(TeacherCommon):
         blank=True,
         verbose_name=_("situational status"),
     )
-    roles = models.ManyToManyField(
-        Role, blank=True, related_name="teachers", verbose_name=_("roles")
-    )
+    roles = models.ManyToManyField(Role, blank=True, related_name="teachers", verbose_name=_("roles"))
     student_age_ranges = models.ManyToManyField(
         AgeRange,
         help_text=_(

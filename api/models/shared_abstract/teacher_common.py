@@ -12,12 +12,8 @@ class TeacherCommon(Person):
     Teachers under 18 cannot teach groups but can some selected activities.
     """
 
-    can_host_speaking_club = models.BooleanField(
-        verbose_name=_("Can host speaking club"), default=False
-    )
-    has_hosted_speaking_club = models.BooleanField(
-        verbose_name=_("Has hosted speaking club"), default=False
-    )
+    can_host_speaking_club = models.BooleanField(verbose_name=_("Can host speaking club"), default=False)
+    has_hosted_speaking_club = models.BooleanField(verbose_name=_("Has hosted speaking club"), default=False)
     is_validated = models.BooleanField(
         verbose_name=_("Is validated"),
         help_text=_("Has an initial validation interview been conducted with this teacher?"),

@@ -54,9 +54,7 @@ class DateThresholdHandler(AlertHandler):
             .values("date_time")[:1]
         )
         return (
-            self.MODEL.objects.filter(  # type: ignore[attr-defined]
-                **{self.STATUS_FIELD: self.STATUS_VALUE}
-            )
+            self.MODEL.objects.filter(**{self.STATUS_FIELD: self.STATUS_VALUE})  # type: ignore[attr-defined]
             .annotate(last_event=Subquery(latest_ev))
             .filter(last_event__lte=threshold)
         )
@@ -107,8 +105,6 @@ class DateThresholdHandler(AlertHandler):
             if not obj or getattr(obj, self.STATUS_FIELD) != self.STATUS_VALUE:
                 to_resolve.append(alert.pk)
         if to_resolve:
-            count = Alert.objects.filter(pk__in=to_resolve).update(
-                is_resolved=True, resolved_at=self.now
-            )
+            count = Alert.objects.filter(pk__in=to_resolve).update(is_resolved=True, resolved_at=self.now)
             processed["resolved"] += count
             logger.info(f"Resolved {count} {self.ALERT_TYPE} alerts.")

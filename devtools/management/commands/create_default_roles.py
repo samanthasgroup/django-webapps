@@ -15,9 +15,7 @@ class Command(BaseCommand):
         ]
 
         for role_data in roles:
-            role, created = Role.objects.get_or_create(
-                slug=role_data["slug"], defaults={"name": role_data["name"]}
-            )
+            role, created = Role.objects.get_or_create(slug=role_data["slug"], defaults={"name": role_data["name"]})
             if created:
                 self.stdout.write(self.style.SUCCESS(f"Successfully created role: {role.name}"))
             else:

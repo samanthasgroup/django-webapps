@@ -105,9 +105,7 @@ def test_teacher_no_group_no_alert_for_recent_event(teacher_no_group: Teacher) -
 def test_teacher_no_group_resolves_after_status_change(teacher_no_group: Teacher) -> None:
     teacher = teacher_no_group
     past = timezone.now() - timedelta(days=46)
-    TeacherLogEvent.objects.create(
-        teacher=teacher, type=TeacherLogEventType.AWAITING_OFFER, comment="", date_time=past
-    )
+    TeacherLogEvent.objects.create(teacher=teacher, type=TeacherLogEventType.AWAITING_OFFER, comment="", date_time=past)
 
     handler = TeacherNoGroup45DaysHandler()
     processed = {"created": 0, "resolved": 0}
@@ -118,12 +116,7 @@ def test_teacher_no_group_resolves_after_status_change(teacher_no_group: Teacher
     teacher.save(update_fields=["project_status", "status_since"])
 
     handler.resolve_alerts(processed)
-    assert (
-        Alert.objects.filter(
-            object_id=teacher.pk, alert_type=handler.alert_type, is_resolved=False
-        ).count()
-        == 0
-    )
+    assert Alert.objects.filter(object_id=teacher.pk, alert_type=handler.alert_type, is_resolved=False).count() == 0
     assert processed["resolved"] == 1
 
 
@@ -205,9 +198,7 @@ def test_coordinator_overdue_transfer_request_creates_alert() -> None:
     processed = {"created": 0, "resolved": 0}
     handler.check_and_create_alerts(processed)
 
-    alert = Alert.objects.filter(
-        object_id=coordinator.pk, alert_type=handler.alert_type, is_resolved=False
-    ).first()
+    alert = Alert.objects.filter(object_id=coordinator.pk, alert_type=handler.alert_type, is_resolved=False).first()
     assert alert is not None
     assert processed["created"] == 1
 
@@ -228,9 +219,7 @@ def test_coordinator_overdue_transfer_request_recent_no_alert() -> None:
     processed = {"created": 0, "resolved": 0}
     handler.check_and_create_alerts(processed)
 
-    assert (
-        Alert.objects.filter(object_id=coordinator.pk, alert_type=handler.alert_type).count() == 0
-    )
+    assert Alert.objects.filter(object_id=coordinator.pk, alert_type=handler.alert_type).count() == 0
     assert processed["created"] == 0
 
 
@@ -281,9 +270,7 @@ def test_coordinator_onboarding_stale_updates_status_and_creates_alert() -> None
 
     coordinator.refresh_from_db()
     assert coordinator.situational_status == CoordinatorSituationalStatus.STALE
-    assert (
-        Alert.objects.filter(object_id=coordinator.pk, alert_type=handler.alert_type).count() == 1
-    )
+    assert Alert.objects.filter(object_id=coordinator.pk, alert_type=handler.alert_type).count() == 1
 
 
 @pytest.mark.django_db  # type: ignore[misc]
@@ -301,9 +288,7 @@ def test_coordinator_onboarding_stale_recent_no_alert() -> None:
 
     coordinator.refresh_from_db()
     assert coordinator.situational_status == CoordinatorSituationalStatus.ONBOARDING
-    assert (
-        Alert.objects.filter(object_id=coordinator.pk, alert_type=handler.alert_type).count() == 0
-    )
+    assert Alert.objects.filter(object_id=coordinator.pk, alert_type=handler.alert_type).count() == 0
 
 
 @pytest.mark.django_db  # type: ignore[misc]

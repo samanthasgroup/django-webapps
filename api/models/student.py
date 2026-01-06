@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.db.models import Count
@@ -15,7 +17,7 @@ from api.models.non_teaching_help import NonTeachingHelp
 from api.models.shared_abstract.person import Person
 
 
-class StudentQuerySet(models.QuerySet["Student"]):
+class StudentQuerySet(models.QuerySet[Any]):
     def annotate_with_group_count(self) -> "StudentQuerySet":
         return self.annotate(group_count=Count("groups"))
 
@@ -40,9 +42,7 @@ class Student(Person):
     age_range = models.ForeignKey(
         AgeRange,
         on_delete=models.PROTECT,
-        help_text=_(
-            "We do not ask students for their exact age. They choose an age range when registering with us."
-        ),
+        help_text=_("We do not ask students for their exact age. They choose an age range when registering with us."),
         verbose_name=_("age range"),
     )
     availability_slots = models.ManyToManyField(
@@ -51,9 +51,7 @@ class Student(Person):
         blank=True,
     )
     # irrelevant if student doesn't want to learn English, hence optional
-    can_read_in_english = models.BooleanField(
-        null=True, blank=True, verbose_name=_("can read in English")
-    )
+    can_read_in_english = models.BooleanField(null=True, blank=True, verbose_name=_("can read in English"))
     children = models.ManyToManyField(
         "self",
         blank=True,

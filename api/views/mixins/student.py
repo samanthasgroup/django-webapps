@@ -14,9 +14,7 @@ class StudentReturnedFromLeaveMixin:
         },
     )
     @action(detail=True, methods=["post"])
-    def returned_from_leave(
-        self, request: Request, personal_info_id: int  # noqa: ARG002
-    ) -> Response:
+    def returned_from_leave(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
         student = self.get_object()  # type: ignore
         StudentProcessor.returned_from_leave(student)
         return Response(status=status.HTTP_204_NO_CONTENT)

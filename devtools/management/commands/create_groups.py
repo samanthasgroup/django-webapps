@@ -26,9 +26,7 @@ class Command(BaseCommand):
         custom_teacher_ids = options.get("teacher_ids")
         # Get all available teachers if none specified
         teachers = (
-            self.get_teacher_ids(custom_teacher_ids)
-            if custom_teacher_ids
-            else GroupBuilder.get_available_teachers()
+            self.get_teacher_ids(custom_teacher_ids) if custom_teacher_ids else GroupBuilder.get_available_teachers()
         )
 
         for teacher in teachers:

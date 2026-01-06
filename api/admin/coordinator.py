@@ -56,13 +56,9 @@ class AlertInline(GenericTabularInline):
     def details_link(self, obj: Alert) -> str:
         if not obj.pk:
             return "-"
-        link: str = reverse(
-            f"admin:{obj._meta.app_label}_{obj._meta.model_name}_change", args=[obj.pk]
-        )
+        link: str = reverse(f"admin:{obj._meta.app_label}_{obj._meta.model_name}_change", args=[obj.pk])
         details_preview: str = (
-            (obj.details[:DETAILS_PREVIEW_LENGTH] + "...")
-            if len(obj.details) > DETAILS_PREVIEW_LENGTH
-            else obj.details
+            (obj.details[:DETAILS_PREVIEW_LENGTH] + "...") if len(obj.details) > DETAILS_PREVIEW_LENGTH else obj.details
         )
         return format_html('<a href="{}">{}</a>', link, details_preview or "View/Edit")
 
@@ -76,18 +72,16 @@ class AdminStatusFilter(SimpleListFilter):
     title = _("admin status")
     parameter_name = "is_admin"
 
-    def lookups(
-        self, _request: HttpRequest, _model_admin: ModelAdmin[Any]
-    ) -> tuple[tuple[bool, str], ...]:
+    def lookups(self, _request: HttpRequest, _model_admin: ModelAdmin[Any]) -> tuple[tuple[str, str], ...]:
         return (
-            (True, "Yes"),
-            (False, "No"),
+            ("yes", "Yes"),
+            ("no", "No"),
         )
 
     def queryset(self, _request: HttpRequest, queryset: QuerySet[Any]) -> QuerySet[Coordinator]:
-        if self.value() == "True":
+        if self.value() == "yes":
             return queryset.filter(is_admin=True)
-        if self.value() == "False":
+        if self.value() == "no":
             return queryset.filter(is_admin=False)
         return queryset
 
@@ -96,9 +90,7 @@ class StaleOnboardingFilter(SimpleListFilter):
     title = _("Onboarding stale")
     parameter_name = "onboarding_stale"
 
-    def lookups(
-        self, _request: HttpRequest, _model_admin: ModelAdmin[Any]
-    ) -> tuple[tuple[str, str], ...]:
+    def lookups(self, _request: HttpRequest, _model_admin: ModelAdmin[Any]) -> tuple[tuple[str, str], ...]:
         return (
             ("yes", cast(str, _("Yes"))),
             ("no", cast(str, _("No"))),
@@ -171,9 +163,7 @@ class CoordinatorFormerGroupsInline(BaseCoordinatorGroupInline):
         return super().get_queryset(request).select_related("group")
 
 
-class CoordinatorLogEventsInline(
-    admin.TabularInline[models.CoordinatorLogEvent, models.Coordinator]
-):
+class CoordinatorLogEventsInline(admin.TabularInline[models.CoordinatorLogEvent, models.Coordinator]):
     model = models.CoordinatorLogEvent
     can_delete = False
     readonly_fields = (
@@ -273,9 +263,7 @@ class CoordinatorAdmin(VersionAdmin):
         css = {"all": ("css/admin-coordinator-stale.css",)}
         js = ("admin/js/sticky-scroll-bar.js", "js/admin-coordinator-stale.js")
 
-    def changelist_view(
-        self, request: HttpRequest, extra_context: dict[str, Any] | None = None
-    ) -> HttpResponse:
+    def changelist_view(self, request: HttpRequest, extra_context: dict[str, Any] | None = None) -> HttpResponse:
         extra_context = extra_context or {}
         extra_context["title"] = "База координаторов"
         return super().changelist_view(request, extra_context)
@@ -319,9 +307,7 @@ class CoordinatorAdmin(VersionAdmin):
     def get_project_status(self, coordinator: Coordinator) -> str:
         return coordinator.get_project_status_display()
 
-    @admin.display(
-        description=mark_safe(_("Situational<br>Status")), ordering="situational_status"
-    )
+    @admin.display(description=mark_safe(_("Situational<br>Status")), ordering="situational_status")
     def get_situational_status(self, coordinator: Coordinator) -> str:
         display = coordinator.get_situational_status_display()
         if coordinator.situational_status == CoordinatorSituationalStatus.STALE:
@@ -410,9 +396,7 @@ class CoordinatorAdmin(VersionAdmin):
             event_type.value: event_type.label for event_type in CoordinatorLogEventType
         }
         extra_context["all_groups"] = (
-            Group.objects.select_related("language_and_level")
-            .prefetch_related("coordinators")
-            .all()
+            Group.objects.select_related("language_and_level").prefetch_related("coordinators").all()
         )
 
         # Передаем список типов, требующих группу, в формате JSON для JavaScript
@@ -438,67 +422,45 @@ class CoordinatorAdmin(VersionAdmin):
             if not log_event_type_str:
                 self.message_user(request, "Event Type is required.", messages.ERROR)
                 # Остаемся на той же странице, чтобы пользователь исправил
-                return super().change_view(
-                    request, object_id, form_url, extra_context=extra_context
-                )
+                return super().change_view(request, object_id, form_url, extra_context=extra_context)
 
             try:
                 # Пытаемся найти Enum по значению
                 log_event_type = CoordinatorLogEventType(log_event_type_str)
             except ValueError:
-                self.message_user(
-                    request, f"Invalid Event Type: {log_event_type_str}.", messages.ERROR
-                )
-                return super().change_view(
-                    request, object_id, form_url, extra_context=extra_context
-                )
+                self.message_user(request, f"Invalid Event Type: {log_event_type_str}.", messages.ERROR)
+                return super().change_view(request, object_id, form_url, extra_context=extra_context)
 
             # Валидация группы (как было в action)
             requires_group = log_event_type in COORDINATOR_LOG_EVENTS_REQUIRE_GROUP
             group_provided = bool(group_id_str)
 
             if requires_group and not group_provided:
-                self.message_user(
-                    request, "You must choose a group for this event type.", messages.ERROR
-                )
-                return super().change_view(
-                    request, object_id, form_url, extra_context=extra_context
-                )
+                self.message_user(request, "You must choose a group for this event type.", messages.ERROR)
+                return super().change_view(request, object_id, form_url, extra_context=extra_context)
             if not requires_group and group_provided:
-                self.message_user(
-                    request, "You should not choose a group for this event type.", messages.ERROR
-                )
-                return super().change_view(
-                    request, object_id, form_url, extra_context=extra_context
-                )
+                self.message_user(request, "You should not choose a group for this event type.", messages.ERROR)
+                return super().change_view(request, object_id, form_url, extra_context=extra_context)
             if requires_group and group_provided:
                 try:
                     assert group_id_str is not None
                     group = Group.objects.get(pk=int(group_id_str))
                 except (ValueError, Group.DoesNotExist):
                     self.message_user(request, "Invalid Group selected.", messages.ERROR)
-                    return super().change_view(
-                        request, object_id, form_url, extra_context=extra_context
-                    )
+                    return super().change_view(request, object_id, form_url, extra_context=extra_context)
 
             # --- Если все проверки пройдены ---
             try:
                 with reversion.create_revision():
                     reversion.set_user(request.user)
-                    reversion.set_comment(
-                        f"Created log event {log_event_type} via admin change form"
-                    )
+                    reversion.set_comment(f"Created log event {log_event_type} via admin change form")
                     CoordinatorAdminLogEventCreator.create(
                         coordinator=coordinator,
                         log_event_type=log_event_type,
                         group=group,
                     )
 
-                event_name = (
-                    log_event_type.label
-                    if hasattr(log_event_type, "label")
-                    else log_event_type.value
-                )
+                event_name = log_event_type.label if hasattr(log_event_type, "label") else log_event_type.value
                 success_msg = f"Log event '{event_name}' created successfully."
 
                 self.message_user(request, success_msg, messages.SUCCESS)

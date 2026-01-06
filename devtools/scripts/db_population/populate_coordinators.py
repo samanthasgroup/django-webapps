@@ -85,9 +85,7 @@ class CoordinatorPopulator(BasePopulatorFromCsv):
                 logger.warning(f"   personal_info пустое, пропускаем legacy_id={entity_data.id}")
                 return
             exists = Coordinator.objects.filter(legacy_cid=entity_data.id).exists()
-            logger.debug(
-                f"   проверка существования в БД (legacy_cid={entity_data.id}) -> {exists}"
-            )
+            logger.debug(f"   проверка существования в БД (legacy_cid={entity_data.id}) -> {exists}")
             if exists:
                 logger.warning(f"   уже мигрирован, пропускаем legacy_id={entity_data.id}")
                 return
@@ -103,14 +101,10 @@ class CoordinatorPopulator(BasePopulatorFromCsv):
             )
             logger.debug(f"   Coordinator.objects.create -> {coordinator!r}")
             coord_id = coordinator.personal_info.id
-            self._update_metadata(
-                coordinator.personal_info.id, entity_data.id, entity_data.first_name
-            )
+            self._update_metadata(coordinator.personal_info.id, entity_data.id, entity_data.first_name)
             logger.info(f"Coordinator migrated, old id: {entity_data.id}, new id: {coord_id}")
         except (IntegrityError, TransactionManagementError) as e:
-            logger.warning(
-                f"Coordinator with {self.id_name} {entity_data.id} can not be parsed, see above"
-            )
+            logger.warning(f"Coordinator with {self.id_name} {entity_data.id} can not be parsed, see above")
             logger.debug(e)
             logger.error(f"Ошибка при миграции legacy_id={entity_data.id}: {e!r}", exc_info=True)
 
@@ -122,8 +116,6 @@ if __name__ == "__main__":
     args = get_args()
     teachers = load_csv_data(args.input_csv)
     populator = CoordinatorPopulator(teachers, COLUMN_TO_ID, dry=args.dry, logger=logger)
-    logger.debug(
-        f"Запуск популятора (dry-run={args.dry}) с {len(teachers)} строками из {args.input_csv}"
-    )
+    logger.debug(f"Запуск популятора (dry-run={args.dry}) с {len(teachers)} строками из {args.input_csv}")
     populator.run()
     logger.info("=== Миграция координаторов завершена ===")

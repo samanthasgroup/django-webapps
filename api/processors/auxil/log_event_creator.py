@@ -120,10 +120,7 @@ class CoordinatorAdminLogEventCreator:
                 | CoordinatorLogEventType.GROUP_STARTED_CLASSES
             ):
                 return cls._get_working_project_status(coordinator), ""
-            case (
-                CoordinatorLogEventType.REQUESTED_TRANSFER
-                | CoordinatorLogEventType.TRANSFER_CANCELED
-            ):
+            case CoordinatorLogEventType.REQUESTED_TRANSFER | CoordinatorLogEventType.TRANSFER_CANCELED:
                 return None, None
         return None, None
 

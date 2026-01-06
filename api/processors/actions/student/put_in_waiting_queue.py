@@ -24,6 +24,4 @@ class StudentPutInWaitingQueueProcessor(StudentActionProcessor):
         self.student.save()
 
     def _create_log_events(self) -> None:
-        StudentLogEvent.objects.create(
-            student=self.student, type=StudentLogEventType.AWAITING_OFFER
-        )
+        StudentLogEvent.objects.create(student=self.student, type=StudentLogEventType.AWAITING_OFFER)

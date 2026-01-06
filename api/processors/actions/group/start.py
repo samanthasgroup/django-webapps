@@ -28,9 +28,7 @@ class GroupStartProcessor(GroupActionProcessor):
         StatusSetter.update_statuses_of_active_coordinators(self.timestamp)
 
     def _set_group_status(self) -> None:
-        StatusSetter.set_status(
-            obj=self.group, project_status=GroupProjectStatus.WORKING, status_since=self.timestamp
-        )
+        StatusSetter.set_status(obj=self.group, project_status=GroupProjectStatus.WORKING, status_since=self.timestamp)
 
     def _set_students_status(self) -> None:
         self.group.students.update(

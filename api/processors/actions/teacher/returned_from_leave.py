@@ -25,6 +25,4 @@ class TeacherReturnedFromLeaveProcessor(TeacherActionProcessor):
         self.teacher.save()
 
     def _create_log_events(self) -> None:
-        TeacherLogEvent.objects.create(
-            teacher=self.teacher, type=TeacherLogEventType.RETURNED_FROM_LEAVE
-        )
+        TeacherLogEvent.objects.create(teacher=self.teacher, type=TeacherLogEventType.RETURNED_FROM_LEAVE)

@@ -56,17 +56,15 @@ class StaffOnlyFilter(admin.SimpleListFilter):
     title = _("is for staff only")
     parameter_name = "staff"
 
-    def lookups(
-        self, _request: HttpRequest, _model_admin: ModelAdmin[Any]
-    ) -> tuple[tuple[bool, str], ...]:
+    def lookups(self, _request: HttpRequest, _model_admin: ModelAdmin[Any]) -> tuple[tuple[str, str], ...]:
         return (
-            (True, "Yes"),
-            (False, "No"),
+            ("yes", "Yes"),
+            ("no", "No"),
         )
 
     def queryset(self, _request: HttpRequest, queryset: QuerySet[Any]) -> QuerySet[Any]:
-        if (value := self.value()) in {"True", "False"}:
-            return queryset.filter(is_for_staff_only=(value == "True"))
+        if (value := self.value()) in {"yes", "no"}:
+            return queryset.filter(is_for_staff_only=(value == "yes"))
         return queryset
 
 
@@ -74,11 +72,9 @@ class CoordinatorFilter(admin.SimpleListFilter):
     title = _("Coordinator")
     parameter_name = "coordinator"
 
-    def lookups(
-        self, _request: HttpRequest, _model_admin: ModelAdmin[Any]
-    ) -> list[tuple[int, str]]:
+    def lookups(self, _request: HttpRequest, _model_admin: ModelAdmin[Any]) -> list[tuple[str, str]]:
         coordinators = models.Coordinator.objects.all()
-        return [(c.pk, str(c)) for c in coordinators]
+        return [(str(c.pk), str(c)) for c in coordinators]
 
     def queryset(self, _request: HttpRequest, queryset: QuerySet[Any]) -> QuerySet[Any]:
         if self.value():
@@ -205,9 +201,7 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         css = {"all": ("css/select2-darkmode.css",)}
         js = ("admin/js/sticky-scroll-bar.js",)
 
-    def changelist_view(
-        self, request: HttpRequest, extra_context: dict[str, Any] | None = None
-    ) -> HttpResponse:
+    def changelist_view(self, request: HttpRequest, extra_context: dict[str, Any] | None = None) -> HttpResponse:
         extra_context = extra_context or {}
         extra_context["title"] = "База групп"
         return super().changelist_view(request, extra_context)
@@ -263,9 +257,7 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
     @admin.display(description=_("End Date"))
     def get_end_date(self, group: models.Group) -> str:
         if group.end_date is not None:
-            return format_html(
-                "<span style='white-space: nowrap;'>{}</span>", group.end_date.strftime("%d-%m-%Y")
-            )
+            return format_html("<span style='white-space: nowrap;'>{}</span>", group.end_date.strftime("%d-%m-%Y"))
         return ""
 
     @admin.display(description=_("Status Since"))
@@ -315,9 +307,7 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
             ("sunday", _("Su")),
         )
         schedule = [
-            f"{short_name} {getattr(group, day).strftime('%H:%M')}"
-            for day, short_name in days
-            if getattr(group, day)
+            f"{short_name} {getattr(group, day).strftime('%H:%M')}" for day, short_name in days if getattr(group, day)
         ]
         return mark_safe(",<br>".join(schedule))
 
@@ -395,9 +385,7 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
                 {"popup_response_data": popup_response_data},
             )
         if "_continue" in request.POST or (
-            "_saveasnew" in request.POST
-            and self.save_as_continue
-            and self.has_change_permission(request, obj)
+            "_saveasnew" in request.POST and self.save_as_continue and self.has_change_permission(request, obj)
         ):
             msg = _("Group %(id)s was added successfully.") % msg_dict
             if self.has_change_permission(request, obj):
@@ -415,10 +403,7 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
             )
             return HttpResponseRedirect(post_url_continue)
         if "_addanother" in request.POST:
-            msg = (
-                _("Group %(id)s was added successfully. You may add another group below.")
-                % msg_dict
-            )
+            msg = _("Group %(id)s was added successfully. You may add another group below.") % msg_dict
             self.message_user(request, msg, messages.SUCCESS)
             redirect_url = request.path
             redirect_url = add_preserved_filters(

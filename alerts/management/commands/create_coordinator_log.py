@@ -12,9 +12,7 @@ from api.models.choices.log_event_type import CoordinatorLogEventType
 try:
     Coordinator = apps.get_model("api", "Coordinator")
 except LookupError:
-    raise CommandError(
-        "Could not find model 'coordinators.Coordinator'. Adjust the app_label in the command."
-    )
+    raise CommandError("Could not find model 'coordinators.Coordinator'. Adjust the app_label in the command.")
 
 try:
     CoordinatorLogEvent = apps.get_model("api", "CoordinatorLogEvent")
@@ -30,9 +28,7 @@ class Command(BaseCommand):
     )
 
     def add_arguments(self, parser: ArgumentParser) -> None:
-        parser.add_argument(
-            "coordinator_id", type=int, help="The primary key (ID) of the Coordinator."
-        )
+        parser.add_argument("coordinator_id", type=int, help="The primary key (ID) of the Coordinator.")
         parser.add_argument(
             "event_type",
             type=str,
@@ -76,9 +72,7 @@ class Command(BaseCommand):
         try:
             total_seconds = seconds_per_unit[singular_unit] * value
         except KeyError:
-            raise ValueError(
-                f"Invalid unit '{unit}' for --ago. Supported units: days, weeks, hours, minutes."
-            )
+            raise ValueError(f"Invalid unit '{unit}' for --ago. Supported units: days, weeks, hours, minutes.")
 
         return timedelta(seconds=total_seconds)
 
@@ -97,9 +91,7 @@ class Command(BaseCommand):
         # 2. Проверить тип события
         if event_type_str not in CoordinatorLogEventType.values:
             valid_types = ", ".join(CoordinatorLogEventType.values)
-            raise CommandError(
-                f"Invalid event_type {event_type_str}. Must be one of: {valid_types}"
-            )
+            raise CommandError(f"Invalid event_type {event_type_str}. Must be one of: {valid_types}")
         # Получаем реальное значение Enum (если используется TextChoices/Enum)
         event_type = CoordinatorLogEventType(event_type_str)
 

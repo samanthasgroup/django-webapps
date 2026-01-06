@@ -65,32 +65,22 @@ class Command(BaseCommand):
         # 2. Проверка существования задачи (частичная, для sync)
         if run_sync:
             if task_name not in current_app.tasks:
-                raise CommandError(
-                    f"Task '{task_name}' not found in the current Celery app instance."
-                )
+                raise CommandError(f"Task '{task_name}' not found in the current Celery app instance.")
             self.stdout.write(self.style.WARNING(f"Running task '{task_name}' synchronously..."))
             try:
                 # Выполняем задачу напрямую
                 result = current_app.tasks[task_name](*task_args, **task_kwargs)
-                self.stdout.write(
-                    self.style.SUCCESS(f"Task '{task_name}' finished synchronously.")
-                )
+                self.stdout.write(self.style.SUCCESS(f"Task '{task_name}' finished synchronously."))
                 self.stdout.write(f"Result: {result}")  # Выводим результат, если он есть
             except Exception as e:
-                raise CommandError(
-                    f"Task '{task_name}' raised an exception during synchronous execution: {e}"
-                )
+                raise CommandError(f"Task '{task_name}' raised an exception during synchronous execution: {e}")
         else:
             # 3. Отправка задачи в очередь через Celery
             self.stdout.write(f"Attempting to send task '{task_name}' to the queue...")
             try:
                 # Используем send_task для отправки по имени
-                async_result = current_app.send_task(
-                    name=task_name, args=task_args, kwargs=task_kwargs
-                )
-                self.stdout.write(
-                    self.style.SUCCESS(f"Task '{task_name}' sent to the queue successfully.")
-                )
+                async_result = current_app.send_task(name=task_name, args=task_args, kwargs=task_kwargs)
+                self.stdout.write(self.style.SUCCESS(f"Task '{task_name}' sent to the queue successfully."))
                 self.stdout.write(f"Task ID: {async_result.id}")
                 self.stdout.write(
                     "Note: This only means the task was accepted by the broker. Check worker logs for execution."

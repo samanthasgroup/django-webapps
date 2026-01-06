@@ -186,9 +186,7 @@ class TestDashboardGroupStart:
             )
             assert coordinator.status_since == common_status_since
 
-            log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(
-                coordinator_id=coordinator.pk
-            )
+            log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(coordinator_id=coordinator.pk)
             assert log_event.type == CoordinatorLogEventType.TOOK_NEW_GROUP
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
@@ -232,9 +230,7 @@ class TestDashboardGroupStart:
         coordinator.save()
 
         for _ in range(number_of_groups_to_start):
-            group = baker.make(
-                Group, _fill_optional=True, availability_slots_for_auto_matching=availability_slots
-            )
+            group = baker.make(Group, _fill_optional=True, availability_slots_for_auto_matching=availability_slots)
             group.project_status = GroupProjectStatus.AWAITING_START
             group.coordinators.add(coordinator)
             group.save()
@@ -252,9 +248,7 @@ class TestDashboardGroupStart:
         student.project_status = StudentProjectStatus.NO_GROUP_YET
         student.save()
 
-        group = baker.make(
-            Group, _fill_optional=True, availability_slots_for_auto_matching=availability_slots
-        )
+        group = baker.make(Group, _fill_optional=True, availability_slots_for_auto_matching=availability_slots)
         group.project_status = GroupProjectStatus.AWAITING_START
 
         group.students.add(student)
@@ -290,9 +284,7 @@ class TestDashboardGroupStart:
         teacher.save()
 
         for _ in range(teacher.simultaneous_groups + delta):
-            group = baker.make(
-                Group, _fill_optional=True, availability_slots_for_auto_matching=availability_slots
-            )
+            group = baker.make(Group, _fill_optional=True, availability_slots_for_auto_matching=availability_slots)
             group.project_status = GroupProjectStatus.AWAITING_START
             group.teachers.add(teacher)
             group.save()
@@ -342,9 +334,7 @@ class TestDashboardGroupAbort:
             )
             assert coordinator.status_since == common_status_since
 
-            log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(
-                coordinator_id=coordinator.pk
-            )
+            log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(coordinator_id=coordinator.pk)
             assert log_event.type == CoordinatorLogEventType.GROUP_ABORTED
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
@@ -449,9 +439,7 @@ class TestDashboardGroupConfirmReadyToStart:
     def _make_url(group: Group) -> str:
         return reverse("groups-confirm-ready-to-start", kwargs={"pk": group.id})
 
-    def test_dashboard_group_confirm_ready_to_start_general_check(
-        self, api_client, group, timestamp
-    ):
+    def test_dashboard_group_confirm_ready_to_start_general_check(self, api_client, group, timestamp):
         response = api_client.post(self._make_url(group))
 
         assert response.status_code == status.HTTP_200_OK
@@ -462,9 +450,7 @@ class TestDashboardGroupConfirmReadyToStart:
         assert_date_time_with_timestamp(common_status_since, timestamp)
 
         for coordinator in group.coordinators.iterator():
-            log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(
-                coordinator_id=coordinator.pk
-            )
+            log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(coordinator_id=coordinator.pk)
             assert log_event.type == CoordinatorLogEventType.TOOK_NEW_GROUP
 
         for student in group.students.iterator():
@@ -492,9 +478,7 @@ class TestDashboardGroupDiscard:
             "/api/groups",
         ],
     )
-    def test_dashboard_group_discard_general_check(
-        self, api_client, pending_group, timestamp, base_path
-    ):
+    def test_dashboard_group_discard_general_check(self, api_client, pending_group, timestamp, base_path):
         group_students, group_teachers, group_coordinators = (
             list(pending_group.students.iterator()),
             list(pending_group.teachers.iterator()),
@@ -502,13 +486,9 @@ class TestDashboardGroupDiscard:
         )
         students_group_count = [student.groups.count() - 1 for student in group_students]
         teachers_group_count = [teacher.groups.count() - 1 for teacher in group_teachers]
-        coordinators_group_count = [
-            coordinator.groups.count() - 1 for coordinator in group_coordinators
-        ]
+        coordinators_group_count = [coordinator.groups.count() - 1 for coordinator in group_coordinators]
         discard_reason = GroupDiscardReason.NOT_ENOUGH_STUDENTS
-        response = api_client.delete(
-            f"{base_path}/{pending_group.id}/discard/?discard_reason={discard_reason}"
-        )
+        response = api_client.delete(f"{base_path}/{pending_group.id}/discard/?discard_reason={discard_reason}")
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
         try:
@@ -526,9 +506,7 @@ class TestDashboardGroupDiscard:
 
         students_group_count_new = [student.groups.count() for student in group_students]
         teachers_group_count_new = [teacher.groups.count() for teacher in group_teachers]
-        coordinators_group_count_new = [
-            coordinator.groups.count() for coordinator in group_coordinators
-        ]
+        coordinators_group_count_new = [coordinator.groups.count() for coordinator in group_coordinators]
 
         assert [
             students_group_count_new,
@@ -561,9 +539,7 @@ class TestDashboardGroupFinish:
     def _make_url(group: Group) -> str:
         return reverse("groups-finish", kwargs={"pk": group.id})
 
-    def test_dashboard_group_finish_general_check(
-        self, api_client, active_group, timestamp, availability_slots
-    ):
+    def test_dashboard_group_finish_general_check(self, api_client, active_group, timestamp, availability_slots):
         student_studying_in_multiple_groups = active_group.students.first()
 
         # Created for checking case when students studying in multiple groups
@@ -600,9 +576,7 @@ class TestDashboardGroupFinish:
             )
             assert coordinator.status_since == common_status_since
 
-            log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(
-                coordinator_id=coordinator.pk
-            )
+            log_event: CoordinatorLogEvent = CoordinatorLogEvent.objects.get(coordinator_id=coordinator.pk)
             assert log_event.type == CoordinatorLogEventType.GROUP_FINISHED
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
@@ -629,9 +603,7 @@ class TestDashboardGroupFinish:
             assert log_event.type == TeacherLogEventType.GROUP_FINISHED
             assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
-    def test_finish_appends_former_entity_lists(
-        self, api_client, active_group, availability_slots
-    ):
+    def test_finish_appends_former_entity_lists(self, api_client, active_group, availability_slots):
         # test that lists are not overwritten
         student = baker.make(Student, _fill_optional=True, availability_slots=availability_slots)
         teacher = baker.make(Teacher, _fill_optional=True, availability_slots=availability_slots)

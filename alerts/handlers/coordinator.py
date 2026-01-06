@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from typing import Any
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
@@ -20,9 +21,7 @@ class CoordinatorOverdueLeaveHandler(DateThresholdHandler):
     """Координатор в отпуске дольше допустимого периода (2 недели)."""
 
     MODEL = Coordinator
-    EVENT_MODEL = __import__(
-        "api.models.log_event", fromlist=["CoordinatorLogEvent"]
-    ).CoordinatorLogEvent
+    EVENT_MODEL = __import__("api.models.log_event", fromlist=["CoordinatorLogEvent"]).CoordinatorLogEvent
     EVENT_TYPE = CoordinatorLogEventType.GONE_ON_LEAVE
     STATUS_FIELD = "project_status"
     STATUS_VALUE = __import__(
@@ -87,9 +86,7 @@ class CoordinatorOverdueTransferRequestHandler(AlertHandler):
         alerts: list[Alert] = []
         for coordinator_id in new_ids:
             items = overdue[coordinator_id]
-            details_items = ", ".join(
-                f"группа {item.group_id} (запрос {item.date_time.date()})" for item in items
-            )
+            details_items = ", ".join(f"группа {item.group_id} (запрос {item.date_time.date()})" for item in items)
             details = (
                 f"Координатор с ID={coordinator_id}: запрос перевода "
                 f"старше {self.PERIOD.days} дней. {details_items}."
@@ -113,9 +110,7 @@ class CoordinatorOverdueTransferRequestHandler(AlertHandler):
         )
         to_resolve = [alert.pk for alert in active if alert.object_id not in overdue_ids]
         if to_resolve:
-            count = Alert.objects.filter(pk__in=to_resolve).update(
-                is_resolved=True, resolved_at=self.now
-            )
+            count = Alert.objects.filter(pk__in=to_resolve).update(is_resolved=True, resolved_at=self.now)
             processed["resolved"] += count
 
 
@@ -132,11 +127,9 @@ class CoordinatorOnboardingStaleHandler(AlertHandler):
         super().__init__(ct, self.ALERT_TYPE)
         self.now = timezone.now()
 
-    def _get_overdue_qs(self) -> QuerySet[Coordinator]:
+    def _get_overdue_qs(self) -> QuerySet[Any]:
         threshold = self.now - self.PERIOD
-        return Coordinator.objects.filter(
-            situational_status=self.ONBOARDING_STATUS, status_since__lte=threshold
-        )
+        return Coordinator.objects.filter(situational_status=self.ONBOARDING_STATUS, status_since__lte=threshold)
 
     def check_and_create_alerts(self, processed: dict[str, int]) -> None:
         overdue_rows = list(self._get_overdue_qs().values("pk", "status_since"))
@@ -163,10 +156,7 @@ class CoordinatorOnboardingStaleHandler(AlertHandler):
             if coordinator_id not in new_ids:
                 continue
             since = row["status_since"].date()
-            details = (
-                f"Координатор с ID={coordinator_id}: онбординг "
-                f"старше {self.PERIOD.days} дней (c {since})."
-            )
+            details = f"Координатор с ID={coordinator_id}: онбординг старше {self.PERIOD.days} дней (c {since})."
             alerts.append(
                 Alert(
                     content_type=self.content_type,
@@ -189,7 +179,5 @@ class CoordinatorOnboardingStaleHandler(AlertHandler):
             if not coordinator or coordinator.situational_status != self.STALE_STATUS:
                 to_resolve.append(alert.pk)
         if to_resolve:
-            count = Alert.objects.filter(pk__in=to_resolve).update(
-                is_resolved=True, resolved_at=self.now
-            )
+            count = Alert.objects.filter(pk__in=to_resolve).update(is_resolved=True, resolved_at=self.now)
             processed["resolved"] += count

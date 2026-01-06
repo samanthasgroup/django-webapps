@@ -15,9 +15,7 @@ class TimeSlot(models.Model):
     to_utc_hour = models.TimeField(verbose_name=_("to UTC hour"))
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=["from_utc_hour", "to_utc_hour"], name="from_to_hour")
-        ]
+        constraints = [models.UniqueConstraint(fields=["from_utc_hour", "to_utc_hour"], name="from_to_hour")]
 
     verbose_name = _("time slot")
     verbose_name_plural = _("time slots")
@@ -38,19 +36,13 @@ class DayAndTimeSlot(models.Model):
         SATURDAY = 5, _("Saturday")
         SUNDAY = 6, _("Sunday")
 
-    day_of_week_index = models.PositiveSmallIntegerField(
-        choices=DayOfWeek.choices, verbose_name=_("day of the week")
-    )
+    day_of_week_index = models.PositiveSmallIntegerField(choices=DayOfWeek.choices, verbose_name=_("day of the week"))
     time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE, verbose_name=_("time slot"))
 
     class Meta:
         verbose_name = _("day and time slot")
         verbose_name_plural = _("days and time slots")
-        constraints = [
-            models.UniqueConstraint(
-                fields=["day_of_week_index", "time_slot"], name="unique_day_and_slot"
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=["day_of_week_index", "time_slot"], name="unique_day_and_slot")]
         ordering = ("day_of_week_index", "time_slot__from_utc_hour")
 
     def __str__(self) -> str:

@@ -16,14 +16,10 @@ class Alert(models.Model):
         max_length=100,
         db_index=True,
         verbose_name=_("Alert Type"),
-        help_text=_(
-            "A unique identifier for the type of alert (e.g., 'overdue_on_leave', 'low_student_activity')."
-        ),
+        help_text=_("A unique identifier for the type of alert (e.g., 'overdue_on_leave', 'low_student_activity')."),
     )
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created At"))
-    resolved_at = models.DateTimeField(
-        null=True, blank=True, db_index=True, verbose_name=_("Resolved At")
-    )
+    resolved_at = models.DateTimeField(null=True, blank=True, db_index=True, verbose_name=_("Resolved At"))
     is_resolved = models.BooleanField(default=False, db_index=True, verbose_name=_("Is Resolved"))
     details = models.TextField(blank=True, verbose_name=_("Details"))
 

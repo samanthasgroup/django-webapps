@@ -62,9 +62,7 @@ class AlertAdmin(admin.ModelAdmin[Alert]):
         if content_object:
             try:
                 opts = content_object._meta
-                url = reverse(
-                    f"admin:{opts.app_label}_{opts.model_name}_change", args=[content_object.pk]
-                )
+                url = reverse(f"admin:{opts.app_label}_{opts.model_name}_change", args=[content_object.pk])
                 return format_html('<a href="{}">{}</a>', url, str(content_object))
             except Exception:
                 return str(content_object)
@@ -89,11 +87,5 @@ class AlertAdmin(admin.ModelAdmin[Alert]):
     @admin.display(description=_("Type"))
     def alert_type_badge(self, obj: Alert) -> SafeString:
         style = AlertConfig.STYLES.get(obj.alert_type, "")
-        label = (
-            obj.get_alert_type_display()
-            if hasattr(obj, "get_alert_type_display")
-            else obj.alert_type
-        )
-        return format_html(
-            '<span style="padding:2px 6px; border-radius:4px; {}">{}</span>', style, label
-        )
+        label = obj.get_alert_type_display() if hasattr(obj, "get_alert_type_display") else obj.alert_type
+        return format_html('<span style="padding:2px 6px; border-radius:4px; {}">{}</span>', style, label)

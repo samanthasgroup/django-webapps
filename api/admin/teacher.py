@@ -29,9 +29,7 @@ class HasGroupsFilter(SimpleListFilter):
             ("no", str(_("No"))),
         ]
 
-    def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Teacher]  # noqa: ARG002
-    ) -> TeacherQuerySet:
+    def queryset(self, request: HttpRequest, queryset: QuerySet[Teacher]) -> TeacherQuerySet:  # noqa: ARG002
         teacher_queryset = cast(TeacherQuerySet, queryset)
 
         if self.value() == "yes":
@@ -125,9 +123,7 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         TeachersGroupInline,
     ]
 
-    def changelist_view(
-        self, request: HttpRequest, extra_context: dict[str, Any] | None = None
-    ) -> HttpResponse:
+    def changelist_view(self, request: HttpRequest, extra_context: dict[str, Any] | None = None) -> HttpResponse:
         extra_context = extra_context or {}
         extra_context["title"] = "База учителей"
         return super().changelist_view(request, extra_context)

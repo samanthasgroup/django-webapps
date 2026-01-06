@@ -92,15 +92,9 @@ class GroupsPopulator(BasePopulatorFromCsv):
         if gid is None:
             return None
         group_data = GroupsData(gid=gid)
-        group_data.day_1 = self._parse_cell(
-            "day_1", lambda x: x.strip().rstrip().lower() if x else None
-        )
-        group_data.day_2 = self._parse_cell(
-            "day_2", lambda x: x.strip().rstrip().lower() if x else None
-        )
-        group_data.day_3 = self._parse_cell(
-            "day_3", lambda x: x.strip().rstrip().lower() if x else None
-        )
+        group_data.day_1 = self._parse_cell("day_1", lambda x: x.strip().rstrip().lower() if x else None)
+        group_data.day_2 = self._parse_cell("day_2", lambda x: x.strip().rstrip().lower() if x else None)
+        group_data.day_3 = self._parse_cell("day_3", lambda x: x.strip().rstrip().lower() if x else None)
         group_data.time_1 = self._parse_cell("time_1", common_parsers.parse_time_string)
         group_data.time_2 = self._parse_cell("time_2", common_parsers.parse_time_string)
         group_data.time_3 = self._parse_cell("time_3", common_parsers.parse_time_string)
@@ -124,9 +118,7 @@ class GroupsPopulator(BasePopulatorFromCsv):
                 return
 
             if Group.objects.filter(legacy_gid=entity_data.gid).count():
-                logger.warning(
-                    f"Coordinator with {self.id_name} {entity_data.gid} was already migrated"
-                )
+                logger.warning(f"Coordinator with {self.id_name} {entity_data.gid} was already migrated")
                 return
             group = Group.objects.create(
                 legacy_gid=entity_data.gid,
@@ -151,24 +143,16 @@ class GroupsPopulator(BasePopulatorFromCsv):
             group.students.set(Student.objects.filter(legacy_sid__in=entity_data.sids))
             group.teachers.set(Teacher.objects.filter(legacy_tid__in=entity_data.tids))
             group.coordinators.set(Coordinator.objects.filter(legacy_cid__in=entity_data.cids))
-            self._add_language_and_level(
-                group, entity_data.language_level, entity_data.teacher_language
-            )
+            self._add_language_and_level(group, entity_data.language_level, entity_data.teacher_language)
             self._update_metadata(group.pk, entity_data.gid)
-            group = self._add_language_and_level(
-                group, entity_data.language_level, entity_data.teacher_language
-            )
+            group = self._add_language_and_level(group, entity_data.language_level, entity_data.teacher_language)
             group.save()
             logger.info(f"Group migrated, old id: {entity_data.gid}, new id: {group.pk}")
         except (IntegrityError, TransactionManagementError) as e:
-            logger.warning(
-                f"Group with {self.id_name} {entity_data.gid} can not be parsed, see above"
-            )
+            logger.warning(f"Group with {self.id_name} {entity_data.gid} can not be parsed, see above")
             logger.debug(e)
 
-    def _add_language_and_level(
-        self, group: Group, levels: list[str], languages: list[str]
-    ) -> Group:
+    def _add_language_and_level(self, group: Group, levels: list[str], languages: list[str]) -> Group:
         levels = [max(levels)] if levels else []
         if not languages:
             return group

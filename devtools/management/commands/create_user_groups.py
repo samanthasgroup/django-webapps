@@ -156,9 +156,7 @@ class Command(BaseCommand):
             # Для каждого приложения создаем свой фильтр
             for app_label, codenames in apps_permissions.items():
                 if codenames:
-                    permission_filters |= Q(
-                        content_type__app_label=app_label, codename__in=codenames
-                    )
+                    permission_filters |= Q(content_type__app_label=app_label, codename__in=codenames)
 
             # Получаем все разрешения по созданному фильтру
             if permission_filters:
@@ -177,15 +175,9 @@ class Command(BaseCommand):
 
                 # Назначаем права группе
                 group.permissions.set(permissions)
-                self.stdout.write(
-                    self.style.SUCCESS(f"Assigned {found_count} permissions to {group_name}")
-                )
+                self.stdout.write(self.style.SUCCESS(f"Assigned {found_count} permissions to {group_name}"))
             else:
                 group.permissions.clear()
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f"No permissions specified for {group_name}, cleared existing."
-                    )
-                )
+                self.stdout.write(self.style.SUCCESS(f"No permissions specified for {group_name}, cleared existing."))
 
         self.stdout.write(self.style.SUCCESS("Groups and permissions initialized successfully"))
