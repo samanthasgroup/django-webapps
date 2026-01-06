@@ -1,6 +1,6 @@
 .PHONY: help start updev down test lint makemigrations migrate recreate-first-migration \
 	pull-and-recreate-first-migration _recreate-first-migration-common repopulate-data \
-	generate-erd celery celery-beat celery-up trans-create trans-comp
+	celery celery-beat celery-up trans-create trans-comp
 
 UV := uv run
 DJANGO := $(UV) manage.py
@@ -28,7 +28,6 @@ help:
 	@echo "  recreate-first-migration"
 	@echo "  pull-and-recreate-first-migration"
 	@echo "  repopulate-data"
-	@echo "  generate-erd"
 	@echo ""
 	@echo "Celery:"
 	@echo "  celery             Start worker"
@@ -56,7 +55,6 @@ lint:
 
 makemigrations:
 	$(DJANGO) makemigrations
-	# $(MAKE) generate-erd
 
 migrate:
 	$(DJANGO) migrate
@@ -64,7 +62,6 @@ migrate:
 recreate-first-migration:
 	$(DJANGO) migrate api zero && \
 	$(MAKE) _recreate-first-migration-common
-	$(MAKE) generate-erd
 
 pull-and-recreate-first-migration:
 	$(DJANGO) migrate api zero && \

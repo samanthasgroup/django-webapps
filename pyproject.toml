@@ -61,7 +61,7 @@ django_settings_module = "django_webapps.settings"
 
 [tool.isort]
 profile = "black"
-line_length = 99
+line_length = 120
 skip_glob = ["api/migrations/*"]
 
 [tool.mypy]
