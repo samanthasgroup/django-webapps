@@ -5,11 +5,7 @@ from rest_framework import serializers
 from api.exceptions import ConflictError
 from api.models import LanguageAndLevel, Student
 from api.models.choices.status.project import StudentProjectStatus
-from api.serializers import (
-    AgeRangeSerializer,
-    DayAndTimeSlotSerializer,
-    LanguageAndLevelSerializer,
-)
+from api.serializers import AgeRangeSerializer, DayAndTimeSlotSerializer, LanguageAndLevelSerializer
 
 
 class StudentWriteSerializer(serializers.ModelSerializer[Student]):

@@ -6,16 +6,8 @@ from api.views.group import DashboardGroupViewSet, GroupViewSet
 from api.views.language_and_level import LanguageAndLevelViewSet
 from api.views.non_teaching_help import NonTeachingHelpViewSet
 from api.views.personal_info import PersonalInfoViewSet
-from api.views.student import (
-    DashboardStudentViewSet,
-    DashboardStudentWithPersonalInfoViewSet,
-    StudentViewSet,
-)
-from api.views.teacher import (
-    DashboardTeacherViewSet,
-    DashboardTeacherWithPersonalInfoViewSet,
-    TeacherViewSet,
-)
+from api.views.student import DashboardStudentViewSet, DashboardStudentWithPersonalInfoViewSet, StudentViewSet
+from api.views.teacher import DashboardTeacherViewSet, DashboardTeacherWithPersonalInfoViewSet, TeacherViewSet
 from api.views.teacher_under_18 import TeacherUnder18ViewSet
 
 __all__ = [

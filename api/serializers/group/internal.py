@@ -7,12 +7,7 @@ from api.exceptions import ConflictError
 from api.models import Group
 from api.models.auxil.constants import GroupDiscardReason
 from api.models.choices.status import GroupProjectStatus
-from api.serializers import (
-    DayAndTimeSlotSerializer,
-    MinifiedStudentSerializer,
-    MinifiedTeacherSerializer,
-    coordinator,
-)
+from api.serializers import DayAndTimeSlotSerializer, MinifiedStudentSerializer, MinifiedTeacherSerializer, coordinator
 
 
 class GroupWriteSerializer(serializers.ModelSerializer[Group]):

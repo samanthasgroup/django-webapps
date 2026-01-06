@@ -4,10 +4,7 @@ from rest_framework import serializers
 
 from api.exceptions import ConflictError
 from api.models import Teacher
-from api.models.auxil.constants import (
-    TEACHER_PEER_SUPPORT_FIELD_NAME_PREFIX,
-    TEACHER_PEER_SUPPORT_OPTIONS,
-)
+from api.models.auxil.constants import TEACHER_PEER_SUPPORT_FIELD_NAME_PREFIX, TEACHER_PEER_SUPPORT_OPTIONS
 from api.serializers import DashboardPersonalInfoSerializer
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer

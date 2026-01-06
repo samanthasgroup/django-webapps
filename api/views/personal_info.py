@@ -11,11 +11,7 @@ from api.exceptions import ConflictError
 from api.filters import PersonalInfoFilter
 from api.filters.personal_info import DashboardPersonalInfoFilter
 from api.models import PersonalInfo
-from api.serializers import (
-    CheckChatIdExistenceSerializer,
-    CheckNameAndEmailExistenceSerializer,
-    PersonalInfoSerializer,
-)
+from api.serializers import CheckChatIdExistenceSerializer, CheckNameAndEmailExistenceSerializer, PersonalInfoSerializer
 from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
 from api.serializers.personal_info import DashboardMinifiedPersonalInfoSerializer
 

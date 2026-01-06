@@ -3,21 +3,9 @@ from django.urls import reverse
 from model_bakery import baker
 from rest_framework import status
 
-from api.models import (
-    Coordinator,
-    CoordinatorLogEvent,
-    Group,
-    Student,
-    StudentLogEvent,
-    Teacher,
-    TeacherLogEvent,
-)
+from api.models import Coordinator, CoordinatorLogEvent, Group, Student, StudentLogEvent, Teacher, TeacherLogEvent
 from api.models.auxil.constants import CoordinatorGroupLimit, GroupDiscardReason
-from api.models.choices.log_event_type import (
-    CoordinatorLogEventType,
-    StudentLogEventType,
-    TeacherLogEventType,
-)
+from api.models.choices.log_event_type import CoordinatorLogEventType, StudentLogEventType, TeacherLogEventType
 from api.models.choices.status import (
     CoordinatorProjectStatus,
     GroupProjectStatus,
@@ -26,11 +14,7 @@ from api.models.choices.status import (
 )
 from api.serializers import GroupReadSerializer
 from tests.fixtures.group import make_active_group
-from tests.tests_api.asserts import (
-    assert_date_time_with_timestamp,
-    assert_response_data,
-    assert_response_data_list,
-)
+from tests.tests_api.asserts import assert_date_time_with_timestamp, assert_response_data, assert_response_data_list
 
 
 def test_dashboard_group_list(api_client, availability_slots):

@@ -1,16 +1,8 @@
 from django.db import transaction
 
 from api.models.auxil.status_setter import StatusSetter
-from api.models.choices.log_event_type import (
-    GroupLogEventType,
-    StudentLogEventType,
-    TeacherLogEventType,
-)
-from api.models.choices.status import (
-    GroupProjectStatus,
-    StudentSituationalStatus,
-    TeacherSituationalStatus,
-)
+from api.models.choices.log_event_type import GroupLogEventType, StudentLogEventType, TeacherLogEventType
+from api.models.choices.status import GroupProjectStatus, StudentSituationalStatus, TeacherSituationalStatus
 from api.processors.actions.group import GroupActionProcessor
 from api.processors.auxil.log_event_creator import GroupLogEventCreator
 

@@ -17,11 +17,7 @@ from api.models.auxil.constants import (
 )
 from api.models.auxil.status_setter import StatusSetter
 from api.models.choices.communication_language_mode import CommunicationLanguageMode
-from api.models.choices.log_event_type import (
-    GroupLogEventType,
-    StudentLogEventType,
-    TeacherLogEventType,
-)
+from api.models.choices.log_event_type import GroupLogEventType, StudentLogEventType, TeacherLogEventType
 from api.models.choices.status import (
     GroupProjectStatus,
     StudentProjectStatus,

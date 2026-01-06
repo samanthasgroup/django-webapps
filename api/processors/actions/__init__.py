@@ -4,18 +4,12 @@ from api.processors.actions.group.create import GroupCreateProcessor
 from api.processors.actions.group.discard import GroupDiscardProcessor
 from api.processors.actions.group.finish import GroupFinishProcessor
 from api.processors.actions.group.start import GroupStartProcessor
-from api.processors.actions.student.accepted_offered_group import (
-    StudentAcceptedOfferedGroupProcessor,
-)
-from api.processors.actions.student.completed_oral_interview import (
-    StudentCompletedOralInterviewProcessor,
-)
+from api.processors.actions.student.accepted_offered_group import StudentAcceptedOfferedGroupProcessor
+from api.processors.actions.student.completed_oral_interview import StudentCompletedOralInterviewProcessor
 from api.processors.actions.student.create import StudentCreateProcessor
 from api.processors.actions.student.expelled import StudentExpelledProcessor
 from api.processors.actions.student.finished_and_left import StudentFinishedAndLeftProcessor
-from api.processors.actions.student.left_project_prematurely import (
-    StudentLeftProjectPrematurelyProcessor,
-)
+from api.processors.actions.student.left_project_prematurely import StudentLeftProjectPrematurelyProcessor
 from api.processors.actions.student.missed_class import StudentMissedClassProcessor
 from api.processors.actions.student.offer_join_group import StudentOfferJoinGroupProcessor
 from api.processors.actions.student.put_in_waiting_queue import StudentPutInWaitingQueueProcessor
@@ -28,9 +22,7 @@ from api.processors.actions.teacher.finished_and_leaving import TeacherFinishedA
 from api.processors.actions.teacher.finished_but_stays_in_project import (
     TeacherFinishedStudiesButStaysInProjectProcessor,
 )
-from api.processors.actions.teacher.left_project_prematurely import (
-    TeacherLeftProjectPrematurelyProcessor,
-)
+from api.processors.actions.teacher.left_project_prematurely import TeacherLeftProjectPrematurelyProcessor
 from api.processors.actions.teacher.returned_from_leave import TeacherReturnedFromLeaveProcessor
 from api.processors.actions.teacher.transfer import TeacherTransferProcessor
 from api.processors.actions.teacher.went_on_leave import TeacherWentOnLeaveProcessor

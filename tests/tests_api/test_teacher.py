@@ -20,11 +20,7 @@ from api.models.choices.log_event_type import TeacherLogEventType
 from api.models.choices.status import TeacherProjectStatus
 from api.models.log_event import TeacherLogEvent
 from api.serializers import DashboardTeacherSerializer, TeacherWriteSerializer
-from tests.tests_api.asserts import (
-    assert_date_time_with_timestamp,
-    assert_response_data,
-    assert_response_data_list,
-)
+from tests.tests_api.asserts import assert_date_time_with_timestamp, assert_response_data, assert_response_data_list
 
 
 def test_teacher_create(api_client, faker, timestamp):

@@ -3,16 +3,8 @@ from typing import Any
 
 from rest_framework import serializers
 
-from api.models import (
-    EnrollmentTest,
-    EnrollmentTestQuestion,
-    EnrollmentTestQuestionOption,
-    EnrollmentTestResult,
-)
-from api.models.auxil.constants import (
-    ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS,
-    LanguageLevelId,
-)
+from api.models import EnrollmentTest, EnrollmentTestQuestion, EnrollmentTestQuestionOption, EnrollmentTestResult
+from api.models.auxil.constants import ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS, LanguageLevelId
 
 
 class EnrollmentTestQuestionOptionSerializer(serializers.ModelSerializer[EnrollmentTestQuestionOption]):

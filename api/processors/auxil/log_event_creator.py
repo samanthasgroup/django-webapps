@@ -1,13 +1,6 @@
 from django.db import transaction
 
-from api.models import (
-    Coordinator,
-    CoordinatorLogEvent,
-    Group,
-    GroupLogEvent,
-    StudentLogEvent,
-    TeacherLogEvent,
-)
+from api.models import Coordinator, CoordinatorLogEvent, Group, GroupLogEvent, StudentLogEvent, TeacherLogEvent
 from api.models.auxil.constants import CoordinatorGroupLimit
 from api.models.auxil.status_setter import StatusSetter
 from api.models.choices.log_event_type import (

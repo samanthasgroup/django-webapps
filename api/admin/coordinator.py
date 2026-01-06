@@ -19,10 +19,7 @@ from alerts.models import Alert
 from api import models
 from api.admin.auxil.widgets import PersonalInfoSelect2Widget
 from api.models import Coordinator, Group
-from api.models.choices.log_event_type import (
-    COORDINATOR_LOG_EVENTS_REQUIRE_GROUP,
-    CoordinatorLogEventType,
-)
+from api.models.choices.log_event_type import COORDINATOR_LOG_EVENTS_REQUIRE_GROUP, CoordinatorLogEventType
 from api.models.choices.status import GroupProjectStatus
 from api.models.choices.status.situational import CoordinatorSituationalStatus
 from api.processors.auxil.log_event_creator import CoordinatorAdminLogEventCreator

@@ -5,11 +5,7 @@ from api.models.choices.log_event_type import (
     StudentLogEventType,
     TeacherLogEventType,
 )
-from api.models.choices.status import (
-    GroupProjectStatus,
-    StudentProjectStatus,
-    TeacherProjectStatus,
-)
+from api.models.choices.status import GroupProjectStatus, StudentProjectStatus, TeacherProjectStatus
 from api.processors.actions.group import GroupActionProcessor
 from api.processors.auxil.log_event_creator import GroupLogEventCreator
 

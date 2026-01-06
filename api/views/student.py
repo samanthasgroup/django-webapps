@@ -27,11 +27,7 @@ from api.serializers import (
     StudentWriteSerializer,
 )
 from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
-from api.views.mixins import (
-    ReadWriteSerializersMixin,
-    StudentReturnedFromLeaveMixin,
-    StudentWentOnLeaveMixin,
-)
+from api.views.mixins import ReadWriteSerializersMixin, StudentReturnedFromLeaveMixin, StudentWentOnLeaveMixin
 
 
 class StudentViewSet(  # type: ignore

@@ -6,25 +6,13 @@ from dateutil import parser
 from model_bakery import baker, seq
 from rest_framework import status
 
-from api.models import (
-    AgeRange,
-    Coordinator,
-    DayAndTimeSlot,
-    LanguageAndLevel,
-    NonTeachingHelp,
-    PersonalInfo,
-    Student,
-)
+from api.models import AgeRange, Coordinator, DayAndTimeSlot, LanguageAndLevel, NonTeachingHelp, PersonalInfo, Student
 from api.models.choices.log_event_type import CoordinatorLogEventType, StudentLogEventType
 from api.models.choices.status import StudentProjectStatus, StudentSituationalStatus
 from api.models.group import Group
 from api.models.log_event import CoordinatorLogEvent, StudentLogEvent
 from api.serializers import DashboardStudentSerializer, StudentWriteSerializer
-from tests.tests_api.asserts import (
-    assert_date_time_with_timestamp,
-    assert_response_data,
-    assert_response_data_list,
-)
+from tests.tests_api.asserts import assert_date_time_with_timestamp, assert_response_data, assert_response_data_list
 
 
 @pytest.mark.parametrize(
