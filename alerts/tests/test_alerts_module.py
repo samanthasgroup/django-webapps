@@ -144,6 +144,44 @@ def test_coordinator_overdue_leave_creates_and_resolves(coordinator_on_leave: Co
 
 
 @pytest.mark.django_db  # type: ignore[misc]
+def test_coordinator_overdue_leave_no_alert_for_recent_event(
+    coordinator_on_leave: Coordinator,
+) -> None:
+    coord = coordinator_on_leave
+    recent = timezone.now() - timedelta(days=1)
+    CoordinatorLogEvent.objects.create(
+        coordinator=coord, type=CoordinatorLogEventType.GONE_ON_LEAVE, comment="", date_time=recent
+    )
+
+    handler = CoordinatorOverdueLeaveHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    assert Alert.objects.filter(object_id=coord.pk, alert_type=handler.alert_type).count() == 0
+    assert processed["created"] == 0
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_coordinator_overdue_leave_no_alert_for_non_leave_status(
+    coordinator_on_leave: Coordinator,
+) -> None:
+    coord = coordinator_on_leave
+    past = timezone.now() - timedelta(days=15)  # > 2 недель
+    CoordinatorLogEvent.objects.create(
+        coordinator=coord, type=CoordinatorLogEventType.GONE_ON_LEAVE, comment="", date_time=past
+    )
+    coord.project_status = CoordinatorProjectStatus.WORKING_OK
+    coord.save(update_fields=["project_status", "status_since"])
+
+    handler = CoordinatorOverdueLeaveHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    assert Alert.objects.filter(object_id=coord.pk, alert_type=handler.alert_type).count() == 0
+    assert processed["created"] == 0
+
+
+@pytest.mark.django_db  # type: ignore[misc]
 def test_utils_create_and_resolve(teacher_no_group: Teacher) -> None:
     teacher = teacher_no_group
     alert_type = "custom_test"

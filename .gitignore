@@ -70,6 +70,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/
 
 # PyBuilder
 target/
@@ -139,3 +140,4 @@ dmypy.json
 /devtools/scripts/db_population/csv
 
 .DS_Store
+AGENTS.md
