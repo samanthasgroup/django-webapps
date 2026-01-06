@@ -20,11 +20,7 @@ from api.models.choices.log_event_type import TeacherLogEventType
 from api.models.choices.status import TeacherProjectStatus
 from api.models.log_event import TeacherLogEvent
 from api.serializers import DashboardTeacherSerializer, TeacherWriteSerializer
-from tests.tests_api.asserts import (
-    assert_date_time_with_timestamp,
-    assert_response_data,
-    assert_response_data_list,
-)
+from tests.tests_api.asserts import assert_date_time_with_timestamp, assert_response_data, assert_response_data_list
 
 
 def test_teacher_create(api_client, faker, timestamp):
@@ -108,9 +104,7 @@ def test_teacher_update(api_client, faker, availability_slots):
         "availability_slots": [i.id for i in availability_slots[1:3]],
     }
 
-    response = api_client.patch(
-        f"/api/teachers/{teacher.personal_info.id}/", data=fields_to_update
-    )
+    response = api_client.patch(f"/api/teachers/{teacher.personal_info.id}/", data=fields_to_update)
     teacher_data = TeacherWriteSerializer(teacher).data
     for field, val in fields_to_update.items():
         teacher_data[field] = val
@@ -123,9 +117,7 @@ def test_teacher_update(api_client, faker, availability_slots):
 
 
 def test_teacher_retrieve(api_client, availability_slots):
-    teacher = baker.make(
-        Teacher, make_m2m=True, _fill_optional=True, availability_slots=availability_slots
-    )
+    teacher = baker.make(Teacher, make_m2m=True, _fill_optional=True, availability_slots=availability_slots)
     response = api_client.get(f"/api/teachers/{teacher.personal_info.id}/")
 
     response_json = response.json()
@@ -172,10 +164,7 @@ def test_teacher_retrieve(api_client, availability_slots):
     roles = [role.id for role in teacher.roles.all()]
     if "status_since" in response_json:
         response_json["status_since"] = (
-            parser.isoparse(response_json["status_since"])
-            .astimezone(pytz.utc)
-            .isoformat()
-            .replace("+00:00", "Z")
+            parser.isoparse(response_json["status_since"]).astimezone(pytz.utc).isoformat().replace("+00:00", "Z")
         )
     assert response_json == {
         "personal_info": teacher.personal_info.id,
@@ -244,9 +233,7 @@ def test_dashboard_teacher_list(api_client, faker, availability_slots):
     teacher_data = DashboardTeacherSerializer(teacher).data
     teacher_data["utc_timedelta"] = f"UTC{sign}{utc_offset_hours:02}:{utc_offset_minutes:02}"
     assert_response_data_list(response.data, [teacher_data])
-    assert (
-        teacher.has_prior_teaching_experience == response.data[0]["has_prior_teaching_experience"]
-    )
+    assert teacher.has_prior_teaching_experience == response.data[0]["has_prior_teaching_experience"]
 
 
 class TestDashboardTeacherTransfer:
@@ -281,9 +268,7 @@ class TestDashboardTeacherTransfer:
         assert log_event.type == TeacherLogEventType.TRANSFERRED
         assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
-    def test_dashboard_teacher_transfer_from_empty_group(
-        self, api_client, active_group: Group, availability_slots
-    ):
+    def test_dashboard_teacher_transfer_from_empty_group(self, api_client, active_group: Group, availability_slots):
         teacher = baker.make(
             Teacher,
             make_m2m=True,
@@ -456,9 +441,7 @@ class TestDashboardTeacherReturnedFromLeave:
             "/api/teachers/",
         ],
     )
-    def test_with_group(
-        self, api_client, availability_slots, timestamp, active_group, endpoint
-    ):  # noqa: PLR0913
+    def test_with_group(self, api_client, availability_slots, timestamp, active_group, endpoint):  # noqa: PLR0913
         teacher = baker.make(
             Teacher,
             make_m2m=True,
@@ -477,9 +460,7 @@ class TestDashboardTeacherReturnedFromLeave:
         assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
 
-def test_dashboard_teacher_left_project_prematurely(
-    api_client, availability_slots, active_group: Group, timestamp
-):
+def test_dashboard_teacher_left_project_prematurely(api_client, availability_slots, active_group: Group, timestamp):
     teacher = baker.make(
         Teacher,
         make_m2m=True,
@@ -501,9 +482,7 @@ def test_dashboard_teacher_left_project_prematurely(
     assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
 
-def test_dashboard_teacher_expelled(
-    api_client, availability_slots, active_group: Group, timestamp
-):
+def test_dashboard_teacher_expelled(api_client, availability_slots, active_group: Group, timestamp):
     teacher = baker.make(
         Teacher,
         make_m2m=True,

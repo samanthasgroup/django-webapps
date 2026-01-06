@@ -1,13 +1,6 @@
 from django.db import transaction
 
-from api.models import (
-    Coordinator,
-    CoordinatorLogEvent,
-    Group,
-    GroupLogEvent,
-    StudentLogEvent,
-    TeacherLogEvent,
-)
+from api.models import Coordinator, CoordinatorLogEvent, Group, GroupLogEvent, StudentLogEvent, TeacherLogEvent
 from api.models.auxil.constants import CoordinatorGroupLimit
 from api.models.auxil.status_setter import StatusSetter
 from api.models.choices.log_event_type import (
@@ -120,10 +113,7 @@ class CoordinatorAdminLogEventCreator:
                 | CoordinatorLogEventType.GROUP_STARTED_CLASSES
             ):
                 return cls._get_working_project_status(coordinator), ""
-            case (
-                CoordinatorLogEventType.REQUESTED_TRANSFER
-                | CoordinatorLogEventType.TRANSFER_CANCELED
-            ):
+            case CoordinatorLogEventType.REQUESTED_TRANSFER | CoordinatorLogEventType.TRANSFER_CANCELED:
                 return None, None
         return None, None
 

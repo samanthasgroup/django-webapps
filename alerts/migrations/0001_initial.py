@@ -19,9 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "id",
-                    models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-                    ),
+                    models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID"),
                 ),
                 (
                     "alert_type",
@@ -34,15 +32,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "created_at",
-                    models.DateTimeField(
-                        default=django.utils.timezone.now, verbose_name="Created At"
-                    ),
+                    models.DateTimeField(default=django.utils.timezone.now, verbose_name="Created At"),
                 ),
                 (
                     "resolved_at",
-                    models.DateTimeField(
-                        blank=True, db_index=True, null=True, verbose_name="Resolved At"
-                    ),
+                    models.DateTimeField(blank=True, db_index=True, null=True, verbose_name="Resolved At"),
                 ),
                 (
                     "is_resolved",
@@ -64,12 +58,8 @@ class Migration(migrations.Migration):
                 "verbose_name_plural": "Alerts",
                 "ordering": ["-created_at"],
                 "indexes": [
-                    models.Index(
-                        fields=["content_type", "object_id"], name="alert_content_object_idx"
-                    ),
-                    models.Index(
-                        fields=["alert_type", "is_resolved"], name="alert_type_resolved_idx"
-                    ),
+                    models.Index(fields=["content_type", "object_id"], name="alert_content_object_idx"),
+                    models.Index(fields=["alert_type", "is_resolved"], name="alert_type_resolved_idx"),
                 ],
             },
         ),

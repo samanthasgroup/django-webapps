@@ -33,9 +33,7 @@ class Command(BaseCommand):
             type=str,
             help='A string identifier for the type of alert (e.g., "overdue_on_leave", "manual_check_required").',
         )
-        parser.add_argument(
-            "--details", type=str, default="", help="Optional descriptive text for the alert."
-        )
+        parser.add_argument("--details", type=str, default="", help="Optional descriptive text for the alert.")
 
     def handle(self, **options: Any) -> None:
         model_spec = options["model_spec"]
@@ -47,15 +45,11 @@ class Command(BaseCommand):
         try:
             app_label, model_name = model_spec.split(".")
         except ValueError:
-            raise CommandError(
-                f"Invalid model_spec format: '{model_spec}'. Use 'app_label.ModelName'."
-            )
+            raise CommandError(f"Invalid model_spec format: '{model_spec}'. Use 'app_label.ModelName'.")
 
         try:
             # Ищем модель без учета регистра, как это делает ContentType
-            content_type = ContentType.objects.get(
-                app_label=app_label.lower(), model=model_name.lower()
-            )
+            content_type = ContentType.objects.get(app_label=app_label.lower(), model=model_name.lower())
             target_model = content_type.model_class()
             if target_model is None:
                 # Это может случиться, если модель была удалена после создания ContentType
@@ -65,31 +59,21 @@ class Command(BaseCommand):
                 )
             assert issubclass(target_model, Model), f"{target_model} is not a Django model"
         except ContentType.DoesNotExist:
-            raise CommandError(
-                f"Model not found for spec '{model_spec}'. Check app_label and ModelName."
-            )
+            raise CommandError(f"Model not found for spec '{model_spec}'. Check app_label and ModelName.")
 
         # 2. Найти целевой объект по ID
         try:
             from django.db.models import Manager
 
-            if not hasattr(target_model, "objects") or not isinstance(
-                target_model.objects, Manager
-            ):
-                raise CommandError(
-                    f"{target_model.__name__} does not have a valid objects manager."
-                )
+            if not hasattr(target_model, "objects") or not isinstance(target_model.objects, Manager):
+                raise CommandError(f"{target_model.__name__} does not have a valid objects manager.")
             manager = getattr(target_model, "objects", None)
             if manager is None or not isinstance(manager, Manager):
-                raise CommandError(
-                    f"{target_model.__name__} does not have a valid objects manager."
-                )
+                raise CommandError(f"{target_model.__name__} does not have a valid objects manager.")
             target_object = manager.get(pk=object_id)
         except Exception as e:
             if isinstance(e, ValueError):
-                raise CommandError(
-                    f"Invalid ID format: '{object_id}' for model {target_model.__name__}."
-                )
+                raise CommandError(f"Invalid ID format: '{object_id}' for model {target_model.__name__}.")
             raise CommandError(f"{target_model.__name__} with ID {object_id} not found: {e}")
 
         # 3. Проверить, существует ли уже идентичный активный алерт

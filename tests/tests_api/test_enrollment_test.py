@@ -77,9 +77,7 @@ def test_get_enrollment_test(api_client):
         (25, 5, 0, "A0"),
     ],
 )
-def test_get_level(
-    api_client, number_of_questions, total_answers, correct_answers, expected_level
-):
+def test_get_level(api_client, number_of_questions, total_answers, correct_answers, expected_level):
     """Test calculating the resulting level of enrollment test."""
     # Don't need to specify a test here, just take some correct and incorrect answers to any test
     correct_answers_ids = list(
@@ -106,27 +104,25 @@ def test_get_level(
 def test_get_level_raises_400_with_wrong_number_of_questions(api_client):
     test = baker.make_recipe("tests.enrollment_test")
     correct_answers_ids = list(
-        EnrollmentTestQuestionOption.objects.filter(
-            question__enrollment_test=test, is_correct=True
-        ).values_list("id", flat=True)
+        EnrollmentTestQuestionOption.objects.filter(question__enrollment_test=test, is_correct=True).values_list(
+            "id", flat=True
+        )
     )
     response = api_client.post(
         "/api/enrollment_test_result/get_level/",
         data={"answers": correct_answers_ids, "number_of_questions": len(correct_answers_ids) - 1},
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {
-        "non_field_errors": ["Enrollment test with 34 questions is not supported"]
-    }
+    assert response.json() == {"non_field_errors": ["Enrollment test with 34 questions is not supported"]}
 
 
 def test_create_student_enrollment_test_result(api_client, availability_slots):
     """Test passing enrollment test."""
     test = baker.make_recipe("tests.enrollment_test")
     correct_answers_ids = list(
-        EnrollmentTestQuestionOption.objects.filter(
-            question__enrollment_test=test, is_correct=True
-        ).values_list("id", flat=True)
+        EnrollmentTestQuestionOption.objects.filter(question__enrollment_test=test, is_correct=True).values_list(
+            "id", flat=True
+        )
     )
     student = baker.make(Student, make_m2m=True, availability_slots=availability_slots)
     response = api_client.post(

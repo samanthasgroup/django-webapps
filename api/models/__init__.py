@@ -3,12 +3,7 @@ from api.models.shared_abstract.group_or_person import GroupOrPerson
 from .age_range import AgeRange
 from .coordinator import Coordinator
 from .day_and_time_slot import DayAndTimeSlot, TimeSlot
-from .enrollment_test import (
-    EnrollmentTest,
-    EnrollmentTestQuestion,
-    EnrollmentTestQuestionOption,
-    EnrollmentTestResult,
-)
+from .enrollment_test import EnrollmentTest, EnrollmentTestQuestion, EnrollmentTestQuestionOption, EnrollmentTestResult
 from .group import Group, SpeakingClub
 from .language_and_level import Language, LanguageAndLevel, LanguageLevel
 from .log_event import (

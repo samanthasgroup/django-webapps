@@ -19,9 +19,7 @@ class NonTeachingHelp(models.Model):
         verbose_name=_("help type id"),
     )
 
-    name = models.CharField(
-        max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True, verbose_name=_("name")
-    )
+    name = models.CharField(max_length=DEFAULT_CHAR_FIELD_MAX_LEN, unique=True, verbose_name=_("name"))
 
     class Meta:
         verbose_name = _("non-teaching help")

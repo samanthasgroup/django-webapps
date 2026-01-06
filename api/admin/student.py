@@ -25,9 +25,7 @@ class StudentAgeRangeFilter(SimpleListFilter):
     title = _("возраст")
     parameter_name = "age_range"
 
-    def lookups(
-        self, request: HttpRequest, model_admin: ModelAdmin[Student]
-    ) -> list[tuple[str, str]]:
+    def lookups(self, request: HttpRequest, model_admin: ModelAdmin[Student]) -> list[tuple[str, str]]:
         qs = model_admin.get_queryset(request)
         used_ranges = qs.values_list("age_range", flat=True).distinct()
 
@@ -47,9 +45,7 @@ class CoordinatorFilter(SimpleListFilter):
     title = _("coordinator")
     parameter_name = "coordinator"
 
-    def lookups(
-        self, request: HttpRequest, model_admin: ModelAdmin[Student]  # noqa: ARG002
-    ) -> list[tuple[str, str]]:
+    def lookups(self, request: HttpRequest, model_admin: ModelAdmin[Student]) -> list[tuple[str, str]]:  # noqa: ARG002
         qs = (
             Coordinator.objects.filter(groups__isnull=False)
             .select_related("personal_info")
@@ -58,9 +54,7 @@ class CoordinatorFilter(SimpleListFilter):
         )
         return [(c.pk, f"{c.pk} - {c.personal_info.full_name}") for c in qs]
 
-    def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Student]  # noqa: ARG002
-    ) -> QuerySet[Student]:
+    def queryset(self, request: HttpRequest, queryset: QuerySet[Student]) -> QuerySet[Student]:  # noqa: ARG002
         if self.value():
             return queryset.filter(groups__coordinators__pk=self.value())
         return queryset
@@ -145,14 +139,10 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
     def get_queryset(self, request: HttpRequest) -> QuerySet[Student]:
 
         return (
-            super()
-            .get_queryset(request)
-            .prefetch_related("groups", "children", "groups__coordinators__personal_info")
+            super().get_queryset(request).prefetch_related("groups", "children", "groups__coordinators__personal_info")
         )
 
-    def changelist_view(
-        self, request: HttpRequest, extra_context: dict[str, Any] | None = None
-    ) -> HttpResponse:
+    def changelist_view(self, request: HttpRequest, extra_context: dict[str, Any] | None = None) -> HttpResponse:
         extra_context = extra_context or {}
         extra_context["title"] = "База студентов"
         return super().changelist_view(request, extra_context)

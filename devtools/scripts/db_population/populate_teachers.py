@@ -91,23 +91,14 @@ class TeacherPopulator(BasePopulatorFromCsv):
         if parsed_status is None:
             logger.info(f"{tid}: skipping teacher since status is unclear")
             return None
-        if (
-            parsed_status[0] == TeacherSituationalStatus.NO_RESPONSE
-            and tid < MIN_TID_WITH_NO_RESPONSE
-        ):
-            logger.info(
-                f"{tid}: skipping since no response, and sid is below: {MIN_TID_WITH_NO_RESPONSE}"
-            )
+        if parsed_status[0] == TeacherSituationalStatus.NO_RESPONSE and tid < MIN_TID_WITH_NO_RESPONSE:
+            logger.info(f"{tid}: skipping since no response, and sid is below: {MIN_TID_WITH_NO_RESPONSE}")
             return None
 
         name = self._parse_cell("name", common_parsers.parse_name)
         project_status = parsed_status[1]
         telegram_username = self._parse_cell("tg", common_parsers.parse_telegram_name)
-        phone = (
-            self._parse_cell("tg", common_parsers.parse_phone_number)
-            if telegram_username is None
-            else None
-        )
+        phone = self._parse_cell("tg", common_parsers.parse_phone_number) if telegram_username is None else None
         email = self._parse_cell("email", common_parsers.parse_email)
         teacher_data = TeacherData(
             email=email,
@@ -123,9 +114,7 @@ class TeacherPopulator(BasePopulatorFromCsv):
         teacher_data.is_teaching_children = self._parse_cell(
             "age_ranges", teacher_parsers.parse_age_ranges, skip_if_empty=True
         )
-        teacher_data.none_teaching_help_comment = self._current_entity[
-            COLUMN_TO_ID["other_help_comment"]
-        ]
+        teacher_data.none_teaching_help_comment = self._current_entity[COLUMN_TO_ID["other_help_comment"]]
         teacher_data.has_prior_teaching_experience = self._parse_cell(
             "experience", teacher_parsers.parse_has_experience, skip_if_empty=True
         )
@@ -141,13 +130,9 @@ class TeacherPopulator(BasePopulatorFromCsv):
         teacher_data.teaching_languages_and_levels = self._parse_cell(
             "language_levels", common_parsers.parse_language_level, skip_if_empty=True
         )
-        teacher_data.has_hosted_speaking_club = (
-            project_status == teacher_parsers.ProjectStatusAction.SPEAKING_CLUB
-        )
+        teacher_data.has_hosted_speaking_club = project_status == teacher_parsers.ProjectStatusAction.SPEAKING_CLUB
         for day in ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]:
-            slots = self._parse_cell(
-                day, common_parsers.parse_availability_slots, skip_if_empty=True
-            )
+            slots = self._parse_cell(day, common_parsers.parse_availability_slots, skip_if_empty=True)
             if slots is not None:
                 teacher_data.availability_slots.append(slots)
         return teacher_data
@@ -160,9 +145,7 @@ class TeacherPopulator(BasePopulatorFromCsv):
                 raise ValueError("Unable to create mandatory data")
 
             if Teacher.objects.filter(legacy_tid=entity_data.id).count():
-                logger.warning(
-                    f"Teacher with {self.id_name} {entity_data.id} was already migrated"
-                )
+                logger.warning(f"Teacher with {self.id_name} {entity_data.id} was already migrated")
                 return
 
             teacher = Teacher.objects.create(
@@ -182,24 +165,16 @@ class TeacherPopulator(BasePopulatorFromCsv):
             )
             if entity_data.situational_status is not None:
                 teacher.situational_status = entity_data.situational_status
-            teacher.student_age_ranges.set(
-                self._create_age_ranges(entity_data.is_teaching_children)
-            )
-            teacher.availability_slots.set(
-                self._create_availability_slots(entity_data.availability_slots)
-            )
+            teacher.student_age_ranges.set(self._create_age_ranges(entity_data.is_teaching_children))
+            teacher.availability_slots.set(self._create_availability_slots(entity_data.availability_slots))
             teacher.teaching_languages_and_levels.set(
                 self._create_language_and_levels(entity_data.teaching_languages_and_levels)
             )
             teacher.save()
             self._update_metadata(teacher.personal_info.id, entity_data.id, entity_data.first_name)
-            logger.info(
-                f"Teacher migrated, old id: {entity_data.id}, new id: {teacher.personal_info.id}"
-            )
+            logger.info(f"Teacher migrated, old id: {entity_data.id}, new id: {teacher.personal_info.id}")
         except (IntegrityError, TransactionManagementError, ValueError) as e:
-            logger.warning(
-                f"Teacher with {self.id_name} {entity_data.id} can not be parsed, see errors above"
-            )
+            logger.warning(f"Teacher with {self.id_name} {entity_data.id} can not be parsed, see errors above")
             logger.debug(e)
 
     def _create_age_ranges(self, is_teaching_children: bool) -> QuerySetAny[AgeRange, AgeRange]:

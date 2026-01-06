@@ -27,9 +27,7 @@ class AlertHandler(ABC):
         """Проверяет и разрешает существующие алерты."""
         pass
 
-    def _bulk_create_alerts(
-        self, alerts_to_create: list[Alert], processed_alerts: dict[str, int]
-    ) -> None:
+    def _bulk_create_alerts(self, alerts_to_create: list[Alert], processed_alerts: dict[str, int]) -> None:
         """Создает список алертов с обработкой ошибок."""
         if not alerts_to_create:
             return
@@ -43,9 +41,7 @@ class AlertHandler(ABC):
             # Резервная логика: попытаться создать по одному
             self._fallback_create_alerts(alerts_to_create, processed_alerts)
 
-    def _fallback_create_alerts(
-        self, alerts_to_create: list[Alert], processed_alerts: dict[str, int]
-    ) -> None:
+    def _fallback_create_alerts(self, alerts_to_create: list[Alert], processed_alerts: dict[str, int]) -> None:
         """Резервный метод создания алертов по одному в случае ошибки bulk_create."""
         created_count = 0
         for alert in alerts_to_create:
@@ -53,9 +49,7 @@ class AlertHandler(ABC):
                 alert.save()
                 created_count += 1
             except Exception as e:
-                logger.error(
-                    f"Error creating single {self.alert_type} alert for object {alert.object_id}: {e}"
-                )
+                logger.error(f"Error creating single {self.alert_type} alert for object {alert.object_id}: {e}")
 
         processed_alerts["created"] += created_count
         if created_count > 0:

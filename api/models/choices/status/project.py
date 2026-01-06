@@ -18,13 +18,10 @@ class CoordinatorProjectStatus(models.TextChoices):
     WORKING_OK = "working_ok", _("Working, required amount of groups reached")
     WORKING_LIMIT_REACHED = (
         "working_limit_reached",
-        _("Working, reached maximum number of groups (%(max)d)")
-        % {"max": CoordinatorGroupLimit.MAX},
+        _("Working, reached maximum number of groups (%(max)d)") % {"max": CoordinatorGroupLimit.MAX},
     )
     ON_LEAVE = "on_leave", _("On leave")
-    LEFT_PREMATURELY = "left_prematurely", _(
-        "Announced that they cannot participate in the project"
-    )
+    LEFT_PREMATURELY = "left_prematurely", _("Announced that they cannot participate in the project")
     FINISHED_STAYS = "finished_stays", _("Finished coordinating but remains in the project")
     FINISHED_LEFT = "finished_left", _("Finished coordinating and left the project")
     REMOVED = "removed", _("All access revoked, accounts closed")
@@ -54,9 +51,7 @@ class StudentProjectStatus(models.TextChoices):
 
     NEEDS_INTERVIEW_TO_DETERMINE_LEVEL = (
         "needs_interview_to_determine_level",
-        _(
-            "Requires oral interview to determine language levelbefore getting 'no_group_yet' status"
-        ),
+        _("Requires oral interview to determine language levelbefore getting 'no_group_yet' status"),
     )
     NO_GROUP_YET = "no_group_yet", _("Not studying, waiting for a group")
     STUDYING = "study", _("Studying in a group")
@@ -89,6 +84,4 @@ class TeacherProjectStatus(models.TextChoices):
         ]
 
 
-ProjectStatus = (
-    CoordinatorProjectStatus | GroupProjectStatus | StudentProjectStatus | TeacherProjectStatus
-)
+ProjectStatus = CoordinatorProjectStatus | GroupProjectStatus | StudentProjectStatus | TeacherProjectStatus

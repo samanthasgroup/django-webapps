@@ -9,11 +9,7 @@ from api.models.choices.log_event_type import (
     StudentLogEventType,
     TeacherLogEventType,
 )
-from api.models.choices.status import (
-    GroupProjectStatus,
-    StudentProjectStatus,
-    TeacherProjectStatus,
-)
+from api.models.choices.status import GroupProjectStatus, StudentProjectStatus, TeacherProjectStatus
 from api.processors.actions.group import GroupActionProcessor
 from api.processors.auxil.log_event_creator import GroupLogEventCreator
 
@@ -39,9 +35,7 @@ class GroupFinishProcessor(GroupActionProcessor):
         StatusSetter.update_statuses_of_active_coordinators(self.timestamp)
 
     def _set_group_status(self) -> None:
-        StatusSetter.set_status(
-            obj=self.group, project_status=GroupProjectStatus.FINISHED, status_since=self.timestamp
-        )
+        StatusSetter.set_status(obj=self.group, project_status=GroupProjectStatus.FINISHED, status_since=self.timestamp)
 
     def _set_teachers_status(self) -> None:
         self.group.teachers_with_other_groups().update(
@@ -57,9 +51,7 @@ class GroupFinishProcessor(GroupActionProcessor):
         )
 
     def _set_students_status(self) -> None:
-        annotated_students = Student.objects.annotate(groups_count=Count("groups")).filter(
-            groups=self.group
-        )
+        annotated_students = Student.objects.annotate(groups_count=Count("groups")).filter(groups=self.group)
 
         annotated_students.filter(groups_count__gt=1).update(
             project_status=StudentProjectStatus.STUDYING,

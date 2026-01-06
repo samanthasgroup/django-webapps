@@ -11,10 +11,7 @@ class CoordinatorRestrictedAdminMixin(ModelAdmin[Any]):
     """Mixin for restricting access to coordinators to data."""
 
     def get_coordinator(self, request: HttpRequest) -> Coordinator | None:
-        if (
-            request.user.is_authenticated
-            and request.user.groups.filter(name="Координатор").exists()
-        ):
+        if request.user.is_authenticated and request.user.groups.filter(name="Координатор").exists():
             try:
                 return Coordinator.objects.get(user=request.user)
             except Coordinator.DoesNotExist:
@@ -28,8 +25,6 @@ class CoordinatorRestrictedAdminMixin(ModelAdmin[Any]):
             qs = self.filter_for_coordinator(qs, coordinator)
         return qs
 
-    def filter_for_coordinator(
-        self, _qs: QuerySet[Any], _coordinator: Coordinator
-    ) -> QuerySet[Any]:
+    def filter_for_coordinator(self, _qs: QuerySet[Any], _coordinator: Coordinator) -> QuerySet[Any]:
         """Method for filtering QuerySet. Implemented in child classes."""
         raise NotImplementedError

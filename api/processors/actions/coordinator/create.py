@@ -18,6 +18,4 @@ class CoordinatorCreateProcessor(CoordinatorActionProcessor):
         pass
 
     def _create_log_events(self) -> None:
-        CoordinatorLogEvent.objects.create(
-            coordinator=self.coordinator, type=CoordinatorLogEventType.APPLIED
-        )
+        CoordinatorLogEvent.objects.create(coordinator=self.coordinator, type=CoordinatorLogEventType.APPLIED)

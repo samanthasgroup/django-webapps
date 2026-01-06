@@ -18,15 +18,9 @@ class GroupCommon(GroupOrPerson):
     """Abstract model for attributes shared by regular groups and speaking clubs."""
 
     # %(class)ss will produce "groups" for Group and "speakingclubs" for SpeakingClub
-    coordinators = models.ManyToManyField(
-        Coordinator, related_name="%(class)ss", verbose_name=_("coordinators")
-    )
-    students = models.ManyToManyField(
-        Student, related_name="%(class)ss", verbose_name=_("students")
-    )
-    teachers = models.ManyToManyField(
-        Teacher, related_name="%(class)ss", verbose_name=_("teachers")
-    )
+    coordinators = models.ManyToManyField(Coordinator, related_name="%(class)ss", verbose_name=_("coordinators"))
+    students = models.ManyToManyField(Student, related_name="%(class)ss", verbose_name=_("students"))
+    teachers = models.ManyToManyField(Teacher, related_name="%(class)ss", verbose_name=_("teachers"))
     comment = models.TextField(blank=True, verbose_name=_("comment"))
     coordinators_former = models.ManyToManyField(
         Coordinator,
@@ -61,9 +55,7 @@ class GroupCommon(GroupOrPerson):
 
     # group chat created manually by the coordinator/teacher
     # null=True due to unqiue constraint and we can not use empty string in this case
-    telegram_chat_url = models.URLField(  # noqa: DJ001
-        blank=True, null=True, verbose_name=_("telegram chat URL")
-    )
+    telegram_chat_url = models.URLField(blank=True, null=True, verbose_name=_("telegram chat URL"))  # noqa: DJ001
 
     class Meta:
         abstract = True
@@ -86,9 +78,7 @@ class Group(GroupCommon):
     language_and_level = models.ForeignKey(
         LanguageAndLevel, on_delete=models.PROTECT, verbose_name=_("language and level")
     )
-    lesson_duration_in_minutes = models.PositiveSmallIntegerField(
-        verbose_name=_("lesson duration (minutes)")
-    )
+    lesson_duration_in_minutes = models.PositiveSmallIntegerField(verbose_name=_("lesson duration (minutes)"))
     project_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=GroupProjectStatus.choices,
@@ -168,15 +158,11 @@ class Group(GroupCommon):
 class SpeakingClub(GroupCommon):
     """Model for a speaking club (a group without any changing status or fixed schedule)."""
 
-    is_for_children = models.BooleanField(
-        verbose_name=_("Is this a speaking club for children?"), default=False
-    )
+    is_for_children = models.BooleanField(verbose_name=_("Is this a speaking club for children?"), default=False)
     # a speaking club has no fixed level, so putting language only
     language = models.ForeignKey(Language, on_delete=models.PROTECT, verbose_name=_("language"))
     # in addition to regular teachers, a speaking club can have young teachers
-    teachers_under_18 = models.ManyToManyField(
-        TeacherUnder18, verbose_name=_("teachers under 18"), blank=True
-    )
+    teachers_under_18 = models.ManyToManyField(TeacherUnder18, verbose_name=_("teachers under 18"), blank=True)
 
     class Meta:
         verbose_name = _("speaking club")

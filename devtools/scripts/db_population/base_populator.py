@@ -62,9 +62,7 @@ class BasePopulatorFromCsv(ABC):
         for entity in tqdm(self.csv_data, desc=f"Processing {self.entity_name}s..."):
             self._current_entity_id = entity[self._column_to_id[self.id_name]]
             self._logger.info("======================================================= ")
-            self._logger.info(
-                f"Parsing {self.entity_name} with {self.id_name} {self._current_entity_id}"
-            )
+            self._logger.info(f"Parsing {self.entity_name} with {self.id_name} {self._current_entity_id}")
             self._current_entity = entity
 
             entity_data = self._get_entity_data()
@@ -95,9 +93,7 @@ class BasePopulatorFromCsv(ABC):
                 )
                 return 0
 
-        filtered_csv_data = [
-            entity for entity in csv_data if len(entity) > self._column_to_id[self.id_name]
-        ]
+        filtered_csv_data = [entity for entity in csv_data if len(entity) > self._column_to_id[self.id_name]]
         if len(filtered_csv_data) < len(csv_data):
             self._logger.warning(
                 f"Filtered out {len(csv_data) - len(filtered_csv_data)} rows due to insufficient columns"
@@ -143,11 +139,7 @@ class BasePopulatorFromCsv(ABC):
         return None
 
     def _create_personal_info(self, entity_data: EntityDataType) -> None | PersonalInfo:
-        if (
-            entity_data.first_name is None
-            or entity_data.telegram_username is None
-            or entity_data.email is None
-        ):
+        if entity_data.first_name is None or entity_data.telegram_username is None or entity_data.email is None:
             return None
 
         try:
@@ -186,17 +178,13 @@ class BasePopulatorFromCsv(ABC):
 
         return None
 
-    def _create_language_and_levels(
-        self, levels: list[str]
-    ) -> QuerySetAny[LanguageAndLevel, LanguageAndLevel]:
+    def _create_language_and_levels(self, levels: list[str]) -> QuerySetAny[LanguageAndLevel, LanguageAndLevel]:
         qs = LanguageAndLevel.objects.filter(language__name="English")
         if levels:
             qs = qs.filter(level_id__in=levels)
         return qs
 
-    def _create_availability_slots(
-        self, weekly_slots: list[list[tuple[int, int]]]
-    ) -> list[DayAndTimeSlot]:
+    def _create_availability_slots(self, weekly_slots: list[list[tuple[int, int]]]) -> list[DayAndTimeSlot]:
         result: list[DayAndTimeSlot] = []
         for day_index, slots in enumerate(weekly_slots):
             for from_hour, to_hour in slots:

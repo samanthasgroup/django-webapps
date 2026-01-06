@@ -4,10 +4,7 @@ from rest_framework import serializers
 
 from api.exceptions import ConflictError
 from api.models import Teacher
-from api.models.auxil.constants import (
-    TEACHER_PEER_SUPPORT_FIELD_NAME_PREFIX,
-    TEACHER_PEER_SUPPORT_OPTIONS,
-)
+from api.models.auxil.constants import TEACHER_PEER_SUPPORT_FIELD_NAME_PREFIX, TEACHER_PEER_SUPPORT_OPTIONS
 from api.serializers import DashboardPersonalInfoSerializer
 from api.serializers.age_range import AgeRangeStringField
 from api.serializers.day_and_time_slot import MinifiedDayAndTimeSlotSerializer
@@ -36,9 +33,7 @@ class CommonDashboardTeacherSerializer(serializers.ModelSerializer[Teacher]):
     first_name = serializers.CharField(source="personal_info.first_name")
     last_name = serializers.CharField(source="personal_info.last_name")
     utc_timedelta = UTCTimedeltaField(source="personal_info.utc_timedelta")
-    communication_language_mode = serializers.CharField(
-        source="personal_info.communication_language_mode"
-    )
+    communication_language_mode = serializers.CharField(source="personal_info.communication_language_mode")
     availability_slots = MinifiedDayAndTimeSlotSerializer(many=True, read_only=True)
     student_age_ranges = serializers.ListSerializer(child=AgeRangeStringField())  # type: ignore
     teaching_languages_and_levels = MinifiedLanguageAndLevelSerializer(many=True, read_only=True)
@@ -100,14 +95,9 @@ class DashboardTeacherTransferSerializer(PersonTransferSerializer):
         to_group = validated_attrs["to_group"]
         from_group = validated_attrs["from_group"]
         if self.instance is not None and to_group.teachers.filter(pk=self.instance.pk).exists():
-            raise ConflictError(
-                f"Teacher {self.instance.pk} is already in that group {to_group.pk}"
-            )
+            raise ConflictError(f"Teacher {self.instance.pk} is already in that group {to_group.pk}")
 
-        if (
-            self.instance is not None
-            and not from_group.teachers.filter(pk=self.instance.pk).exists()
-        ):
+        if self.instance is not None and not from_group.teachers.filter(pk=self.instance.pk).exists():
             raise ConflictError(f"Teacher {self.instance.pk} must be in group {from_group.pk}")
 
         return validated_attrs

@@ -16,9 +16,7 @@ def fake_personal_info_data(faker):
         "utc_timedelta": "03:00:00",
         "information_source": faker.text(),
         "registration_telegram_bot_chat_id": faker.pyint(),
-        "registration_telegram_bot_language": faker.random_element(
-            RegistrationTelegramBotLanguage.values
-        ),
+        "registration_telegram_bot_language": faker.random_element(RegistrationTelegramBotLanguage.values),
         "chatwoot_conversation_id": faker.pyint(),
     }
 
@@ -36,9 +34,7 @@ def fake_personal_info_list(faker):
             "utc_timedelta": "03:00:00",
             "information_source": faker.text(),
             "registration_telegram_bot_chat_id": faker.pyint(),
-            "registration_telegram_bot_language": faker.random_element(
-                RegistrationTelegramBotLanguage.values
-            ),
+            "registration_telegram_bot_language": faker.random_element(RegistrationTelegramBotLanguage.values),
             "chatwoot_conversation_id": faker.pyint(),
         }
         for _ in range(10)

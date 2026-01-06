@@ -13,9 +13,7 @@ from api.serializers.errors import ValidationErrorSerializer
 
 DirectionLiteral = Literal["request", "response"]
 
-BAD_REQUEST_STATUS = str(
-    status.HTTP_400_BAD_REQUEST
-)  # In OpenAPI schema, status codes are strings.
+BAD_REQUEST_STATUS = str(status.HTTP_400_BAD_REQUEST)  # In OpenAPI schema, status codes are strings.
 
 
 class CustomSchema(AutoSchema):
@@ -39,11 +37,7 @@ class CustomSchema(AutoSchema):
 
     def _get_response_bodies(self, direction: DirectionLiteral = "response") -> dict[str, Any]:
         bodies = super()._get_response_bodies(direction)
-        if (
-            self.method not in SAFE_METHODS
-            and direction == "response"
-            and BAD_REQUEST_STATUS not in bodies
-        ):
+        if self.method not in SAFE_METHODS and direction == "response" and BAD_REQUEST_STATUS not in bodies:
             bodies[BAD_REQUEST_STATUS] = self._get_response_for_code(
                 serializer=ValidationErrorSerializer,
                 status_code=BAD_REQUEST_STATUS,
@@ -62,10 +56,7 @@ class TeacherNonTeachingHelpProvidedFieldFix(OpenApiSerializerFieldExtension):
         self, auto_schema: AutoSchema, direction: DirectionLiteral  # noqa: ARG002
     ) -> dict[str, Any]:
         return build_object_type(
-            properties={
-                option: build_basic_type(OpenApiTypes.BOOL)
-                for option in NonTeachingHelpType.values
-            }
+            properties={option: build_basic_type(OpenApiTypes.BOOL) for option in NonTeachingHelpType.values}
         )
 
 
@@ -78,8 +69,5 @@ class TeacherPeerSupportFieldFix(OpenApiSerializerFieldExtension):
         self, auto_schema: AutoSchema, direction: DirectionLiteral  # noqa: ARG002
     ) -> dict[str, Any]:
         return build_object_type(
-            properties={
-                option: build_basic_type(OpenApiTypes.BOOL)
-                for option in TEACHER_PEER_SUPPORT_OPTIONS
-            }
+            properties={option: build_basic_type(OpenApiTypes.BOOL) for option in TEACHER_PEER_SUPPORT_OPTIONS}
         )

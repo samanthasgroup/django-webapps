@@ -73,10 +73,7 @@ class RecipeStorage:
         return self.faker.random_element([None, self.faker.time_object()])
 
     def _get_group_days_of_week(self) -> dict[str, time | None]:
-        return {
-            member.name.lower(): self._get_random_time_or_none()
-            for member in DayAndTimeSlot.DayOfWeek
-        }
+        return {member.name.lower(): self._get_random_time_or_none() for member in DayAndTimeSlot.DayOfWeek}
 
     def _get_random_amount_of_objects(
         self,
@@ -94,9 +91,7 @@ class RecipeStorage:
 
         # Determine the effective maximum length for pyint
         effective_max_length: int = (
-            actual_max_length
-            if max_length is None or max_length > actual_max_length
-            else max_length
+            actual_max_length if max_length is None or max_length > actual_max_length else max_length
         )
 
         # Determine the effective minimum length for pyint
@@ -109,9 +104,7 @@ class RecipeStorage:
             return []
 
         # Now, effective_min_length <= effective_max_length, and effective_max_length >= 0.
-        num_choices = self.faker.pyint(
-            min_value=effective_min_length, max_value=effective_max_length
-        )
+        num_choices = self.faker.pyint(min_value=effective_min_length, max_value=effective_max_length)
 
         if num_choices == 0:
             return []
@@ -157,9 +150,7 @@ class RecipeStorage:
             first_name=self.faker.first_name,
             last_name=self.faker.last_name,
             email=self.faker.email,
-            communication_language_mode=self.faker.random_element(
-                CommunicationLanguageMode.values
-            ),
+            communication_language_mode=self.faker.random_element(CommunicationLanguageMode.values),
             telegram_username=self.faker.user_name,
             phone=self.faker.numerify("+3531#######"),
             information_source=self.faker.text,
@@ -190,19 +181,13 @@ class RecipeStorage:
             personal_info=foreign_key(self.personal_info, one_to_one=True),
             comment=self.faker.text,
             project_status=lambda: self.faker.random_element(StudentProjectStatus.values),
-            age_range=lambda: self.faker.random_element(
-                AgeRange.objects.filter(type=AgeRangeType.STUDENT) or [None]
-            ),
-            availability_slots=lambda: self._get_random_amount_of_objects(
-                DayAndTimeSlot, min_length=10, max_length=20
-            ),
+            age_range=lambda: self.faker.random_element(AgeRange.objects.filter(type=AgeRangeType.STUDENT) or [None]),
+            availability_slots=lambda: self._get_random_amount_of_objects(DayAndTimeSlot, min_length=10, max_length=20),
             can_read_in_english=self.faker.pybool,
             is_member_of_speaking_club=self.faker.pybool,
             non_teaching_help_required=lambda: self._get_random_amount_of_objects(NonTeachingHelp),
             smalltalk_test_result=self.faker.json,
-            teaching_languages_and_levels=lambda: self._get_random_amount_of_objects(
-                LanguageAndLevel, max_length=2
-            ),
+            teaching_languages_and_levels=lambda: self._get_random_amount_of_objects(LanguageAndLevel, max_length=2),
         )
 
     def _make_teacher_recipe(self) -> Recipe:
@@ -214,9 +199,7 @@ class RecipeStorage:
             can_host_speaking_club=self.faker.pybool,
             has_hosted_speaking_club=self.faker.pybool,
             is_validated=self.faker.pybool,
-            availability_slots=lambda: self._get_random_amount_of_objects(
-                DayAndTimeSlot, min_length=10, max_length=20
-            ),
+            availability_slots=lambda: self._get_random_amount_of_objects(DayAndTimeSlot, min_length=10, max_length=20),
             non_teaching_help_provided=lambda: self._get_random_amount_of_objects(NonTeachingHelp),
             peer_support_can_check_syllabus=self.faker.pybool,
             peer_support_can_host_mentoring_sessions=self.faker.pybool,
@@ -229,9 +212,7 @@ class RecipeStorage:
             student_age_ranges=lambda: self._get_random_amount_of_objects(
                 AgeRange, filter_condition=Q(type=AgeRangeType.TEACHER)
             ),
-            teaching_languages_and_levels=lambda: self._get_random_amount_of_objects(
-                LanguageAndLevel
-            ),
+            teaching_languages_and_levels=lambda: self._get_random_amount_of_objects(LanguageAndLevel),
             weekly_frequency_per_group=self.faker.pyint,
         )
 
@@ -253,12 +234,8 @@ class RecipeStorage:
                 DayAndTimeSlot, min_length=10, max_length=20
             ),
             is_for_staff_only=self.faker.pybool,
-            language_and_level=lambda: self.faker.random_element(
-                LanguageAndLevel.objects.all() or [None]
-            ),
-            lesson_duration_in_minutes=lambda: self.faker.pyint(
-                min_value=30, max_value=120, step=30
-            ),
+            language_and_level=lambda: self.faker.random_element(LanguageAndLevel.objects.all() or [None]),
+            lesson_duration_in_minutes=lambda: self.faker.pyint(min_value=30, max_value=120, step=30),
             project_status=lambda: self.faker.random_element(GroupProjectStatus.values),
             start_date=self.faker.past_date,
             end_date=self.faker.future_date,
@@ -314,9 +291,7 @@ class FakeDataPopulator:
                         )
                         break
                 except DatabaseError as e:
-                    self.stdout.write(
-                        f"Error: {str(e)}. Regenerating fake data for {recipe._model.__name__}..."
-                    )
+                    self.stdout.write(f"Error: {str(e)}. Regenerating fake data for {recipe._model.__name__}...")
                     current_item_attempts += 1
                     attempts += 1
             if current_item_attempts >= max_attempts_per_item and created_count < amount:
@@ -333,15 +308,11 @@ class FakeDataPopulator:
 
     def _make_fake_students_without_group(self) -> None:
         self.stdout.write("Making fake students without group...")
-        self._make_amount_of_recipe_and_skip_database_error(
-            self.recipes.student, AMOUNT_OF_STUDENTS_WITHOUT_GROUP
-        )
+        self._make_amount_of_recipe_and_skip_database_error(self.recipes.student, AMOUNT_OF_STUDENTS_WITHOUT_GROUP)
 
     def _make_fake_teachers_without_group(self) -> None:
         self.stdout.write("Making fake teachers without groups...")
-        self._make_amount_of_recipe_and_skip_database_error(
-            self.recipes.teacher, AMOUNT_OF_TEACHERS_WITHOUT_GROUP
-        )
+        self._make_amount_of_recipe_and_skip_database_error(self.recipes.teacher, AMOUNT_OF_TEACHERS_WITHOUT_GROUP)
 
     def _make_fake_teachers_under_18_without_speaking_club(self) -> None:
         self.stdout.write("Making fake teachers under 18 without speaking club...")
@@ -356,9 +327,7 @@ class FakeDataPopulator:
 
     def _make_fake_speaking_clubs(self) -> None:
         self.stdout.write("Making fake speaking clubs...")
-        self._make_amount_of_recipe_and_skip_database_error(
-            self.recipes.speaking_club, AMOUNT_OF_SPEAKING_CLUBS
-        )
+        self._make_amount_of_recipe_and_skip_database_error(self.recipes.speaking_club, AMOUNT_OF_SPEAKING_CLUBS)
 
     def populate(self) -> None:
         """Runs operations required for populating the database with fake data."""
@@ -415,11 +384,7 @@ class Command(BaseCommand):
         )
 
         if PersonalInfo.objects.exists():
-            self.stdout.write(
-                self.style.WARNING(
-                    "Fake data seems to exist already (found PersonalInfo objects)."
-                )
-            )
+            self.stdout.write(self.style.WARNING("Fake data seems to exist already (found PersonalInfo objects)."))
             if input("Do you want to add more fake data? (yes/no): ").lower() != "yes":
                 self.stdout.write("Aborting.")
                 return

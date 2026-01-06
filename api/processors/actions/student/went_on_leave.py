@@ -22,6 +22,4 @@ class StudentWentOnLeaveProcessor(StudentActionProcessor):
         self.student.save()
 
     def _create_log_events(self) -> None:
-        StudentLogEvent.objects.create(
-            student=self.student, type=StudentLogEventType.GONE_ON_LEAVE
-        )
+        StudentLogEvent.objects.create(student=self.student, type=StudentLogEventType.GONE_ON_LEAVE)

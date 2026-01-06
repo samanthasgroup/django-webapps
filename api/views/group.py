@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import QuerySet
 from django_filters import rest_framework as filters
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -30,16 +31,17 @@ class GroupViewSet(  # type: ignore
     filterset_class = GroupFilter
 
 
-class DashboardGroupViewSet(
-    viewsets.ReadOnlyModelViewSet[Group], DiscardGroupMixin, CreateGroupMixin
-):
+class DashboardGroupViewSet(viewsets.ReadOnlyModelViewSet[Group], DiscardGroupMixin, CreateGroupMixin):
     """
     Dashboard viewset for groups. Used for dashboard API (Tooljet).
     """
 
-    queryset = Group.objects.annotate(students_count=models.Count("students")).all()
+    queryset = Group.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = GroupFilter
+
+    def get_queryset(self) -> QuerySet[Group]:
+        return Group.objects.annotate(students_count=models.Count("students")).all()
 
     def get_serializer_class(self) -> type[BaseSerializer[Group]]:
         if self.action == "list":

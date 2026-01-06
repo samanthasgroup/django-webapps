@@ -115,9 +115,7 @@ class StudentLogEvent(LogEvent):
         related_name="student_log_events_to_this_group",
         verbose_name=_("to group"),
     )
-    student = models.ForeignKey(
-        Student, related_name="log", on_delete=models.CASCADE, verbose_name=_("student")
-    )
+    student = models.ForeignKey(Student, related_name="log", on_delete=models.CASCADE, verbose_name=_("student"))
     type = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=StudentLogEventType.choices,
@@ -155,9 +153,7 @@ class TeacherLogEvent(LogEvent):
         related_name="teacher_log_events_to_this_group",
         verbose_name=_("to group"),
     )
-    teacher = models.ForeignKey(
-        Teacher, related_name="log", on_delete=models.CASCADE, verbose_name=_("teacher")
-    )
+    teacher = models.ForeignKey(Teacher, related_name="log", on_delete=models.CASCADE, verbose_name=_("teacher"))
     type = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,
         choices=TeacherLogEventType.choices,

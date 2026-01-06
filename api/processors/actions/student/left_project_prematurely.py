@@ -28,6 +28,4 @@ class StudentLeftProjectPrematurelyProcessor(StudentActionProcessor):
         self.student.save()
 
     def _create_log_events(self) -> None:
-        StudentLogEvent.objects.create(
-            student=self.student, type=StudentLogEventType.LEFT_PREMATURELY
-        )
+        StudentLogEvent.objects.create(student=self.student, type=StudentLogEventType.LEFT_PREMATURELY)

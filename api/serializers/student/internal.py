@@ -5,11 +5,7 @@ from rest_framework import serializers
 from api.exceptions import ConflictError
 from api.models import LanguageAndLevel, Student
 from api.models.choices.status.project import StudentProjectStatus
-from api.serializers import (
-    AgeRangeSerializer,
-    DayAndTimeSlotSerializer,
-    LanguageAndLevelSerializer,
-)
+from api.serializers import AgeRangeSerializer, DayAndTimeSlotSerializer, LanguageAndLevelSerializer
 
 
 class StudentWriteSerializer(serializers.ModelSerializer[Student]):
@@ -33,9 +29,7 @@ class StudentWriteSerializer(serializers.ModelSerializer[Student]):
             and project_status != StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL.value
         ):
             enu_val = StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL.value
-            raise ConflictError(
-                f"Project status can only be {enu_val} if language and level is not specified"
-            )
+            raise ConflictError(f"Project status can only be {enu_val} if language and level is not specified")
 
         return attrs
 

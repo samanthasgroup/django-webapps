@@ -82,23 +82,14 @@ class StudentPopulator(BasePopulatorFromCsv):
         if parsed_status is None:
             logger.error(f"{sid}: skipping since status is unclear")
             return None
-        if (
-            parsed_status[0] == StudentSituationalStatus.NO_RESPONSE
-            and sid < MIN_SID_WITH_NO_RESPONSE
-        ):
-            logger.info(
-                f"{sid}: skipping since no response, and sid is below: {MIN_SID_WITH_NO_RESPONSE}"
-            )
+        if parsed_status[0] == StudentSituationalStatus.NO_RESPONSE and sid < MIN_SID_WITH_NO_RESPONSE:
+            logger.info(f"{sid}: skipping since no response, and sid is below: {MIN_SID_WITH_NO_RESPONSE}")
             return None
 
         name = self._parse_cell("name", common_parsers.parse_name)
         project_status = parsed_status[1]
         phone = self._parse_cell("phone", common_parsers.parse_phone_number)
-        tg = (
-            self._parse_cell("phone", common_parsers.parse_telegram_name)
-            if phone is None
-            else None
-        )
+        tg = self._parse_cell("phone", common_parsers.parse_telegram_name) if phone is None else None
         email = self._parse_cell("email", common_parsers.parse_email)
         student_data = StudentData(
             email=email,
@@ -116,9 +107,7 @@ class StudentPopulator(BasePopulatorFromCsv):
             "language_level", common_parsers.parse_language_level, skip_if_empty=True
         )
         for day in ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]:
-            slots = self._parse_cell(
-                day, common_parsers.parse_availability_slots, skip_if_empty=True
-            )
+            slots = self._parse_cell(day, common_parsers.parse_availability_slots, skip_if_empty=True)
             if slots is not None:
                 student_data.availability_slots.append(slots)
         return student_data
@@ -132,9 +121,7 @@ class StudentPopulator(BasePopulatorFromCsv):
                 raise ValueError("Unable to create mandatory data")
 
             if Student.objects.filter(legacy_sid=entity_data.id).count():
-                logger.warning(
-                    f"Student with {self.id_name} {entity_data.id} was already migrated"
-                )
+                logger.warning(f"Student with {self.id_name} {entity_data.id} was already migrated")
                 return
 
             student = Student.objects.create(
@@ -147,21 +134,15 @@ class StudentPopulator(BasePopulatorFromCsv):
             )
             if entity_data.situational_status is not None:
                 student.situational_status = entity_data.situational_status
-            student.availability_slots.set(
-                self._create_availability_slots(entity_data.availability_slots)
-            )
+            student.availability_slots.set(self._create_availability_slots(entity_data.availability_slots))
             student.teaching_languages_and_levels.set(
                 self._create_language_and_levels(entity_data.languages_and_levels)
             )
             student.save()
             self._update_metadata(entity_data.id, student.personal_info.id, entity_data.first_name)
-            logger.info(
-                f"Student migrated, old id: {entity_data.id}, new id: {student.personal_info.id}"
-            )
+            logger.info(f"Student migrated, old id: {entity_data.id}, new id: {student.personal_info.id}")
         except (IntegrityError, TransactionManagementError, ValueError) as e:
-            logger.warning(
-                f"Student with {self.id_name} {entity_data.id} can not be parsed, see errors above"
-            )
+            logger.warning(f"Student with {self.id_name} {entity_data.id} can not be parsed, see errors above")
             logger.debug(e)
 
     def _create_age_range(self, age_range: tuple[int, int] | None) -> AgeRange | None:

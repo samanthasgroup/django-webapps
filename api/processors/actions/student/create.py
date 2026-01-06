@@ -20,6 +20,4 @@ class StudentCreateProcessor(StudentActionProcessor):
     def _create_log_events(self) -> None:
         StudentLogEvent.objects.create(student=self.student, type=StudentLogEventType.REGISTERED)
         if self.student.teaching_languages_and_levels.exists():
-            StudentLogEvent.objects.create(
-                student=self.student, type=StudentLogEventType.AWAITING_OFFER
-            )
+            StudentLogEvent.objects.create(student=self.student, type=StudentLogEventType.AWAITING_OFFER)

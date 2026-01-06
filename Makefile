@@ -1,83 +1,111 @@
+.PHONY: help start updev down test lint makemigrations migrate recreate-first-migration \
+	pull-and-recreate-first-migration _recreate-first-migration-common repopulate-data \
+	celery celery-beat celery-up trans-create trans-comp
+
+UV := uv run
+DJANGO := $(UV) manage.py
+PYTEST := $(UV) pytest
+PRECOMMIT := $(UV) pre-commit
+COMPOSE_DEV := docker compose -f compose.dev.yml
+
+help:
+	@echo "Usage: make <target>"
+	@echo ""
+	@echo "Dev:"
+	@echo "  start              Run Django dev server"
+	@echo ""
+	@echo "Docker:"
+	@echo "  updev              Start dev containers (compose.dev.yml)"
+	@echo "  down               Stop dev containers (compose.dev.yml)"
+	@echo ""
+	@echo "Tests/Lint:"
+	@echo "  test               Run pytest"
+	@echo "  lint               Run pre-commit on all files"
+	@echo ""
+	@echo "Migrations/Data:"
+	@echo "  makemigrations     Create migrations"
+	@echo "  migrate            Apply migrations"
+	@echo "  recreate-first-migration"
+	@echo "  pull-and-recreate-first-migration"
+	@echo "  repopulate-data"
+	@echo ""
+	@echo "Celery:"
+	@echo "  celery             Start worker"
+	@echo "  celery-beat        Start beat scheduler"
+	@echo "  celery-up          Start worker and beat (foreground)"
+	@echo ""
+	@echo "i18n:"
+	@echo "  trans-create       Create RU translations"
+	@echo "  trans-comp         Compile translations"
+
 start:
-	uv run manage.py runserver
+	$(DJANGO) runserver
 
 updev:
-	docker compose -f compose.dev.yml up -d 
+	$(COMPOSE_DEV) up -d
 
 down:
-	docker compose down
+	$(COMPOSE_DEV) down
 
 test:
-	uv run pytest
+	$(PYTEST)
 
 lint:
-	uv run pre-commit run --all-files
+	$(PRECOMMIT) run --all-files
 
 makemigrations:
-	uv run manage.py makemigrations
-	# $(MAKE) generate-erd
+	$(DJANGO) makemigrations
 
 migrate:
-	uv run manage.py migrate
+	$(DJANGO) migrate
 
 recreate-first-migration:
-	uv run manage.py migrate api zero && \
+	$(DJANGO) migrate api zero && \
 	$(MAKE) _recreate-first-migration-common
-	$(MAKE) generate-erd
 
 pull-and-recreate-first-migration:
-	uv run manage.py migrate api zero && \
+	$(DJANGO) migrate api zero && \
 	git restore api/migrations/0001_initial.py && \
 	git pull origin && \
 	$(MAKE) _recreate-first-migration-common
 
 _recreate-first-migration-common:
-	uv run manage.py dumpdata auth -o auth_dump.json.gz && \
-	uv run manage.py flush --no-input && \
-	uv run manage.py loaddata auth_dump.json.gz && \
+	$(DJANGO) dumpdata auth -o auth_dump.json.gz && \
+	$(DJANGO) flush --no-input && \
+	$(DJANGO) loaddata auth_dump.json.gz && \
 	mv ./api/migrations/0002_data_migration.py ./api/migrations/0002_data_migration.py.bak && \
 	mv ./api/migrations/0003_fake_data.py ./api/migrations/0003_fake_data.py.bak && \
 	rm -rf ./api/migrations/0001_initial.py && \
-	uv run manage.py makemigrations && \
+	$(DJANGO) makemigrations && \
 	mv ./api/migrations/0002_data_migration.py.bak ./api/migrations/0002_data_migration.py && \
 	mv ./api/migrations/0003_fake_data.py.bak ./api/migrations/0003_fake_data.py && \
-	uv run manage.py migrate && \
+	$(DJANGO) migrate && \
 	rm auth_dump.json.gz
 
 repopulate-data:
 # This script will need to be changed if model migrations are added after data migrations.
-	uv run manage.py migrate api 0001_initial && \
-	uv run manage.py dumpdata auth -o auth_dump.json.gz && \
-	uv run manage.py flush --no-input && \
-	uv run manage.py loaddata auth_dump.json.gz && \
-	uv run manage.py migrate && \
+	$(DJANGO) migrate api 0001_initial && \
+	$(DJANGO) dumpdata auth -o auth_dump.json.gz && \
+	$(DJANGO) flush --no-input && \
+	$(DJANGO) loaddata auth_dump.json.gz && \
+	$(DJANGO) migrate && \
 	rm auth_dump.json.gz
 
-generate-erd:
-	uv run manage.py graph_models --output erd.dot --theme django2018 --layout fdp --rankdir TB --arrow crow --verbosity 2 api && \
-	dot -Tpng erd.dot -o ./api/models/erd.png && \
-	rm erd.dot && \
-	uv run manage.py graph_models --output erd_core.dot --verbose-names -I PersonalInfo,Coordinator,Student,Teacher,TeacherUnder18 --theme django2018 --layout fdp --rankdir TB --arrow crow --verbosity 2 api && \
-	dot -Tpng erd_core.dot -o ./api/models/erd_core.png && \
-	rm erd_core.dot
-
-
 celery:
-	uv run celery -A celery_config worker --loglevel=info
+	$(UV) celery -A celery_config worker --loglevel=info
 
 celery-beat:
-	uv run celery -A celery_config beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+	$(UV) celery -A celery_config beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
 
 celery-up:
 	@echo "Starting Celery workers and beat..."
-	uv run celery -A celery_config worker --loglevel=info & \
-	uv run celery -A celery_config beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+	$(UV) celery -A celery_config worker --loglevel=info & \
+	$(UV) celery -A celery_config beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
 
 
 # Create and compile translations
 trans-create:
-	uv run manage.py makemessages -l ru
+	$(DJANGO) makemessages -l ru
 
 trans-comp:
-	uv run manage.py compilemessages 
-
+	$(DJANGO) compilemessages

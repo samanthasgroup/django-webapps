@@ -11,11 +11,7 @@ from api.exceptions import ConflictError
 from api.filters import PersonalInfoFilter
 from api.filters.personal_info import DashboardPersonalInfoFilter
 from api.models import PersonalInfo
-from api.serializers import (
-    CheckChatIdExistenceSerializer,
-    CheckNameAndEmailExistenceSerializer,
-    PersonalInfoSerializer,
-)
+from api.serializers import CheckChatIdExistenceSerializer, CheckNameAndEmailExistenceSerializer, PersonalInfoSerializer
 from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
 from api.serializers.personal_info import DashboardMinifiedPersonalInfoSerializer
 
@@ -57,15 +53,11 @@ class PersonalInfoViewSet(viewsets.ModelViewSet[PersonalInfo]):
                 and "non_field_errors" in error_detail
                 and any(error_detail["non_field_errors"])
             ):
-                return Response(
-                    {"detail": "Personal info already exists"}, status=status.HTTP_409_CONFLICT
-                )
+                return Response({"detail": "Personal info already exists"}, status=status.HTTP_409_CONFLICT)
             raise  # Если ошибка не связана с уникальностью, пробрасываем дальше
         # кастомная ошибка при дубилровании записи
         except ConflictError:
-            return Response(
-                {"detail": "Personal info already exists"}, status=status.HTTP_409_CONFLICT
-            )
+            return Response({"detail": "Personal info already exists"}, status=status.HTTP_409_CONFLICT)
         return Response({"exists": False}, status=status.HTTP_200_OK)
 
     def get_serializer_class(self) -> type[BaseSerializer[PersonalInfo]]:

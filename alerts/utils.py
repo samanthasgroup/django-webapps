@@ -46,9 +46,7 @@ def create_alert_for_object(
         return None
 
 
-def resolve_alerts_for_objects(
-    model_class: type[Model], object_ids: list[int], alert_type: str
-) -> int:
+def resolve_alerts_for_objects(model_class: type[Model], object_ids: list[int], alert_type: str) -> int:
     """
     Разрешает все активные алерты определенного типа для объектов.
 

@@ -20,9 +20,7 @@ class Person(models.Model):
         verbose_name=_("personal info"),
     )
     # these will be overridden in each model: putting here for mypy
-    project_status = models.CharField(
-        max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, verbose_name=_("project status")
-    )
+    project_status = models.CharField(max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH, verbose_name=_("project status"))
 
     situational_status = models.CharField(
         max_length=DEFAULT_CHOICE_CHAR_FIELD_MAX_LENGTH,

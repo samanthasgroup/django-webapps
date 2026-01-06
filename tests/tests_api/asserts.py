@@ -9,9 +9,7 @@ def assert_response_data(response_data: dict, fields_to_assert: dict) -> None:
         assert val == response_data[field], f"{val} is not equal to {response_data[field]}"
 
 
-def assert_response_data_list(
-    response_data_items: list[dict], data_items_to_assert: list[dict]
-) -> None:
+def assert_response_data_list(response_data_items: list[dict], data_items_to_assert: list[dict]) -> None:
     """
     Does assertion of every response data list item with corresponding item specified
     in data_items_to_assert

@@ -27,11 +27,7 @@ from api.serializers import (
     StudentWriteSerializer,
 )
 from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
-from api.views.mixins import (
-    ReadWriteSerializersMixin,
-    StudentReturnedFromLeaveMixin,
-    StudentWentOnLeaveMixin,
-)
+from api.views.mixins import ReadWriteSerializersMixin, StudentReturnedFromLeaveMixin, StudentWentOnLeaveMixin
 
 
 class StudentViewSet(  # type: ignore
@@ -86,9 +82,7 @@ class DashboardStudentViewSet(
     @action(detail=True, methods=["post"])
     def transfer(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
         student = self.get_object()
-        query_params_serializer = DashboardStudentTransferSerializer(
-            data=request.data, instance=student
-        )
+        query_params_serializer = DashboardStudentTransferSerializer(data=request.data, instance=student)
         query_params_serializer.is_valid(raise_exception=True)
         StudentProcessor.transfer(
             student,
@@ -118,9 +112,7 @@ class DashboardStudentViewSet(
     @action(detail=True, methods=["post"])
     def missed_class(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
         student = self.get_object()
-        query_params_serializer = DashboardStudentMissedClassSerializer(
-            data=request.data, instance=student
-        )
+        query_params_serializer = DashboardStudentMissedClassSerializer(data=request.data, instance=student)
         query_params_serializer.is_valid(raise_exception=True)
         StudentProcessor.missed_class(
             student,
@@ -184,9 +176,7 @@ class DashboardStudentViewSet(
         self, request: Request, personal_info_id: int  # noqa: ARG002
     ) -> Response:
         student = self.get_object()
-        query_params_serializer = DashboardStudentAcceptedOfferedGroupSerializer(
-            data=request.data, instance=student
-        )
+        query_params_serializer = DashboardStudentAcceptedOfferedGroupSerializer(data=request.data, instance=student)
         query_params_serializer.is_valid(raise_exception=True)
         StudentProcessor.accepted_offered_group(
             student,
@@ -205,9 +195,7 @@ class DashboardStudentViewSet(
         },
     )
     @action(detail=True, methods=["post"])
-    def finished_and_left(
-        self, request: Request, personal_info_id: int  # noqa: ARG002
-    ) -> Response:
+    def finished_and_left(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
         student = self.get_object()
         if student.has_groups:
             raise ConflictError("Only students with no groups can be processed")
@@ -233,13 +221,9 @@ class DashboardStudentViewSet(
         },
     )
     @action(detail=True, methods=["post"])
-    def offer_join_group(
-        self, request: Request, personal_info_id: int  # noqa: ARG002
-    ) -> Response:
+    def offer_join_group(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
         student = self.get_object()
-        query_params_serializer = DashboardStudentOfferJoinGroupSerializer(
-            data=request.data, instance=student
-        )
+        query_params_serializer = DashboardStudentOfferJoinGroupSerializer(data=request.data, instance=student)
         query_params_serializer.is_valid(raise_exception=True)
         StudentProcessor.offer_join_group(
             student,
@@ -257,9 +241,7 @@ class DashboardStudentViewSet(
         },
     )
     @action(detail=True, methods=["post"])
-    def put_in_waiting_queue(
-        self, request: Request, personal_info_id: int  # noqa: ARG002
-    ) -> Response:
+    def put_in_waiting_queue(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
         student = self.get_object()
         if student.has_groups:
             raise ConflictError("Only students with no groups can be processed")
@@ -308,9 +290,7 @@ class DashboardStudentViewSet(
     )
     @action(detail=False, methods=["get"])
     def active_students_with_no_groups(self, request: Request) -> Response:  # noqa: ARG002
-        matched_students = Student.objects.filter(
-            project_status=StudentProjectStatus.STUDYING
-        ).filter_has_no_groups()
+        matched_students = Student.objects.filter(project_status=StudentProjectStatus.STUDYING).filter_has_no_groups()
         return Response(
             data=DashboardStudentSerializer(matched_students, many=True).data,
             status=status.HTTP_200_OK,
@@ -336,14 +316,10 @@ class DashboardStudentViewSet(
     ) -> Response:
         student = self.get_object()
         if student.project_status != StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL:
-            raise ConflictError(
-                "Only with status NEEDS_INTERVIEW_TO_DETERMINE_LEVEL can be processed"
-            )
+            raise ConflictError("Only with status NEEDS_INTERVIEW_TO_DETERMINE_LEVEL can be processed")
         data_serializer = DashboardCompletedOralInterviewSerializer(data=request.data)
         data_serializer.is_valid(raise_exception=True)
-        StudentProcessor.completed_oral_interview(
-            student, data_serializer.validated_data["language_and_level"]
-        )
+        StudentProcessor.completed_oral_interview(student, data_serializer.validated_data["language_and_level"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

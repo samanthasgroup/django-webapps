@@ -3,21 +3,11 @@ from typing import Any
 
 from rest_framework import serializers
 
-from api.models import (
-    EnrollmentTest,
-    EnrollmentTestQuestion,
-    EnrollmentTestQuestionOption,
-    EnrollmentTestResult,
-)
-from api.models.auxil.constants import (
-    ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS,
-    LanguageLevelId,
-)
+from api.models import EnrollmentTest, EnrollmentTestQuestion, EnrollmentTestQuestionOption, EnrollmentTestResult
+from api.models.auxil.constants import ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS, LanguageLevelId
 
 
-class EnrollmentTestQuestionOptionSerializer(
-    serializers.ModelSerializer[EnrollmentTestQuestionOption]
-):
+class EnrollmentTestQuestionOptionSerializer(serializers.ModelSerializer[EnrollmentTestQuestionOption]):
     class Meta:
         model = EnrollmentTestQuestionOption
         fields = (
@@ -72,18 +62,14 @@ class EnrollmentTestResultLevelSerializer(serializers.ModelSerializer[Enrollment
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         number_of_questions = attrs["number_of_questions"]
         if number_of_questions not in ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS:
-            raise serializers.ValidationError(
-                f"Enrollment test with {number_of_questions} questions is not supported"
-            )
+            raise serializers.ValidationError(f"Enrollment test with {number_of_questions} questions is not supported")
         return attrs
 
     def get_resulting_level(self, obj: OrderedDict[str, Any]) -> str:
         """Calculates language level depending on amount of correct answers."""
         # level thresholds (= numbers of correct answers required to reach that level)
         # depend on total number of questions
-        level_for_threshold = ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS[
-            obj["number_of_questions"]
-        ]
+        level_for_threshold = ENROLLMENT_TEST_LEVEL_THRESHOLDS_FOR_NUMBER_OF_QUESTIONS[obj["number_of_questions"]]
 
         number_of_correct_answers = len([answer for answer in obj["answers"] if answer.is_correct])
 

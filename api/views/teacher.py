@@ -1,6 +1,6 @@
 from typing import Any
 
-from django.db.models import Count, Prefetch
+from django.db.models import Count, Prefetch, QuerySet
 from django_filters import rest_framework as filters
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status, viewsets
@@ -20,11 +20,7 @@ from api.serializers import (
     TeacherWriteSerializer,
 )
 from api.serializers.errors import BaseAPIExceptionSerializer, ValidationErrorSerializer
-from api.views.mixins import (
-    ReadWriteSerializersMixin,
-    TeacherReturnedFromLeaveMixin,
-    TeacherWentOnLeaveMixin,
-)
+from api.views.mixins import ReadWriteSerializersMixin, TeacherReturnedFromLeaveMixin, TeacherWentOnLeaveMixin
 
 
 class TeacherViewSet(  # type: ignore
@@ -79,9 +75,7 @@ class DashboardTeacherViewSet(
     @action(detail=True, methods=["post"])
     def transfer(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
         teacher = self.get_object()
-        query_params_serializer = DashboardTeacherTransferSerializer(
-            data=request.data, instance=teacher
-        )
+        query_params_serializer = DashboardTeacherTransferSerializer(data=request.data, instance=teacher)
         query_params_serializer.is_valid(raise_exception=True)
         TeacherProcessor.transfer(
             teacher,
@@ -117,9 +111,7 @@ class DashboardTeacherViewSet(
         },
     )
     @action(detail=True, methods=["post"])
-    def expelled(
-        self, request: Request, personal_info_id: int  # noqa: ARG002  # noqa: ARG002
-    ) -> Response:
+    def expelled(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002  # noqa: ARG002
         teacher = self.get_object()
         TeacherProcessor.expelled(teacher)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -161,9 +153,7 @@ class DashboardTeacherViewSet(
         },
     )
     @action(detail=True, methods=["post"])
-    def finished_and_leaving(
-        self, request: Request, personal_info_id: int  # noqa: ARG002
-    ) -> Response:
+    def finished_and_leaving(self, request: Request, personal_info_id: int) -> Response:  # noqa: ARG002
         teacher = self.get_object()
         if teacher.has_groups:
             raise ConflictError("Unable to process teacher with group(s)")
@@ -171,7 +161,7 @@ class DashboardTeacherViewSet(
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class DashboardTeacherWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Teacher]):
+class DashboardTeacherWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Teacher dashboard viewset with personal info. Used for dashboard API (Tooljet).
     """
@@ -179,9 +169,12 @@ class DashboardTeacherWithPersonalInfoViewSet(viewsets.ReadOnlyModelViewSet[Teac
     # TODO permissions?
     # TODO test this API
     lookup_field = "personal_info_id"
-    queryset = Teacher.objects.prefetch_related(
-        Prefetch("groups", queryset=Group.objects.annotate(students_count=Count("students"))),
-    ).all()
+    queryset = Teacher.objects.all()
     serializer_class = DashboardTeacherWithPersonalInfoSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = TeacherFilter
+
+    def get_queryset(self) -> QuerySet[Teacher]:
+        return Teacher.objects.prefetch_related(
+            Prefetch("groups", queryset=Group.objects.annotate(students_count=Count("students"))),
+        ).all()

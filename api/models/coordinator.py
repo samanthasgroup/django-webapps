@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
@@ -13,7 +15,7 @@ from api.models.choices.status import CoordinatorProjectStatus, CoordinatorSitua
 from api.models.shared_abstract.person import Person
 
 
-class CoordinatorQuerySet(models.QuerySet["Coordinator"]):
+class CoordinatorQuerySet(models.QuerySet[Any]):
     def annotate_with_group_count(self) -> "CoordinatorQuerySet":
         return self.annotate(group_count=Count("groups"))
 
@@ -95,9 +97,7 @@ class Coordinator(Person):
         object_id_field="object_id",
         related_query_name="coordinator",
     )
-    user = OneToOneField(
-        User, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_("Django user")
-    )
+    user = OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_("Django user"))
 
     objects = CoordinatorQuerySet.as_manager()
 

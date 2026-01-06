@@ -27,9 +27,7 @@ class StudentAcceptedOfferedGroupProcessor(StudentActionProcessor):
         self.student.save()
 
     def _create_log_events(self) -> None:
-        StudentLogEvent.objects.create(
-            student=self.student, to_group=self.group, type=StudentLogEventType.STUDY_START
-        )
+        StudentLogEvent.objects.create(student=self.student, to_group=self.group, type=StudentLogEventType.STUDY_START)
         CoordinatorLogEvent.objects.create(
             coordinator=self.coordinator,
             group=self.group,

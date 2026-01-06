@@ -22,9 +22,7 @@ class CommonDashboardStudentSerializer(serializers.ModelSerializer[Student]):
     first_name = serializers.CharField(source="personal_info.first_name")
     last_name = serializers.CharField(source="personal_info.last_name")
     utc_timedelta = UTCTimedeltaField(source="personal_info.utc_timedelta")
-    communication_language_mode = serializers.CharField(
-        source="personal_info.communication_language_mode"
-    )
+    communication_language_mode = serializers.CharField(source="personal_info.communication_language_mode")
     non_teaching_help_required = NonTeachingHelpSerializerField()
 
     class Meta:
@@ -78,14 +76,9 @@ class DashboardStudentTransferSerializer(PersonTransferSerializer):
         to_group = validated_attrs["to_group"]
         from_group = validated_attrs["from_group"]
         if self.instance is not None and to_group.students.filter(pk=self.instance.pk).exists():
-            raise ConflictError(
-                f"Student {self.instance.pk} is already in that group {to_group.pk}"
-            )
+            raise ConflictError(f"Student {self.instance.pk} is already in that group {to_group.pk}")
 
-        if (
-            self.instance is not None
-            and not from_group.students.filter(pk=self.instance.pk).exists()
-        ):
+        if self.instance is not None and not from_group.students.filter(pk=self.instance.pk).exists():
             raise ConflictError(f"Student {self.instance.pk} must be in group {from_group.pk}")
 
         return validated_attrs
@@ -170,8 +163,6 @@ class DashboardCompletedOralInterviewSerializer(serializers.Serializer[Any]):
         try:
             language_and_level = LanguageAndLevel.objects.get(pk=attrs["language_and_level_id"])
         except LanguageAndLevel.DoesNotExist:
-            raise UnproccessableEntityError(
-                f"Language and level {attrs['language_and_level_id']} not found"
-            )
+            raise UnproccessableEntityError(f"Language and level {attrs['language_and_level_id']} not found")
         attrs["language_and_level"] = language_and_level
         return attrs

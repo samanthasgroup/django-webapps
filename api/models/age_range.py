@@ -25,11 +25,7 @@ class AgeRange(models.Model):
     )
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["age_from", "age_to", "type"], name="unique_age_and_type"
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=["age_from", "age_to", "type"], name="unique_age_and_type")]
 
     def __str__(self) -> str:
         return f"{self.age_from}-{self.age_to} [{self.type[0].upper()}]"

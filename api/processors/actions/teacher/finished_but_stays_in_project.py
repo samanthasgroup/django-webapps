@@ -27,6 +27,4 @@ class TeacherFinishedStudiesButStaysInProjectProcessor(TeacherActionProcessor):
         self.teacher.save()
 
     def _create_log_events(self) -> None:
-        TeacherLogEvent.objects.create(
-            teacher=self.teacher, type=TeacherLogEventType.FINISHED_AND_STAYING
-        )
+        TeacherLogEvent.objects.create(teacher=self.teacher, type=TeacherLogEventType.FINISHED_AND_STAYING)

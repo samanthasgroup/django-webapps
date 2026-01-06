@@ -4,9 +4,7 @@ from api.models.auxil.constants import STUDENT_AGE_RANGES
 from api.models.choices.status.project import StudentProjectStatus
 from api.models.choices.status.situational import StudentSituationalStatus
 
-RAW_PROJECT_STATUS_TO_PARSED: dict[
-    str, tuple[StudentSituationalStatus | None, StudentProjectStatus]
-] = {
+RAW_PROJECT_STATUS_TO_PARSED: dict[str, tuple[StudentSituationalStatus | None, StudentProjectStatus]] = {
     "группа расформирована": (None, StudentProjectStatus.FINISHED),
     "не ходит на занятия": (StudentSituationalStatus.NOT_ATTENDING, StudentProjectStatus.STUDYING),
     "идут занятия": (None, StudentProjectStatus.STUDYING),

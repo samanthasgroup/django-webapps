@@ -6,25 +6,13 @@ from dateutil import parser
 from model_bakery import baker, seq
 from rest_framework import status
 
-from api.models import (
-    AgeRange,
-    Coordinator,
-    DayAndTimeSlot,
-    LanguageAndLevel,
-    NonTeachingHelp,
-    PersonalInfo,
-    Student,
-)
+from api.models import AgeRange, Coordinator, DayAndTimeSlot, LanguageAndLevel, NonTeachingHelp, PersonalInfo, Student
 from api.models.choices.log_event_type import CoordinatorLogEventType, StudentLogEventType
 from api.models.choices.status import StudentProjectStatus, StudentSituationalStatus
 from api.models.group import Group
 from api.models.log_event import CoordinatorLogEvent, StudentLogEvent
 from api.serializers import DashboardStudentSerializer, StudentWriteSerializer
-from tests.tests_api.asserts import (
-    assert_date_time_with_timestamp,
-    assert_response_data,
-    assert_response_data_list,
-)
+from tests.tests_api.asserts import assert_date_time_with_timestamp, assert_response_data, assert_response_data_list
 
 
 @pytest.mark.parametrize(
@@ -121,10 +109,7 @@ def test_student_retrieve(api_client, availability_slots):
     ]
     if "status_since" in response_json:
         response_json["status_since"] = (
-            parser.isoparse(response_json["status_since"])
-            .astimezone(pytz.utc)
-            .isoformat()
-            .replace("+00:00", "Z")
+            parser.isoparse(response_json["status_since"]).astimezone(pytz.utc).isoformat().replace("+00:00", "Z")
         )
     assert response_json == {
         "personal_info": student.personal_info.id,
@@ -163,9 +148,7 @@ def test_student_update(api_client, availability_slots):
         "availability_slots": [i.id for i in availability_slots[2:5]],
     }
 
-    response = api_client.patch(
-        f"/api/students/{student.personal_info.id}/", data=fields_to_update
-    )
+    response = api_client.patch(f"/api/students/{student.personal_info.id}/", data=fields_to_update)
     new_student_data = StudentWriteSerializer(student).data
     for field, val in fields_to_update.items():
         new_student_data[field] = val
@@ -302,9 +285,7 @@ class TestDashboardStudentTransfer:
         assert student.project_status == StudentProjectStatus.STUDYING
         assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
-    def test_dashboard_student_transfer_from_empty_group(
-        self, api_client, active_group: Group, availability_slots
-    ):
+    def test_dashboard_student_transfer_from_empty_group(self, api_client, active_group: Group, availability_slots):
         student = baker.make(
             Student,
             make_m2m=True,
@@ -398,9 +379,7 @@ class TestStudentWithPersonalInfo:
 
 
 class TestDashboardStudentMissedClass:
-    def _create_logs_for_past_missed_days(
-        self, past_missed_days: list[int], timestamp, student
-    ) -> None:
+    def _create_logs_for_past_missed_days(self, past_missed_days: list[int], timestamp, student) -> None:
         for days in past_missed_days:
             date_time = timestamp - datetime.timedelta(days=days)
             log_event = StudentLogEvent.objects.create(
@@ -497,9 +476,7 @@ class TestDashboardStudentMissedClass:
         assert student.situational_status == ""
         assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
-    def test_dashboard_student_missed_class_bad_group(
-        self, api_client, active_group: Group, availability_slots
-    ):
+    def test_dashboard_student_missed_class_bad_group(self, api_client, active_group: Group, availability_slots):
         student = baker.make(
             Student,
             make_m2m=True,
@@ -558,9 +535,7 @@ class TestDashboardStudentReturnedFromLeave:
         )
         student.refresh_from_db()
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        log_event: StudentLogEvent | None = StudentLogEvent.objects.filter(
-            student_id=student.pk
-        ).last()
+        log_event: StudentLogEvent | None = StudentLogEvent.objects.filter(student_id=student.pk).last()
         assert log_event is not None and log_event.type == StudentLogEventType.RETURNED_FROM_LEAVE
         assert student.project_status == StudentProjectStatus.NO_GROUP_YET
         assert_date_time_with_timestamp(log_event.date_time, timestamp)
@@ -629,9 +604,7 @@ class TestDashboardStudentListByTimeSlots:
             {"full_name": student2.personal_info.full_name, "id": student2.pk},
         ]
 
-        assert sorted(response.data, key=lambda x: x["id"]) == sorted(
-            expected, key=lambda x: x["id"]
-        )
+        assert sorted(response.data, key=lambda x: x["id"]) == sorted(expected, key=lambda x: x["id"])
 
     def test_different_slots(self, api_client, availability_slots):
         slots_to_test = availability_slots[0:2]
@@ -699,9 +672,7 @@ class TestDashboardStudentListByTimeSlots:
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_dashboard_student_finished_and_left(
-    api_client, availability_slots, active_group, timestamp
-):
+def test_dashboard_student_finished_and_left(api_client, availability_slots, active_group, timestamp):
     student = baker.make(
         Student,
         make_m2m=True,
@@ -863,12 +834,8 @@ class TestDashboardStudentAcceptedOfferedGroup:
         assert student.project_status == StudentProjectStatus.STUDYING
         assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
-        coordinator_log_event = CoordinatorLogEvent.objects.filter(
-            coordinator_id=coordinator.pk
-        ).last()
-        assert (
-            coordinator_log_event.type == CoordinatorLogEventType.ADDED_STUDENT_TO_EXISTING_GROUP
-        )
+        coordinator_log_event = CoordinatorLogEvent.objects.filter(coordinator_id=coordinator.pk).last()
+        assert coordinator_log_event.type == CoordinatorLogEventType.ADDED_STUDENT_TO_EXISTING_GROUP
         assert_date_time_with_timestamp(coordinator_log_event.date_time, timestamp)
 
     def test_none_existing_group(self, api_client, availability_slots, active_group: Group):
@@ -985,9 +952,7 @@ class TestDashboardStudentOfferJoinGroup:
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_dashboard_student_left_project_prematurely(
-    api_client, availability_slots, active_group: Group, timestamp
-):
+def test_dashboard_student_left_project_prematurely(api_client, availability_slots, active_group: Group, timestamp):
     student = baker.make(
         Student,
         make_m2m=True,
@@ -1009,9 +974,7 @@ def test_dashboard_student_left_project_prematurely(
     assert_date_time_with_timestamp(log_event.date_time, timestamp)
 
 
-def test_dashboard_student_expelled(
-    api_client, availability_slots, active_group: Group, timestamp
-):
+def test_dashboard_student_expelled(api_client, availability_slots, active_group: Group, timestamp):
     student = baker.make(
         Student,
         make_m2m=True,

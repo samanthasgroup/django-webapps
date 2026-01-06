@@ -38,9 +38,7 @@ class StudentMissedClassProcessor(StudentActionProcessor):
 
     def _create_log_events(self) -> None:
         event_type = (
-            StudentLogEventType.MISSED_CLASS_NOTIFIED
-            if self.notified
-            else StudentLogEventType.MISSED_CLASS_SILENTLY
+            StudentLogEventType.MISSED_CLASS_NOTIFIED if self.notified else StudentLogEventType.MISSED_CLASS_SILENTLY
         )
         StudentLogEvent.objects.create(
             student=self.student, from_group=self.group, to_group=self.group, type=event_type

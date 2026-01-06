@@ -159,8 +159,7 @@ def find_any_phone_number(number_str: str) -> list[str]:
 def parse_phone_number(number_str: str) -> str | None:
     number_str = number_str.replace(" ", "")
     country_codes_to_test = [("", None)] + [
-        (f"+{code}", region[0])
-        for code, region in phonenumbers.COUNTRY_CODE_TO_REGION_CODE.items()
+        (f"+{code}", region[0]) for code, region in phonenumbers.COUNTRY_CODE_TO_REGION_CODE.items()
     ]
 
     phone_numbers = find_any_phone_number(number_str)
@@ -220,9 +219,7 @@ def parse_language_level(level_str: str) -> list[str]:
 
 def parse_availability_slots(
     slot_str: str,
-    time_slots: tuple[
-        tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int]
-    ] = TIME_SLOTS,
+    time_slots: tuple[tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int]] = TIME_SLOTS,
 ) -> list[tuple[int, int]]:
     slot_str = slot_str.lower().strip().rstrip()
     result = []
@@ -239,20 +236,14 @@ def parse_availability_slots(
     re_result = re.search(regex_till, slot_str)
     if re_result:
         re_groups = re_result.groups()
-        range_to_fit = (
-            (int(re_groups[1]), 21)
-            if re_groups[0] in ["с", "после", "from"]
-            else (5, int(re_groups[1]))
-        )
+        range_to_fit = (int(re_groups[1]), 21) if re_groups[0] in ["с", "после", "from"] else (5, int(re_groups[1]))
         result.extend(find_best_fits(range_to_fit))
     if len(result) > 0:
         return result
 
     # parse slots
     # e.g. 11:00-17:00, 11-17, 11.17 and so on
-    regex_slots = re.compile(
-        r"(\d{1,2})[.\-:]{0,1}(\d{1,2}){0,1}[\-.](\d{1,2})[.\-:]{0,1}(\d{1,2}){0,1}"
-    )
+    regex_slots = re.compile(r"(\d{1,2})[.\-:]{0,1}(\d{1,2}){0,1}[\-.](\d{1,2})[.\-:]{0,1}(\d{1,2}){0,1}")
     slot_str = slot_str.replace(" ", "")
 
     re_results = re.findall(regex_slots, slot_str)
