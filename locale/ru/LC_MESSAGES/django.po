@@ -771,6 +771,10 @@ msgstr "Закончил:а преподавать, остается в прое
 msgid "Has been in onboarding for too long without taking a group"
 msgstr "Долго в онбординге, еще не приступал:а к набору групп"
 
+#: api/models/choices/status/situational.py:14
+msgid "In onboarding"
+msgstr "В онбординге"
+
 #: api/models/choices/status/situational.py:18
 #: api/models/choices/status/situational.py:43
 #: api/models/choices/status/situational.py:55

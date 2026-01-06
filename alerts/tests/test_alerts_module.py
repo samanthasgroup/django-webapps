@@ -2,9 +2,14 @@ from datetime import timedelta
 
 import pytest
 from django.utils import timezone
+from model_bakery import baker
 from pytest_mock import MockerFixture
 
-from alerts.handlers.coordinator import CoordinatorOverdueLeaveHandler
+from alerts.handlers.coordinator import (
+    CoordinatorOnboardingStaleHandler,
+    CoordinatorOverdueLeaveHandler,
+    CoordinatorOverdueTransferRequestHandler,
+)
 from alerts.handlers.teacher import TeacherNoGroup45DaysHandler
 from alerts.models import Alert
 from alerts.tasks import check_system_alerts
@@ -13,7 +18,9 @@ from api.models.choices.log_event_type import CoordinatorLogEventType, TeacherLo
 from api.models.choices.registration_telegram_bot_language import RegistrationTelegramBotLanguage
 from api.models.choices.status import TeacherProjectStatus
 from api.models.choices.status.project import CoordinatorProjectStatus
+from api.models.choices.status.situational import CoordinatorSituationalStatus
 from api.models.coordinator import Coordinator
+from api.models.group import Group
 from api.models.log_event import CoordinatorLogEvent, TeacherLogEvent
 from api.models.personal_info import PersonalInfo
 from api.models.teacher import Teacher
@@ -179,6 +186,124 @@ def test_coordinator_overdue_leave_no_alert_for_non_leave_status(
 
     assert Alert.objects.filter(object_id=coord.pk, alert_type=handler.alert_type).count() == 0
     assert processed["created"] == 0
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_coordinator_overdue_transfer_request_creates_alert() -> None:
+    coordinator = baker.make(Coordinator, _fill_optional=True)
+    group = baker.make(Group, _fill_optional=True, make_m2m=True)
+    past = timezone.now() - timedelta(days=15)
+    CoordinatorLogEvent.objects.create(
+        coordinator=coordinator,
+        group=group,
+        type=CoordinatorLogEventType.REQUESTED_TRANSFER,
+        comment="",
+        date_time=past,
+    )
+
+    handler = CoordinatorOverdueTransferRequestHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    alert = Alert.objects.filter(
+        object_id=coordinator.pk, alert_type=handler.alert_type, is_resolved=False
+    ).first()
+    assert alert is not None
+    assert processed["created"] == 1
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_coordinator_overdue_transfer_request_recent_no_alert() -> None:
+    coordinator = baker.make(Coordinator, _fill_optional=True)
+    group = baker.make(Group, _fill_optional=True, make_m2m=True)
+    CoordinatorLogEvent.objects.create(
+        coordinator=coordinator,
+        group=group,
+        type=CoordinatorLogEventType.REQUESTED_TRANSFER,
+        comment="",
+        date_time=timezone.now(),
+    )
+
+    handler = CoordinatorOverdueTransferRequestHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    assert (
+        Alert.objects.filter(object_id=coordinator.pk, alert_type=handler.alert_type).count() == 0
+    )
+    assert processed["created"] == 0
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_coordinator_overdue_transfer_request_resolves_after_cancel() -> None:
+    coordinator = baker.make(Coordinator, _fill_optional=True)
+    group = baker.make(Group, _fill_optional=True, make_m2m=True)
+    past = timezone.now() - timedelta(days=15)
+    CoordinatorLogEvent.objects.create(
+        coordinator=coordinator,
+        group=group,
+        type=CoordinatorLogEventType.REQUESTED_TRANSFER,
+        comment="",
+        date_time=past,
+    )
+
+    handler = CoordinatorOverdueTransferRequestHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    cancel_time = past + timedelta(days=1)
+    CoordinatorLogEvent.objects.create(
+        coordinator=coordinator,
+        group=group,
+        type=CoordinatorLogEventType.TRANSFER_CANCELED,
+        comment="",
+        date_time=cancel_time,
+    )
+    handler.resolve_alerts(processed)
+
+    alert = Alert.objects.filter(object_id=coordinator.pk, alert_type=handler.alert_type).first()
+    assert alert is not None
+    assert alert.is_resolved
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_coordinator_onboarding_stale_updates_status_and_creates_alert() -> None:
+    coordinator = baker.make(
+        Coordinator,
+        _fill_optional=True,
+        situational_status=CoordinatorSituationalStatus.ONBOARDING,
+        status_since=timezone.now() - timedelta(days=15),
+    )
+
+    handler = CoordinatorOnboardingStaleHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    coordinator.refresh_from_db()
+    assert coordinator.situational_status == CoordinatorSituationalStatus.STALE
+    assert (
+        Alert.objects.filter(object_id=coordinator.pk, alert_type=handler.alert_type).count() == 1
+    )
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_coordinator_onboarding_stale_recent_no_alert() -> None:
+    coordinator = baker.make(
+        Coordinator,
+        _fill_optional=True,
+        situational_status=CoordinatorSituationalStatus.ONBOARDING,
+        status_since=timezone.now(),
+    )
+
+    handler = CoordinatorOnboardingStaleHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    coordinator.refresh_from_db()
+    assert coordinator.situational_status == CoordinatorSituationalStatus.ONBOARDING
+    assert (
+        Alert.objects.filter(object_id=coordinator.pk, alert_type=handler.alert_type).count() == 0
+    )
 
 
 @pytest.mark.django_db  # type: ignore[misc]

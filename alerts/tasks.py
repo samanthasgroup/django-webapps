@@ -18,7 +18,7 @@ def check_system_alerts() -> str:
     # Инициализация и запуск всех обработчиков алертов
     for handler_class in ALERT_HANDLERS:
         try:
-            handler = handler_class()
+            handler = handler_class()  # type: ignore[abstract]
             handler.check_and_create_alerts(processed_alerts)
             handler.resolve_alerts(processed_alerts)
         except Exception as e:

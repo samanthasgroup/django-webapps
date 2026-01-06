@@ -1,5 +1,5 @@
 import json
-from typing import Any
+from typing import Any, cast
 
 import reversion
 from django import forms
@@ -24,6 +24,7 @@ from api.models.choices.log_event_type import (
     CoordinatorLogEventType,
 )
 from api.models.choices.status import GroupProjectStatus
+from api.models.choices.status.situational import CoordinatorSituationalStatus
 from api.processors.auxil.log_event_creator import CoordinatorAdminLogEventCreator
 
 DETAILS_PREVIEW_LENGTH: int = 30
@@ -88,6 +89,26 @@ class AdminStatusFilter(SimpleListFilter):
             return queryset.filter(is_admin=True)
         if self.value() == "False":
             return queryset.filter(is_admin=False)
+        return queryset
+
+
+class StaleOnboardingFilter(SimpleListFilter):
+    title = _("Onboarding stale")
+    parameter_name = "onboarding_stale"
+
+    def lookups(
+        self, _request: HttpRequest, _model_admin: ModelAdmin[Any]
+    ) -> tuple[tuple[str, str], ...]:
+        return (
+            ("yes", cast(str, _("Yes"))),
+            ("no", cast(str, _("No"))),
+        )
+
+    def queryset(self, _request: HttpRequest, queryset: QuerySet[Any]) -> QuerySet[Coordinator]:
+        if self.value() == "yes":
+            return queryset.filter(situational_status=CoordinatorSituationalStatus.STALE)
+        if self.value() == "no":
+            return queryset.exclude(situational_status=CoordinatorSituationalStatus.STALE)
         return queryset
 
 
@@ -215,6 +236,7 @@ class CoordinatorAdmin(VersionAdmin):
         AdminStatusFilter,
         "project_status",
         "situational_status",
+        StaleOnboardingFilter,
         "personal_info__communication_language_mode",
         ("mentor", admin.AllValuesFieldListFilter),
         ("alerts__alert_type", admin.AllValuesFieldListFilter),
@@ -248,7 +270,8 @@ class CoordinatorAdmin(VersionAdmin):
     )
 
     class Media:
-        js = ("admin/js/sticky-scroll-bar.js",)
+        css = {"all": ("css/admin-coordinator-stale.css",)}
+        js = ("admin/js/sticky-scroll-bar.js", "js/admin-coordinator-stale.js")
 
     def changelist_view(
         self, request: HttpRequest, extra_context: dict[str, Any] | None = None
@@ -300,7 +323,10 @@ class CoordinatorAdmin(VersionAdmin):
         description=mark_safe(_("Situational<br>Status")), ordering="situational_status"
     )
     def get_situational_status(self, coordinator: Coordinator) -> str:
-        return coordinator.get_situational_status_display()
+        display = coordinator.get_situational_status_display()
+        if coordinator.situational_status == CoordinatorSituationalStatus.STALE:
+            return format_html('<span data-stale="1">{}</span>', display)
+        return display
 
     @admin.display(description=mark_safe(_("Status<br>last changed")), ordering="status_since")
     def get_status_since(self, coordinator: Coordinator) -> str:
