@@ -1,0 +1,5 @@
+tr.has-active-alerts th,
+tr.has-active-alerts td {
+    background-color: var(--message-warning-bg);
+    color: var(--body-fg);
+}
