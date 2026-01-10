@@ -8,7 +8,7 @@ from django.contrib.admin import ModelAdmin
 from django.contrib.admin.options import IS_POPUP_VAR, TO_FIELD_VAR
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.contrib.admin.utils import quote
-from django.db.models import QuerySet
+from django.db.models import Count, Q, QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -18,6 +18,7 @@ from django.utils.translation import gettext_lazy as _
 from django_select2.forms import ModelSelect2MultipleWidget
 from reversion.admin import VersionAdmin
 
+from alerts.admin_inlines import AlertInline
 from api import models
 from api.admin.auxil.mixin import CoordinatorRestrictedAdminMixin
 from api.admin.auxil.widgets import NativeTimeInput
@@ -174,6 +175,7 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "get_situational_status",
         "get_status_since",
         "staff_only",
+        "display_active_alerts_count",
     )
     ordering = ["-id"]
     list_filter = (
@@ -182,6 +184,8 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "situational_status",
         CoordinatorFilter,
         ScheduleFilter,
+        ("alerts__alert_type", admin.AllValuesFieldListFilter),
+        ("alerts__is_resolved", admin.BooleanFieldListFilter),
     )
     search_fields = (
         "coordinators__personal_info__first_name",
@@ -197,9 +201,20 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "schedule_display",
     )
 
+    inlines = [
+        AlertInline,
+    ]
+
     class Media:
-        css = {"all": ("css/select2-darkmode.css",)}
-        js = ("admin/js/sticky-scroll-bar.js",)
+        css = {"all": ("css/select2-darkmode.css", "css/admin-alerts-highlight.css")}
+        js = ("admin/js/sticky-scroll-bar.js", "admin/js/admin-alerts-highlight.js")
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
+        return (
+            super()
+            .get_queryset(request)
+            .annotate(active_alerts_count=Count("alerts__pk", filter=Q(alerts__is_resolved=False), distinct=True))
+        )
 
     def changelist_view(self, request: HttpRequest, extra_context: dict[str, Any] | None = None) -> HttpResponse:
         extra_context = extra_context or {}
@@ -342,6 +357,14 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         if getattr(group, "is_for_staff_only"):
             return format_html('<img src="{}" alt="icon"/>', "/static/admin/img/icon-yes.svg")
         return ""
+
+    @admin.display(description=_("Active Alerts"), ordering="active_alerts_count")
+    def display_active_alerts_count(self, group: models.Group) -> int | str:
+        count = getattr(group, "active_alerts_count", None)
+        if count is None:
+            count = group.alerts.filter(is_resolved=False).count()
+        label = str(count) if count > 0 else "-"
+        return format_html('<span class="active-alerts-count" data-count="{}">{}</span>', count, label)
 
     @admin.display(description=mark_safe(_("Project<br>status")))
     def get_project_status(self, group: models.Group) -> str:

@@ -6,16 +6,14 @@ from django import forms
 from django.contrib import admin, messages
 from django.contrib.admin import ModelAdmin, SimpleListFilter
 from django.contrib.admin.helpers import ActionForm
-from django.contrib.contenttypes.admin import GenericTabularInline
-from django.db.models import Count, QuerySet
+from django.db.models import Count, Q, QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 
-from alerts.models import Alert
+from alerts.admin_inlines import AlertInline
 from api import models
 from api.admin.auxil.widgets import PersonalInfoSelect2Widget
 from api.models import Coordinator, Group
@@ -23,46 +21,6 @@ from api.models.choices.log_event_type import COORDINATOR_LOG_EVENTS_REQUIRE_GRO
 from api.models.choices.status import GroupProjectStatus
 from api.models.choices.status.situational import CoordinatorSituationalStatus
 from api.processors.auxil.log_event_creator import CoordinatorAdminLogEventCreator
-
-DETAILS_PREVIEW_LENGTH: int = 30
-
-
-class AlertInline(GenericTabularInline):
-    """Inline admin for Alerts on a related object page."""
-
-    model = Alert
-    fields = (
-        "alert_type",
-        "created_at",
-        "is_resolved",
-        "resolved_at",
-        "details_link",
-    )
-    readonly_fields = ("alert_type", "created_at", "resolved_at", "details_link")
-    extra = 0
-    ordering = (
-        "-is_resolved",
-        "-created_at",
-    )  # Сначала активные, потом новые
-    ct_field = "content_type"  # Имя поля ContentType в Alert
-    ct_fk_field = "object_id"  # Имя поля ID объекта в Alert
-
-    # Опционально: ссылка на страницу деталей алерта
-
-    @admin.display(description="Details")
-    def details_link(self, obj: Alert) -> str:
-        if not obj.pk:
-            return "-"
-        link: str = reverse(f"admin:{obj._meta.app_label}_{obj._meta.model_name}_change", args=[obj.pk])
-        details_preview: str = (
-            (obj.details[:DETAILS_PREVIEW_LENGTH] + "...") if len(obj.details) > DETAILS_PREVIEW_LENGTH else obj.details
-        )
-        return format_html('<a href="{}">{}</a>', link, details_preview or "View/Edit")
-
-    # Показываем только активные, если нужно
-    # def get_queryset(self, request):
-    #    qs = super().get_queryset(request)
-    #    return qs.filter(is_resolved=False)
 
 
 class AdminStatusFilter(SimpleListFilter):
@@ -257,8 +215,8 @@ class CoordinatorAdmin(VersionAdmin):
     )
 
     class Media:
-        css = {"all": ("css/admin-coordinator-stale.css",)}
-        js = ("admin/js/sticky-scroll-bar.js", "js/admin-coordinator-stale.js")
+        css = {"all": ("css/admin-alerts-highlight.css",)}
+        js = ("admin/js/sticky-scroll-bar.js", "admin/js/admin-alerts-highlight.js")
 
     def changelist_view(self, request: HttpRequest, extra_context: dict[str, Any] | None = None) -> HttpResponse:
         extra_context = extra_context or {}
@@ -342,11 +300,14 @@ class CoordinatorAdmin(VersionAdmin):
     def get_role_comment(self, coordinator: Coordinator) -> str:
         return coordinator.role_comment
 
-    @admin.display(description=_("Active Alerts"), ordering="alerts__created_at")
+    @admin.display(description=_("Active Alerts"), ordering="active_alerts_count")
     def display_active_alerts_count(self, obj: Coordinator) -> int | str:
         """Displays the count of active alerts."""
-        count: int = obj.alerts.filter(is_resolved=False).count()
-        return count if count > 0 else "-"
+        count = getattr(obj, "active_alerts_count", None)
+        if count is None:
+            count = obj.alerts.filter(is_resolved=False).count()
+        label = str(count) if count > 0 else "-"
+        return format_html('<span class="active-alerts-count" data-count="{}">{}</span>', count, label)
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Coordinator]:
         # Оптимизация 1: аннотация с количеством групп
@@ -356,6 +317,7 @@ class CoordinatorAdmin(VersionAdmin):
             super()
             .get_queryset(request)
             .annotate(group_count=Count("groups"))
+            .annotate(active_alerts_count=Count("alerts__pk", filter=Q(alerts__is_resolved=False), distinct=True))
             .prefetch_related("groups")
             # .prefetch_related('alerts')
         )

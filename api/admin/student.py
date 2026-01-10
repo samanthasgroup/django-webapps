@@ -13,6 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from django_select2.forms import ModelSelect2MultipleWidget
 from reversion.admin import VersionAdmin
 
+from alerts.admin_inlines import AlertInline
 from api import models
 from api.admin.auxil.mixin import CoordinatorRestrictedAdminMixin
 from api.admin.auxil.widgets import PersonalInfoSelect2Widget
@@ -116,6 +117,7 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "groups_links",
         "teaching_languages_and_levels_display",
         "coordinators_display",
+        "display_active_alerts_count",
     )
 
     list_filter = (
@@ -123,6 +125,8 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         "project_status",
         StudentAgeRangeFilter,
         CoordinatorFilter,
+        ("alerts__alert_type", admin.AllValuesFieldListFilter),
+        ("alerts__is_resolved", admin.BooleanFieldListFilter),
     )
 
     search_fields = (
@@ -134,12 +138,20 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
     )
 
     class Media:
-        js = ("admin/js/sticky-scroll-bar.js",)
+        css = {"all": ("css/admin-alerts-highlight.css",)}
+        js = ("admin/js/sticky-scroll-bar.js", "admin/js/admin-alerts-highlight.js")
+
+    inlines = [
+        AlertInline,
+    ]
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Student]:
 
         return (
-            super().get_queryset(request).prefetch_related("groups", "children", "groups__coordinators__personal_info")
+            super()
+            .get_queryset(request)
+            .annotate(active_alerts_count=Count("alerts__pk", filter=Q(alerts__is_resolved=False), distinct=True))
+            .prefetch_related("groups", "children", "groups__coordinators__personal_info")
         )
 
     def changelist_view(self, request: HttpRequest, extra_context: dict[str, Any] | None = None) -> HttpResponse:
@@ -197,6 +209,14 @@ class StudentAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
             links.append(format_html('<a href="{}">{}</a>', url, full_name))
 
         return format_html(", ".join(links))
+
+    @admin.display(description=_("Active Alerts"), ordering="active_alerts_count")
+    def display_active_alerts_count(self, obj: Student) -> int | str:
+        count = getattr(obj, "active_alerts_count", None)
+        if count is None:
+            count = obj.alerts.filter(is_resolved=False).count()
+        label = str(count) if count > 0 else "-"
+        return format_html('<span class="active-alerts-count" data-count="{}">{}</span>', count, label)
 
     @admin.display(description=_("Enrollment test summary"))
     def enrollment_tests_summary(self, obj: Student) -> str:
