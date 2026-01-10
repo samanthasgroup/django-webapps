@@ -120,11 +120,11 @@ msgstr "Решен"
 
 #: alerts/models.py:36
 msgid "Related Model Type"
-msgstr ""
+msgstr "Тип связанной модели"
 
 #: alerts/models.py:43
 msgid "Related Object ID"
-msgstr ""
+msgstr "ID связанного объекта"
 
 #: alerts/models.py:48
 msgid "Alert"
