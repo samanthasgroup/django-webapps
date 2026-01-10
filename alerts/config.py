@@ -17,6 +17,11 @@ class AlertConfig:
         "TEACHER_NO_GROUP_45_DAYS": "teacher_no_group_45_days",
         "TEACHER_OVERDUE_ON_LEAVE": "teacher_overdue_on_leave",
         "TEACHER_OVERDUE_GROUP_OFFER": "teacher_overdue_group_offer",
+        "STUDENT_NEEDS_ORAL_INTERVIEW": "student_needs_oral_interview",
+        "STUDENT_OVERDUE_GROUP_OFFER": "student_overdue_group_offer",
+        "STUDENT_NO_GROUP_30_DAYS": "student_no_group_30_days",
+        "GROUP_PENDING_OVERDUE": "group_pending_overdue",
+        "GROUP_AWAITING_START_OVERDUE": "group_awaiting_start_overdue",
         # TODO: добавить другие типы алертов здесь
     }
 
@@ -28,4 +33,9 @@ class AlertConfig:
         "teacher_no_group_45_days": "background: #fff3cd; color: #856404;",
         "teacher_overdue_on_leave": "background: #fdecea; color: #a94442;",
         "teacher_overdue_group_offer": "background: #ffe8d1; color: #8a3b12;",
+        "student_needs_oral_interview": "background: #fff3cd; color: #856404;",
+        "student_overdue_group_offer": "background: #ffe8d1; color: #8a3b12;",
+        "student_no_group_30_days": "background: #fff3cd; color: #856404;",
+        "group_pending_overdue": "background: #f2f2f2; color: #555555;",
+        "group_awaiting_start_overdue": "background: #fff3cd; color: #856404;",
     }

@@ -10,6 +10,12 @@ from alerts.handlers.coordinator import (
     CoordinatorOverdueLeaveHandler,
     CoordinatorOverdueTransferRequestHandler,
 )
+from alerts.handlers.group import GroupAwaitingStartOverdueHandler, GroupPendingOverdueHandler
+from alerts.handlers.student import (
+    StudentNeedsOralInterviewHandler,
+    StudentNoGroup30DaysHandler,
+    StudentOverdueGroupOfferHandler,
+)
 from alerts.handlers.teacher import (
     TeacherNoGroup45DaysHandler,
     TeacherOverdueGroupOfferHandler,
@@ -18,15 +24,16 @@ from alerts.handlers.teacher import (
 from alerts.models import Alert
 from alerts.tasks import check_system_alerts
 from alerts.utils import create_alert_for_object, resolve_alerts_for_objects
-from api.models.choices.log_event_type import CoordinatorLogEventType, TeacherLogEventType
+from api.models.choices.log_event_type import CoordinatorLogEventType, StudentLogEventType, TeacherLogEventType
 from api.models.choices.registration_telegram_bot_language import RegistrationTelegramBotLanguage
-from api.models.choices.status import TeacherProjectStatus
+from api.models.choices.status import GroupProjectStatus, StudentProjectStatus, TeacherProjectStatus
 from api.models.choices.status.project import CoordinatorProjectStatus
 from api.models.choices.status.situational import CoordinatorSituationalStatus
 from api.models.coordinator import Coordinator
 from api.models.group import Group
-from api.models.log_event import CoordinatorLogEvent, TeacherLogEvent
+from api.models.log_event import CoordinatorLogEvent, StudentLogEvent, TeacherLogEvent
 from api.models.personal_info import PersonalInfo
+from api.models.student import Student
 from api.models.teacher import Teacher
 
 
@@ -62,6 +69,19 @@ def coordinator_on_leave(personal_info: PersonalInfo) -> Coordinator:
         project_status=CoordinatorProjectStatus.ON_LEAVE,
         is_validated=False,
         status_since=timezone.now(),
+    )
+
+
+@pytest.fixture  # type: ignore[misc]
+def student_no_group(personal_info: PersonalInfo) -> Student:
+    """Ученик со статусом NO_GROUP_YET."""
+    return baker.make(
+        Student,
+        personal_info=personal_info,
+        project_status=StudentProjectStatus.NO_GROUP_YET,
+        status_since=timezone.now(),
+        _fill_optional=True,
+        make_m2m=True,
     )
 
 
@@ -183,6 +203,165 @@ def test_coordinator_overdue_leave_no_alert_for_non_leave_status(
 
     assert Alert.objects.filter(object_id=coord.pk, alert_type=handler.alert_type).count() == 0
     assert processed["created"] == 0
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_student_oral_interview_overdue_creates_and_resolves(student_no_group: Student) -> None:
+    student = student_no_group
+    student.project_status = StudentProjectStatus.NEEDS_INTERVIEW_TO_DETERMINE_LEVEL
+    student.status_since = timezone.now() - timedelta(days=15)
+    student.save(update_fields=["project_status", "status_since"])
+
+    handler = StudentNeedsOralInterviewHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    alert = Alert.objects.filter(object_id=student.pk, alert_type=handler.alert_type).first()
+    assert alert is not None
+    assert processed["created"] == 1
+
+    student.project_status = StudentProjectStatus.NO_GROUP_YET
+    student.save(update_fields=["project_status", "status_since"])
+    handler.resolve_alerts(processed)
+
+    alert.refresh_from_db()
+    assert alert.is_resolved
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_student_overdue_group_offer_creates_alert(student_no_group: Student) -> None:
+    student = student_no_group
+    past = timezone.now() - timedelta(days=15)
+    StudentLogEvent.objects.create(
+        student=student,
+        type=StudentLogEventType.GROUP_OFFERED,
+        comment="",
+        date_time=past,
+    )
+
+    handler = StudentOverdueGroupOfferHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    alert = Alert.objects.filter(object_id=student.pk, alert_type=handler.alert_type).first()
+    assert alert is not None
+    assert processed["created"] == 1
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_student_overdue_group_offer_no_alert_after_response(student_no_group: Student) -> None:
+    student = student_no_group
+    past = timezone.now() - timedelta(days=15)
+    StudentLogEvent.objects.create(
+        student=student,
+        type=StudentLogEventType.GROUP_OFFERED,
+        comment="",
+        date_time=past,
+    )
+    StudentLogEvent.objects.create(
+        student=student,
+        type=StudentLogEventType.ACCEPTED_OFFER,
+        comment="",
+        date_time=past + timedelta(days=1),
+    )
+
+    handler = StudentOverdueGroupOfferHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    assert Alert.objects.filter(object_id=student.pk, alert_type=handler.alert_type).count() == 0
+    assert processed["created"] == 0
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_student_overdue_group_offer_no_alert_if_recent_offer_exists(student_no_group: Student) -> None:
+    student = student_no_group
+    old_offer = timezone.now() - timedelta(days=20)
+    recent_offer = timezone.now() - timedelta(days=2)
+    StudentLogEvent.objects.create(
+        student=student,
+        type=StudentLogEventType.GROUP_OFFERED,
+        comment="",
+        date_time=old_offer,
+    )
+    StudentLogEvent.objects.create(
+        student=student,
+        type=StudentLogEventType.GROUP_OFFERED,
+        comment="",
+        date_time=recent_offer,
+    )
+
+    handler = StudentOverdueGroupOfferHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    assert Alert.objects.filter(object_id=student.pk, alert_type=handler.alert_type).count() == 0
+    assert processed["created"] == 0
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_student_no_group_30_days_creates_alert(student_no_group: Student) -> None:
+    student = student_no_group
+    past = timezone.now() - timedelta(days=31)
+    StudentLogEvent.objects.create(
+        student=student,
+        type=StudentLogEventType.AWAITING_OFFER,
+        comment="",
+        date_time=past,
+    )
+
+    handler = StudentNoGroup30DaysHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    alert = Alert.objects.filter(object_id=student.pk, alert_type=handler.alert_type).first()
+    assert alert is not None
+    assert processed["created"] == 1
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_group_pending_overdue_creates_and_resolves() -> None:
+    group = baker.make(
+        Group,
+        _fill_optional=True,
+        make_m2m=True,
+        project_status=GroupProjectStatus.PENDING,
+        status_since=timezone.now() - timedelta(days=15),
+    )
+
+    handler = GroupPendingOverdueHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    alert = Alert.objects.filter(object_id=group.pk, alert_type=handler.alert_type).first()
+    assert alert is not None
+    assert processed["created"] == 1
+
+    group.project_status = GroupProjectStatus.AWAITING_START
+    group.save(update_fields=["project_status", "status_since"])
+    handler.resolve_alerts(processed)
+
+    alert.refresh_from_db()
+    assert alert.is_resolved
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_group_awaiting_start_overdue_creates_alert() -> None:
+    group = baker.make(
+        Group,
+        _fill_optional=True,
+        make_m2m=True,
+        project_status=GroupProjectStatus.AWAITING_START,
+        status_since=timezone.now() - timedelta(days=15),
+    )
+
+    handler = GroupAwaitingStartOverdueHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    alert = Alert.objects.filter(object_id=group.pk, alert_type=handler.alert_type).first()
+    assert alert is not None
+    assert processed["created"] == 1
 
 
 @pytest.mark.django_db  # type: ignore[misc]
