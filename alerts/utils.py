@@ -2,6 +2,7 @@ import logging
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Model
+from django.utils import timezone
 
 from alerts.models import Alert
 
@@ -69,7 +70,7 @@ def resolve_alerts_for_objects(model_class: type[Model], object_ids: list[int], 
             object_id__in=object_ids,
             alert_type=alert_type,
             is_resolved=False,
-        ).update(is_resolved=True)
+        ).update(is_resolved=True, resolved_at=timezone.now())
     except Exception as e:
         logger.error(f"Error resolving alerts for {model_class.__name__} objects: {e}")
         return 0

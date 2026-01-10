@@ -21,8 +21,8 @@ def check_system_alerts() -> str:
             handler = handler_class()  # type: ignore[abstract]
             handler.check_and_create_alerts(processed_alerts)
             handler.resolve_alerts(processed_alerts)
-        except Exception as e:
-            logger.error(f"Error processing alerts with handler {handler_class.__name__}: {e}")
+        except Exception:
+            logger.exception("Error processing alerts with handler %s", handler_class.__name__)
 
     logger.info(
         f"Alert check complete. Created: {processed_alerts['created']}. Resolved: {processed_alerts['resolved']}."

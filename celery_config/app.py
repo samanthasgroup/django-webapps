@@ -9,7 +9,7 @@ app = Celery("django_webapps")
 app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks(["celery_config", "alerts"])
 
-CELERY_BEAT_SCHEDULE = {
+app.conf.beat_schedule = {
     "check-system-alerts-hourly": {
         "task": "alerts.tasks.check_system_alerts",
         "schedule": crontab(minute=0),

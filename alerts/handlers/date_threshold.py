@@ -61,7 +61,8 @@ class DateThresholdHandler(AlertHandler):
 
     def check_and_create_alerts(self, processed: dict[str, int]) -> None:
         qs = self._get_threshold_qs()
-        overdue_ids = set(qs.values_list("pk", flat=True))
+        overdue_rows = list(qs.values("pk", "last_event"))
+        overdue_ids = {row["pk"] for row in overdue_rows}
         # исключаем уже существующие
         existing = set(
             Alert.objects.filter(
@@ -73,10 +74,13 @@ class DateThresholdHandler(AlertHandler):
         )
         new_ids = overdue_ids - existing
         alerts = []
-        for pk in new_ids:
-            # Получаем объект с аннотацией last_event
-            obj_with_last_event = qs.get(pk=pk)
-            last_date = obj_with_last_event.last_event  # type: ignore[attr-defined]
+        for row in overdue_rows:
+            pk = row["pk"]
+            if pk not in new_ids:
+                continue
+            last_date = row["last_event"]
+            if last_date is None:
+                continue
             details = (
                 f"{str(self.MODEL._meta.verbose_name).capitalize()} с ID={pk}: "
                 f"последнее событие {self.EVENT_TYPE} было "
