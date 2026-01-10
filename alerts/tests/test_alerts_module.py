@@ -10,7 +10,11 @@ from alerts.handlers.coordinator import (
     CoordinatorOverdueLeaveHandler,
     CoordinatorOverdueTransferRequestHandler,
 )
-from alerts.handlers.teacher import TeacherNoGroup45DaysHandler
+from alerts.handlers.teacher import (
+    TeacherNoGroup45DaysHandler,
+    TeacherOverdueGroupOfferHandler,
+    TeacherOverdueOnLeaveHandler,
+)
 from alerts.models import Alert
 from alerts.tasks import check_system_alerts
 from alerts.utils import create_alert_for_object, resolve_alerts_for_objects
@@ -179,6 +183,95 @@ def test_coordinator_overdue_leave_no_alert_for_non_leave_status(
 
     assert Alert.objects.filter(object_id=coord.pk, alert_type=handler.alert_type).count() == 0
     assert processed["created"] == 0
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_teacher_overdue_leave_creates_and_resolves(teacher_no_group: Teacher) -> None:
+    teacher = teacher_no_group
+    teacher.project_status = TeacherProjectStatus.ON_LEAVE
+    teacher.save(update_fields=["project_status", "status_since"])
+    past = timezone.now() - timedelta(days=15)
+    TeacherLogEvent.objects.create(
+        teacher=teacher,
+        type=TeacherLogEventType.GONE_ON_LEAVE,
+        comment="",
+        date_time=past,
+    )
+
+    handler = TeacherOverdueOnLeaveHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    alert = Alert.objects.filter(object_id=teacher.pk, alert_type=handler.alert_type).first()
+    assert alert is not None
+    assert processed["created"] == 1
+
+    teacher.project_status = TeacherProjectStatus.WORKING
+    teacher.save(update_fields=["project_status", "status_since"])
+    handler.resolve_alerts(processed)
+    alert.refresh_from_db()
+    assert alert.is_resolved
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_teacher_overdue_group_offer_creates_alert(teacher_no_group: Teacher) -> None:
+    teacher = teacher_no_group
+    past = timezone.now() - timedelta(days=15)
+    TeacherLogEvent.objects.create(
+        teacher=teacher,
+        type=TeacherLogEventType.GROUP_OFFERED,
+        comment="",
+        date_time=past,
+    )
+
+    handler = TeacherOverdueGroupOfferHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    alert = Alert.objects.filter(object_id=teacher.pk, alert_type=handler.alert_type).first()
+    assert alert is not None
+    assert processed["created"] == 1
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_teacher_overdue_group_offer_no_alert_for_recent_event(teacher_no_group: Teacher) -> None:
+    teacher = teacher_no_group
+    TeacherLogEvent.objects.create(
+        teacher=teacher,
+        type=TeacherLogEventType.GROUP_OFFERED,
+        comment="",
+        date_time=timezone.now(),
+    )
+
+    handler = TeacherOverdueGroupOfferHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    assert Alert.objects.filter(object_id=teacher.pk, alert_type=handler.alert_type).count() == 0
+    assert processed["created"] == 0
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_teacher_overdue_group_offer_resolves_after_status_change(teacher_no_group: Teacher) -> None:
+    teacher = teacher_no_group
+    past = timezone.now() - timedelta(days=15)
+    TeacherLogEvent.objects.create(
+        teacher=teacher,
+        type=TeacherLogEventType.GROUP_OFFERED,
+        comment="",
+        date_time=past,
+    )
+
+    handler = TeacherOverdueGroupOfferHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    teacher.project_status = TeacherProjectStatus.WORKING
+    teacher.save(update_fields=["project_status", "status_since"])
+    handler.resolve_alerts(processed)
+
+    assert Alert.objects.filter(object_id=teacher.pk, alert_type=handler.alert_type, is_resolved=False).count() == 0
+    assert processed["resolved"] == 1
 
 
 @pytest.mark.django_db  # type: ignore[misc]
