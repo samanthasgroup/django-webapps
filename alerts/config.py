@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.utils.functional import Promise
 from django.utils.translation import gettext_lazy as _
 
 
@@ -58,5 +59,5 @@ class AlertConfig:
     }
 
     @classmethod
-    def choices(cls) -> list[tuple[str, str]]:
-        return [(alert_type, str(cls.LABELS.get(alert_type, alert_type))) for alert_type in cls.TYPES.values()]
+    def choices(cls) -> list[tuple[str, str | Promise]]:
+        return [(alert_type, cls.LABELS.get(alert_type, alert_type)) for alert_type in cls.TYPES.values()]
