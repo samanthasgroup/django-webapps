@@ -252,6 +252,57 @@ def test_teacher_overdue_group_offer_no_alert_for_recent_event(teacher_no_group:
 
 
 @pytest.mark.django_db  # type: ignore[misc]
+def test_teacher_overdue_group_offer_no_alert_after_response(teacher_no_group: Teacher) -> None:
+    teacher = teacher_no_group
+    past = timezone.now() - timedelta(days=15)
+    TeacherLogEvent.objects.create(
+        teacher=teacher,
+        type=TeacherLogEventType.GROUP_OFFERED,
+        comment="",
+        date_time=past,
+    )
+    TeacherLogEvent.objects.create(
+        teacher=teacher,
+        type=TeacherLogEventType.DECLINED_OFFER,
+        comment="",
+        date_time=past + timedelta(days=1),
+    )
+
+    handler = TeacherOverdueGroupOfferHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    assert Alert.objects.filter(object_id=teacher.pk, alert_type=handler.alert_type).count() == 0
+    assert processed["created"] == 0
+
+
+@pytest.mark.django_db  # type: ignore[misc]
+def test_teacher_overdue_group_offer_no_alert_if_recent_offer_exists(teacher_no_group: Teacher) -> None:
+    teacher = teacher_no_group
+    old_offer = timezone.now() - timedelta(days=20)
+    recent_offer = timezone.now() - timedelta(days=2)
+    TeacherLogEvent.objects.create(
+        teacher=teacher,
+        type=TeacherLogEventType.GROUP_OFFERED,
+        comment="",
+        date_time=old_offer,
+    )
+    TeacherLogEvent.objects.create(
+        teacher=teacher,
+        type=TeacherLogEventType.GROUP_OFFERED,
+        comment="",
+        date_time=recent_offer,
+    )
+
+    handler = TeacherOverdueGroupOfferHandler()
+    processed = {"created": 0, "resolved": 0}
+    handler.check_and_create_alerts(processed)
+
+    assert Alert.objects.filter(object_id=teacher.pk, alert_type=handler.alert_type).count() == 0
+    assert processed["created"] == 0
+
+
+@pytest.mark.django_db  # type: ignore[misc]
 def test_teacher_overdue_group_offer_resolves_after_status_change(teacher_no_group: Teacher) -> None:
     teacher = teacher_no_group
     past = timezone.now() - timedelta(days=15)
@@ -400,6 +451,7 @@ def test_utils_create_and_resolve(teacher_no_group: Teacher) -> None:
     assert resolved == 1
     alert.refresh_from_db()
     assert alert.is_resolved
+    assert alert.resolved_at is not None
 
 
 @pytest.mark.django_db  # type: ignore[misc]
