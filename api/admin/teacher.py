@@ -3,13 +3,14 @@ from typing import Any, cast
 from django import forms
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
-from django.db.models import QuerySet
+from django.db.models import Count, Q, QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from alerts.admin_inlines import AlertInline
 from api.admin.auxil.widgets import PersonalInfoSelect2Widget
 from api.models import Coordinator, Group, PersonalInfo, Teacher
 from api.models.teacher import TeacherQuerySet
@@ -87,7 +88,8 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
     form = TeacherAdminForm
 
     class Media:
-        js = ("admin/js/sticky-scroll-bar.js",)
+        css = {"all": ("css/admin-alerts-highlight.css",)}
+        js = ("admin/js/sticky-scroll-bar.js", "admin/js/admin-alerts-highlight.js")
 
     list_display: tuple[str, ...] = (
         "get_pk",
@@ -101,6 +103,7 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         "can_host_speaking_club",
         "teaching_languages_and_levels_display",
         "non_teaching_help_provided_display",
+        "display_active_alerts_count",
     )
 
     list_filter = (
@@ -109,6 +112,8 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
         HasGroupsFilter,
         "groups",
         CoordinatorFilter,
+        ("alerts__alert_type", admin.AllValuesFieldListFilter),
+        ("alerts__is_resolved", admin.BooleanFieldListFilter),
     )
 
     search_fields: tuple[str, ...] = (
@@ -121,6 +126,7 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
 
     inlines = [
         TeachersGroupInline,
+        AlertInline,
     ]
 
     def changelist_view(self, request: HttpRequest, extra_context: dict[str, Any] | None = None) -> HttpResponse:
@@ -154,7 +160,9 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
 
         teacher_queryset = cast(TeacherQuerySet, queryset_from_super)
 
-        return teacher_queryset.prefetch_related(
+        return teacher_queryset.annotate(
+            active_alerts_count=Count("alerts__pk", filter=Q(alerts__is_resolved=False), distinct=True)
+        ).prefetch_related(
             "personal_info",
             "teaching_languages_and_levels",
             "availability_slots",
@@ -222,6 +230,14 @@ class TeacherAdmin(admin.ModelAdmin[Teacher]):
             links.append(format_html('<a href="{}">{}</a>', url, coord_pi_pk))
 
         return format_html(", ".join(links))
+
+    @admin.display(description=_("Active Alerts"), ordering="active_alerts_count")
+    def display_active_alerts_count(self, obj: Teacher) -> int | str:
+        count = getattr(obj, "active_alerts_count", None)
+        if count is None:
+            count = obj.alerts.filter(is_resolved=False).count()
+        label = str(count) if count > 0 else "-"
+        return format_html('<span class="active-alerts-count" data-count="{}">{}</span>', count, label)
 
     @admin.display(boolean=True, description=_("Can take more groups"))
     def can_take_more_groups_display(self, obj: Teacher) -> bool:

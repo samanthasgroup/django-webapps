@@ -1,6 +1,7 @@
 from django.db import transaction
+from django.db.models import Count
 
-from api.models import Group
+from api.models import Group, Student, Teacher
 from api.models.auxil.status_setter import StatusSetter
 from api.models.choices.log_event_type import StudentLogEventType, TeacherLogEventType
 from api.models.choices.status import StudentProjectStatus, TeacherProjectStatus
@@ -15,9 +16,23 @@ class GroupDiscardProcessor(GroupActionProcessor):
 
     @transaction.atomic
     def process(self) -> None:
+        teachers = list(self.group.teachers.all())
+        students = list(self.group.students.all())
+        coordinators = list(self.group.coordinators.all())
+
         self._set_statuses()
         self._create_log_events()
         self._delete()
+
+        timestamp = self.timestamp
+        if coordinators:
+            StatusSetter.update_statuses_of_active_coordinators(timestamp)
+        if teachers or students:
+            StatusSetter.update_related_statuses_for_people(
+                teachers=Teacher.objects.filter(pk__in=[t.pk for t in teachers]),
+                students=Student.objects.filter(pk__in=[s.pk for s in students]),
+                timestamp=timestamp,
+            )
 
     def _create_log_events(self) -> None:
         # TODO add from_groupd once CASCAD policy removed
@@ -40,22 +55,23 @@ class GroupDiscardProcessor(GroupActionProcessor):
     def _set_teachers_status(self) -> None:
         self.group.teachers_with_other_groups().update(
             project_status=TeacherProjectStatus.WORKING,
-            situational_status="",
             status_since=self.timestamp,
         )
 
         self.group.teachers_with_no_other_groups().update(
             project_status=TeacherProjectStatus.NO_GROUP_YET,
-            situational_status="",
             status_since=self.timestamp,
         )
 
     def _set_students_status(self) -> None:
-        self.group.students.update(
-            # TODO actually student can theoretically be studying in a different group already,
-            #  so additional check will be needed instead of blindly setting NO_GROUP_YET.
-            #  However, this definitely won't be the case in the MVP.
+        annotated_students = Student.objects.annotate(groups_count=Count("groups")).filter(groups=self.group)
+
+        annotated_students.filter(groups_count__gt=1).update(
+            project_status=StudentProjectStatus.STUDYING,
+            status_since=self.timestamp,
+        )
+
+        annotated_students.filter(groups_count=1).update(
             project_status=StudentProjectStatus.NO_GROUP_YET,
-            situational_status="",
             status_since=self.timestamp,
         )

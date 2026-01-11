@@ -20,6 +20,7 @@ class AlertAdmin(admin.ModelAdmin[Alert]):
         "alert_type_badge",
         "content_object_link",
         "related_model_type",
+        "details_preview",
         "created_at",
         "is_resolved",
         "resolved_at",
@@ -75,6 +76,16 @@ class AlertAdmin(admin.ModelAdmin[Alert]):
         return obj.content_type.name.capitalize()
 
     related_model_type.admin_order_field = "content_type"  # type: ignore[attr-defined]
+
+    @admin.display(description=_("Details"))
+    def details_preview(self, obj: Alert) -> str:
+        if not obj.details:
+            return "-"
+        preview_length = 80
+        preview = obj.details[:preview_length]
+        if len(obj.details) > preview_length:
+            preview = f"{preview}..."
+        return format_html('<span title="{}">{}</span>', obj.details, preview)
 
     @admin.action(description=_("Mark selected alerts as resolved"))
     def mark_resolved(self, request: HttpRequest, queryset: Any) -> None:

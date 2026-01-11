@@ -40,13 +40,11 @@ class GroupFinishProcessor(GroupActionProcessor):
     def _set_teachers_status(self) -> None:
         self.group.teachers_with_other_groups().update(
             project_status=TeacherProjectStatus.WORKING,
-            situational_status="",
             status_since=self.timestamp,
         )
 
         self.group.teachers_with_no_other_groups().update(
             project_status=TeacherProjectStatus.NO_GROUP_YET,
-            situational_status="",
             status_since=self.timestamp,
         )
 
@@ -55,13 +53,11 @@ class GroupFinishProcessor(GroupActionProcessor):
 
         annotated_students.filter(groups_count__gt=1).update(
             project_status=StudentProjectStatus.STUDYING,
-            situational_status="",
             status_since=self.timestamp,
         )
 
         # after moving the student, this 1 will become 0
         annotated_students.filter(groups_count=1).update(
             project_status=StudentProjectStatus.NO_GROUP_YET,
-            situational_status="",
             status_since=self.timestamp,
         )

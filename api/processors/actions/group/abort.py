@@ -1,6 +1,7 @@
 from django.db import transaction
+from django.db.models import Count
 
-from api.models import Teacher
+from api.models import Student
 from api.models.auxil.status_setter import StatusSetter
 from api.models.choices.log_event_type import (
     CoordinatorLogEventType,
@@ -37,26 +38,25 @@ class GroupAbortProcessor(GroupActionProcessor):
         StatusSetter.set_status(obj=self.group, project_status=GroupProjectStatus.ABORTED, status_since=self.timestamp)
 
     def _set_teachers_status(self) -> None:
-        teachers = Teacher.objects.filter_active()
-
-        teachers.filter_has_groups().update(
+        self.group.teachers_with_other_groups().update(
             project_status=TeacherProjectStatus.WORKING,
-            situational_status="",
             status_since=self.timestamp,
         )
 
-        teachers.filter_has_no_groups().update(
+        self.group.teachers_with_no_other_groups().update(
             project_status=TeacherProjectStatus.NO_GROUP_YET,
-            situational_status="",
             status_since=self.timestamp,
         )
 
     def _set_students_status(self) -> None:
-        self.group.students.update(
-            # TODO actually student can theoretically be studying in a different group already,
-            #  so additional check will be needed instead of blindly setting NO_GROUP_YET.
-            #  However, this definitely won't be the case in the MVP.
+        annotated_students = Student.objects.annotate(groups_count=Count("groups")).filter(groups=self.group)
+
+        annotated_students.filter(groups_count__gt=1).update(
+            project_status=StudentProjectStatus.STUDYING,
+            status_since=self.timestamp,
+        )
+
+        annotated_students.filter(groups_count=1).update(
             project_status=StudentProjectStatus.NO_GROUP_YET,
-            situational_status="",
             status_since=self.timestamp,
         )

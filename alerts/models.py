@@ -1,8 +1,12 @@
+from typing import Any
+
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+from alerts.config import AlertConfig
 
 
 class Alert(models.Model):
@@ -15,6 +19,7 @@ class Alert(models.Model):
     alert_type = models.CharField(
         max_length=100,
         db_index=True,
+        choices=AlertConfig.choices(),
         verbose_name=_("Alert Type"),
         help_text=_("A unique identifier for the type of alert (e.g., 'overdue_on_leave', 'low_student_activity')."),
     )
@@ -57,9 +62,18 @@ class Alert(models.Model):
             model_class = self.content_type.model_class()
             model_name = model_class.__name__ if model_class is not None else "UnknownModel"
             obj_str = str(self.content_object) if self.content_object else f"ID: {self.object_id}"
-            return f"Alert '{self.alert_type}' for {model_name} ({obj_str}) - {status}"
+            label = self.get_alert_type_display() if hasattr(self, "get_alert_type_display") else self.alert_type
+            return f"Alert '{label}' for {model_name} ({obj_str}) - {status}"
         except Exception:  # На случай если content_type или object_id некорректны
-            return f"Alert '{self.alert_type}' (Type: {self.content_type_id}, ID: {self.object_id}) - {status}"
+            label = self.get_alert_type_display() if hasattr(self, "get_alert_type_display") else self.alert_type
+            return f"Alert '{label}' (Type: {self.content_type_id}, ID: {self.object_id}) - {status}"
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        if self.is_resolved and self.resolved_at is None:
+            self.resolved_at = timezone.now()
+        if not self.is_resolved and self.resolved_at is not None:
+            self.resolved_at = None
+        super().save(*args, **kwargs)
 
     def resolve(self) -> None:
         """Marks the alert as resolved."""

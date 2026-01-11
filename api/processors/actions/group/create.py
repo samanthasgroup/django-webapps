@@ -2,7 +2,7 @@ from django.db import transaction
 
 from api.models.auxil.status_setter import StatusSetter
 from api.models.choices.log_event_type import GroupLogEventType, StudentLogEventType, TeacherLogEventType
-from api.models.choices.status import GroupProjectStatus, StudentSituationalStatus, TeacherSituationalStatus
+from api.models.choices.status import GroupProjectStatus
 from api.processors.actions.group import GroupActionProcessor
 from api.processors.auxil.log_event_creator import GroupLogEventCreator
 
@@ -26,14 +26,10 @@ class GroupCreateProcessor(GroupActionProcessor):
         StatusSetter.set_status(obj=self.group, project_status=GroupProjectStatus.PENDING, status_since=self.timestamp)
 
     def _set_coordinators_status(self) -> None:
-        pass
+        StatusSetter.update_statuses_of_active_coordinators(self.timestamp)
 
     def _set_teachers_status(self) -> None:
-        self.group.teachers.all().filter_active().update(  # type: ignore[attr-defined]
-            situational_status=TeacherSituationalStatus.GROUP_OFFERED, status_since=self.timestamp
-        )
+        pass
 
     def _set_students_status(self) -> None:
-        self.group.students.update(
-            situational_status=StudentSituationalStatus.GROUP_OFFERED, status_since=self.timestamp
-        )
+        self.group.students.update(status_since=self.timestamp)
