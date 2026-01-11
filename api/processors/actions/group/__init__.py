@@ -4,6 +4,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from api.models import Group
+from api.models.auxil.status_setter import StatusSetter
 
 
 class GroupActionProcessor(abc.ABC):
@@ -26,6 +27,7 @@ class GroupActionProcessor(abc.ABC):
         self._set_coordinators_status()
         self._set_students_status()
         self._set_teachers_status()
+        StatusSetter.update_related_statuses_for_group(self.group, self.timestamp)
 
     def _move_related_people_to_former(self) -> None:
         teachers_current, students_current, coordinators_current = (

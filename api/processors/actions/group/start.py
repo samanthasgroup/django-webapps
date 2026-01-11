@@ -29,13 +29,11 @@ class GroupStartProcessor(GroupActionProcessor):
     def _set_students_status(self) -> None:
         self.group.students.update(
             project_status=StudentProjectStatus.STUDYING,
-            situational_status="",
             status_since=self.timestamp,
         )
 
     def _set_teachers_status(self) -> None:
         self.group.teachers.all().filter_active().update(  # type: ignore[attr-defined]
             project_status=TeacherProjectStatus.WORKING,
-            situational_status="",
             status_since=self.timestamp,
         )

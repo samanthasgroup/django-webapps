@@ -12,6 +12,7 @@ from django.db.models import Count, Q, QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -23,6 +24,7 @@ from api import models
 from api.admin.auxil.mixin import CoordinatorRestrictedAdminMixin
 from api.admin.auxil.widgets import NativeTimeInput
 from api.models import Coordinator
+from api.models.auxil.status_setter import StatusSetter
 
 COMMON_SEARCH_FIELDS = [
     "personal_info__id__icontains",
@@ -241,6 +243,32 @@ class GroupAdmin(CoordinatorRestrictedAdminMixin, VersionAdmin):
         extra_context = extra_context or {}
         extra_context["title"] = "Добавить группу"
         return super().add_view(request, form_url, extra_context)
+
+    def save_model(self, request: HttpRequest, obj: models.Group, form: forms.ModelForm[Any], change: bool) -> None:
+        previous_project_status = None
+        previous_situational_status = None
+        if change and obj.pk:
+            previous = self.model.objects.get(pk=obj.pk)
+            previous_project_status = previous.project_status
+            previous_situational_status = previous.situational_status
+
+        super().save_model(request, obj, form, change)
+
+        if (
+            not change
+            or previous_project_status != obj.project_status
+            or previous_situational_status != obj.situational_status
+        ):
+            timestamp = timezone.now()
+            StatusSetter.update_statuses_of_active_coordinators(timestamp)
+            StatusSetter.update_related_statuses_for_group(obj, timestamp)
+
+    def save_related(self, request: HttpRequest, form: forms.ModelForm[Any], formsets: list[Any], change: bool) -> None:
+        super().save_related(request, form, formsets, change)
+        obj = form.instance
+        timestamp = timezone.now()
+        StatusSetter.update_statuses_of_active_coordinators(timestamp)
+        StatusSetter.update_related_statuses_for_group(obj, timestamp)
 
     def get_search_results(
         self, request: HttpRequest, queryset: QuerySet[Any], search_term: str
