@@ -34,6 +34,7 @@ class StudentSituationalStatus(models.TextChoices):
 
     GROUP_OFFERED = "group_offered", _("Was offered a group, has not responded yet")
     AWAITING_START = "awaiting_start", _("Group confirmed, awaiting start of classes")
+    HOLIDAY = "holiday", _("Holiday")
     NOT_ATTENDING = (
         "not_attending",
         _("Missed {miss_limit} classes in a row without letting the teacher know").format(
@@ -49,6 +50,7 @@ class TeacherSituationalStatus(models.TextChoices):
 
     GROUP_OFFERED = "group_offered", _("Was offered a group, has not responded yet")
     AWAITING_START = "awaiting_start", _("Group confirmed, awaiting start of classes")
+    HOLIDAY = "holiday", _("Holiday")
     NEEDS_SUBSTITUTION = (
         "needs_substitution",
         _("Needs a break in teaching the group, substitute teacher needed"),
