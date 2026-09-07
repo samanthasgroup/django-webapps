@@ -277,10 +277,8 @@ class FakeDataPopulator:
             current_item_attempts = 0
             while True:
                 if current_item_attempts >= max_attempts_per_item:
-                    self.stdout.write(
-                        f"Warning: Max attempts reached for one item of recipe {recipe._model.__name__}. \
-                        Skipping this item. ({created_count}/{amount} created)"
-                    )
+                    self.stdout.write(f"Warning: Max attempts reached for one item of recipe {recipe._model.__name__}. \
+                        Skipping this item. ({created_count}/{amount} created)")
                     break
                 try:
                     with transaction.atomic():
@@ -378,10 +376,8 @@ class Command(BaseCommand):
         populator.stdout = self.stdout
         populator.style = self.style
 
-        self.stdout.write(
-            "Pre-requisite: Ensure that basic data from migration '0002_data_migration' \
-              exists (AgeRanges, DayTimeSlots, Languages, etc.)."
-        )
+        self.stdout.write("Pre-requisite: Ensure that basic data from migration '0002_data_migration' \
+              exists (AgeRanges, DayTimeSlots, Languages, etc.).")
 
         if PersonalInfo.objects.exists():
             self.stdout.write(self.style.WARNING("Fake data seems to exist already (found PersonalInfo objects)."))
