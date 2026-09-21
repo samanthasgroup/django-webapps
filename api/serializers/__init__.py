@@ -43,7 +43,6 @@ from api.serializers.group.internal import (  # isort:skip
     GroupWriteSerializer,
 )
 
-
 __all__ = [
     "AgeRangeSerializer",
     "DayAndTimeSlotSerializer",
