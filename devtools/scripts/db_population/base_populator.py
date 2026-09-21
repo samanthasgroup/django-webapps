@@ -87,10 +87,8 @@ class BasePopulatorFromCsv(ABC):
                     return result
                 return 0
             except IndexError:
-                self._logger.error(
-                    f"Row too short for entity {entity}, expected at least \
-                    {self._column_to_id[self.id_name] + 1} columns"
-                )
+                self._logger.error(f"Row too short for entity {entity}, expected at least \
+                    {self._column_to_id[self.id_name] + 1} columns")
                 return 0
 
         filtered_csv_data = [entity for entity in csv_data if len(entity) > self._column_to_id[self.id_name]]
